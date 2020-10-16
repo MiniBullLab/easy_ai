@@ -1,0 +1,4 @@
+include README.md
+include requirements.txt
+include LICENSE
+recursive-include easy_tools *.py *.so *.cfg *.h5 *.pt *.sh
