@@ -14,7 +14,7 @@ class SegmentionMetric():
     def reset(self):
         self.confusion_matrix = np.zeros((self.number_class, self.number_class))
 
-    def eval(self, label_pred, label_gt):
+    def numpy_eval(self, label_pred, label_gt):
         label_pred = label_pred.astype(label_gt.dtype)
         self.confusion_matrix += self.fast_hist(label_gt.flatten(), label_pred.flatten(), self.number_class)
 
@@ -43,7 +43,7 @@ class SegmentionMetric():
         return {'Overall Acc: \t': acc,
                 'Mean Acc : \t': acc_cls,
                 'FreqW Acc : \t': fwavacc,
-                'Mean IoU : \t': mean_iu,}, cls_iu
+                'Mean IoU : \t': mean_iu}, cls_iu
 
     def fast_hist(self, gt, pred, n_class):
         mask = (gt >= 0) & (gt < n_class)

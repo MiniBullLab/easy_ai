@@ -13,8 +13,10 @@ from easyai.model.base_block.utility.utility_layer import RouteLayer
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.base_block.utility.utility_block import ConvActivationBlock
 from easyai.model.utility.base_classify_model import *
+from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
 
+@REGISTERED_SEG_MODEL.register_module(ModelName.MobileV2FCN)
 class MobileV2FCN(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=2):
@@ -23,13 +25,15 @@ class MobileV2FCN(BaseClassifyModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU6
 
+        self.model_args['type'] = BackboneName.MobileNetV2_1_0
+
         self.create_block_list()
 
     def create_block_list(self):
         self.block_out_channels = []
         self.index = 0
 
-        backbone = self.factory.get_base_model(BackboneName.MobileNetV2_1_0, self.model_args)
+        backbone = self.factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 

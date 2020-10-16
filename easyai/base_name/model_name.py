@@ -8,6 +8,7 @@ class ModelName():
     FCNSeg = "FCNSeg"
     UNetSeg = "UNetSeg"
     R2UNetSeg = "R2UNetSeg"
+    R2AttentionUNetSeg = "R2AttentionUNetSeg"
     UNet11 = "UNet11"
     UNet16 = "UNet16"
     AlbuNet = "AlbuNet"
@@ -22,6 +23,7 @@ class ModelName():
     DeepLabV3Plus = "DeepLabV3Plus"
     MobilenetDeepLabV3Plus = "MobilenetDeepLabV3Plus"
     MobileV2FCN = "MobileV2FCN"
+    AttentionUnetSeg = "AttentionUnetSeg"
 
     ComplexYOLO = "ComplexYOLO"
 
@@ -30,8 +32,10 @@ class ModelName():
     Inceptionv4Cls = "Inceptionv4Cls"
     SENetCls = "SENetCls"
     GhostNetCls = "GhostNetCls"
+    ClassNet = "classnet"
 
-    YoloV3Det2d = "detnet"
+    YoloV3Det2d = "yolov3"
+    DetNet = "detnet"
 
     MSRResNet = "MSRResNet"
     SmallSRNet = "SmallSRNet"

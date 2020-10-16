@@ -10,7 +10,6 @@ import numpy as np
 import random
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
-from easyai.helper import XMLProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.helper import ImageProcess
 from easyai.base_name.task_name import TaskName
@@ -28,10 +27,10 @@ class CreateDetectionAnchors():
         self.image_process = ImageProcess()
 
         self.detection_sample = DetectionSample(train_path,
-                                                self.task_config.class_name)
+                                                self.task_config.detect2d_class)
         self.detection_sample.read_sample()
 
-        self.dataset_process = DetectionDataSetProcess()
+        self.dataset_process = DetectionDataSetProcess(1, 0)
 
     def get_anchors(self, number):
         wh_numpy = self.get_width_height()
@@ -51,7 +50,7 @@ class CreateDetectionAnchors():
             rgb_image, labels = self.dataset_process.resize_dataset(rgb_image,
                                                                     self.task_config.image_size,
                                                                     boxes,
-                                                                    self.task_config.class_name)
+                                                                    self.task_config.detect2d_class)
 
             temp = np.zeros((len(labels), 2), dtype=np.float32)
             for index, object in enumerate(labels):

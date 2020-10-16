@@ -6,19 +6,20 @@ import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.base_name.task_name import TaskName
+from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 
+@REGISTERED_INFERENCE_TASK.register_module(TaskName.SuperResolution_Task)
 class SuperResolution(BaseInference):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Segment_Task)
+        super().__init__(cfg_path, config_path, TaskName.SuperResolution_Task)
 
         self.model_args['upscale_factor'] = self.task_config.upscale_factor
-        self.model = self.torchModelProcess.initModel(cfg_path, gpu_id,
-                                                      default_args=self.model_args)
+        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
         self.device = self.torchModelProcess.getDevice()
 
-    def process(self, input_path):
+    def process(self, input_path, is_show=False):
         pass
         # for i, (oriImg, imgs) in enumerate(dataloader):
         #     img_pil = Image.fromarray(cv2.cvtColor(oriImg, cv2.COLOR_BGR2RGB))

@@ -21,15 +21,18 @@ from easyai.model.base_block.seg.bisenet_block import SpatialPath, GlobalAvgPool
 from easyai.model.base_block.seg.bisenet_block import ContextPath, FeatureFusionBlock
 from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_classify_model import *
+from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
 
+@REGISTERED_SEG_MODEL.register_module(ModelName.BiSeNet)
 class BiSeNet(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=2):
         super().__init__(data_channel, class_number)
-        self.set_name(ModelName.FastSCNN)
+        self.set_name(ModelName.BiSeNet)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
+        self.model_args['type'] = BackboneName.ResNet18
         self.factory = BackboneFactory()
         self.create_block_list()
 
@@ -40,7 +43,7 @@ class BiSeNet(BaseClassifyModel):
                                    bn_name=self.bn_name, activation_name=self.activation_name)
         self.add_block_list(spatial_path.get_name(), spatial_path, 128)
 
-        backbone = self.factory.get_base_model(BackboneName.ResNet18, self.model_args)
+        backbone = self.factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 

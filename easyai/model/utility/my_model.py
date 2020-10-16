@@ -29,7 +29,7 @@ class MyModel(BaseModel):
         backbone_block, self.backbone_name = self.creat_backbone()
         base_out_channels = backbone_block.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone_block,
-                            base_out_channels[-1], flag=1)
+                            base_out_channels[-1])
         if backbone_block is not None:
             task_block_dict, task_out_channels = self.create_task(base_out_channels)
             for index, (key, block) in enumerate(task_block_dict.items()):
@@ -67,12 +67,15 @@ class MyModel(BaseModel):
             input_name = input_name.strip()
             if input_name.endswith("cfg"):
                 input_cfg_path = os.path.join(self.cfg_dir, input_name)
-                result = self.backbone_factory.get_base_model(input_cfg_path, self.default_args)
+                self.default_args['type'] = input_cfg_path
+                result = self.backbone_factory.get_backbone_model(self.default_args)
             else:
-                result = self.backbone_factory.get_base_model(input_name, self.default_args)
+                self.default_args['type'] = input_name
+                result = self.backbone_factory.get_backbone_model(self.default_args)
         return result, input_name
 
     def create_task(self, base_out_channels):
+        self.createTaskList.set_start_index(1)
         self.createTaskList.createOrderedDict(self.model_defines, base_out_channels)
         block_dict = self.createTaskList.getBlockList()
         task_out_channels = self.createTaskList.getOutChannelList()

@@ -5,8 +5,9 @@
 import os
 import inspect
 from optparse import OptionParser
-from easyai.tools.copy_image import CopyImage
+from easyai.tools.utility.copy_image import CopyImage
 from easyai.train_task import TrainTask
+from easyai.base_name.task_name import TaskName
 from easyai.config.utility.image_task_config import ImageTaskConfig
 
 
@@ -47,30 +48,31 @@ def parse_arguments():
     return options
 
 
-def main():
+def train_main():
     print("process start...")
     options = parse_arguments()
     copy_process = CopyImage()
     config = ImageTaskConfig()
-    train_task = TrainTask(options.trainPath, options.valPath, True)
     current_path = inspect.getfile(inspect.currentframe())
     dir_name = os.path.dirname(current_path)
     if options.task_name.strip() == "ClassNet":
-        cfg_path = os.path.join(dir_name, "./data/classnet.cfg")
         pretrain_model_path = os.path.join(dir_name, "./data/classnet.pt")
-        train_task.classify_train(cfg_path, options.gpu_id, options.config_path, pretrain_model_path)
+        train_task = TrainTask(TaskName.Classify_Task, options.trainPath, options.valPath, True)
+        train_task.train('classnet', options.gpu_id, options.config_path, pretrain_model_path)
         save_image_dir = os.path.join(config.root_save_dir, "cls_img")
         copy_process.copy(options.trainPath, save_image_dir)
     elif options.task_name.strip() == "DeNET":
         pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
-        train_task.detect2d_train("detnet", options.gpu_id, options.config_path, pretrain_model_path)
+        train_task = TrainTask(TaskName.Detect2d_Task, options.trainPath, options.valPath, True)
+        train_task.train("detnet", options.gpu_id, options.config_path, pretrain_model_path)
         # easy_model_convert(options.task_name, train_task.save_onnx_path)
         save_image_dir = os.path.join(config.root_save_dir, "det_img")
         copy_process.copy(options.trainPath, save_image_dir)
     elif options.task_name.strip() == "SegNET":
         pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
         cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
-        train_task.segment_train(cfg_path, options.gpu_id, options.config_path, pretrain_model_path)
+        train_task = TrainTask(TaskName.Segment_Task, options.trainPath, options.valPath, True)
+        train_task.train(cfg_path, options.gpu_id, options.config_path, pretrain_model_path)
         save_image_dir = os.path.join(config.root_save_dir, "seg_img")
         copy_process.copy(options.trainPath, save_image_dir)
     else:
@@ -79,4 +81,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    train_main()

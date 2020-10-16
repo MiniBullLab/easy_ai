@@ -2,37 +2,46 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-import numpy as np
+import os
 import math
 import random
+import numpy as np
 from easyai.helper.json_process import JsonProcess
-from easyai.helper.imageProcess import ImageProcess
 from easyai.data_loader.utility.data_loader import DataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.data_loader.det2d.det2d_data_augment import DetectionDataAugment
+from easyai.tools.sample.create_detection_sample import CreateDetectionSample
 
 
 class DetectionTrainDataloader(DataLoader):
 
-    def __init__(self, train_path, class_name, batch_size=1, image_size=(768, 320),
+    def __init__(self, train_path, detect2d_class,
+                 resize_type, normalize_type, mean=0, std=1,
+                 batch_size=1, image_size=(768, 320),
                  data_channel=3, multi_scale=False, is_augment=False, balanced_sample=False):
-        super().__init__()
-        self.className = class_name
+        super().__init__(data_channel)
+        self.detect2d_class = detect2d_class
         self.multi_scale = multi_scale
         self.is_augment = is_augment
         self.balanced_sample = balanced_sample
         self.batch_size = batch_size
         self.image_size = image_size
-        self.data_channel = data_channel
 
+        if balanced_sample:
+            create_sample = CreateDetectionSample()
+            save_sample_dir, _ = os.path.split(train_path)
+            create_sample.createBalanceSample(train_path,
+                                              save_sample_dir,
+                                              detect2d_class)
         self.detection_sample = DetectionSample(train_path,
-                                                class_name,
+                                                detect2d_class,
                                                 balanced_sample)
         self.detection_sample.read_sample()
         self.json_process = JsonProcess()
-        self.image_process = ImageProcess()
-        self.dataset_process = DetectionDataSetProcess()
+
+        self.dataset_process = DetectionDataSetProcess(resize_type, normalize_type,
+                                                       mean, std, self.get_pad_color())
         self.dataset_augment = DetectionDataAugment()
 
         self.nF = self.detection_sample.get_sample_count()
@@ -59,13 +68,13 @@ class DetectionTrainDataloader(DataLoader):
         stop_index = start_index + self.batch_size
         for temp_index in range(start_index, stop_index):
             img_path, label_path = self.detection_sample.get_sample_path(temp_index, class_index)
-            src_image = self.read_src_image(img_path)
+            _, src_image = self.read_src_image(img_path)
             _, boxes = self.json_process.parse_rect_data(label_path)
 
             image, labels = self.dataset_process.resize_dataset(src_image,
                                                                 (width, height),
                                                                 boxes,
-                                                                self.className)
+                                                                self.detect2d_class)
             image, labels = self.dataset_augment.augment(image, labels)
             image = self.dataset_process.normalize_image(image)
             labels = self.dataset_process.normalize_labels(labels, (width, height))
@@ -87,8 +96,8 @@ class DetectionTrainDataloader(DataLoader):
     def get_random_class(self):
         class_index = None
         if self.balanced_sample:
-            class_index = np.random.randint(0, len(self.className))
-            print("loading labels {}".format(self.className[class_index]))
+            class_index = np.random.randint(0, len(self.detect2d_class))
+            print("loading labels {}".format(self.detect2d_class[class_index]))
         return class_index
 
     def get_image_size(self):
@@ -104,14 +113,19 @@ class DetectionTrainDataloader(DataLoader):
             height = self.image_size[1]
         return width, height
 
-    def read_src_image(self, image_path):
-        src_image = None
-        if self.data_channel == 1:
-            src_image = self.image_process.read_gray_image(image_path)
-        elif self.data_channel == 3:
-            _, src_image = self.image_process.readRgbImage(image_path)
-        else:
-            print("det2d read src image error!")
-        return src_image
 
-
+def get_detect2d_train_dataloader(train_path, data_config):
+    resize_type = data_config.resize_type
+    normalize_type = data_config.normalize_type
+    mean = data_config.data_mean
+    std = data_config.data_std
+    image_size = data_config.image_size
+    data_channel = data_config.data_channel
+    batch_size = data_config.train_batch_size
+    dataloader = DetectionTrainDataloader(train_path, data_config.detect2d_class,
+                                          resize_type, normalize_type, mean, std,
+                                          batch_size, image_size, data_channel,
+                                          multi_scale=data_config.train_multi_scale,
+                                          is_augment=data_config.train_data_augment,
+                                          balanced_sample=data_config.balanced_sample)
+    return dataloader

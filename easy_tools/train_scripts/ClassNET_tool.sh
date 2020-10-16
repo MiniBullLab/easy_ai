@@ -1,33 +1,30 @@
 #!/bin/bash
 
-rm -rf ./.log/detect2d*
 #cuda10
 export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 #caffe
-export PYTHONPATH=/home/minibull/Software/caffe/python:$PYTHONPATH
+export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
-python3 -m easyai.easy_ai --task DeNET --gpu 0 --trainPath $1 --valPath $2
-python3 -m easy_converter.easy_convert --task DeNET --input ./.log/snapshot/detnet.onnx
+rm -rf ./log/classify*
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task ClassNet --gpu 0 --trainPath $1 --valPath $2
 
 set -v
 root_path=$(pwd)
-modelDir="./.log/snapshot"
-imageDir="./.log/det_img"
-outDir="${root_path}/.log/out"
-caffeNetName=detnet
-outNetName=detnet
+modelDir="./log/snapshot"
+imageDir="./log/cls_img"
+outDir="${root_path}/log/out"
+modelName=classnet
+outNetName=classnet
 
-inputColorFormat=0
-outputShape=1,3,416,416
-outputLayerName="o:636|odf:fp32"
-outputLayerName1="o:662|odf:fp32"
-outputLayerName2="o:688|odf:fp32"
-inputDataFormat=0,0,8,0
+inputColorFormat=1
+outputShape=1,3,224,224
+outputLayerName="o:198|ot:0,1,2,3|odf:fp32"
+inputDataFormat=0,0,0,0
 
-mean=0.0
-scale=255.0
+mean=129.3041,124.0699,112.4340
+scale=67.9934
 
 rm -rf $outDir
 mkdir $outDir
@@ -41,10 +38,9 @@ export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 #caffe
-export PYTHONPATH=/home/minibull/Software/caffe/python:$PYTHONPATH
+export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
 ls $imageDir/*.* > $imageDir/img_list.txt
-
 imgtobin.py -i $imageDir/img_list.txt \
             -o $outDir/dra_image_bin \
             -c $inputColorFormat \
@@ -53,13 +49,14 @@ imgtobin.py -i $imageDir/img_list.txt \
 
 ls $outDir/dra_image_bin/*.bin > $outDir/dra_image_bin/dra_bin_list.txt
 
-caffeparser.py -p $modelDir/$caffeNetName.prototxt \
-               -m $modelDir/$caffeNetName.caffemodel \
-               -i $outDir/dra_image_bin/dra_bin_list.txt \
-               -o $outNetName \
-               -of $outDir/out_parser \
-               -it 0,1,2,3 \
-               -iq -idf $inputDataFormat -odst $outputLayerName -odst $outputLayerName1 -odst $outputLayerName2 # -c act-force-fx16,coeff-force-fx16 
+onnxparser.py -m $modelDir/${modelName}.onnx \
+                -i $outDir/dra_image_bin/dra_bin_list.txt \
+                -o $outNetName \
+                -of $outDir/out_parser \
+                -is $outputShape \
+                -im $mean -ic $scale \
+                -iq -idf $inputDataFormat \
+                -odst $outputLayerName
 
 cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 

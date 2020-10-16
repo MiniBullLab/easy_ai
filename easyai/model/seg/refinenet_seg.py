@@ -14,8 +14,10 @@ from easyai.model.base_block.seg.refinenet_block import RefineNetBlockName
 from easyai.model.base_block.seg.refinenet_block import CRPBlock, RefineNetBlock
 from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_classify_model import *
+from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
 
+@REGISTERED_SEG_MODEL.register_module(ModelName.RefineNetSeg)
 class RefineNetSeg(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=2):
@@ -24,6 +26,8 @@ class RefineNetSeg(BaseClassifyModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
 
+        self.model_args['type'] = BackboneName.ResNet101
+
         self.factory = BackboneFactory()
         self.create_block_list()
 
@@ -31,7 +35,7 @@ class RefineNetSeg(BaseClassifyModel):
         self.block_out_channels = []
         self.index = 0
 
-        backbone = self.factory.get_base_model(BackboneName.ResNet101, self.model_args)
+        backbone = self.factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 

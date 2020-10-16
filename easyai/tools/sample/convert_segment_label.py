@@ -74,7 +74,7 @@ class ConvertSegmentionLable():
         shape = mask.shape[:2]  # shape = [height, width]
         result = np.full(shape, 250, dtype=np.uint8)
         for index, value in enumerate(class_list):
-            value_list = [int(x) for x in value[1].spilt(',') if x.strip()]
+            value_list = [int(x) for x in value[1].split(',') if x.strip()]
             color_value = np.array(value_list, dtype=np.uint8)
             temp1 = mask[:, :] == color_value
             temp2 = np.sum(temp1, axis=2)
@@ -89,8 +89,8 @@ def main():
     config_factory = ConfigFactory()
     task_config = config_factory.get_config(TaskName.Segment_Task, config_path=options.config_path)
     test.convert_segment_label(options.inputPath,
-                               task_config.label_type,
-                               task_config.class_name)
+                               task_config.seg_label_type,
+                               task_config.segment_class)
     print("End of game, have a nice day!")
 
 

@@ -15,8 +15,10 @@ from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.base_block.cls.deeplab_block import ASPPBlock
 from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_classify_model import *
+from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
 
+@REGISTERED_SEG_MODEL.register_module(ModelName.DeepLabV3)
 class DeepLabV3(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=19):
@@ -24,6 +26,7 @@ class DeepLabV3(BaseClassifyModel):
         self.set_name(ModelName.DeepLabV3)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
+        self.model_args['type'] = BackboneName.ResNet50
         self.factory = BackboneFactory()
         self.create_block_list()
         self.loss_flag = -1
@@ -32,7 +35,7 @@ class DeepLabV3(BaseClassifyModel):
         self.clear_list()
         self.lossList = []
 
-        backbone = self.factory.get_base_model(BackboneName.ResNet50, self.model_args)
+        backbone = self.factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 

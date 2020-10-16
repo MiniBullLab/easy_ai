@@ -1,23 +1,20 @@
 #!/bin/bash
 
-rm -rf ./.log/segment*
-python3 -m easyai.easy_ai --task SegNET --gpu 0 --trainPath $1 --valPath $2
-
 set -v
 root_path=$(pwd)
 modelDir="./.log/snapshot"
-imageDir="./.log/seg_img"
+imageDir="./.log/cls_img"
 outDir="${root_path}/.log/out"
-modelName=segnet
-outNetName=segnet
+modelName=classnet
+outNetName=classnet
 
 inputColorFormat=1
-outputShape=1,3,400,500
-outputLayerName="o:507|ot:0,1,2,3|odf:fp32"
+outputShape=1,3,224,224
+outputLayerName="o:198|ot:0,1,2,3|odf:fp32"
 inputDataFormat=0,0,0,0
 
-mean=0.0
-scale=255.0
+mean=129.3041,124.0699,112.4340
+scale=67.9934
 
 rm -rf $outDir
 mkdir $outDir
@@ -31,7 +28,7 @@ export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 #caffe
-export PYTHONPATH=/home/minibull/Software/caffe/python:$PYTHONPATH
+export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
 ls $imageDir/*.* > $imageDir/img_list.txt
 imgtobin.py -i $imageDir/img_list.txt \
@@ -49,8 +46,7 @@ onnxparser.py -m $modelDir/${modelName}.onnx \
                 -is $outputShape \
                 -im $mean -ic $scale \
                 -iq -idf $inputDataFormat \
-                -odst $outputLayerName \
-                -c act-allow-fp16,coeff-force-fx16
+                -odst $outputLayerName
 
 cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 

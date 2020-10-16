@@ -20,8 +20,10 @@ from easyai.model.base_block.utility.separable_conv_block import SeparableConv2d
 from easyai.model.base_block.cls.deeplab_block import ASPP
 from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_classify_model import *
+from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
 
+@REGISTERED_SEG_MODEL.register_module(ModelName.DeepLabV3Plus)
 class DeepLabV3Plus(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=2):
@@ -29,6 +31,7 @@ class DeepLabV3Plus(BaseClassifyModel):
         self.set_name(ModelName.DeepLabV3Plus)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
+        self.model_args['type'] = BackboneName.Xception65
         self.factory = BackboneFactory()
         self.create_block_list()
 
@@ -38,7 +41,7 @@ class DeepLabV3Plus(BaseClassifyModel):
         c1_channels = 256
         c4_channels = 2048
 
-        backbone = self.factory.get_base_model(BackboneName.Xception65, self.model_args)
+        backbone = self.factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 

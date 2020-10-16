@@ -11,28 +11,27 @@ from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
 from easyai.visualization.task_show.det2d_seg_drawing import Det2dSegTaskShow
 from easyai.base_name.task_name import TaskName
+from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 
+@REGISTERED_INFERENCE_TASK.register_module(TaskName.Det2d_Seg_Task)
 class Det2dSegTask(BaseInference):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Det2d_Seg_Task)
+        super().__init__(cfg_path, config_path, TaskName.Det2d_Seg_Task)
         self.det2d_result_process = Detect2dResultProcess()
         self.seg_result_process = SegmentResultProcess()
         self.nms_process = FastNonMaxSuppression()
         self.result_show = Det2dSegTaskShow()
 
-        self.model = self.torchModelProcess.initModel(cfg_path, gpu_id,
-                                                      default_args=self.model_args)
+        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
         self.device = self.torchModelProcess.getDevice()
 
         self.threshold_seg = 0.5  # binary class threshold
 
-    def process(self, input_path):
-        dataloader = self.get_image_data_lodaer(input_path,
-                                                self.task_config.image_size,
-                                                self.task_config.image_channel)
-        for i, (src_image, img) in enumerate(dataloader):
+    def process(self, input_path, is_show=False):
+        dataloader = self.get_image_data_lodaer(input_path)
+        for i, (file_path, src_image, img) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
             self.set_src_size(src_image)
 
@@ -42,7 +41,7 @@ class Det2dSegTask(BaseInference):
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
 
             if not self.result_show.show(src_image, segment_image,
-                                         self.task_config.segment_name, det2d_objects):
+                                         self.task_config.segment_class, det2d_objects):
                 break
 
     def save_result(self, filename, detection_objects):
@@ -62,7 +61,6 @@ class Det2dSegTask(BaseInference):
             output_dets, output_seg = self.compute_output(output_list)
             result_dets = self.det2d_result_process.get_detection_result(output_dets, threshold_det)
             result_seg = self.seg_result_process.get_segmentation_result(output_seg, threshold_seg)
-
         return result_dets, result_seg
 
     def postprocess(self, result):
@@ -70,7 +68,7 @@ class Det2dSegTask(BaseInference):
         det2d_objects = self.det2d_result_process.resize_detection_objects(self.src_size,
                                                                            self.task_config.image_size,
                                                                            det2d_objects,
-                                                                           self.task_config.detect_name)
+                                                                           self.task_config.detect2d_class)
         segment_image = self.seg_result_process.resize_segmention_result(self.src_size,
                                                                          self.task_config.image_size,
                                                                          result)

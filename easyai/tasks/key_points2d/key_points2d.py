@@ -7,25 +7,24 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.key_points2d.key_points2d_result_process import KeyPoints2dResultProcess
 from easyai.visualization.task_show.key_points2d_show import KeyPointsShow
 from easyai.base_name.task_name import TaskName
+from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 
+@REGISTERED_INFERENCE_TASK.register_module(TaskName.KeyPoints2d_Task)
 class KeyPoints2d(BaseInference):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.KeyPoints2d_Task)
+        super().__init__(cfg_path, config_path, TaskName.KeyPoints2d_Task)
 
         self.result_process = KeyPoints2dResultProcess(self.task_config.points_count)
         self.result_show = KeyPointsShow()
 
-        self.model = self.torchModelProcess.initModel(cfg_path, gpu_id,
-                                                      default_args=self.model_args)
+        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
         self.device = self.torchModelProcess.getDevice()
 
-    def process(self, input_path):
-        dataloader = self.get_image_data_lodaer(input_path,
-                                                self.task_config.image_size,
-                                                self.task_config.image_channel)
-        for i, (src_image, img) in enumerate(dataloader):
+    def process(self, input_path, is_show=False):
+        dataloader = self.get_image_data_lodaer(input_path)
+        for i, (file_path, src_image, img) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
             self.set_src_size(src_image)
 
@@ -49,7 +48,7 @@ class KeyPoints2d(BaseInference):
         result_objects = self.result_process.resize_keypoints_objects(self.src_size,
                                                                       self.task_config.image_size,
                                                                       result,
-                                                                      self.task_config.class_name)
+                                                                      self.task_config.points_class)
         return result_objects
 
     def compute_output(self, output_list):
