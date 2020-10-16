@@ -1,0 +1,9 @@
+*.pyc
+*.user
+*.workspace
+*.log
+.idea/
+.vscode/
+log/
+build/
+result/
