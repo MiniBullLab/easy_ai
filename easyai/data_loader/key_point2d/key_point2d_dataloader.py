@@ -36,12 +36,12 @@ class KeyPoint2dDataLoader(TorchDataLoader):
                                                             self.image_size,
                                                             boxes,
                                                             self.class_name)
-        image = self.dataset_process.normalize_image(image)
+        torch_image = self.dataset_process.normalize_image(image)
+
         labels = self.dataset_process.normalize_labels(labels, self.image_size)
         labels = self.dataset_process.change_outside_labels(labels)
 
         torch_label = self.dataset_process.numpy_to_torch(labels, flag=0)
-        torch_image = self.dataset_process.numpy_to_torch(image, flag=0)
         return torch_image, torch_label
 
     def __len__(self):

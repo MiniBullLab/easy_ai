@@ -25,10 +25,9 @@ class DetectionValDataLoader(TorchDataLoader):
     def __getitem__(self, index):
         img_path, label_path = self.detection_sample.get_sample_path(index)
         cv_image, src_image = self.read_src_image(img_path)
-        image = self.dataset_process.resize_src_image(src_image,
-                                                      self.image_size)
+        image = self.dataset_process.resize_image(src_image,
+                                                  self.image_size)
         image = self.dataset_process.normalize_image(image)
-        image = self.dataset_process.numpy_to_torch(image, flag=0)
         return img_path, cv_image, image
 
     def __len__(self):

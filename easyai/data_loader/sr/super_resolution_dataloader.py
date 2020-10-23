@@ -32,9 +32,7 @@ class SuperResolutionDataloader(TorchDataLoader):
                                                             self.image_size,
                                                             src_hr_image,
                                                             self.target_size)
-        image, target = self.dataset_process.normalize_dataset(image, target)
-        torch_image = self.dataset_process.numpy_to_torch(image, flag=0)
-        torch_target = self.dataset_process.numpy_to_torch(target, flag=0)
+        torch_image, torch_target = self.dataset_process.normalize_dataset(image, target)
         return torch_image, torch_target
 
     def __len__(self):

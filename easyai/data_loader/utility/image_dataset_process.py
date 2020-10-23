@@ -35,6 +35,9 @@ class ImageDataSetProcess(BaseDataSetProcess):
             std = param['std']
             normaliza_image = self.image_normalize(input_data)
             result = self.standard_normalize(normaliza_image, mean, std)
+        elif normalize_type == 2:
+            temp_x = self.image_normalize(input_data)
+            result = (temp_x - 0.5) / 0.5
         return result
 
     def numpy_transpose(self, images, dtype=np.float32):

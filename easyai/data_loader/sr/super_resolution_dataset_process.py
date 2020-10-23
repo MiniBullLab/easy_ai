@@ -13,16 +13,8 @@ class SuperResolutionDatasetProcess(TaskDataSetProcess):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)
 
     def normalize_dataset(self, src_lr_image, src_hr_image):
-        lr_image = self.dataset_process.normalize(input_data=src_lr_image,
-                                                  normalize_type=self.normalize_type,
-                                                  mean=self.mean,
-                                                  std=self.std)
-        lr_image = self.dataset_process.numpy_transpose(lr_image)
-        hr_image = self.dataset_process.normalize(input_data=src_hr_image,
-                                                  normalize_type=self.normalize_type,
-                                                  mean=self.mean,
-                                                  std=self.std)
-        hr_image = self.dataset_process.numpy_transpose(hr_image)
+        lr_image = self.normalize_image(src_lr_image)
+        hr_image = self.normalize_image(src_hr_image)
         return lr_image, hr_image
 
     def resize_dataset(self, lr_image, src_image_size, hr_image, target_size):

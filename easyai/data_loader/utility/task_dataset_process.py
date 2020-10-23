@@ -16,4 +16,25 @@ class TaskDataSetProcess(BaseDataSetProcess):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
         self.pad_color = pad_color
+        self.torchvision_transform = self.torchvision_process.torch_normalize(flag=0,
+                                                                              mean=self.mean,
+                                                                              std=self.std)
         self.dataset_process = ImageDataSetProcess()
+
+    def normalize_image(self, src_image):
+        if self.normalize_type == -1:
+            image = self.torchvision_transform(src_image)
+        else:
+            image = self.dataset_process.normalize(input_data=src_image,
+                                                   normalize_type=self.normalize_type,
+                                                   mean=self.mean,
+                                                   std=self.std)
+            image = self.dataset_process.numpy_transpose(image)
+            image = self.numpy_to_torch(image, flag=0)
+        return image
+
+    def resize_image(self, src_image, image_size):
+        image = self.dataset_process.resize(src_image, image_size,
+                                            self.resize_type,
+                                            pad_color=self.pad_color)
+        return image

@@ -38,8 +38,7 @@ class SegmentDataLoader(TorchDataLoader):
         if self.is_augment:
             image, target = self.data_augment.augment(image, target)
         target = self.dataset_process.change_label(target, self.number_class)
-        rgb_image = self.dataset_process.normalize_dataset(image)
-        torch_image = self.dataset_process.numpy_to_torch(rgb_image, flag=0)
+        torch_image = self.dataset_process.normalize_image(image)
         torch_target = self.dataset_process.numpy_to_torch(target).long()
         return torch_image, torch_target
 
