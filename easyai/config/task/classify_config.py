@@ -70,7 +70,7 @@ class ClassifyConfig(ImageTrainConfig):
         self.data_mean = (0.5070751592371323, 0.48654887331495095, 0.4409178433670343)
         self.data_std = (0.2666410733740041, 0.2666410733740041, 0.2666410733740041)
         self.resize_type = 0
-        self.normalize_type = 1
+        self.normalize_type = -1
         self.save_result_name = "classify_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 

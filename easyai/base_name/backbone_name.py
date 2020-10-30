@@ -94,3 +94,7 @@ class BackboneName():
     HRnet_w48 = "hrnet_w48"
     HRnet_w64 = "hrnet_w64"
     CSPDarknet53 = "csp_darknet53"
+
+    # GAN
+    MNISTDiscriminator = "mnist_discriminator"
+    MNISTGenerator = "mnist_generator"

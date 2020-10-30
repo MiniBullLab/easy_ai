@@ -3,17 +3,15 @@
 # Author:
 
 import os
-from easyai.data_loader.det2d.det2d_train_dataloader import get_detect2d_train_dataloader
+from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
 from easyai.solver.torch_optimizer import TorchOptimizer
 from easyai.solver.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.base_train import BaseTrain
-from easyai.tasks.det2d.detect2d_test import Detection2dTest
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 
-@REGISTERED_TRAIN_TASK.register_module(TaskName.Detect2d_Task)
-class Detection2dTrain(BaseTrain):
+class GenerateImageTrain(BaseTrain):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.Detect2d_Task)
@@ -23,8 +21,6 @@ class Detection2dTrain(BaseTrain):
         self.model_args['class_number'] = len(self.train_task_config.detect2d_class)
         self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
         self.device = self.torchModelProcess.getDevice()
-
-        self.detect_test = Detection2dTest(cfg_path, gpu_id, config_path)
 
         self.total_images = 0
         self.avg_loss = -1
@@ -138,12 +134,4 @@ class Detection2dTrain(BaseTrain):
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
-        if val_path is not None and os.path.exists(val_path):
-            self.detect_test.load_weights(save_model_path)
-            mAP, aps = self.detect_test.test(val_path)
-            self.detect_test.save_test_value(epoch, mAP, aps)
-            # save best model
-            self.best_mAP = self.torchModelProcess.saveBestModel(mAP, save_model_path,
-                                                                 self.train_task_config.best_weights_path)
-        else:
-            print("no test!")
+        pass

@@ -26,3 +26,7 @@ class LossType():
     # seg
     EncNetLoss = "encNetLoss"
     OhemCrossEntropy2d = "OhemCrossEntropy2d"
+
+    # gan
+    MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"
+    MNISTGeneratorLoss = "MNISTGeneratorLoss"

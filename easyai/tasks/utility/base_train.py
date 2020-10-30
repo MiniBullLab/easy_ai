@@ -45,7 +45,7 @@ class BaseTrain(BaseTask):
         pass
 
     @abc.abstractmethod
-    def compute_loss(self, output_list, targets):
+    def compute_loss(self, output_list, targets, loss_type=0):
         pass
 
     def load_pretrain_model(self, weights_path):

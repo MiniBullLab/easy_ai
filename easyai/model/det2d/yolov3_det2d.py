@@ -36,7 +36,7 @@ class YoloV3Det2d(BaseDetectionModel):
 
     def create_block_list(self):
         self.clear_list()
-        self.lossList = []
+        self.create_loss()
 
         backbone = self.factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
@@ -286,10 +286,8 @@ class YoloV3Det2d(BaseDetectionModel):
         self.add_block_list(loss3.get_name(), loss3, output_filter)
         self.lossList.append(loss3)
 
-        self.create_loss()
-
     def create_loss(self, input_dict=None):
-        pass
+        self.lossList = []
 
     def forward(self, x):
         base_outputs = []

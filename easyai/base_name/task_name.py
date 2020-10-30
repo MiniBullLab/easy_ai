@@ -11,3 +11,4 @@ class TaskName():
     SuperResolution_Task = "super_resolution"
     Det2d_Seg_Task = "det2d_seg"
     KeyPoints2d_Task = "key_points2d"
+    GenerateImage = "generate_image"
