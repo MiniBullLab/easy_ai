@@ -3,18 +3,19 @@
 # Author:
 
 from easyai.base_name.block_name import ActivationType
-from easyai.base_name.backbone_name import BackboneName
+from easyai.base_name.backbone_name import GanBaseModelName
 from easyai.model.backbone.utility.base_backbone import *
 from easyai.model.base_block.utility.utility_block import FcActivationBlock
 from easyai.model.backbone.utility.registry import REGISTERED_GAN_G_BACKBONE
 
 
-@REGISTERED_GAN_G_BACKBONE.register_module(BackboneName.MNISTGenerator)
+@REGISTERED_GAN_G_BACKBONE.register_module(GanBaseModelName.MNISTGenerator)
 class MNISTGenerator(BaseBackbone):
 
-    def __init__(self, data_channel=3, activation_name=ActivationType.ReLU):
+    def __init__(self, data_channel=3, final_out_channel=1, activation_name=ActivationType.ReLU):
         super().__init__(data_channel)
-        self.set_name(BackboneName.MNISTGenerator)
+        self.set_name(GanBaseModelName.MNISTGenerator)
+        self.final_out_channel = final_out_channel
         self.activation_name = activation_name
 
         self.first_output = 256
@@ -32,6 +33,11 @@ class MNISTGenerator(BaseBackbone):
         layer2 = FcActivationBlock(self.in_channel, self.in_channel,
                                    activationName=self.activation_name)
         self.add_block_list(layer2.get_name(), layer2, self.in_channel)
+
+        layer3 = FcActivationBlock(self.in_channel, self.final_out_channel,
+                                   activationName=ActivationType.Tanh)
+
+        self.add_block_list(layer3.get_name(), layer3, self.final_out_channel)
 
     def forward(self, x):
         output_list = []

@@ -2,18 +2,20 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-
+from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.utility.anchor_generator import SSDPriorBoxGenerator
 from easyai.loss.det2d.utility.det2d_gt_process import Det2dGroundTruthProcess
 from easyai.torch_utility.box_utility import torch_corners_box2d_ious, torch_box2d_rect_corner
+from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 
 
+@REGISTERED_DET2D_LOSS.register_module(LossName.MultiBoxLoss)
 class MultiBoxLoss(BaseLoss):
 
     def __init__(self, class_number, iou_threshold, input_size,
                  anchor_counts, anchor_sizes, aspect_ratio_list):
-        super().__init__(LossType.MultiBoxLoss)
+        super().__init__(LossName.MultiBoxLoss)
         self.class_number = class_number
         self.iou_threshold = iou_threshold
         self.input_size = input_size

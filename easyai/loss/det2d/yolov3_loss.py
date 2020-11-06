@@ -3,22 +3,25 @@
 # Author:
 
 
+from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.yolo_loss import YoloLoss
 from easyai.loss.cls.label_smoothing_ce2d_loss import LabelSmoothCE2dLoss
 from easyai.torch_utility.box_utility import torch_rect_box_ious
 import math
+from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 
 
 __all__ = ['YoloV3Loss']
 
 
+@REGISTERED_DET2D_LOSS.register_module(LossName.YoloV3Loss)
 class YoloV3Loss(YoloLoss):
 
     def __init__(self, class_number, anchor_sizes, anchor_mask, reduction,
                  coord_weight=1.0, noobject_weight=1.0,
                  object_weight=1.0, class_weight=1.0, iou_threshold=0.5):
-        super().__init__(LossType.YoloV3Loss, class_number, anchor_sizes, anchor_mask)
+        super().__init__(LossName.YoloV3Loss, class_number, anchor_sizes, anchor_mask)
         self.reduction = reduction
         self.coord_xy_weight = 2.0 * 1.0 * coord_weight
         self.coord_wh_weight = 2.0 * 1.5 * coord_weight

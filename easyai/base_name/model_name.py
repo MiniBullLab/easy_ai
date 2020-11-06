@@ -37,8 +37,13 @@ class ModelName():
     YoloV3Det2d = "yolov3"
     DetNet = "detnet"
 
+    # sr
     MSRResNet = "MSRResNet"
     SmallSRNet = "SmallSRNet"
+
+    # gan
+    MNISTGan = "MNISTGan"
+
 
 
 

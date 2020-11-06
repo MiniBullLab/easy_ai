@@ -4,12 +4,12 @@
 
 import os
 from easyai.base_name.task_name import TaskName
-from easyai.config.utility.image_train_config import ImageTrainConfig
+from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.Detect2d_Task)
-class Detect2dConfig(ImageTrainConfig):
+class Detect2dConfig(CommonTrainConfig):
 
     def __init__(self):
         super().__init__()

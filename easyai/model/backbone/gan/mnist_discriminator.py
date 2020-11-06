@@ -3,18 +3,18 @@
 # Author:
 
 from easyai.base_name.block_name import ActivationType
-from easyai.base_name.backbone_name import BackboneName
+from easyai.base_name.backbone_name import GanBaseModel
 from easyai.model.backbone.utility.base_backbone import *
 from easyai.model.base_block.utility.utility_block import FcActivationBlock
 from easyai.model.backbone.utility.registry import REGISTERED_GAN_D_BACKBONE
 
 
-@REGISTERED_GAN_D_BACKBONE.register_module(BackboneName.MNISTDiscriminator)
+@REGISTERED_GAN_D_BACKBONE.register_module(GanBaseModel.MNISTDiscriminator)
 class MNISTDiscriminator(BaseBackbone):
 
     def __init__(self, data_channel=3, activation_name=ActivationType.LeakyReLU):
         super().__init__(data_channel)
-        self.set_name(BackboneName.MNISTDiscriminator)
+        self.set_name(GanBaseModel.MNISTDiscriminator)
         self.activation_name = activation_name
 
         self.first_output = 256

@@ -95,6 +95,11 @@ class BackboneName():
     HRnet_w64 = "hrnet_w64"
     CSPDarknet53 = "csp_darknet53"
 
+
+class GanBaseModelName():
+
     # GAN
     MNISTDiscriminator = "mnist_discriminator"
     MNISTGenerator = "mnist_generator"
+
+

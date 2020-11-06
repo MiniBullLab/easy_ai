@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-
+from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 import numpy as np
 
@@ -10,7 +10,7 @@ import numpy as np
 class OhemCrossEntropy2d(BaseLoss):
 
     def __init__(self, ignore_index=-1, threshold=0.7, min_kept=int(32 // 1 * 640 * 352 // 16)):
-        super().__init__(LossType.OhemCrossEntropy2d)
+        super().__init__(LossName.OhemCrossEntropy2d)
         self.ignore_index = ignore_index
         self.threshold = threshold
         self.min_kept = min_kept

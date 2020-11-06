@@ -6,8 +6,7 @@
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
+from easyai.base_name.loss_name import LossName
 from easyai.model.base_block.utility.upsample_layer import Upsample
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.base_block.utility.separable_conv_block import SeparableConv2dBNActivation
@@ -50,12 +49,15 @@ class FastSCNN(BaseClassifyModel):
         layer = Upsample(scale_factor=8, mode='bilinear')
         self.add_block_list(layer.get_name(), layer, self.block_out_channels[-1])
 
-        self.create_loss()
+        self.create_loss_list()
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = CrossEntropy2d(ignore_index=250)
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type', LossName.CrossEntropy2d,
+                       'reduction', 'mean',
+                       'ignore_index', 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def learning_to_downsample(self):
@@ -114,7 +116,7 @@ class FastSCNN(BaseClassifyModel):
                 x = block(layer_outputs)
             elif FastSCNNBlockName.FeatureFusionBlock in key:
                 x = block(layer_outputs[-2], layer_outputs[-1])
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

@@ -3,7 +3,7 @@
 # Author:
 
 
-class LossType():
+class LossName():
 
     # utility
     MeanSquaredErrorLoss = "mseLoss"

@@ -5,11 +5,11 @@
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.block_name import ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.utility.utility_loss import MeanSquaredErrorLoss
+from easyai.base_name.loss_name import LossName
 from easyai.model.utility.base_model import *
 from easyai.model.base_block.utility.utility_block import ConvActivationBlock
 from easyai.model.base_block.sr.msr_resnet_block import ResidualBlockNoBN
+from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model.utility.registry import REGISTERED_SR_MODEL
 
 
@@ -23,6 +23,7 @@ class MSRResNet(BaseModel):
         self.out_channel = 64
         self.num_block = 3
         self.activation_name = ActivationType.LeakyReLU
+        self.loss_factory = LossFactory()
         self.create_block_list()
 
     def create_block_list(self):
@@ -56,15 +57,18 @@ class MSRResNet(BaseModel):
         pixel_shuffle = nn.PixelShuffle(self.upscale_factor)
         self.add_block_list(LayerType.PixelShuffle, pixel_shuffle, 1)
 
+        self.create_loss_list()
+
     def make_layer(self, number_block, in_channel):
         for _ in range(number_block):
             temp_block = ResidualBlockNoBN(in_channel)
             self.add_block_list(temp_block.get_name(), temp_block, in_channel)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = MeanSquaredErrorLoss()
-        self.add_block_list(LossType.MeanSquaredErrorLoss, loss, self.block_out_channels[-1])
+        loss_config = {"type": LossName.MeanSquaredErrorLoss}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def forward(self, x):
@@ -77,7 +81,7 @@ class MSRResNet(BaseModel):
                 x = base_outputs[-1]
             elif LayerType.RouteLayer in key:
                 x = block(layer_outputs, base_outputs)
-            elif LossType.MeanSquaredErrorLoss in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

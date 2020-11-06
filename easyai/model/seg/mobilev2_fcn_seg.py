@@ -5,9 +5,8 @@
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
+from easyai.base_name.loss_name import LossName
 from easyai.base_name.backbone_name import BackboneName
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
 from easyai.model.base_block.utility.upsample_layer import Upsample
 from easyai.model.base_block.utility.utility_layer import RouteLayer
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
@@ -33,7 +32,7 @@ class MobileV2FCN(BaseClassifyModel):
         self.block_out_channels = []
         self.index = 0
 
-        backbone = self.factory.get_backbone_model(self.model_args)
+        backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
@@ -69,12 +68,15 @@ class MobileV2FCN(BaseClassifyModel):
         layer10 = Upsample(scale_factor=4, mode='bilinear')
         self.add_block_list(layer10.get_name(), layer10, self.block_out_channels[-1])
 
-        self.create_loss()
+        self.create_loss_list()
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = CrossEntropy2d(ignore_index=250)
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type', LossName.CrossEntropy2d,
+                       'reduction', 'mean',
+                       'ignore_index', 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def make_layer(self, base_out_channels, conv_output_channel, scale_factor, route_layer_indexs):
@@ -128,7 +130,7 @@ class MobileV2FCN(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

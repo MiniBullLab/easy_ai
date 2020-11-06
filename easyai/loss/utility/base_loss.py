@@ -2,12 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from easyai.base_name.loss_name import LossType
 
 
 class BaseLoss(nn.Module):

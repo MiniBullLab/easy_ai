@@ -67,7 +67,6 @@ class BlockType():
     BaseNet = "baseNet"
     Discriminator = "ganDNet"
     Generator = "ganGNet"
-    EndGanNet = "endGanNet"
 
     ConvBNBlock1d = "convBN1d"
     ConvBNActivationBlock1d = "convBNActivationBlock1d"
