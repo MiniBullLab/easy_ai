@@ -91,13 +91,16 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.is_save_epoch_model = False
         self.latest_weights_name = 'key_point2d_latest.pt'
         self.best_weights_name = 'key_point2d_best.pt'
+        self.latest_optimizer_name = "key_point2d_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
         self.max_epochs = 100
 
         self.base_lr = 2e-4
-        self.optimizer_config = {0: {'optimizer': 'SGD',
+        self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
                                  }

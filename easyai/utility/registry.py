@@ -32,6 +32,20 @@ class Registry(object):
         result = key.strip() in self._module_dict
         return result
 
+    def add_module(self, module_class, cls_name=None):
+        if not inspect.isclass(module_class):
+            raise TypeError(
+                "module must be a class, but got {}".format(type(module_class))
+            )
+        if cls_name is None:
+            cls_name = module_class.__name__
+        if cls_name in self._module_dict:
+            raise KeyError(
+                "{} is already registered in {}".format(cls_name, self.name)
+            )
+        self._module_dict[cls_name] = module_class
+        # print(module_class, "register name: %s" % cls_name)
+
     def _register_module(self, module_class, cls_name=None):
         """Register a module.
         Args:

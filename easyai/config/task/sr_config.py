@@ -62,12 +62,15 @@ class SuperResolutionConfig(CommonTrainConfig):
         self.is_save_epoch_model = False
         self.latest_weights_name = 'sr_latest.pt'
         self.best_weights_name = 'sr_best.pt'
+        self.latest_optimizer_name = "sr_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
 
         self.base_lr = 1e-3
-        self.optimizer_config = {0: {'optimizer': 'Adam',
+        self.optimizer_config = {0: {'type': 'Adam',
                                      'betas': (0.9, 0.999),
                                      'eps': 1e-08,
                                      'weight_decay': 0}

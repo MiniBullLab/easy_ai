@@ -14,10 +14,13 @@ class MNISTDiscriminatorLoss(BaseLoss):
         super().__init__(LossName.MNISTDiscriminatorLoss)
         self.loss_function = nn.BCELoss()
 
-    def forward(self, outputs, targets):
-        real_labels = torch.ones_like(targets, dtype=torch.float).to(targets.device)
-        fake_labels = torch.zeros_like(targets, dtype=torch.float).to(targets.device)
-        D_real_loss = self.loss_function(outputs[0], real_labels)
-        D_fake_loss = self.loss_function(outputs[1], fake_labels)
-        loss = D_real_loss + D_fake_loss
+    def forward(self, outputs, targets=None):
+        if targets is not None:
+            real_labels = torch.ones_like(targets, dtype=torch.float).to(targets.device)
+            fake_labels = torch.zeros_like(targets, dtype=torch.float).to(targets.device)
+            real_loss = self.loss_function(outputs[0], real_labels)
+            fake_loss = self.loss_function(outputs[1], fake_labels)
+            loss = real_loss + fake_loss
+        else:
+            loss = None
         return loss

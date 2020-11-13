@@ -23,8 +23,8 @@ class Detection2d(BaseInference):
         self.result_show = DetectionShow()
 
         self.model_args['class_number'] = len(self.task_config.detect2d_class)
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.getDevice()
+        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+        self.device = self.torchModelProcess.get_device()
 
     def process(self, input_path, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
@@ -34,7 +34,7 @@ class Detection2d(BaseInference):
             self.set_src_size(src_image)
 
             self.timer.tic()
-            result = self.infer(img, self.task_config.confidence_th)
+            result, _ = self.infer(img, self.task_config.confidence_th)
             detection_objects = self.postprocess(result)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
@@ -79,7 +79,7 @@ class Detection2d(BaseInference):
             output = self.compute_output(output_list)
             result = self.result_process.get_detection_result(output, threshold,
                                                               self.task_config.post_prcoess_type)
-        return result
+        return result, output_list
 
     def postprocess(self, result):
         detection_objects = self.nms_process.multi_class_nms(result, self.task_config.nms_th)

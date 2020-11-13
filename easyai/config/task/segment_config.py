@@ -74,12 +74,15 @@ class SegmentionConfig(CommonTrainConfig):
         self.is_save_epoch_model = False
         self.latest_weights_name = 'seg_latest.pt'
         self.best_weights_name = 'seg_best.pt'
+        self.latest_optimizer_name = "seg_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
 
         self.base_lr = 0.001
-        self.optimizer_config = {0: {'optimizer': 'RMSprop',
+        self.optimizer_config = {0: {'type': 'RMSprop',
                                      'alpha': 0.9,
                                      'eps': 1e-08,
                                      'weight_decay': 0}

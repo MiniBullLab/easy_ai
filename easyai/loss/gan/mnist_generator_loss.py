@@ -14,7 +14,10 @@ class MNISTGeneratorLoss(BaseLoss):
         super().__init__(LossName.MNISTGeneratorLoss)
         self.loss_function = nn.BCELoss()
 
-    def forward(self, outputs, targets):
-        real_labels = torch.ones_like(targets, dtype=torch.float).to(targets.device)
-        G_loss = self.loss_function(outputs[0], real_labels)
-        return G_loss
+    def forward(self, outputs, targets=None):
+        if targets is not None:
+            real_labels = torch.ones_like(targets, dtype=torch.float).to(targets.device)
+            loss = self.loss_function(outputs[0], real_labels)
+        else:
+            loss = outputs[0]
+        return loss

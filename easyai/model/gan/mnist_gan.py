@@ -21,19 +21,26 @@ class MNISTGan(BaseGanModel):
 
         self.create_block_list()
 
+        assert len(self.d_model_list) == len(self.d_loss_list)
+        assert len(self.g_model_list) == len(self.g_loss_list)
+
     def create_block_list(self):
         self.clear_list()
+        self.d_model_list = []
+        self.g_model_list = []
 
         self.d_model_args['type'] = GanBaseModelName.MNISTDiscriminator
         discriminator = self.gan_base_factory.get_backbone_model(self.model_args)
         d_out_channels = discriminator.get_outchannel_list()
         self.add_block_list(BlockType.Discriminator, discriminator, d_out_channels[-1], 1)
+        self.d_model_list.append(discriminator)
 
         self.g_model_args['type'] = GanBaseModelName.MNISTGenerator
         self.g_model_args['final_out_channel'] = self.image_size[0] * self.image_size[1]
         generator = self.gan_base_factory.get_backbone_model(self.model_args)
         g_out_channels = generator.get_outchannel_list()
         self.add_block_list(BlockType.Generator, generator, g_out_channels[-1], 1)
+        self.g_model_list.append(generator)
 
     def create_loss_list(self, input_dict=None):
         self.clear_loss()
@@ -68,7 +75,7 @@ class MNISTGan(BaseGanModel):
             x = self._modules[BlockType.Generator](fake_data)
             x = self._modules[BlockType.Discriminator](x)
             output.append(x)
-        elif net_type == 3:
+        elif net_type == 2:
             x = self._modules[BlockType.Generator](fake_data)
             output.append(x)
         return output

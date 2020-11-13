@@ -22,9 +22,13 @@ class GanTrainConfig(ImageTaskConfig):
 
         self.is_save_epoch_model = False
         self.latest_weights_name = None
+        self.latest_optimizer_name = None
         self.best_weights_name = None
         self.latest_weights_path = None
+        self.latest_optimizer_path = None
         self.best_weights_path = None
+        self.accumulated_batches = 1
+        self.display = 1
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = None
@@ -41,6 +45,8 @@ class GanTrainConfig(ImageTaskConfig):
             self.is_save_epoch_model = bool(config_dict['is_save_epoch_model'])
         if config_dict.get('latest_weights_name', None) is not None:
             self.latest_weights_name = str(config_dict['latest_weights_name'])
+        if config_dict.get('latest_optimizer_name', None) is not None:
+            self.latest_optimizer_name = str(config_dict['latest_optimizer_name'])
         if config_dict.get('best_weights_name', None) is not None:
             self.best_weights_name = str(config_dict['best_weights_name'])
         if config_dict.get('max_epochs', None) is not None:
@@ -61,6 +67,10 @@ class GanTrainConfig(ImageTaskConfig):
             self.d_lr_scheduler_config = config_dict['d_lr_scheduler_config']
         if config_dict.get('g_lr_scheduler_config', None) is not None:
             self.g_lr_scheduler_config = config_dict['g_lr_scheduler_config']
+        if config_dict.get('accumulated_batches', None) is not None:
+            self.accumulated_batches = int(config_dict['accumulated_batches'])
+        if config_dict.get('display', None) is not None:
+            self.display = int(config_dict['display'])
 
         if config_dict.get('freeze_layer_type', None) is not None:
             self.freeze_layer_type = int(config_dict['freeze_layer_type'])
@@ -75,6 +85,7 @@ class GanTrainConfig(ImageTaskConfig):
         config_dict['train_batch_size'] = self.train_batch_size
         config_dict['is_save_epoch_model'] = self.is_save_epoch_model
         config_dict['latest_weights_name'] = self.latest_weights_name
+        config_dict['latest_optimizer_name'] = self.latest_optimizer_name
         config_dict['best_weights_name'] = self.best_weights_name
         config_dict['max_epochs'] = self.max_epochs
         config_dict['base_lr'] = self.base_lr
@@ -82,6 +93,8 @@ class GanTrainConfig(ImageTaskConfig):
         config_dict['g_optimizer_config'] = self.g_optimizer_config
         config_dict['d_lr_scheduler_config'] = self.d_lr_scheduler_config
         config_dict['g_lr_scheduler_config'] = self.g_lr_scheduler_config
+        config_dict['accumulated_batches'] = self.accumulated_batches
+        config_dict['display'] = self.display
 
         config_dict['freeze_layer_type'] = self.freeze_layer_type
         config_dict['freeze_layer_name'] = self.freeze_layer_name

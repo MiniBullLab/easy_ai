@@ -4,8 +4,7 @@
 
 import os
 from easyai.data_loader.sr.super_resolution_dataloader import get_sr_train_dataloader
-from easyai.solver.lr_factory import LrSchedulerFactory
-from easyai.solver.torch_optimizer import TorchOptimizer
+from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.base_train import BaseTrain
 from easyai.tasks.sr.super_resolution_test import SuperResolutionTest
 from easyai.base_name.task_name import TaskName
@@ -18,13 +17,13 @@ class SuperResolutionTrain(BaseTrain):
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.SuperResolution_Task)
 
-        self.torch_optimizer = TorchOptimizer(self.train_task_config.optimizer_config)
         self.model_args['upscale_factor'] = self.train_task_config.upscale_factor
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.getDevice()
+        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+        self.device = self.torchModelProcess.get_device()
 
         self.sr_test = SuperResolutionTest(cfg_path, gpu_id, config_path)
 
+        self.optimizer = None
         self.total_images = 0
         self.optimizer = None
         self.start_epoch = 0
@@ -33,18 +32,21 @@ class SuperResolutionTrain(BaseTrain):
     def load_latest_param(self, latest_weights_path):
         checkpoint = None
         if latest_weights_path and os.path.exists(latest_weights_path):
-            checkpoint = self.torchModelProcess.loadLatestModelWeight(latest_weights_path, self.model)
-            self.torchModelProcess.modelTrainInit(self.model)
-        else:
-            self.torchModelProcess.modelTrainInit(self.model)
-        self.start_epoch, self.best_score = self.torchModelProcess.getLatestModelValue(checkpoint)
+            self.start_epoch, self.best_score \
+                = self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
 
-        self.torch_optimizer.freeze_optimizer_layer(self.start_epoch,
-                                                    self.train_task_config.base_lr,
-                                                    self.model,
-                                                    self.train_task_config.freeze_layer_name,
-                                                    self.train_task_config.freeze_layer_type)
-        self.optimizer = self.torch_optimizer.getLatestModelOptimizer(checkpoint)
+        self.model = self.torchModelProcess.model_train_init(self.model)
+
+        self.freeze_process.freeze_block(self.model,
+                                         self.train_task_config.freeze_layer_name,
+                                         self.train_task_config.freeze_layer_type)
+
+        optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
+                                                                     self.train_task_config.optimizer_config)
+        self.optimizer = self.optimizer_process.get_optimizer(optimizer_args,
+                                                              self.model)
+        self.torchModelProcess.load_latest_optimizer(self.train_task_config.latest_optimizer_path,
+                                                     self.optimizer)
 
     def train(self, train_path, val_path):
         dataloader = get_sr_train_dataloader(train_path, self.train_task_config)
@@ -85,7 +87,7 @@ class SuperResolutionTrain(BaseTrain):
             self.optimizer.zero_grad()
         return loss
 
-    def compute_loss(self, output_list, targets):
+    def compute_loss(self, output_list, targets, loss_type=0):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
@@ -120,15 +122,17 @@ class SuperResolutionTrain(BaseTrain):
                                            "seg_model_epoch_%d.pt" % epoch)
         else:
             save_model_path = self.train_task_config.latest_weights_path
-        self.torchModelProcess.saveLatestModel(save_model_path, self.model,
-                                               self.optimizer, epoch, self.best_score)
+        self.torchModelProcess.save_latest_model(epoch, self.best_score,
+                                                 self.model, save_model_path)
+        self.torchModelProcess.save_optimizer_state(epoch, self.optimizer,
+                                                    self.train_task_config.latest_weights_path)
         return save_model_path
 
     def set_model_train(self):
         self.model.train()
-        self.freeze_normalization.freeze_normalization_layer(self.model,
-                                                             self.train_task_config.freeze_bn_layer_name,
-                                                             self.train_task_config.freeze_bn_type)
+        self.freeze_process.freeze_bn(self.model,
+                                      self.train_task_config.freeze_bn_layer_name,
+                                      self.train_task_config.freeze_bn_type)
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
@@ -139,9 +143,9 @@ class SuperResolutionTrain(BaseTrain):
             self.train_logger.eval_log("val epoch loss", epoch, average_loss)
             print("Val epoch loss: {}".format(average_loss))
             # save best model
-            self.best_score = self.torchModelProcess.saveBestModel(score,
-                                                                   save_model_path,
-                                                                   self.train_task_config.best_weights_path)
+            self.best_score = self.torchModelProcess.save_best_model(score,
+                                                                     save_model_path,
+                                                                     self.train_task_config.best_weights_path)
         else:
             print("no test!")
 

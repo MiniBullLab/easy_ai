@@ -11,6 +11,8 @@ class BaseGanModel(AbstractModel):
 
     def __init__(self, data_channel):
         super().__init__()
+        self.d_model_list = []
+        self.g_model_list = []
         self.d_loss_list = []
         self.g_loss_list = []
         self.data_channel = data_channel

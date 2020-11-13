@@ -29,3 +29,7 @@ class BaseLrSecheduler():
                 optimizer.param_groups[i]['lr'] = lr
             else:
                 optimizer.param_groups[i]['lr'] = lr * 10
+
+    def print_optimizer_lr(self, optimizer):
+        for param_group in optimizer.param_groups:
+            print("optimizer lr:", param_group['lr'])

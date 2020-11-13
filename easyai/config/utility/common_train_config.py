@@ -20,8 +20,10 @@ class CommonTrainConfig(ImageTaskConfig):
 
         self.is_save_epoch_model = False
         self.latest_weights_name = None
+        self.latest_optimizer_name = None
         self.best_weights_name = None
         self.latest_weights_path = None
+        self.latest_optimizer_path = None
         self.best_weights_path = None
         self.accumulated_batches = 1
         self.display = 1
@@ -41,6 +43,8 @@ class CommonTrainConfig(ImageTaskConfig):
             self.is_save_epoch_model = bool(config_dict['is_save_epoch_model'])
         if config_dict.get('latest_weights_name', None) is not None:
             self.latest_weights_name = str(config_dict['latest_weights_name'])
+        if config_dict.get('latest_optimizer_name', None) is not None:
+            self.latest_optimizer_name = str(config_dict['latest_optimizer_name'])
         if config_dict.get('best_weights_name', None) is not None:
             self.best_weights_name = str(config_dict['best_weights_name'])
         if config_dict.get('max_epochs', None) is not None:
@@ -72,6 +76,7 @@ class CommonTrainConfig(ImageTaskConfig):
         config_dict['train_batch_size'] = self.train_batch_size
         config_dict['is_save_epoch_model'] = self.is_save_epoch_model
         config_dict['latest_weights_name'] = self.latest_weights_name
+        config_dict['latest_optimizer_name'] = self.latest_optimizer_name
         config_dict['best_weights_name'] = self.best_weights_name
         config_dict['max_epochs'] = self.max_epochs
         config_dict['base_lr'] = self.base_lr

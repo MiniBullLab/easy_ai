@@ -78,7 +78,7 @@ class VggNetCls(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

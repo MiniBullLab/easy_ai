@@ -26,8 +26,9 @@ class DelayedKeyboardInterrupt():
 
 class BaseTask():
 
-    def __init__(self):
+    def __init__(self, config_path=None):
         self.task_name = None
+        self.config_path = config_path
         self.config_factory = ConfigFactory()
 
     def set_task_name(self, task_name):

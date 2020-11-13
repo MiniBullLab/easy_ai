@@ -87,13 +87,16 @@ class ClassifyConfig(CommonTrainConfig):
         self.latest_weights_name = 'cls_latest.pt'
         self.best_weights_name = 'cls_best.pt'
 
+        self.latest_optimizer_name = "cls_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
         self.max_epochs = 200
 
         self.base_lr = 0.01
-        self.optimizer_config = {0: {'optimizer': 'SGD',
+        self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
                                  }

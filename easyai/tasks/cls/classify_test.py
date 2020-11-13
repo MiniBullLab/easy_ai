@@ -2,10 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:
 
+import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.data_loader.cls.classify_dataloader import get_classify_val_dataloader
 from easyai.tasks.cls.classify import Classify
 from easyai.evaluation.classify_accuracy import ClassifyAccuracy
+from easyai.helper.average_meter import AverageMeter
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
@@ -18,6 +20,7 @@ class ClassifyTest(BaseTest):
         self.classify_inference = Classify(cfg_path, gpu_id, config_path)
         self.topK = (1,)
         self.evaluation = ClassifyAccuracy(top_k=self.topK)
+        self.epoch_loss_average = AverageMeter()
 
     def load_weights(self, weights_path):
         self.classify_inference.load_weights(weights_path)
@@ -26,10 +29,13 @@ class ClassifyTest(BaseTest):
         dataloader = get_classify_val_dataloader(val_path, self.test_task_config)
         self.evaluation.clean_data()
         for index, (images, labels) in enumerate(dataloader):
-            output = self.classify_inference.infer(images)
-            self.evaluation.torch_eval(output.data, labels.to(output.device))
+            prediction, output_list = self.classify_inference.infer(images)
+            loss = self.compute_loss(output_list, labels)
+            self.evaluation.torch_eval(prediction.data, labels.to(prediction.device))
+            self.metirc_loss(index, loss)
+        average_loss = self.epoch_loss_average.avg
         self.print_evaluation()
-        return self.evaluation.get_top1()
+        return self.evaluation.get_top1(), average_loss
 
     def save_test_value(self, epoch):
         # Write epoch results
@@ -43,6 +49,30 @@ class ClassifyTest(BaseTest):
         else:
             with open(self.test_task_config.evaluation_result_path, 'a') as file:
                 file.write("Epoch: {} | prec1: {:.3f}\n".format(epoch, self.evaluation.get_top1()))
+
+    def compute_loss(self, output_list, targets):
+        loss = 0
+        loss_count = len(self.model.lossList)
+        output_count = len(output_list)
+        targets = targets.to(self.device)
+        with torch.no_grad():
+            if loss_count == 1 and output_count == 1:
+                loss = self.model.lossList[0](output_list[0], targets)
+            elif loss_count == 1 and output_count > 1:
+                loss = self.model.lossList[0](output_list, targets)
+            elif loss_count > 1 and loss_count == output_count:
+                for k in range(0, loss_count):
+                    loss += self.model.lossList[k](output_list[k], targets)
+            else:
+                print("compute loss error")
+        return loss
+
+    def metirc_loss(self, step, loss):
+        loss_value = loss.item()
+        self.epoch_loss_average.update(loss_value)
+        print("Val Batch {} loss: {} | Time: {}".format(step,
+                                                        loss_value,
+                                                        self.timer.toc(True)))
 
     def print_evaluation(self):
         if max(self.topK) > 1:
