@@ -20,7 +20,6 @@ class KeyPoints2d(BaseInference):
         self.result_show = KeyPointsShow()
 
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
     def process(self, input_path, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)

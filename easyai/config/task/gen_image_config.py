@@ -16,6 +16,8 @@ class GenerateImageConfig(GanTrainConfig):
         self.set_task_name(TaskName.GenerateImage)
 
         # data
+        self.save_result_dir_name = "generate_results"
+        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
         # train
         self.log_name = TaskName.GenerateImage
 
@@ -26,9 +28,12 @@ class GenerateImageConfig(GanTrainConfig):
 
     def load_data_value(self, config_dict):
         self.load_image_data_value(config_dict)
+        if config_dict.get('post_prcoess_type', None) is not None:
+            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
+        config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
@@ -37,12 +42,13 @@ class GenerateImageConfig(GanTrainConfig):
         self.save_image_train_value(config_dict)
 
     def get_data_default_value(self):
-        self.image_size = (720, 1024)  # w * H
+        self.image_size = (28, 28)  # w * H
         self.data_channel = 1
         self.resize_type = 0
-        self.normalize_type = 0
-        self.data_mean = (0, 0, 0)
-        self.data_std = (1, 1, 1)
+        self.normalize_type = -1
+        self.data_mean = (0.5, )
+        self.data_std = (0.5, )
+        self.post_prcoess_type = 0
 
     def get_train_default_value(self):
         self.train_batch_size = 2
@@ -57,7 +63,7 @@ class GenerateImageConfig(GanTrainConfig):
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
 
-        self.base_lr = 0.0003
+        self.base_lr = 0.0002
         self.d_optimizer_config = {0: {'type': 'Adam',
                                        'betas': (0.9, 0.999),
                                        'eps': 1e-08,
@@ -79,6 +85,9 @@ class GenerateImageConfig(GanTrainConfig):
                                       'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
                                       'warmup_type': 0,
                                       'warmup_iters': 1000}
+
+        self.accumulated_batches = 1
+        self.display = 1
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = ""

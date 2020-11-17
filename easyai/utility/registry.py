@@ -25,6 +25,9 @@ class Registry(object):
     def module_dict(self):
         return self._module_dict
 
+    def get_keys(self):
+        return self._module_dict.keys()
+
     def get(self, key):
         return self._module_dict.get(key, None)
 

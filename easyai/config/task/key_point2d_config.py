@@ -18,7 +18,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.points_class = None
         self.points_count = 0
         self.confidence_th = 1.0
-        self.post_prcoess_type = 0
         # test
         # train
         self.log_name = "key_point2d"

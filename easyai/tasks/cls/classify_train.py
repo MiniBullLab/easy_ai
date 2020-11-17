@@ -20,7 +20,6 @@ class ClassifyTrain(BaseTrain):
 
         self.model_args['class_number'] = len(self.train_task_config.class_name)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
         self.classify_test = ClassifyTest(cfg_path, gpu_id, config_path)
 
@@ -80,6 +79,7 @@ class ClassifyTrain(BaseTrain):
                 save_model_path = self.save_train_model(epoch)
                 self.test(val_path, epoch, save_model_path)
         except Exception as e:
+            print(e)
             raise e
         finally:
             self.train_logger.close()
@@ -115,17 +115,16 @@ class ClassifyTrain(BaseTrain):
     def update_logger(self, index, total, epoch, loss_value):
         step = epoch * total + index
         lr = self.optimizer.param_groups[0]['lr']
-        self.train_logger.train_log(step, loss_value, self.train_task_config.display)
+        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
         self.train_logger.lr_log(step, lr, self.train_task_config.display)
 
-        print('Epoch: {} \t Time: {}\t'.format(epoch, '%.5f' % self.timer.toc(True)))
-        print('Epoch: {}[{}/{}]\t Loss: {}\t Lr: {} \t'.format(epoch, index, total,
-                                                               '%.7f' % loss_value,
-                                                               '%.7f' % lr))
+        print('Epoch: {} \t Time: {:.5f}\t'.format(epoch, self.timer.toc(True)))
+        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Lr: {:.7f} \t'.format(epoch, index, total,
+                                                                       loss_value, lr))
 
     def save_train_model(self, epoch):
         with DelayedKeyboardInterrupt():
-            self.train_logger.epoch_train_log(epoch)
+            self.train_logger.epoch_train_loss_log(epoch)
             if self.train_task_config.is_save_epoch_model:
                 save_model_path = os.path.join(self.train_task_config.snapshot_path,
                                                "cls_model_epoch_%d.pt" % epoch)
@@ -134,7 +133,7 @@ class ClassifyTrain(BaseTrain):
             self.torchModelProcess.save_latest_model(epoch, self.best_precision,
                                                      self.model, save_model_path)
             self.torchModelProcess.save_optimizer_state(epoch, self.optimizer,
-                                                        self.train_task_config.latest_weights_path)
+                                                        self.train_task_config.latest_optimizer_path)
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
@@ -143,7 +142,7 @@ class ClassifyTrain(BaseTrain):
             precision, average_loss = self.classify_test.test(val_path)
             self.classify_test.save_test_value(epoch)
 
-            self.train_logger.eval_log("val epoch loss", epoch, average_loss)
+            self.train_logger.epoch_eval_loss_log(epoch, average_loss)
             print("Val epoch loss: {}".format(average_loss))
 
             # save best model

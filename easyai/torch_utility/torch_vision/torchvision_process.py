@@ -23,11 +23,6 @@ class TorchVisionProcess():
             transform = transforms.Compose([
                 transforms.ToTensor()
             ])
-        elif normalize_type == -3:
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize([0.5], [0.5])  # (-1, 1)
-            ])
         return transform
 
     def torch_data_augment(self, input_size):

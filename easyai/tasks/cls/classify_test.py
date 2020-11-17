@@ -18,6 +18,8 @@ class ClassifyTest(BaseTest):
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(config_path, TaskName.Classify_Task)
         self.classify_inference = Classify(cfg_path, gpu_id, config_path)
+        self.model = self.classify_inference.model
+        self.device = self.classify_inference.device
         self.topK = (1,)
         self.evaluation = ClassifyAccuracy(top_k=self.topK)
         self.epoch_loss_average = AverageMeter()
@@ -28,6 +30,7 @@ class ClassifyTest(BaseTest):
     def test(self, val_path):
         dataloader = get_classify_val_dataloader(val_path, self.test_task_config)
         self.evaluation.clean_data()
+        self.epoch_loss_average.reset()
         for index, (images, labels) in enumerate(dataloader):
             prediction, output_list = self.classify_inference.infer(images)
             loss = self.compute_loss(output_list, labels)
@@ -70,15 +73,15 @@ class ClassifyTest(BaseTest):
     def metirc_loss(self, step, loss):
         loss_value = loss.item()
         self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {} | Time: {}".format(step,
-                                                        loss_value,
-                                                        self.timer.toc(True)))
+        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
+                                                                loss_value,
+                                                                self.timer.toc(True)))
 
     def print_evaluation(self):
         if max(self.topK) > 1:
-            print('prec{}: {} \t prec{}: {}\t'.format(self.topK[0],
-                                                      self.topK[1],
-                                                      self.evaluation.get_top1(),
-                                                      self.evaluation.get_topK()))
+            print('prec{}: {:.3f} \t prec{}: {:.3f}\t'.format(self.topK[0],
+                                                              self.topK[1],
+                                                              self.evaluation.get_top1(),
+                                                              self.evaluation.get_topK()))
         else:
-            print('prec1: {} \t'.format(self.evaluation.get_top1()))
+            print('prec1: {:.3f} \t'.format(self.evaluation.get_top1()))

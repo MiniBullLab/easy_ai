@@ -44,7 +44,7 @@ class FocalLoss(BaseLoss):
         return loss
 
 
-@REGISTERED_CLS_LOSS.register_module(LossName.FocalLoss)
+@REGISTERED_CLS_LOSS.register_module(LossName.FocalBinaryLoss)
 class FocalBinaryLoss(BaseLoss):
 
     def __init__(self, alpha=0.25, gamma=2, reduction='mean'):

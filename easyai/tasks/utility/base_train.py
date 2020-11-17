@@ -55,3 +55,7 @@ class BaseTrain(BaseTask):
         self.is_sparse = is_sparse
         self.sparse_ratio = sparse_ratio
 
+    @property
+    def device(self):
+        return self.torchModelProcess.get_device()
+

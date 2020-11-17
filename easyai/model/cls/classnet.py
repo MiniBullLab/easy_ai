@@ -52,9 +52,9 @@ class ClassNet(BaseClassifyModel):
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss_config = {'type', LossName.CrossEntropy2d,
-                       'reduction', 'mean',
-                       'ignore_index', 250}
+        loss_config = {'type': LossName.CrossEntropy2d,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
         loss = self.loss_factory.get_loss(loss_config)
         self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)

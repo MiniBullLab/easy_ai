@@ -26,7 +26,7 @@ class LossFactory():
             result = self.get_cls_loss(loss_args)
         elif REGISTERED_DET2D_LOSS.has_class(input_name):
             result = self.get_det2d_loss(loss_args)
-        elif REGISTERED_SEG_LOSS.has_class(loss_args):
+        elif REGISTERED_SEG_LOSS.has_class(input_name):
             result = self.get_seg_loss(loss_args)
         else:
             result = self.get_gan_loss(loss_args)
@@ -36,27 +36,27 @@ class LossFactory():
 
     def has_loss(self, key):
 
-        for loss_name in REGISTERED_COMMON_LOSS.module_dict():
+        for loss_name in REGISTERED_COMMON_LOSS.get_keys():
             if loss_name in key:
                 return True
 
-        for loss_name in REGISTERED_CLS_LOSS.module_dict():
+        for loss_name in REGISTERED_CLS_LOSS.get_keys():
             if loss_name in key:
                 return True
 
-        for loss_name in REGISTERED_DET2D_LOSS.module_dict():
+        for loss_name in REGISTERED_DET2D_LOSS.get_keys():
             if loss_name in key:
                 return True
 
-        for loss_name in REGISTERED_SEG_LOSS.module_dict():
+        for loss_name in REGISTERED_SEG_LOSS.get_keys():
             if loss_name in key:
                 return True
 
-        for loss_name in REGISTERED_GAN_D_LOSS.module_dict():
+        for loss_name in REGISTERED_GAN_D_LOSS.get_keys():
             if loss_name in key:
                 return True
 
-        for loss_name in REGISTERED_GAN_G_LOSS.module_dict():
+        for loss_name in REGISTERED_GAN_G_LOSS.get_keys():
             if loss_name in key:
                 return True
 
@@ -143,8 +143,8 @@ class LossFactory():
         loss = None
         input_name = loss_config['type'].strip()
         if REGISTERED_GAN_D_LOSS.has_class(input_name):
-            loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
+            loss = build_from_cfg(loss_config, REGISTERED_GAN_D_LOSS)
         elif REGISTERED_GAN_G_LOSS.has_class(input_name):
-            loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
+            loss = build_from_cfg(loss_config, REGISTERED_GAN_G_LOSS)
         return loss
 

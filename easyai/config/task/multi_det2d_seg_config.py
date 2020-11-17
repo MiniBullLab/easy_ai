@@ -53,6 +53,8 @@ class MultiDet2dSegConfig(Detect2dConfig):
         self.resize_type = 1
         self.normalize_type = 0
 
+        self.post_prcoess_type = 0
+
     def get_test_default_value(self):
         self.test_batch_size = 1
         self.evaluation_result_name = 'det2d_seg_evaluation.txt'

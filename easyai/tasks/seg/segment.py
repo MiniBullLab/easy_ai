@@ -21,12 +21,9 @@ class Segmentation(BaseInference):
 
         self.model_args['class_number'] = len(self.task_config.segment_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
         self.result_process = SegmentResultProcess()
-
         self.result_show = SegmentionShow()
-
         self.image_process = ImageProcess()
 
         self.threshold = 0.5  # binary class threshold

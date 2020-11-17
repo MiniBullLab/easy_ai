@@ -24,7 +24,6 @@ class Detection2d(BaseInference):
 
         self.model_args['class_number'] = len(self.task_config.detect2d_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
     def process(self, input_path, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)

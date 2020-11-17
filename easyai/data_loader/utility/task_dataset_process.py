@@ -20,7 +20,7 @@ class TaskDataSetProcess(BaseDataSetProcess):
 
     def normalize_image(self, src_image):
         if self.normalize_type < 0:
-            torchvision_transform = self.torchvision_process.torch_normalize(flag=self.normalize_type,
+            torchvision_transform = self.torchvision_process.torch_normalize(normalize_type=self.normalize_type,
                                                                              mean=self.mean,
                                                                              std=self.std)
             image = torchvision_transform(src_image)

@@ -25,8 +25,8 @@ class OptimizerProcess():
         params = filter(lambda p: p.requires_grad, model.parameters())
         config_args['params'] = params
         config_args['lr'] = self.base_lr
-        self.optimizer = build_from_cfg(config, REGISTERED_OPTIMIZER)
-        self.print_param()
+        self.optimizer = build_from_cfg(config_args, REGISTERED_OPTIMIZER)
+        # self.print_param()
         return self.optimizer
 
     def adjust_optimizer(self, config):

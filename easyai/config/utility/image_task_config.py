@@ -19,6 +19,7 @@ class ImageTaskConfig(BaseConfig):
         self.normalize_type = 0
         self.data_mean = (0, 0, 0)
         self.data_std = (1, 1, 1)
+        self.post_prcoess_type = 0
         self.save_result_path = None
         # test
         self.test_batch_size = 1

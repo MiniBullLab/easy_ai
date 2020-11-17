@@ -20,6 +20,10 @@ class ClassifyShow():
         cv2.namedWindow("image", 0)
         cv2.resizeWindow("image", int(src_image.shape[1] * scale), int(src_image.shape[0] * scale))
         cv2.imshow('image', src_image)
+        if cv2.waitKey() & 0xff == ord('q'):  # 按q退出
+            return False
+        else:
+            return True
 
         if cv2.waitKey() & 0xFF == 27:
             return False

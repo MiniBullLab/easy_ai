@@ -17,7 +17,6 @@ class Classify(BaseInference):
         super().__init__(cfg_path, config_path, TaskName.Classify_Task)
         self.model_args['class_number'] = len(self.task_config.class_name)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
         self.result_show = ClassifyShow()
 
     def process(self, input_path, is_show=False):

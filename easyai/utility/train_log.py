@@ -23,7 +23,7 @@ class TrainLogger():
         self.lr_average = AverageMeter()
         self.epoch_loss_average = AverageMeter()
 
-    def train_log(self, step, value, display):
+    def loss_log(self, step, value, display):
         self.loss_average.update(value)
         self.epoch_loss_average.update(value)
         if step % display == 0:
@@ -38,12 +38,12 @@ class TrainLogger():
             self.add_scalar("lr", self.lr_average.avg, step)
             self.lr_average.reset()
 
-    def epoch_train_log(self, epoch):
+    def epoch_train_loss_log(self, epoch):
         self.add_scalar("train epoch loss", self.epoch_loss_average.avg, epoch)
         self.epoch_loss_average.reset()
 
-    def eval_log(self, tag, epoch, value):
-        self.add_scalar(tag, value, epoch)
+    def epoch_eval_loss_log(self, epoch, value):
+        self.add_scalar("val epoch loss", value, epoch)
 
     def add_scalar(self, tag, value, step):
         self.writer.add_scalar(tag, value, step)

@@ -19,7 +19,6 @@ class Detection2dTrain(BaseTrain):
 
         self.model_args['class_number'] = len(self.train_task_config.detect2d_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
         self.detect_test = Detection2dTest(cfg_path, gpu_id, config_path)
 
@@ -116,17 +115,17 @@ class Detection2dTrain(BaseTrain):
         self.avg_loss = 0.9 * (loss.cpu().detach().numpy() / self.train_task_config.train_batch_size) \
                         + 0.1 * self.avg_loss
 
-        self.train_logger.train_log(step, loss_value, self.train_task_config.display)
+        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
         self.train_logger.lr_log(step, lr, self.train_task_config.display)
-        print('Epoch: {}[{}/{}]\t Loss: {}\t Rate: {} \t Time: {}\t'.format(epoch,
-                                                                            index,
-                                                                            total,
-                                                                            '%.7f' % self.avg_loss,
-                                                                            '%.7f' % lr,
-                                                                            '%.5f' % self.timer.toc(True)))
+        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
+                                                                                        index,
+                                                                                        total,
+                                                                                        self.avg_loss,
+                                                                                        lr,
+                                                                                        self.timer.toc(True)))
 
     def save_train_model(self, epoch):
-        self.train_logger.epoch_train_log(epoch)
+        self.train_logger.epoch_train_loss_log(epoch)
         if self.train_task_config.is_save_epoch_model:
             save_model_path = os.path.join(self.train_task_config.snapshot_path,
                                            "det2d_model_epoch_%d.pt" % epoch)
@@ -135,7 +134,7 @@ class Detection2dTrain(BaseTrain):
         self.torchModelProcess.save_latest_model(epoch, self.best_mAP,
                                                  self.model, save_model_path)
         self.torchModelProcess.save_optimizer_state(epoch, self.optimizer,
-                                                    self.train_task_config.latest_weights_path)
+                                                    self.train_task_config.latest_optimizer_path)
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):

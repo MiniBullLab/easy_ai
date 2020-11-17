@@ -20,7 +20,6 @@ class SegmentionTrain(BaseTrain):
 
         self.model_args['class_number'] = len(self.train_task_config.segment_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
         self.output_process = SegmentResultProcess()
 
@@ -108,18 +107,18 @@ class SegmentionTrain(BaseTrain):
     def update_logger(self, index, total, epoch, loss_value):
         step = epoch * total + index
         lr = self.optimizer.param_groups[0]['lr']
-        self.train_logger.train_log(step, loss_value, self.train_task_config.display)
+        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
         self.train_logger.lr_log(step, lr, self.train_task_config.display)
 
-        print('Epoch: {}[{}/{}]\t Loss: {}\t Rate: {} \t Time: {}\t'.format(epoch,
-                                                                            index,
-                                                                            total,
-                                                                            '%.7f' % loss_value,
-                                                                            '%.7f' % lr,
-                                                                            '%.5f' % self.timer.toc(True)))
+        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
+                                                                                        index,
+                                                                                        total,
+                                                                                        loss_value,
+                                                                                        lr,
+                                                                                        self.timer.toc(True)))
 
     def save_train_model(self, epoch):
-        self.train_logger.epoch_train_log(epoch)
+        self.train_logger.epoch_train_loss_log(epoch)
         if self.train_task_config.is_save_epoch_model:
             save_model_path = os.path.join(self.train_task_config.snapshot_path,
                                            "seg_model_epoch_%d.pt" % epoch)
@@ -128,7 +127,7 @@ class SegmentionTrain(BaseTrain):
         self.torchModelProcess.save_latest_model(epoch, self.bestmIoU,
                                                  self.model, save_model_path)
         self.torchModelProcess.save_optimizer_state(epoch, self.optimizer,
-                                                    self.train_task_config.latest_weights_path)
+                                                    self.train_task_config.latest_optimizer_path)
         return save_model_path
 
     def set_model_train(self):
@@ -143,8 +142,8 @@ class SegmentionTrain(BaseTrain):
             score, class_score, average_loss = self.segment_test.test(val_path)
             self.segment_test.save_test_value(epoch, score, class_score)
 
-            self.train_logger.eval_log("val epoch loss", epoch, average_loss)
-            print("Val epoch loss: {}".format(average_loss))
+            self.train_logger.epoch_eval_loss_log(epoch, average_loss)
+            print("Val epoch loss: {:.7f}".format(average_loss))
             # save best model
             self.bestmIoU = self.torchModelProcess.save_best_model(score['Mean IoU : \t'],
                                                                    save_model_path,

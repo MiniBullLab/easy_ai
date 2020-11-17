@@ -10,15 +10,15 @@ export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 rm -rf ./log/detect2d*
 
 CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath $1 --valPath $2
-python3 -m easy_tools.easy_convert --task DeNET --input ./log/snapshot/detnet.onnx
+python3 -m easy_tools.easy_convert --task DeNET --input ./log/snapshot/denet.onnx
 
 set -v
 root_path=$(pwd)
 modelDir="./log/snapshot"
 imageDir="./log/det_img"
 outDir="${root_path}/log/out"
-caffeNetName=detnet
-outNetName=detnet
+caffeNetName=denet
+outNetName=denet
 
 inputColorFormat=0
 outputShape=1,3,416,416

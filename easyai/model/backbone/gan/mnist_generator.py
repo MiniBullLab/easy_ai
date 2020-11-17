@@ -30,6 +30,8 @@ class MNISTGenerator(BaseBackbone):
                                    activationName=self.activation_name)
         self.add_block_list(layer1.get_name(), layer1, self.first_output)
 
+        self.in_channel = self.first_output
+
         layer2 = FcActivationBlock(self.in_channel, self.in_channel,
                                    activationName=self.activation_name)
         self.add_block_list(layer2.get_name(), layer2, self.in_channel)
@@ -44,5 +46,6 @@ class MNISTGenerator(BaseBackbone):
         for key, block in self._modules.items():
             x = block(x)
             output_list.append(x)
+            # print(key, x.shape)
         return output_list
 

@@ -78,11 +78,11 @@ class SegmentionTest(BaseTest):
         return loss
 
     def metirc_loss(self, step, loss):
-        loss_value = loss.data.cpu().squeeze()
+        loss_value = loss.item()
         self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {} | Time: {}".format(step,
-                                                        loss_value,
-                                                        self.timer.toc(True)))
+        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
+                                                                loss_value,
+                                                                self.timer.toc(True)))
 
     def print_evaluation(self, score):
         for k, v in score.items():

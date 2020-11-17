@@ -18,7 +18,6 @@ class Detect2dConfig(CommonTrainConfig):
         self.detect2d_class = None
         self.confidence_th = 1.0
         self.nms_th = 1.0
-        self.post_prcoess_type = 0
         self.save_result_name = None
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_results')

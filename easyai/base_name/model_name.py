@@ -35,7 +35,7 @@ class ModelName():
     ClassNet = "classnet"
 
     YoloV3Det2d = "yolov3"
-    DetNet = "detnet"
+    DetNet = "denet"
 
     # sr
     MSRResNet = "MSRResNet"

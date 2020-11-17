@@ -25,7 +25,6 @@ class Det2dSegTask(BaseInference):
         self.result_show = Det2dSegTaskShow()
 
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
         self.threshold_seg = 0.5  # binary class threshold
 

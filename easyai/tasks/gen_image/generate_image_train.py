@@ -3,6 +3,7 @@
 # Author:
 
 import os
+from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.base_train import BaseTrain
@@ -16,7 +17,9 @@ class GenerateImageTrain(BaseTrain):
 
         self.model_args['image_size'] = len(self.train_task_config.image_size)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
+
+        self.d_loss_average = AverageMeter()
+        self.g_loss_average = AverageMeter()
 
         self.d_optimizer_list = []
         self.g_optimizer_list = []
@@ -67,6 +70,8 @@ class GenerateImageTrain(BaseTrain):
         self.train_task_config.save_config()
         self.timer.tic()
         self.model.train()
+        self.d_loss_average.reset()
+        self.g_loss_average.reset()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             for i, (images, targets) in enumerate(dataloader):
                 current_iter = epoch * self.total_images + i
@@ -88,22 +93,12 @@ class GenerateImageTrain(BaseTrain):
         g_loss_values = self.generator_backward(input_datas, targets)
         return d_loss_values, g_loss_values
 
-    def compute_loss(self, output_list, targets, loss_type=0):
-        loss = []
-        if loss_type == 0:
-            loss = self.compute_d_loss(output_list, targets)
-        elif loss_type == 1:
-            loss = self.compute_g_loss(output_list, targets)
-        else:
-            print("compute loss error")
-        return loss
-
     def discriminator_backward(self, input_datas, targets):
         real_images = self.model.generator_input_data(input_datas, 0)
         fake_images = self.model.generator_input_data(input_datas, 1)
         output_list = self.model(fake_images.to(self.device),
                                  real_images.to(self.device),
-                                 net_type=0)
+                                 net_type=1)
         loss = self.compute_loss(output_list, targets, 0)
         for index, optimizer in enumerate(self.d_optimizer_list):
             optimizer.zero_grad()
@@ -114,12 +109,22 @@ class GenerateImageTrain(BaseTrain):
     def generator_backward(self, input_datas, targets):
         fake_images = self.model.generator_input_data(input_datas, 1)
         output_list = self.model(fake_images.to(self.device),
-                                 net_type=1)
+                                 net_type=2)
         loss = self.compute_loss(output_list, targets, 1)
         for index, optimizer in enumerate(self.g_optimizer_list):
             optimizer.zero_grad()
             loss[index].backward()
             optimizer.step()
+        return loss
+
+    def compute_loss(self, output_list, targets, loss_type=0):
+        loss = []
+        if loss_type == 0:
+            loss = self.compute_d_loss(output_list, targets)
+        elif loss_type == 1:
+            loss = self.compute_g_loss(output_list, targets)
+        else:
+            print("compute loss error")
         return loss
 
     def compute_d_loss(self, output_list, targets):
@@ -160,26 +165,50 @@ class GenerateImageTrain(BaseTrain):
 
     def update_logger(self, index, total, epoch, loss_values):
         step = epoch * total + index
-        lr = self.optimizer.param_groups[0]['lr']
         d_loss_values, g_loss_values = loss_values
-        loss_value = loss.data.cpu().squeeze()
+        all_d_loss_value = 0
+        all_g_loss_value = 0
+        for index, d_loss in enumerate(d_loss_values):
+            tag = "d_loss_%d" % index
+            all_d_loss_value += d_loss.item()
+            self.train_logger.add_scalar(tag, d_loss.item(), step)
+        for index, g_loss in enumerate(g_loss_values):
+            tag = "g_loss_%d" % index
+            all_g_loss_value += g_loss.item()
+            self.train_logger.add_scalar(tag, g_loss.item(), step)
 
-        self.train_logger.train_log(step, loss_value, self.train_task_config.display)
-        self.train_logger.lr_log(step, lr, self.train_task_config.display)
-        print('Epoch: {} \t Time: {}\t'.format(epoch, '%.5f' % self.timer.toc(True)))
-        print('Epoch: {}[{}/{}]\t Loss: {}\t Lr: {} \t'.format(epoch, index, total,
-                                                               '%.7f' % loss_value,
-                                                               '%.7f' % lr))
+        for index, optimizer in enumerate(self.d_optimizer_list):
+            tag = "d_lr_%d" % index
+            d_lr = optimizer.param_groups[0]['lr']
+            self.train_logger.add_scalar(tag, d_lr, step)
+        for index, optimizer in enumerate(self.g_optimizer_list):
+            tag = "g_lr_%d" % index
+            g_lr = optimizer.param_groups[0]['lr']
+            self.train_logger.add_scalar(tag, g_lr, step)
+
+        self.d_loss_average.update(all_d_loss_value)
+        self.g_loss_average.update(all_g_loss_value)
+
+        print('Epoch: {} \t Time: {:.5f}\t'.format(epoch, self.timer.toc(True)))
+        print('Epoch: {}[{}/{}]\t  D Loss: {:.7f}\t G Loss: {:.7f} \t'.format(epoch, index, total,
+                                                                              self.d_loss_average.avg,
+                                                                              self.g_loss_average.avg))
 
     def save_train_model(self, epoch):
-        self.train_logger.epoch_train_log(epoch)
+        self.train_logger.add_scalar("train epoch d loss",
+                                     self.d_loss_average.avg, epoch)
+        self.train_logger.add_scalar("train epoch g loss",
+                                     self.g_loss_average.avg, epoch)
+        self.d_loss_average.reset()
+        self.g_loss_average.reset()
+
         if self.train_task_config.is_save_epoch_model:
             save_model_path = os.path.join(self.train_task_config.snapshot_path,
-                                           "det2d_model_epoch_%d.pt" % epoch)
+                                           "generate_image_epoch_%d.pt" % epoch)
         else:
             save_model_path = self.train_task_config.latest_weights_path
-        self.torchModelProcess.saveLatestModel(save_model_path, self.model,
-                                               self.optimizer, epoch, self.best_mAP)
+        self.torchModelProcess.save_latest_model(epoch, 0, self.model, save_model_path)
+
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):

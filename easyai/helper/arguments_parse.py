@@ -59,11 +59,11 @@ class TaskArgumentsParse():
 
         parser.add_option("-i", "--trainPath", dest="trainPath",
                           metavar="PATH", type="string", default="./train.txt",
-                          help="path to data config file")
+                          help="path to train.txt file")
 
         parser.add_option("-v", "--valPath", dest="valPath",
                           metavar="PATH", type="string", default=None,
-                          help="path to data config file")
+                          help="path to val.txt file")
 
         parser.add_option("-m", "--model", dest="model",
                           metavar="PATH", type="string", default="cfg/conv_block.cfg",
@@ -71,7 +71,7 @@ class TaskArgumentsParse():
 
         parser.add_option("-p", "--pretrainModel", dest="pretrainModel",
                           metavar="PATH", type="string", default=None,
-                          help="path to store weights")
+                          help="path to pretrain weights file")
 
         parser.add_option("-c", "--config", dest="config_path",
                           metavar="PATH", type="string", default=None,

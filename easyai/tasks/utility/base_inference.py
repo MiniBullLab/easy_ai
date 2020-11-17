@@ -68,3 +68,7 @@ class BaseInference(BaseTask):
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]
         self.src_size = (shape[1], shape[0])
+
+    @property
+    def device(self):
+        return self.torchModelProcess.get_device()
