@@ -29,8 +29,7 @@ function stop() {
 }
 
 start
-python3 -m easyAI.easy_ai_seg --gpu 0 --trainPath /home/minibull/lipeijie/dataset/LED_segment/ImageSets/train_val.txt
-python3 -m easyAI.easy_convert --task SegNET
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task SegNET --gpu 0 --trainPath $1 --valPath $2
 stop
 
 set -v

@@ -29,8 +29,8 @@ function stop() {
 }
 
 start
-python3 -m easyAI.easy_ai_det --gpu 0 --trainPath /home/minibull/lipeijie/dataset/Berkeley/ImageSets/train.txt --valPath /home/minibull/lipeijie/dataset/Berkeley/ImageSets/val.txt
-python3 -m easyAI.easy_convert --task DeNET
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai_det --gpu 0 --trainPath /home/minibull/lipeijie/dataset/Berkeley/ImageSets/train.txt --valPath /home/minibull/lipeijie/dataset/Berkeley/ImageSets/val.txt
+python3 -m easy_tools.easy_convert --task DeNET
 stop
 
 set -v

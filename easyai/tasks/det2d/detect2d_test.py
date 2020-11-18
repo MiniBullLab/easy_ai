@@ -45,7 +45,7 @@ class Detection2dTest(BaseTest):
 
     def save_test_value(self, epoch, mAP, aps):
         # Write epoch results
-        with open(self.test_task_config.evaluation_result_name, 'a') as file:
+        with open(self.test_task_config.evaluation_result_path, 'a') as file:
             # file.write('%11.3g' * 2 % (mAP, aps[0]) + '\n')
             file.write("Epoch: {} | mAP: {:.3f} | ".format(epoch, mAP))
             for i, ap in enumerate(aps):

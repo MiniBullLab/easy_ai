@@ -5,10 +5,31 @@ from easy_converter.helper.imageProcess import ImageProcess
 from easy_converter.helper.image_dataset_process import ImageDataSetProcess
 from easy_converter.inference.det2d import detection_utility
 from easy_converter.helper.dirProcess import DirProcess
+from optparse import OptionParser
+
+
+def parse_arguments():
+	parser = OptionParser()
+	parser.description = "This program is caffe key_point2d inference"
+
+	parser.add_option("-i", "--image_dir", dest="image_dir",
+					  type="string", default=None,
+					  help="image dir")
+
+	parser.add_option("-p", "--prototxt", dest="prototxt_path",
+					  metavar="PATH", type="string", default=None,
+					  help="caffe prototxt path")
+
+	parser.add_option("-m", "--caffe_model", dest="caffe_model_path",
+					  type="string", default=None,
+					  help="caffe model path")
+
+	(options, args) = parser.parse_args()
+
+	return options
 
 
 class CaffeYoloV3Inference():
-
 	def __init__(self, model_def, model_weights):
 		self.dir_process = DirProcess()
 		self.image_process = ImageProcess()
@@ -75,10 +96,10 @@ def main():
 	caffe.set_device(0)
 	caffe.set_mode_gpu()
 
-	model_def = './data/darknet/yolov3_berkeley_6_classes.prototxt'
-	model_weights = './data/darknet/yolov3_berkeley_6_classes.caffemodel'
-	test = CaffeYoloV3Inference(model_def, model_weights)
-	test.yolov3_detect("/home/lpj/Desktop/test")
+	print("process start...")
+	options = parse_arguments()
+	test = CaffeYoloV3Inference(options.prototxt, options.caffe_model_path)
+	test.yolov3_detect(options.image_dir)
 
 
 if __name__ == "__main__":

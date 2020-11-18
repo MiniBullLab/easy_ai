@@ -9,6 +9,7 @@ from easyai.tools.utility.copy_image import CopyImage
 from easyai.train_task import TrainTask
 from easyai.base_name.task_name import TaskName
 from easyai.config.utility.image_task_config import ImageTaskConfig
+from easyai.tools.sample.detection_sample_process import DetectionSampleProcess
 
 
 def parse_arguments():
@@ -63,11 +64,16 @@ def train_main():
         copy_process.copy(options.trainPath, save_image_dir)
     elif options.task_name.strip() == "DeNET":
         pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
-        train_task = TrainTask(TaskName.Detect2d_Task, options.trainPath, options.valPath, True)
-        train_task.train("detnet", options.gpu_id, options.config_path, pretrain_model_path)
-        # easy_model_convert(options.task_name, train_task.save_onnx_path)
-        save_image_dir = os.path.join(config.root_save_dir, "det_img")
-        copy_process.copy(options.trainPath, save_image_dir)
+        sample_process = DetectionSampleProcess()
+        class_names = sample_process.create_class_names(options.trainPath)
+        if len(class_names) > 0:
+            train_task = TrainTask(TaskName.Detect2d_Task, options.trainPath, options.valPath, True)
+            train_task.train("detnet", options.gpu_id, options.config_path, pretrain_model_path)
+            # easy_model_convert(options.task_name, train_task.save_onnx_path)
+            save_image_dir = os.path.join(config.root_save_dir, "det_img")
+            copy_process.copy(options.trainPath, save_image_dir)
+        else:
+            print("class name empty!")
     elif options.task_name.strip() == "SegNET":
         pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
         cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
