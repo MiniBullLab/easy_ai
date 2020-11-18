@@ -100,7 +100,6 @@ class Detect2dConfig(CommonTrainConfig):
         self.train_multi_scale = False
         self.balanced_sample = False
         self.train_batch_size = 1
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'det2d_latest.pt'
         self.best_weights_name = 'det2d_best.pt'
@@ -111,6 +110,10 @@ class Detect2dConfig(CommonTrainConfig):
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
         self.max_epochs = 100
+
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
 
         self.base_lr = 2e-4
         self.optimizer_config = {0: {'type': 'SGD',
@@ -123,6 +126,9 @@ class Detect2dConfig(CommonTrainConfig):
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 1
         self.freeze_layer_name = "baseNet_0"

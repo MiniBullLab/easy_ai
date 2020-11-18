@@ -70,7 +70,6 @@ class SegmentionConfig(CommonTrainConfig):
         self.log_name = "segment"
         self.train_data_augment = False
         self.train_batch_size = 1
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'seg_latest.pt'
         self.best_weights_name = 'seg_best.pt'
@@ -80,6 +79,10 @@ class SegmentionConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
+
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
 
         self.base_lr = 0.001
         self.optimizer_config = {0: {'type': 'RMSprop',
@@ -93,6 +96,9 @@ class SegmentionConfig(CommonTrainConfig):
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 2
         self.freeze_layer_name = "base_convBNActivationBlock_38"

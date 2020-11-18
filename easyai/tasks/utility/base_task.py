@@ -3,6 +3,7 @@
 # Author:
 
 import signal
+from abc import ABC
 from easyai.config.utility.config_factory import ConfigFactory
 
 
@@ -24,7 +25,7 @@ class DelayedKeyboardInterrupt():
             self.old_handler(*self.signal_received)
 
 
-class BaseTask():
+class BaseTask(ABC):
 
     def __init__(self, config_path=None):
         self.task_name = None

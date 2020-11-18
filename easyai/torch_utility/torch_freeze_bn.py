@@ -66,6 +66,17 @@ class TorchFreezeNormalization():
                 break
 
     def freeze_bn(self, model):
-        for m in model.modules():
-            if isinstance(m, nn.BatchNorm2d):
-                m.eval()
+        model.apply(self.set_bn_eval)
+        # for name, module in model.named_children():
+        #     classname = model.__class__.__name__
+        #     if classname.find('BatchNorm') != -1:
+        #         module.eval()
+        #         print('freeze bn: ', name)
+        #     else:
+        #         self.freeze_bn(module)
+
+    def set_bn_eval(self, m):
+        classname = m.__class__.__name__
+        if classname.find('BatchNorm') != -1:
+            m.eval()
+            # m.eval().half()

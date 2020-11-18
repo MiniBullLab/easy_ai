@@ -3,14 +3,13 @@
 # Author:
 
 import os
-from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
-from easyai.tasks.utility.base_train import BaseTrain
+from easyai.tasks.utility.gan_train import GanTrain
 from easyai.base_name.task_name import TaskName
 
 
-class GenerateImageTrain(BaseTrain):
+class GenerateImageTrain(GanTrain):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.GenerateImage)
@@ -18,13 +17,6 @@ class GenerateImageTrain(BaseTrain):
         self.model_args['image_size'] = len(self.train_task_config.image_size)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-        self.d_loss_average = AverageMeter()
-        self.g_loss_average = AverageMeter()
-
-        self.d_optimizer_list = []
-        self.g_optimizer_list = []
-        self.total_images = 0
-        self.start_epoch = 0
         self.best_score = 0
 
     def load_latest_param(self, latest_weights_path):
@@ -38,22 +30,7 @@ class GenerateImageTrain(BaseTrain):
                                          self.train_task_config.freeze_layer_name,
                                          self.train_task_config.freeze_layer_type)
 
-        self.load_optimize_param()
-
-    def load_optimize_param(self):
-        d_optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
-                                                                       self.train_task_config.d_optimizer_config)
-        g_optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
-                                                                       self.train_task_config.g_optimizer_config)
-        for d_model in self.model.d_model_list:
-            optimizer = self.optimizer_process.get_optimizer(d_optimizer_args,
-                                                             d_model)
-            self.d_optimizer_list.append(optimizer)
-
-        for g_model in self.model.g_model_list:
-            optimizer = self.optimizer_process.get_optimizer(g_optimizer_args,
-                                                             g_model)
-            self.d_optimizer_list.append(optimizer)
+        self.build_optimizer()
 
     def train(self, train_path, val_path):
         dataloader = get_gan_train_dataloader(train_path, self.train_task_config)
@@ -67,11 +44,7 @@ class GenerateImageTrain(BaseTrain):
 
         self.load_latest_param(self.train_task_config.latest_weights_path)
 
-        self.train_task_config.save_config()
-        self.timer.tic()
-        self.model.train()
-        self.d_loss_average.reset()
-        self.g_loss_average.reset()
+        self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             for i, (images, targets) in enumerate(dataloader):
                 current_iter = epoch * self.total_images + i

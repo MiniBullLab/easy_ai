@@ -5,14 +5,14 @@
 import os
 from easyai.data_loader.multi_task.det2d_seg_train_dataloader import get_det2d_seg_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
-from easyai.tasks.utility.base_train import BaseTrain
+from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.multi_task.det2d_seg_task_test import Det2dSegTaskTest
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Det2d_Seg_Task)
-class Det2dSegTaskTrain(BaseTrain):
+class Det2dSegTaskTrain(CommonTrain):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.Det2d_Seg_Task)
@@ -21,10 +21,7 @@ class Det2dSegTaskTrain(BaseTrain):
 
         self.multi_task_test = Det2dSegTaskTest(cfg_path, gpu_id, config_path)
 
-        self.optimizer = None
-        self.total_images = 0
         self.avg_loss = -1
-        self.start_epoch = 0
         self.best_mAP = 0
         self.bestmIoU = 0
 
@@ -39,12 +36,7 @@ class Det2dSegTaskTrain(BaseTrain):
                                          self.train_task_config.freeze_layer_name,
                                          self.train_task_config.freeze_layer_type)
 
-        optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
-                                                                     self.train_task_config.optimizer_config)
-        self.optimizer = self.optimizer_process.get_optimizer(optimizer_args,
-                                                              self.model)
-        self.torchModelProcess.load_latest_optimizer(self.train_task_config.latest_optimizer_path,
-                                                     self.optimizer)
+        self.build_optimizer()
 
     def train(self, train_path, val_path):
         dataloader = get_det2d_seg_train_dataloader(train_path, self.train_task_config)
@@ -57,12 +49,7 @@ class Det2dSegTaskTrain(BaseTrain):
 
         self.load_latest_param(self.train_task_config.latest_weights_path)
 
-        self.train_task_config.save_config()
-        self.timer.tic()
-        self.model.train()
-        self.freeze_process.freeze_bn(self.model,
-                                      self.train_task_config.freeze_bn_layer_name,
-                                      self.train_task_config.freeze_bn_type)
+        self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
             for i, (images, detects, segments) in enumerate(dataloader):
@@ -83,11 +70,13 @@ class Det2dSegTaskTrain(BaseTrain):
         # Compute loss, compute gradient, update parameters
         output_list = self.model(input_datas.to(self.device))
         loss, loss_list = self.compute_loss(output_list, targets)
-        loss.backward()
+
+        self.loss_backward(loss)
 
         # accumulate gradient for x batches before optimizing
         if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
                 or (setp_index == self.total_images - 1):
+            self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()
         return loss, loss_list
@@ -143,8 +132,7 @@ class Det2dSegTaskTrain(BaseTrain):
         # wrong !!! how to save best_iou
         self.torchModelProcess.save_latest_model(epoch, self.best_mAP,
                                                  self.model, save_model_path)
-        self.torchModelProcess.save_optimizer_state(epoch, self.optimizer,
-                                                    self.train_task_config.latest_optimizer_path)
+        self.save_optimizer(epoch)
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):

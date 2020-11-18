@@ -58,7 +58,6 @@ class SuperResolutionConfig(CommonTrainConfig):
     def get_train_default_value(self):
         self.train_data_augment = False
         self.train_batch_size = 2
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'sr_latest.pt'
         self.best_weights_name = 'sr_best.pt'
@@ -68,6 +67,10 @@ class SuperResolutionConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
+
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
 
         self.base_lr = 1e-3
         self.optimizer_config = {0: {'type': 'Adam',
@@ -82,6 +85,9 @@ class SuperResolutionConfig(CommonTrainConfig):
                                     'warmup_iters': 1000}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = "route_0"

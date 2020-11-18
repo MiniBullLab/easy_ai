@@ -6,14 +6,14 @@ import os
 from easyai.data_loader.cls.classify_dataloader import get_classify_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.base_task import DelayedKeyboardInterrupt
-from easyai.tasks.utility.base_train import BaseTrain
+from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.cls.classify_test import ClassifyTest
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Classify_Task)
-class ClassifyTrain(BaseTrain):
+class ClassifyTrain(CommonTrain):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.Classify_Task)
@@ -22,10 +22,6 @@ class ClassifyTrain(BaseTrain):
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
         self.classify_test = ClassifyTest(cfg_path, gpu_id, config_path)
-
-        self.optimizer = None
-        self.total_images = 0
-        self.start_epoch = 0
         self.best_precision = 0
 
     def load_latest_param(self, latest_weights_path):
@@ -39,12 +35,7 @@ class ClassifyTrain(BaseTrain):
                                          self.train_task_config.freeze_layer_name,
                                          self.train_task_config.freeze_layer_type)
 
-        optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
-                                                                     self.train_task_config.optimizer_config)
-        self.optimizer = self.optimizer_process.get_optimizer(optimizer_args,
-                                                              self.model)
-        self.torchModelProcess.load_latest_optimizer(self.train_task_config.latest_optimizer_path,
-                                                     self.optimizer)
+        self.build_optimizer()
 
     def train(self, train_path, val_path):
 
@@ -60,12 +51,7 @@ class ClassifyTrain(BaseTrain):
 
         self.load_latest_param(self.train_task_config.latest_weights_path)
 
-        self.train_task_config.save_config()
-        self.timer.tic()
-        self.model.train()
-        self.freeze_process.freeze_bn(self.model,
-                                      self.train_task_config.freeze_bn_layer_name,
-                                      self.train_task_config.freeze_bn_type)
+        self.start_train()
         try:
             for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
                 self.optimizer.zero_grad()
@@ -88,10 +74,13 @@ class ClassifyTrain(BaseTrain):
         # Compute loss, compute gradient, update parameters
         output_list = self.model(input_datas.to(self.device))
         loss = self.compute_loss(output_list, targets)
-        loss.backward()
+
+        self.loss_backward(loss)
+
         # accumulate gradient for x batches before optimizing
         if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) or \
                 (setp_index == self.total_images - 1):
+            self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()
         return loss.item()
@@ -132,8 +121,8 @@ class ClassifyTrain(BaseTrain):
                 save_model_path = self.train_task_config.latest_weights_path
             self.torchModelProcess.save_latest_model(epoch, self.best_precision,
                                                      self.model, save_model_path)
-            self.torchModelProcess.save_optimizer_state(epoch, self.optimizer,
-                                                        self.train_task_config.latest_optimizer_path)
+
+            self.save_optimizer(epoch)
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):

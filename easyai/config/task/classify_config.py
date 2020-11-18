@@ -82,7 +82,6 @@ class ClassifyConfig(CommonTrainConfig):
     def get_train_default_value(self):
         self.train_data_augment = True
         self.train_batch_size = 16
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'cls_latest.pt'
         self.best_weights_name = 'cls_best.pt'
@@ -95,6 +94,10 @@ class ClassifyConfig(CommonTrainConfig):
 
         self.max_epochs = 200
 
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
+
         self.base_lr = 0.01
         self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
@@ -106,6 +109,9 @@ class ClassifyConfig(CommonTrainConfig):
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = "route_0"

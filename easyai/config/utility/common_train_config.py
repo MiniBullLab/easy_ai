@@ -12,9 +12,9 @@ class CommonTrainConfig(ImageTaskConfig):
         super().__init__()
         # train
         self.train_batch_size = 1
-        self.enable_mixed_precision = False
         self.max_epochs = 0
         self.base_lr = 0.0
+        self.amp_config = None
         self.optimizer_config = None
         self.lr_scheduler_config = None
 
@@ -27,6 +27,8 @@ class CommonTrainConfig(ImageTaskConfig):
         self.best_weights_path = None
         self.accumulated_batches = 1
         self.display = 1
+
+        self.clip_grad_config = None
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = None
@@ -51,6 +53,8 @@ class CommonTrainConfig(ImageTaskConfig):
             self.max_epochs = int(config_dict['max_epochs'])
         if config_dict.get('base_lr', None) is not None:
             self.base_lr = float(config_dict['base_lr'])
+        if config_dict.get('amp_config', None) is not None:
+            self.amp_config = config_dict['amp_config']
         if config_dict.get('optimizer_config', None) is not None:
             optimizer_dict = config_dict['optimizer_config']
             self.optimizer_config = {}
@@ -62,6 +66,9 @@ class CommonTrainConfig(ImageTaskConfig):
             self.accumulated_batches = int(config_dict['accumulated_batches'])
         if config_dict.get('display', None) is not None:
             self.display = int(config_dict['display'])
+
+        if config_dict.get('clip_grad_config', None) is not None:
+            self.clip_grad_config = config_dict['clip_grad_config']
 
         if config_dict.get('freeze_layer_type', None) is not None:
             self.freeze_layer_type = int(config_dict['freeze_layer_type'])
@@ -80,10 +87,17 @@ class CommonTrainConfig(ImageTaskConfig):
         config_dict['best_weights_name'] = self.best_weights_name
         config_dict['max_epochs'] = self.max_epochs
         config_dict['base_lr'] = self.base_lr
-        config_dict['optimizer_config'] = self.optimizer_config
-        config_dict['lr_scheduler_config'] = self.lr_scheduler_config
+        if self.amp_config is not None:
+            config_dict['amp_config'] = self.amp_config
+        if self.optimizer_config is not None:
+            config_dict['optimizer_config'] = self.optimizer_config
+        if self.lr_scheduler_config is not None:
+            config_dict['lr_scheduler_config'] = self.lr_scheduler_config
         config_dict['accumulated_batches'] = self.accumulated_batches
         config_dict['display'] = self.display
+
+        if self.clip_grad_config is not None:
+            config_dict['clip_grad_config'] = self.clip_grad_config
 
         config_dict['freeze_layer_type'] = self.freeze_layer_type
         config_dict['freeze_layer_name'] = self.freeze_layer_name

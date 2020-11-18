@@ -5,7 +5,6 @@
 import os.path
 import re
 import torch
-from torch import nn
 from collections import OrderedDict
 from easyai.torch_utility.torch_device_process import TorchDeviceProcess
 from easyai.model.utility.model_factory import ModelFactory
@@ -91,12 +90,23 @@ class TorchModelProcess():
             ))
         return self.best_value
 
-    def load_latest_optimizer(self, optimizer_path, optimizer):
+    def load_latest_optimizer(self, optimizer_path, optimizer, amp_opt=None):
         if os.path.exists(optimizer_path):
             checkpoint = torch.load(optimizer_path)
             optimizer.load_state_dict(checkpoint['optimizer'])
+            if amp_opt is not None:
+                amp_opt.load_state_dict(checkpoint['amp'])
         else:
             print("Loading optimizer %s fail" % optimizer_path)
+
+    def save_optimizer_state(self, optimizer_save_path,
+                             epoch, optimizer, amp_opt=None):
+        checkpoint = {'epoch': epoch,
+                      'optimizer': optimizer.state_dict()
+                      }
+        if amp_opt is not None:
+            checkpoint['amp'] = amp_opt.state_dict()
+        torch.save(checkpoint, optimizer_save_path)
 
     def load_latest_list_optimizer(self, optimizer_path, optimizer_list):
         if os.path.exists(optimizer_path):
@@ -109,15 +119,8 @@ class TorchModelProcess():
         else:
             print("Loading optimizer %s fail" % optimizer_path)
 
-    def save_optimizer_state(self, epoch, optimizer,
-                             optimizer_save_path):
-        checkpoint = {'epoch': epoch,
-                      'optimizer': optimizer.state_dict()
-                      }
-        torch.save(checkpoint, optimizer_save_path)
-
-    def save_list_optimizer_state(self, epoch, optimizer_list,
-                                  optimizer_save_path):
+    def save_list_optimizer_state(self, optimizer_save_path,
+                                  epoch, optimizer_list):
         checkpoint = {'epoch': epoch}
         for index, optimizer in enumerate(optimizer_list):
             checkpoint['optimizer_%d' % index] = optimizer.state_dict()
@@ -130,7 +133,7 @@ class TorchModelProcess():
         count = self.torchDeviceProcess.getCUDACount()
         if count > 1 and self.is_multi_gpu:
             print('Using ', count, ' GPUs')
-            model = nn.DataParallel(model)
+            model = torch.nn.DataParallel(model)
         model = model.to(self.torchDeviceProcess.device)
         return model
 
@@ -139,7 +142,7 @@ class TorchModelProcess():
         return model
 
     def model_clip_grad(self, model):
-        nn.utils.clip_grad_norm_(model.parameters(), max_norm=20, norm_type=2)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=20, norm_type=2)
 
     def convert_state_dict(self, state_dict):
         """Converts a state dict saved from a dataParallel module to normal

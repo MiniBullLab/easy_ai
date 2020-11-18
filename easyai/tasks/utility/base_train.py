@@ -55,6 +55,11 @@ class BaseTrain(BaseTask):
         self.is_sparse = is_sparse
         self.sparse_ratio = sparse_ratio
 
+    def print_grad_norm(self):
+        if self.model is not None:
+            for p in self.model.parameters():
+                print(p.grad.norm())
+
     @property
     def device(self):
         return self.torchModelProcess.get_device()
