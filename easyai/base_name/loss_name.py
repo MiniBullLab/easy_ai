@@ -9,8 +9,8 @@ class LossName():
     MeanSquaredErrorLoss = "mseLoss"
 
     # cls
-    CrossEntropy2d = "crossEntropy2d"
-    BinaryCrossEntropy2d = "bceLoss"
+    CrossEntropy2dLoss = "crossEntropy2dLoss"
+    BinaryCrossEntropy2dLoss = "bceLoss"
     LabelSmoothCE2dLoss = "LabelSmoothCE2dLoss"
     FocalLoss = "FocalLoss"
     FocalBinaryLoss = "FocalBinaryLoss"

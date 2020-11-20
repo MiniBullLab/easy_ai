@@ -12,7 +12,6 @@ from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
 from easyai.base_name.loss_name import LossName
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
 from easyai.model.base_block.utility.upsample_layer import Upsample
 from easyai.model.base_block.utility.utility_layer import RouteLayer
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
@@ -89,9 +88,10 @@ class DeepLabV3Plus(BaseClassifyModel):
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss_config = {'type', LossName.CrossEntropy2d,
-                       'reduction', 'mean',
-                       'ignore_index', 250}
+        loss_config = {'type': LossName.CrossEntropy2dLoss,
+                       'weight_type': 0,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
         loss = self.loss_factory.get_loss(loss_config)
         self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)

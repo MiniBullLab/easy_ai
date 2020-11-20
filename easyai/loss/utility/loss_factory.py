@@ -68,16 +68,20 @@ class LossFactory():
 
     def get_cls_loss(self, loss_config):
         input_name = loss_config['type'].strip()
-        if input_name == LossName.CrossEntropy2d:
+        if input_name == LossName.CrossEntropy2dLoss:
             loss_config['weight_type'] = int(loss_config.get("weight_type", 0))
-            loss_config['weight'] = loss_config.get("weight", None)
-            loss_config['reduce'] = loss_config.get("reduce", None)
+            weight_str = loss_config.get("weight", None)
+            if weight_str is not None:
+                weights = [float(x) for x in weight_str.split(',') if x]
+                loss_config['weight'] = weights
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
             loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
-        elif input_name == LossName.BinaryCrossEntropy2d:
+        elif input_name == LossName.BinaryCrossEntropy2dLoss:
             loss_config['weight_type'] = int(loss_config.get("weight_type", 0))
-            loss_config['weight'] = loss_config.get("weight", None)
-            loss_config['reduce'] = loss_config.get("reduce", None)
+            weight_str = loss_config.get("weight", None)
+            if weight_str is not None:
+                weights = [float(x) for x in weight_str.split(',') if x]
+                loss_config['weight'] = weights
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
         loss = build_from_cfg(loss_config, REGISTERED_CLS_LOSS)
         return loss
