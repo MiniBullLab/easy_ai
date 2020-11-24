@@ -68,9 +68,3 @@ class YoloLoss(BaseLoss):
         else:
             anchors = torch.cat([torch.zeros_like(self.anchor_sizes), self.anchor_sizes], 1)
         return anchors
-
-    def print_info(self):
-        info_str = ''
-        for key, value in self.info.items():
-            info_str += "%s: %.5f|" % (key, value)
-        print('%s' % info_str)

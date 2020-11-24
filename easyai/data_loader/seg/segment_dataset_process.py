@@ -15,7 +15,7 @@ class SegmentDatasetProcess(TaskDataSetProcess):
 
     def resize_dataset(self, src_image, image_size, label):
         src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
-        image = self.resize_image(src_size, image_size)
+        image = self.resize_image(src_image, image_size)
         target = self.resize_lable(label, src_size, image_size)
         return image, target
 

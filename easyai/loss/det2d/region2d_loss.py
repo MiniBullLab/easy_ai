@@ -28,11 +28,11 @@ class Region2dLoss(YoloLoss):
 
         self.anchor_sizes = self.anchor_sizes / float(self.reduction)
 
-        self.mse = nn.MSELoss(size_average=False)
-        self.ce = nn.CrossEntropyLoss(size_average=False)
+        self.mse = nn.MSELoss(reduction='mean')
+        self.ce = nn.CrossEntropyLoss(reduction='mean')
 
-        self.info = {'object_count': 0, 'average_iou': 0, 'recall50': 0, 'recall75': 0,
-                     'coord_loss': 0.0, 'conf_loss': 0.0, 'cls_loss': 0.0}
+        self.loss_info = {'object_count': 0, 'average_iou': 0, 'recall50': 0, 'recall75': 0,
+                          'coord_loss': 0.0, 'conf_loss': 0.0, 'cls_loss': 0.0}
 
     def build_targets(self, pred_boxes, gt_targets, height, width, device):
         batch_size = len(gt_targets)
@@ -105,10 +105,10 @@ class Region2dLoss(YoloLoss):
                 tcls[b][best_n][gj * width + gi] = anno[0]
         # informaion
         if object_count > 0:
-            self.info['object_count'] = object_count
-            self.info['average_iou'] = iou_sum / object_count
-            self.info['recall50'] = recall50 / object_count
-            self.info['recall75'] = recall75 / object_count
+            self.loss_info['object_count'] = object_count
+            self.loss_info['average_iou'] = iou_sum / object_count
+            self.loss_info['recall50'] = recall50 / object_count
+            self.loss_info['recall75'] = recall75 / object_count
 
         return coord_mask, conf_mask, object_mask, no_object_mask, \
                cls_mask, tcoord, tconf, tcls
@@ -161,10 +161,7 @@ class Region2dLoss(YoloLoss):
             loss_cls = self.class_weight * self.ce(cls, tcls)
             loss = loss_coord + loss_conf + loss_cls
 
-            if self.info['object_count'] > 0:
-                self.info['coord_loss'] = loss_coord.item()
-                self.info['conf_loss'] = loss_conf.item()
-                self.info['cls_loss'] = loss_cls.item()
-            self.print_info()
-
+            self.loss_info['coord_loss'] = loss_coord.item()
+            self.loss_info['conf_loss'] = loss_conf.item()
+            self.loss_info['cls_loss'] = loss_cls.item()
             return loss

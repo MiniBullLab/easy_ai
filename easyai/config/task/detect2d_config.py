@@ -69,16 +69,10 @@ class Detect2dConfig(CommonTrainConfig):
     def get_data_default_value(self):
         self.image_size = (416, 416)  # W * H
         self.data_channel = 3
-        self.detect2d_class = ("bike",
-                               "bus",
-                               "car",
-                               "motor",
-                               "person",
-                               "rider",
-                               "traffic light",
-                               "traffic sign",
-                               "train",
-                               "truck")
+        self.detect2d_class = ("orange",
+                               "apple",
+                               "pear",
+                               "potato")
         self.confidence_th = 0.24
         self.nms_th = 0.45
         self.post_prcoess_type = 0
@@ -99,7 +93,7 @@ class Detect2dConfig(CommonTrainConfig):
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False
-        self.train_batch_size = 1
+        self.train_batch_size = 4
         self.is_save_epoch_model = False
         self.latest_weights_name = 'det2d_latest.pt'
         self.best_weights_name = 'det2d_best.pt'

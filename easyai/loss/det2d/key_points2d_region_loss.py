@@ -26,8 +26,8 @@ class KeyPoints2dRegionLoss(YoloLoss):
         self.mse_loss = nn.MSELoss()
         self.ce_loss = nn.CrossEntropyLoss()
 
-        self.info = {'num_ground_truth': 0, 'num_det_correct': 0,
-                     'x_loss': 0.0, 'y_loss': 0.0, 'conf_loss': 0.0, 'cls_loss': 0.0}
+        self.loss_info = {'num_ground_truth': 0, 'num_det_correct': 0,
+                          'x_loss': 0.0, 'y_loss': 0.0, 'conf_loss': 0.0, 'cls_loss': 0.0}
 
     def normaliza_points(self, pred_corners, batch_size, H, W):
         for index in range(batch_size):
@@ -198,12 +198,12 @@ class KeyPoints2dRegionLoss(YoloLoss):
 
             loss = loss_x + loss_y + loss_conf + loss_cls
 
-            self.info['num_ground_truth'] = num_ground_truth
-            self.info['num_det_correct'] = num_det_correct
-            self.info['x_loss'] = loss_x.item()
-            self.info['y_loss'] = loss_y.item()
-            self.info['conf_loss'] = loss_conf.item()
-            self.info['cls_loss'] = loss_cls.item()
-            self.print_info()
+            self.loss_info['num_ground_truth'] = num_ground_truth
+            self.loss_info['num_det_correct'] = num_det_correct
+            self.loss_info['x_loss'] = loss_x.item()
+            self.loss_info['y_loss'] = loss_y.item()
+            self.loss_info['conf_loss'] = loss_conf.item()
+            self.loss_info['cls_loss'] = loss_cls.item()
+            self.print_loss_info()
             return loss
 

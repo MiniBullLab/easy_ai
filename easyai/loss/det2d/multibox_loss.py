@@ -27,7 +27,7 @@ class MultiBoxLoss(BaseLoss):
         self.ssd_priorbox = SSDPriorBoxGenerator()
         self.gt_process = Det2dGroundTruthProcess()
 
-        self.info = {'loc_loss': 0.0, 'cls_loss': 0.0}
+        self.loss_info = {'loc_loss': 0.0, 'cls_loss': 0.0}
 
     def encode(self, gt_boxes, gt_labels, prior_boxes):
         cxcy = (gt_boxes[:, :2] + gt_boxes[:, 2:]) / 2 - prior_boxes[:, :2]  # [8732,2]
@@ -180,7 +180,7 @@ class MultiBoxLoss(BaseLoss):
                 loc_loss = loc_loss / num_matched_boxes
                 cls_loss = cls_loss / num_matched_boxes
 
-            self.info['loc_loss'] = float(loc_loss.item())
-            self.info['cls_loss'] = float(cls_loss.item())
+            self.loss_info['loc_loss'] = float(loc_loss.item())
+            self.loss_info['cls_loss'] = float(cls_loss.item())
 
             return loc_loss + cls_loss

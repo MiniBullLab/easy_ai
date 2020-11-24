@@ -31,7 +31,7 @@ class YoloV3Det2d(BaseDetectionModel):
                             "class_number": class_number,
                             "anchor_mask": "6,7,8",
                             "reduction": 32,
-                            "coord_weight": 1.0,
+                            "coord_weight": 3.0,
                             "noobject_weight": 1.0,
                             "object_weight": 1.0,
                             "class_weight": 1.0,

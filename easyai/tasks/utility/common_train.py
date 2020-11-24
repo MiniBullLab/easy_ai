@@ -32,7 +32,8 @@ class CommonTrain(BaseTrain):
                                                             self.train_task_config.amp_config['opt_level'],
                                                             keep_batchnorm_fp32=
                                                             self.train_task_config.amp_config[
-                                                            'keep_batchnorm_fp32'])
+                                                            'keep_batchnorm_fp32'],
+                                                            verbosity=0)
                 self.torchModelProcess.load_latest_optimizer(self.train_task_config.latest_optimizer_path,
                                                              self.optimizer, amp)
             else:

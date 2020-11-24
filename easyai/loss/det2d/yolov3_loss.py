@@ -6,7 +6,6 @@
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.yolo_loss import YoloLoss
-from easyai.loss.cls.label_smoothing_ce2d_loss import LabelSmoothCE2dLoss
 from easyai.torch_utility.box_utility import torch_rect_box_ious
 import math
 from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
@@ -19,42 +18,27 @@ __all__ = ['YoloV3Loss']
 class YoloV3Loss(YoloLoss):
 
     def __init__(self, class_number, anchor_sizes, anchor_mask, reduction,
-                 coord_weight=1.0, noobject_weight=1.0,
+                 coord_weight=3.0, noobject_weight=1.0,
                  object_weight=1.0, class_weight=1.0, iou_threshold=0.5):
         super().__init__(LossName.YoloV3Loss, class_number, anchor_sizes, anchor_mask)
         self.reduction = reduction
-        self.coord_xy_weight = 2.0 * 1.0 * coord_weight
-        self.coord_wh_weight = 2.0 * 1.5 * coord_weight
-        self.noobject_weight = 1.0 * noobject_weight
-        self.object_weight = 1.0 * object_weight
-        self.class_weight = 1.0 * class_weight
+        self.coord_xy_weight = coord_weight
+        self.coord_wh_weight = coord_weight
+        self.noobject_weight = noobject_weight
+        self.object_weight = object_weight
+        self.class_weight = class_weight
         self.iou_threshold = iou_threshold
-
-        self.smoothLabel = False
-        self.focalLoss = False
 
         self.anchor_sizes = self.anchor_sizes / float(self.reduction)
 
         # criterion
-        self.mse_loss = nn.MSELoss(reduce=False)
-        self.bce_loss = nn.BCELoss(reduce=False)
-        self.smooth_l1_loss = nn.SmoothL1Loss(reduce=False)
-        if self.smoothLabel:
-            self.ce_loss = LabelSmoothCE2dLoss(class_number, reduction='sum')
-        else:
-            self.ce_loss = nn.CrossEntropyLoss(size_average=False)
+        self.bce_loss = nn.BCELoss(reduction='mean')
+        self.ce_loss = nn.CrossEntropyLoss(reduction='mean')
 
-        self.info = {'object_count': 0, 'object_current': 0,
-                     'average_iou': 0, 'recall50': 0, 'recall75': 0,
-                     'class': 0.0, 'obj': 0.0, 'no_obj': 0.0,
-                     'coord_xy': 0.0, 'coord_wh': 0.0}
-
-    def init_loss(self, device):
-        # criteria
-        self.mse_loss = self.mse_loss.to(device)
-        self.bce_loss = self.bce_loss.to(device)
-        self.smooth_l1_loss = self.smooth_l1_loss.to(device)
-        self.ce_loss = self.ce_loss.to(device)
+        self.loss_info = {'object_count': 0, 'object_current': 0,
+                          'average_iou': 0, 'recall50': 0, 'recall75': 0,
+                          'cls_loss': 0.0, 'obj_loss': 0.0, 'no_obj_loss': 0.0,
+                          'coord_xy_loss': 0.0, 'coord_wh_loss': 0.0}
 
     def build_targets(self, pred_boxes, gt_targets, height, width, device):
         """ Compare prediction boxes and ground truths, convert ground truths to network output tensors """
@@ -64,9 +48,9 @@ class YoloV3Loss(YoloLoss):
 
         # Tensors
         object_mask = torch.zeros(batch_size, self.anchor_count, nPixels,
-                                  requires_grad=False, device=device)
+                                  requires_grad=False, dtype=torch.uint8, device=device)
         no_object_mask = torch.ones(batch_size, self.anchor_count, nPixels,
-                                    requires_grad=False, device=device)
+                                    requires_grad=False, dtype=torch.uint8, device=device)
         coord_mask = torch.zeros(batch_size, self.anchor_count, nPixels, 1,
                                  requires_grad=False, device=device)
         cls_mask = torch.zeros(batch_size, self.anchor_count, nPixels,
@@ -133,11 +117,11 @@ class YoloV3Loss(YoloLoss):
                 tcls[b][anchor_index][gj * width + gi] = anno[0]
         # informaion
         if object_current > 0:
-            self.info['object_count'] = object_count
-            self.info['object_current'] = object_current
-            self.info['average_iou'] = iou_sum / object_current
-            self.info['recall50'] = recall50 / object_current
-            self.info['recall75'] = recall75 / object_current
+            self.loss_info['object_count'] = object_count
+            self.loss_info['object_current'] = object_current
+            self.loss_info['average_iou'] = iou_sum / object_current
+            self.loss_info['recall50'] = recall50 / object_current
+            self.loss_info['recall75'] = recall75 / object_current
 
         return coord_mask, object_mask, no_object_mask, \
                cls_mask, tcoord, tconf, tcls
@@ -177,24 +161,36 @@ class YoloV3Loss(YoloLoss):
 
             # coord
             # 0 = 1 = 2 = 3, only need first two element
+            mask_count = object_mask.sum().item()
             coord = coord.transpose(2, 3).contiguous()
             coord_mask = coord_mask.expand_as(tcoord)[:, :, :, :2]
             coord_center, tcoord_center = coord[:, :, :, :2], tcoord[:, :, :, :2]
             coord_wh, tcoord_wh = coord[:, :, :, 2:], tcoord[:, :, :, 2:]
-            conf = conf.view(batch_size, self.anchor_count, height * width)
 
-            self.init_loss(device)
+            conf = conf.view(batch_size, self.anchor_count, height * width)
+            pos_conf = conf[object_mask].view(-1, 1)
+            pos_tconf = tconf[object_mask].view(-1, 1)
+            neg_conf = conf[no_object_mask].view(-1, 1)
+            neg_tconf = tconf[no_object_mask].view(-1, 1)
 
             # Compute losses
             # x,y BCELoss; w,h SmoothL1Loss, conf BCELoss, class CELoss
-            loss_coord_center = self.coord_xy_weight * \
-                                (coord_mask * self.bce_loss(coord_center, tcoord_center)).sum()
-            loss_coord_wh = self.coord_wh_weight * \
-                            (coord_mask * self.smooth_l1_loss(coord_wh, tcoord_wh)).sum()
-            loss_coord = loss_coord_center + loss_coord_wh
+            if mask_count > 0:
+                xy_bce_loss = F.binary_cross_entropy(coord_center, tcoord_center, reduction='none')
+                loss_coord_center = (coord_mask * xy_bce_loss).sum() / mask_count
+                wh_l1_loss = F.smooth_l1_loss(coord_wh, tcoord_wh, reduction='none')
+                loss_coord_wh = (coord_mask * wh_l1_loss).sum() / mask_count
 
-            loss_conf_pos = self.object_weight * (object_mask * self.bce_loss(conf, tconf)).sum()
-            loss_conf_neg = self.noobject_weight * (no_object_mask * self.bce_loss(conf, tconf)).sum()
+                loss_conf_pos = self.object_weight * self.bce_loss(pos_conf, pos_tconf)
+            else:
+                loss_coord_center = torch.tensor(0.0, device=device)
+                loss_coord_wh = torch.tensor(0.0, device=device)
+                loss_conf_pos = torch.tensor(0.0, device=device)
+
+            loss_coord = self.coord_xy_weight * loss_coord_center + \
+                         self.coord_wh_weight * loss_coord_wh
+
+            loss_conf_neg = self.noobject_weight * self.bce_loss(neg_conf, neg_tconf)
             loss_conf = loss_conf_pos + loss_conf_neg
 
             if self.class_number > 1 and cls_mask.sum().item() > 0:
@@ -204,21 +200,18 @@ class YoloV3Loss(YoloLoss):
                 cls = cls[cls_mask].view(-1, self.class_number)
 
                 loss_cls = self.class_weight * self.ce_loss(cls, tcls)
-                cls_softmax = F.softmax(cls, 1)
-                t_ind = torch.unsqueeze(tcls, 1).expand_as(cls_softmax)
-                class_prob = torch.gather(cls_softmax, 1, t_ind)[:, 0]
+                # cls_softmax = F.softmax(cls, 1)
+                # t_ind = torch.unsqueeze(tcls, 1).expand_as(cls_softmax)
+                # class_prob = torch.gather(cls_softmax, 1, t_ind)[:, 0]
             else:
+                # class_prob = torch.tensor(0.0, device=device)
                 loss_cls = torch.tensor(0.0, device=device)
-                class_prob = torch.tensor(0.0, device=device)
 
-            if self.info['object_count'] > 0:
-                self.info['class'] = class_prob.sum().item() / self.info['object_current']
-                self.info['obj'] = (object_mask * conf).sum().item() / self.info['object_current']
-                self.info['no_obj'] = (no_object_mask * conf).sum().item() / \
-                                      (batch_size * self.anchor_count * height * width)
-                self.info['coord_xy'] = (coord_mask * self.mse_loss(coord_center, tcoord_center)).sum().item() / self.info['object_current']
-                self.info['coord_wh'] = (coord_mask * self.mse_loss(coord_wh, tcoord_wh)).sum().item() / self.info['object_current']
-            self.print_info()
+            self.loss_info['cls_loss'] = loss_cls.item()
+            self.loss_info['obj_loss'] = loss_conf_pos.item()
+            self.loss_info['no_obj_loss'] = loss_conf_neg.item()
+            self.loss_info['coord_xy_loss'] = loss_coord_center.item()
+            self.loss_info['coord_wh_loss'] = loss_coord_wh.item()
 
             all_loss = loss_coord + loss_conf + loss_cls
             return all_loss
