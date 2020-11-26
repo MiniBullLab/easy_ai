@@ -14,6 +14,8 @@ class LossName():
     LabelSmoothCE2dLoss = "LabelSmoothCE2dLoss"
     FocalLoss = "FocalLoss"
     FocalBinaryLoss = "FocalBinaryLoss"
+    OhemCrossEntropy2dLoss = "OhemCE2dLoss"
+    OhemBinaryCrossEntropy2dLoss = "OhemBCELoss"
 
     # det2d
     Region2dLoss = "Region2dLoss"
@@ -25,7 +27,6 @@ class LossName():
 
     # seg
     EncNetLoss = "encNetLoss"
-    OhemCrossEntropy2d = "OhemCrossEntropy2d"
 
     # gan
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"

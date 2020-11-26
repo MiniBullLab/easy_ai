@@ -83,6 +83,14 @@ class LossFactory():
                 weights = [float(x) for x in weight_str.split(',') if x]
                 loss_config['weight'] = weights
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
+        elif input_name == LossName.OhemCrossEntropy2dLoss:
+            loss_config['threshold'] = float(loss_config.get("ignore_index", 0.7))
+            loss_config['min_keep'] = int(loss_config.get("min_keep", int(32 // 1 * 640 * 352 // 16)))
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
+        elif input_name == LossName.OhemBinaryCrossEntropy2dLoss:
+            loss_config['threshold'] = float(loss_config.get("ignore_index", 0.7))
+            loss_config['min_keep'] = int(loss_config.get("min_keep", int(32 // 1 * 640 * 352 // 16)))
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_CLS_LOSS)
         return loss
 
@@ -140,6 +148,9 @@ class LossFactory():
         return loss
 
     def get_seg_loss(self, loss_config):
+        input_name = loss_config['type'].strip()
+        if input_name == LossName.EncNetLoss:
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
         return loss
 

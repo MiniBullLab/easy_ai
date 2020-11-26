@@ -10,7 +10,8 @@ class OhemCrossEntropy2d(BaseLoss):
         self.ignore_index = ignore_index
         self.thresh = float(thresh)
         self.min_kept = int(min_kept)
-        self.loss_function = torch.nn.CrossEntropyLoss(ignore_index=ignore_index)
+        self.loss_function = torch.nn.CrossEntropyLoss(reduction='mean',
+                                                       ignore_index=ignore_index)
 
     def compute_ohem_loss(self, input_data, target):
         n, c, h, w = input_data.size()
