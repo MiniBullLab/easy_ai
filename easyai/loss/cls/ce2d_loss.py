@@ -88,7 +88,7 @@ class BinaryCrossEntropy2dLoss(BaseLoss):
                      self.weight[1] * target.eq(1).type(loss.dtype) * loss
         elif self.weight_type == 2:
             labels = target.data.cpu().numpy()
-            weights = numpy_compute_weight(labels)
+            weights = numpy_compute_weight(labels, self.ignore_index)
             result = weights[0] * target.eq(0).type(loss.dtype) * loss + \
                      weights[1] * target.eq(1).type(loss.dtype) * loss
         else:

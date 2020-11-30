@@ -83,6 +83,7 @@ class LossFactory():
                 weights = [float(x) for x in weight_str.split(',') if x]
                 loss_config['weight'] = weights
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         elif input_name == LossName.OhemCrossEntropy2dLoss:
             loss_config['threshold'] = float(loss_config.get("ignore_index", 0.7))
             loss_config['min_keep'] = int(loss_config.get("min_keep", int(32 // 1 * 640 * 352 // 16)))
@@ -150,6 +151,24 @@ class LossFactory():
     def get_seg_loss(self, loss_config):
         input_name = loss_config['type'].strip()
         if input_name == LossName.EncNetLoss:
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
+        elif input_name == LossName.MixCrossEntropy2dLoss:
+            loss_config['aux_weight'] = float(loss_config.get("aux_weight", 0.2))
+            loss_config['weight_type'] = int(loss_config.get("weight_type", 0))
+            weight_str = loss_config.get("weight", None)
+            if weight_str is not None:
+                weights = [float(x) for x in weight_str.split(',') if x]
+                loss_config['weight'] = weights
+            loss_config['reduction'] = loss_config.get("reduction", 'mean')
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
+        elif input_name == LossName.MixBinaryCrossEntropy2dLoss:
+            loss_config['aux_weight'] = float(loss_config.get("aux_weight", 0.2))
+            loss_config['weight_type'] = int(loss_config.get("weight_type", 0))
+            weight_str = loss_config.get("weight", None)
+            if weight_str is not None:
+                weights = [float(x) for x in weight_str.split(',') if x]
+                loss_config['weight'] = weights
+            loss_config['reduction'] = loss_config.get("reduction", 'mean')
             loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
         return loss
