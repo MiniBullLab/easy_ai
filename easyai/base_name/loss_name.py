@@ -27,6 +27,8 @@ class LossName():
 
     # seg
     EncNetLoss = "encNetLoss"
+    MixCrossEntropy2dLoss = "MixCE2dLoss"
+    MixBinaryCrossEntropy2dLoss = "MixBCELoss"
 
     # gan
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"
