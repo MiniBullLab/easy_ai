@@ -7,8 +7,10 @@ from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.gan_train import GanTrain
 from easyai.base_name.task_name import TaskName
+from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 
+@REGISTERED_TRAIN_TASK.register_module(TaskName.GenerateImage)
 class GenerateImageTrain(GanTrain):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):

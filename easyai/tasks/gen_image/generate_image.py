@@ -10,8 +10,10 @@ from easyai.tasks.gen_image.generate_image_result_process import GenerateImageRe
 from easyai.helper.imageProcess import ImageProcess
 from easyai.visualization.task_show.image_show import ImageShow
 from easyai.base_name.task_name import TaskName
+from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 
+@REGISTERED_INFERENCE_TASK.register_module(TaskName.GenerateImage)
 class GenerateImage(BaseInference):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):

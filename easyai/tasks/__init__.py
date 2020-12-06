@@ -5,3 +5,5 @@ from . import key_points2d
 from . import multi_task
 from . import seg
 from . import sr
+from . import gen_image
+
