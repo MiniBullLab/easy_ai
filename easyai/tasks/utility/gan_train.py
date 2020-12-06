@@ -34,7 +34,7 @@ class GanTrain(BaseTrain):
             for g_model in self.model.g_model_list:
                 optimizer = self.optimizer_process.get_optimizer(g_optimizer_args,
                                                                  g_model)
-                self.d_optimizer_list.append(optimizer)
+                self.g_optimizer_list.append(optimizer)
         else:
             print("model is not create!")
 

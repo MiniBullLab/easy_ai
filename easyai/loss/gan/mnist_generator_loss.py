@@ -17,7 +17,7 @@ class MNISTGeneratorLoss(BaseLoss):
     def forward(self, outputs, targets=None):
         if targets is not None:
             real_labels = torch.ones_like(targets, dtype=torch.float).to(targets.device)
-            loss = self.loss_function(outputs, real_labels)
+            loss = self.loss_function(outputs.to(targets.device), real_labels)
         else:
             loss = outputs
         return loss

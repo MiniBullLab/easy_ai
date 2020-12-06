@@ -16,7 +16,7 @@ class GenerateImageTrain(GanTrain):
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.GenerateImage)
 
-        self.model_args['image_size'] = len(self.train_task_config.image_size)
+        self.model_args['image_size'] = self.train_task_config.image_size
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
         self.best_score = 0
