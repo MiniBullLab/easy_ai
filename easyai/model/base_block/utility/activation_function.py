@@ -73,6 +73,8 @@ class ActivationFunction():
             return nn.LeakyReLU(0.1, inplace=inplace)
         elif name == ActivationType.Sigmoid:
             return nn.Sigmoid()
+        elif name == ActivationType.Tanh:
+            return nn.Tanh()
         elif name == ActivationType.Swish:
             return SwishActivation()
         elif name == ActivationType.HardSigmoid:

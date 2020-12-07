@@ -11,6 +11,7 @@ class ActivationType():
     ReLU6 = "relu6"
     LeakyReLU = "leaky"
     Sigmoid = "sigmoid"
+    Tanh = "tanh"
 
     Swish = "swish"
     Mish = "mish"
@@ -64,6 +65,8 @@ class BlockType():
 
     InputData = "inputData"
     BaseNet = "baseNet"
+    Discriminator = "ganDNet"
+    Generator = "ganGNet"
 
     ConvBNBlock1d = "convBN1d"
     ConvBNActivationBlock1d = "convBNActivationBlock1d"
@@ -75,6 +78,7 @@ class BlockType():
     ConvActivationBlock = "convActivationBlock"
 
     FcBNActivationBlock = "fcBNActivationBlock"
+    FcActivationBlock = "fcActivationBlock"
 
     InceptionBlock = "inceptionBlock"
 

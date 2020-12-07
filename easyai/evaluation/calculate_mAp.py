@@ -29,7 +29,6 @@ class CalculateMeanAp():
                 detect_boxes = self.get_detect_boxes(file_path)
                 recall, precision, ap = self.calculate_ap(gt_boxes, detect_boxes, 0.5)
                 aps += [ap]
-        self.print_evaluation(aps)
         return np.mean(aps), aps
 
     def result_eval(self, result_path, val_path):

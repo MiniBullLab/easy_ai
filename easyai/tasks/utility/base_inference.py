@@ -41,8 +41,8 @@ class BaseInference(BaseTask):
         pass
 
     def load_weights(self, weights_path):
-        self.torchModelProcess.loadLatestModelWeight(weights_path, self.model)
-        self.model = self.torchModelProcess.modelTestInit(self.model)
+        self.torchModelProcess.load_latest_model(weights_path, self.model)
+        self.model = self.torchModelProcess.model_test_init(self.model)
         self.model.eval()
 
     def get_image_data_lodaer(self, input_path):
@@ -68,3 +68,7 @@ class BaseInference(BaseTask):
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]
         self.src_size = (shape[1], shape[0])
+
+    @property
+    def device(self):
+        return self.torchModelProcess.get_device()

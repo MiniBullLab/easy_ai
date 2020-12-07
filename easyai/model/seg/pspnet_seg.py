@@ -11,14 +11,12 @@ from easyai.base_name.model_name import ModelName
 from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
+from easyai.base_name.loss_name import LossName
 from easyai.model.base_block.utility.upsample_layer import Upsample
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.base_block.seg.pspnet_block import PyramidPooling
 from easyai.model.base_block.seg.encnet_block import EncNetBlockName
 from easyai.model.base_block.seg.encnet_block import JPUBlock
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
@@ -35,13 +33,12 @@ class PSPNetSeg(BaseClassifyModel):
 
         self.model_args['type'] = BackboneName.ResNet101
 
-        self.factory = BackboneFactory()
         self.create_block_list()
 
     def create_block_list(self):
         self.clear_list()
 
-        backbone = self.factory.get_backbone_model(self.model_args)
+        backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
@@ -75,12 +72,16 @@ class PSPNetSeg(BaseClassifyModel):
         layer = Upsample(scale_factor=scale_factor, mode='bilinear')
         self.add_block_list(layer.get_name(), layer, self.block_out_channels[-1])
 
-        self.create_loss()
+        self.create_loss_list()
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = CrossEntropy2d(ignore_index=250)
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type': LossName.CrossEntropy2dLoss,
+                       'weight_type': 0,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def forward(self, x):
@@ -95,7 +96,7 @@ class PSPNetSeg(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif EncNetBlockName.JPUBlock in key:
                 x = block(layer_outputs, base_outputs)
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

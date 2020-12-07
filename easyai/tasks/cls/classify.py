@@ -16,8 +16,7 @@ class Classify(BaseInference):
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.Classify_Task)
         self.model_args['class_number'] = len(self.task_config.class_name)
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.getDevice()
+        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
         self.result_show = ClassifyShow()
 
     def process(self, input_path, is_show=False):
@@ -25,7 +24,7 @@ class Classify(BaseInference):
         dataloader = self.get_image_data_lodaer(input_path)
         for index, (file_path, src_image, image) in enumerate(dataloader):
             self.timer.tic()
-            prediction = self.infer(image)
+            prediction, _ = self.infer(image)
             result = self.postprocess(prediction)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
@@ -45,7 +44,7 @@ class Classify(BaseInference):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list)
-        return output
+        return output, output_list
 
     def postprocess(self, result):
         class_indices = torch.argmax(result, dim=1)

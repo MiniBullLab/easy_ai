@@ -4,8 +4,8 @@
 
 import os
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
 from easyai.model.backbone.utility.backbone_factory import BackboneFactory
+from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model.utility.create_model_list import CreateModuleList
 from easyai.model.utility.base_model import *
 
@@ -15,6 +15,7 @@ class MyModel(BaseModel):
     def __init__(self, model_defines, cfg_dir, default_args=None):
         super().__init__(None)
         self.backbone_factory = BackboneFactory()
+        self.loss_factory = LossFactory()
         self.createTaskList = CreateModuleList()
         self.model_defines = model_defines
         self.cfg_dir = cfg_dir
@@ -35,26 +36,14 @@ class MyModel(BaseModel):
             for index, (key, block) in enumerate(task_block_dict.items()):
                 self.add_block_list(key, block, task_out_channels[index], flag=1)
 
-            self.create_loss(input_dict=task_block_dict)
+            self.create_loss_list(input_dict=task_block_dict)
         else:
             print("create backbone error!")
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
         for key, block in input_dict.items():
-            if LossType.CrossEntropy2d in key:
-                self.lossList.append(block)
-            elif LossType.BinaryCrossEntropy2d in key:
-                self.lossList.append(block)
-            elif LossType.OhemCrossEntropy2d in key:
-                self.lossList.append(block)
-            elif LossType.Region2dLoss in key:
-                self.lossList.append(block)
-            elif LossType.YoloV3Loss in key:
-                self.lossList.append(block)
-            elif LossType.MultiBoxLoss in key:
-                self.lossList.append(block)
-            elif LossType.KeyPoints2dRegionLoss in key:
+            if self.loss_factory.has_loss(key):
                 self.lossList.append(block)
 
     def creat_backbone(self):
@@ -103,20 +92,8 @@ class MyModel(BaseModel):
             elif BlockType.Detection2dBlock in key:
                 x = block(x)
                 multi_output.extend(x)
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
-            elif LossType.BinaryCrossEntropy2d in key:
-                output.append(x)
-            elif LossType.OhemCrossEntropy2d in key:
-                output.append(x)
-            elif LossType.KeyPoints2dRegionLoss in key:
-                output.append(x)
-            elif LossType.Region2dLoss in key:
-                output.append(x)
-            elif LossType.YoloV3Loss in key:
-                output.append(x)
-            elif LossType.MultiBoxLoss in key:
-                output.extend(multi_output)
             else:
                 x = block(x)
             # print(key, x.shape)

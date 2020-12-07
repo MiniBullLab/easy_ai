@@ -6,16 +6,17 @@ import numpy as np
 from sklearn.utils import compute_class_weight
 
 
-def numpy_compute_weight(labels):
+def numpy_compute_weight(labels, ignore_index=250):
     # compute class weights
     cls_weight_list = []
     batch_size = labels.shape[0]
     for i in range(batch_size):
         y = labels[i].reshape(-1)
         lb = np.unique(y)
-        cls_weight = compute_class_weight('balanced', lb, y)
+        classes = np.setdiff1d(lb, np.array([ignore_index]))
+        cls_weight = compute_class_weight('balanced', classes, y)
         cls_weight_list.append(cls_weight)
-    del y
+        del y
     cls_weight_list = np.asarray(cls_weight_list)
     result = np.sum(cls_weight_list, axis=0) / batch_size
     # print(result)

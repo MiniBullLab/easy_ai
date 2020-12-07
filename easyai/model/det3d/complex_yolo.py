@@ -8,7 +8,6 @@ from easyai.base_name.block_name import LayerType, BlockType
 from easyai.model.base_block.utility.utility_layer import RouteLayer
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.base_block.cls.darknet_block import ReorgBlock
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_det_model import *
 
 
@@ -23,14 +22,13 @@ class ComplexYOLO(BaseDetectionModel):
 
         self.model_args['type'] = backbone_path
 
-        self.factory = BackboneFactory()
         self.create_block_list()
 
     def create_block_list(self):
         self.block_out_channels = []
         self.index = 0
 
-        basic_model = self.factory.get_backbone_model(self.model_args)
+        basic_model = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = basic_model.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, basic_model, base_out_channels[-1])
 
@@ -77,7 +75,7 @@ class ComplexYOLO(BaseDetectionModel):
                           bias=True)
         self.add_block_list(LayerType.Convolutional, conv4, output_channel)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
 
     def forward(self, x):

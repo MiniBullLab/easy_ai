@@ -19,8 +19,7 @@ class KeyPoints2d(BaseInference):
         self.result_process = KeyPoints2dResultProcess(self.task_config.points_count)
         self.result_show = KeyPointsShow()
 
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.getDevice()
+        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
     def process(self, input_path, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)

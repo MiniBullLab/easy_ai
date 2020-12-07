@@ -9,14 +9,12 @@ from easyai.base_name.model_name import ModelName
 from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
+from easyai.base_name.loss_name import LossName
 from easyai.model.base_block.utility.upsample_layer import Upsample
 from easyai.model.base_block.utility.utility_layer import RouteLayer
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.base_block.seg.icnet_block import ICNetBlockName
 from easyai.model.base_block.seg.icnet_block import InputDownSample, CascadeFeatureFusion
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 
@@ -30,7 +28,6 @@ class ICNet(BaseClassifyModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
         self.model_args['type'] = BackboneName.ResNet50
-        self.factory = BackboneFactory()
         self.create_block_list()
 
     def create_block_list(self):
@@ -88,7 +85,7 @@ class ICNet(BaseClassifyModel):
         self.add_block_list(layer2.get_name(), layer2, output_channel)
 
         self.create_head()
-        self.create_loss()
+        self.create_loss_list()
 
     def create_head(self):
         cff_24 = CascadeFeatureFusion(2048, 512, 128, 7, bn_name=self.bn_name,
@@ -108,10 +105,14 @@ class ICNet(BaseClassifyModel):
         up2 = Upsample(scale_factor=4, mode='bilinear')
         self.add_block_list(up2.get_name(), up2, self.class_number)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = CrossEntropy2d(ignore_index=250)
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type': LossName.CrossEntropy2dLoss,
+                       'weight_type': 0,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def forward(self, x):
@@ -133,7 +134,7 @@ class ICNet(BaseClassifyModel):
                 elif ICNetBlockName.CascadeFeatureFusion in key:
                     x = block(layer_outputs[-1], layer_outputs[index])
                     index -= 1
-                elif LossType.CrossEntropy2d in key:
+                elif self.loss_factory.has_loss(key):
                     output.append(x)
                 else:
                     x = block(x)

@@ -3,6 +3,7 @@
 # Author:
 
 import os
+import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.calculate_mAp import CalculateMeanAp
 from easyai.data_loader.det2d.det2d_val_dataloader import get_detection_val_dataloader
@@ -34,13 +35,14 @@ class Detection2dTest(BaseTest):
 
             self.detect_inference.set_src_size(src_image.numpy()[0])
 
-            result = self.detect_inference.infer(input_image, self.threshold_det)
+            result, output_list = self.detect_inference.infer(input_image, self.threshold_det)
             detection_objects = self.detect_inference.postprocess(result)
 
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
             self.detect_inference.save_result(image_path[0], detection_objects, 1)
 
         mAP, aps = self.evaluator.eval(self.test_task_config.save_result_dir, val_path)
+        self.evaluator.print_evaluation(aps)
         return mAP, aps
 
     def save_test_value(self, epoch, mAP, aps):
@@ -51,3 +53,27 @@ class Detection2dTest(BaseTest):
             for i, ap in enumerate(aps):
                 file.write(self.test_task_config.detect2d_class[i] + ": {:.3f} ".format(ap))
             file.write("\n")
+
+    def compute_loss(self, output_list, targets):
+        loss = 0
+        loss_count = len(self.model.lossList)
+        output_count = len(output_list)
+        targets = targets.to(self.device)
+        with torch.no_grad():
+            if loss_count == 1 and output_count == 1:
+                loss = self.model.lossList[0](output_list[0], targets)
+            elif loss_count == 1 and output_count > 1:
+                loss = self.model.lossList[0](output_list, targets)
+            elif loss_count > 1 and loss_count == output_count:
+                for k in range(0, loss_count):
+                    loss += self.model.lossList[k](output_list[k], targets)
+            else:
+                print("compute loss error")
+        return loss
+
+    def metirc_loss(self, step, loss):
+        loss_value = loss.item()
+        self.epoch_loss_average.update(loss_value)
+        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
+                                                                loss_value,
+                                                                self.timer.toc(True)))

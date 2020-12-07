@@ -2,27 +2,30 @@
 # -*- coding:utf-8 -*-
 # Author:
 
+from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
-from easyai.loss.cls.bce_loss import BinaryCrossEntropy2d
+from easyai.loss.cls.ce2d_loss import CrossEntropy2dLoss
+from easyai.loss.cls.ce2d_loss import BinaryCrossEntropy2dLoss
+from easyai.loss.utility.registry import REGISTERED_SEG_LOSS
 
 
+@REGISTERED_SEG_LOSS.register_module(LossName.EncNetLoss)
 class EncNetLoss(BaseLoss):
 
     def __init__(self, num_class,
                  se_loss=False, se_weight=0.2,
                  aux=False, aux_weight=0.4,
                  weight=None, reduction='mean', ignore_index=250):
-        super().__init__(LossType.EncNetLoss)
+        super().__init__(LossName.EncNetLoss)
         self.num_class = num_class
         self.se_loss = se_loss
         self.aux = aux
         self.se_weight = se_weight
         self.aux_weight = aux_weight
-        self.ce = CrossEntropy2d(0, weight, True,
-                                 reduction, ignore_index)
-        self.bce = BinaryCrossEntropy2d(0, weight, True,
-                                        reduction, ignore_index)
+        self.ce = CrossEntropy2dLoss(0, weight,
+                                     reduction, ignore_index)
+        self.bce = BinaryCrossEntropy2dLoss(0, weight,
+                                            reduction, ignore_index)
 
     def forward(self, input_datas, target=None):
         if target is not None:

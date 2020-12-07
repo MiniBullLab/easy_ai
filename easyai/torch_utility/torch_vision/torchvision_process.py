@@ -12,14 +12,14 @@ class TorchVisionProcess():
     def __init__(self):
         pass
 
-    def torch_normalize(self, flag=0, mean=0, std=1):
+    def torch_normalize(self, normalize_type=-1, mean=0, std=1):
         transform = None
-        if flag == 0:
+        if normalize_type == -1:
             transform = transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize(mean, std)
             ])
-        elif flag == 1:
+        elif normalize_type == -2:
             transform = transforms.Compose([
                 transforms.ToTensor()
             ])

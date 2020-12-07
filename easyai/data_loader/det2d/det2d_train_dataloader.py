@@ -6,6 +6,7 @@ import os
 import math
 import random
 import numpy as np
+import torch
 from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.utility.data_loader import DataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
@@ -56,14 +57,14 @@ class DetectionTrainDataloader(DataLoader):
         self.count += 1
         if self.count == self.nB:
             raise StopIteration
-        numpy_images = []
-        numpy_labels = []
+        list_images = []
+        list_labels = []
 
         class_index = self.get_random_class()
         start_index = self.detection_sample.get_sample_start_index(self.count,
                                                                    self.batch_size,
                                                                    class_index)
-        width, height = self.get_image_size()
+        dst_size = self.get_image_size()
 
         stop_index = start_index + self.batch_size
         for temp_index in range(start_index, stop_index):
@@ -72,23 +73,22 @@ class DetectionTrainDataloader(DataLoader):
             _, boxes = self.json_process.parse_rect_data(label_path)
 
             image, labels = self.dataset_process.resize_dataset(src_image,
-                                                                (width, height),
+                                                                dst_size,
                                                                 boxes,
                                                                 self.detect2d_class)
             image, labels = self.dataset_augment.augment(image, labels)
             image = self.dataset_process.normalize_image(image)
-            labels = self.dataset_process.normalize_labels(labels, (width, height))
+            labels = self.dataset_process.normalize_labels(labels, dst_size)
             labels = self.dataset_process.change_outside_labels(labels)
 
-            numpy_images.append(image)
+            list_images.append(image)
 
             torch_labels = self.dataset_process.numpy_to_torch(labels, flag=0)
-            numpy_labels.append(torch_labels)
+            list_labels.append(torch_labels)
 
-        numpy_images = np.stack(numpy_images)
-        torch_images = self.all_numpy_to_tensor(numpy_images)
+        torch_images = torch.stack(list_images, dim=0)
 
-        return torch_images, numpy_labels
+        return torch_images, list_labels
 
     def __len__(self):
         return self.nB  # number of batches
@@ -111,7 +111,8 @@ class DetectionTrainDataloader(DataLoader):
             # Fixed-Scale YOLO Training
             width = self.image_size[0]
             height = self.image_size[1]
-        return width, height
+        result_size = (width, height)
+        return result_size
 
 
 def get_detect2d_train_dataloader(train_path, data_config):

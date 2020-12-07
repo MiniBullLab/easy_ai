@@ -6,6 +6,8 @@ import os.path
 from easyai.model.backbone.utility.my_backbone import MyBackbone
 from easyai.model.utility.model_parse import ModelParse
 from easyai.model.backbone.utility.registry import REGISTERED_CLS_BACKBONE
+from easyai.model.backbone.utility.registry import REGISTERED_GAN_D_BACKBONE
+from easyai.model.backbone.utility.registry import REGISTERED_GAN_G_BACKBONE
 from easyai.utility.registry import build_from_cfg
 
 
@@ -21,6 +23,8 @@ class BackboneFactory():
             result = self.get_backbone_from_cfg(input_name)
         else:
             result = self.get_backbone_from_name(model_args)
+            if result is None:
+                result = self.get_gan_base_model(model_config)
             if result is None:
                 print("backbone:%s error" % input_name)
         return result
@@ -39,6 +43,18 @@ class BackboneFactory():
             model_config['data_channel'] = 3
         result = None
         if REGISTERED_CLS_BACKBONE.has_class(input_name):
+            if model_config.get('class_number'):
+                model_config.pop("class_number")
             result = build_from_cfg(model_config, REGISTERED_CLS_BACKBONE)
         return result
 
+    def get_gan_base_model(self, model_config):
+        input_name = model_config['type'].strip()
+        if model_config.get('data_channel') is None:
+            model_config['data_channel'] = 3
+        result = None
+        if REGISTERED_GAN_D_BACKBONE.has_class(input_name):
+            result = build_from_cfg(model_config, REGISTERED_GAN_D_BACKBONE)
+        elif REGISTERED_GAN_G_BACKBONE.has_class(input_name):
+            result = build_from_cfg(model_config, REGISTERED_GAN_G_BACKBONE)
+        return result

@@ -17,11 +17,11 @@ class Detect2dResultProcess():
         self.use_new_confidence = False
         self.dataset_process = ImageDataSetProcess()
 
-    def get_detection_result(self, prediction, conf_thresh, flag=0):
+    def get_detection_result(self, prediction, conf_thresh, result_type=0):
         result = None
-        if flag == 0:
+        if result_type == 0:
             result = self.get_yolo_result(prediction, conf_thresh)
-        elif flag == 1:
+        elif result_type == 1:
             result = self.get_ssd_result(prediction, conf_thresh)
         return result
 

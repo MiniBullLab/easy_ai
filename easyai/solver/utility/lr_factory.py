@@ -2,8 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:
 
+from easyai.base_name.solver_name import LrSechedulerName
 from easyai.utility.registry import build_from_cfg
-from easyai.solver.registry import REGISTERED_LR_SCHEDULER
+from easyai.solver.utility.registry import REGISTERED_LR_SCHEDULER
 
 
 class LrSchedulerFactory():
@@ -20,15 +21,15 @@ class LrSchedulerFactory():
         self.process_warmup(config)
         config['base_lr'] = self.base_lr
         result = None
-        if lr_class_name == "LinearIncreaseLR":
+        if lr_class_name == LrSechedulerName.LinearIncreaseLR:
             config['total_iters'] = self.total_iters
             result = build_from_cfg(config, REGISTERED_LR_SCHEDULER)
-        elif lr_class_name == "MultiStageLR":
+        elif lr_class_name == LrSechedulerName.MultiStageLR:
             result = build_from_cfg(config, REGISTERED_LR_SCHEDULER)
-        elif lr_class_name == "PolyLR":
+        elif lr_class_name == LrSechedulerName.PolyLR:
             config['total_iters'] = self.total_iters
             result = build_from_cfg(config, REGISTERED_LR_SCHEDULER)
-        elif lr_class_name == "CosineLR":
+        elif lr_class_name == LrSechedulerName.CosineLR:
             config['total_iters'] = self.total_iters
             result = build_from_cfg(config, REGISTERED_LR_SCHEDULER)
         else:

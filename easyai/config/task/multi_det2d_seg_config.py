@@ -53,6 +53,8 @@ class MultiDet2dSegConfig(Detect2dConfig):
         self.resize_type = 1
         self.normalize_type = 0
 
+        self.post_prcoess_type = 0
+
     def get_test_default_value(self):
         self.test_batch_size = 1
         self.evaluation_result_name = 'det2d_seg_evaluation.txt'
@@ -65,17 +67,23 @@ class MultiDet2dSegConfig(Detect2dConfig):
         self.train_multi_scale = False
         self.balanced_sample = False
         self.train_batch_size = 16
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'det2d_seg_latest.pt'
         self.best_weights_name = 'det2d_seg_best.pt'
+        self.latest_optimizer_name = "det2d_seg_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
         self.max_epochs = 100
 
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
+
         self.base_lr = 2e-4
-        self.optimizer_config = {0: {'optimizer': 'SGD',
+        self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
                                  }
@@ -85,6 +93,9 @@ class MultiDet2dSegConfig(Detect2dConfig):
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = "route_0"

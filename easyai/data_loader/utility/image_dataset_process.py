@@ -35,6 +35,9 @@ class ImageDataSetProcess(BaseDataSetProcess):
             std = param['std']
             normaliza_image = self.image_normalize(input_data)
             result = self.standard_normalize(normaliza_image, mean, std)
+        elif normalize_type == 2:
+            temp_x = self.image_normalize(input_data)
+            result = (temp_x - 0.5) / 0.5
         return result
 
     def numpy_transpose(self, images, dtype=np.float32):
@@ -57,8 +60,12 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def standard_normalize(self, input_data, mean, std):
         return (input_data - mean) / std
 
-    def cv_image_resize(self, src_image, image_size):
-        image = cv2.resize(src_image, image_size, interpolation=cv2.INTER_NEAREST)
+    def cv_image_resize(self, src_image, image_size, interpolation="nearest"):
+        image = None
+        if interpolation.strip() == "nearest":
+            image = cv2.resize(src_image, image_size, interpolation=cv2.INTER_NEAREST)
+        elif interpolation.strip() == "bilinear":
+            image = cv2.resize(src_image, image_size, interpolation=cv2.INTER_LINEAR)
         return image
 
     def cv_image_color_convert(self, src_image, flag):

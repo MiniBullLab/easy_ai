@@ -5,7 +5,6 @@
 import torch.nn as nn
 from collections import OrderedDict
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
 from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
 from easyai.model.base_block.utility.utility_layer import NormalizeLayer, ActivationLayer
 from easyai.model.base_block.utility.utility_layer import MultiplyLayer, AddLayer
@@ -17,13 +16,7 @@ from easyai.model.base_block.utility.pooling_layer import SpatialPyramidPooling
 from easyai.model.base_block.utility.upsample_layer import Upsample
 from easyai.model.base_block.utility.detection_block import Detection2dBlock
 from easyai.model.base_block.cls.darknet_block import ReorgBlock, DarknetBlockName
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
-from easyai.loss.cls.bce_loss import BinaryCrossEntropy2d
-from easyai.loss.seg.ohem_cross_entropy2d import OhemCrossEntropy2d
-from easyai.loss.det2d.region2d_loss import Region2dLoss
-from easyai.loss.det2d.yolov3_loss import YoloV3Loss
-from easyai.loss.det2d.multibox_loss import MultiBoxLoss
-from easyai.loss.det2d.key_points2d_region_loss import KeyPoints2dRegionLoss
+from easyai.loss.utility.loss_factory import LossFactory
 
 
 class CreateModuleList():
@@ -32,6 +25,8 @@ class CreateModuleList():
         self.index = 0
         self.outChannelList = []
         self.blockDict = OrderedDict()
+
+        self.loss_factory = LossFactory()
 
         self.filters = 0
         self.input_channels = 0
@@ -222,96 +217,9 @@ class CreateModuleList():
             self.input_channels = self.filters
 
     def create_loss(self, module_def):
-        if module_def["type"] == LossType.CrossEntropy2d:
-            weight_type = int(module_def.get("weight_type", 0))
-            weight = module_def.get("weight", None)
-            reduce = module_def.get("reduce", None)
-            reduction = module_def.get("reduction", 'mean')
-            ignore_index = int(module_def.get("ignore_index", 250))
-            layer = CrossEntropy2d(weight_type=weight_type,
-                                   weight=weight,
-                                   reduce=reduce,
-                                   reduction=reduction,
-                                   ignore_index=ignore_index)
-            self.add_block_list(LossType.CrossEntropy2d, layer, self.filters)
-            self.input_channels = self.filters
-        elif module_def["type"] == LossType.BinaryCrossEntropy2d:
-            weight_type = int(module_def.get("weight_type", 0))
-            weight = module_def.get("weight", None)
-            reduce = module_def.get("reduce", None)
-            reduction = module_def.get("reduction", 'mean')
-            layer = BinaryCrossEntropy2d(weight_type=weight_type,
-                                         weight=weight,
-                                         reduce=reduce,
-                                         reduction=reduction)
-            self.add_block_list(LossType.BinaryCrossEntropy2d, layer, self.filters)
-            self.input_channels = self.filters
-        elif module_def["type"] == LossType.OhemCrossEntropy2d:
-            ignore_index = int(module_def.get("ignore_index", 250))
-            layer = OhemCrossEntropy2d(ignore_index=ignore_index)
-            self.add_block_list(LossType.OhemCrossEntropy2d, layer, self.filters)
-            self.input_channels = self.filters
-        elif module_def['type'] == LossType.Region2dLoss:
-            anchor_sizes_str = (x for x in module_def['anchor_sizes'].split('|') if x.strip())
-            anchor_sizes = []
-            for data in anchor_sizes_str:
-                temp_value = [float(x) for x in data.split(',') if x.strip()]
-                anchor_sizes.append(temp_value)
-            class_number = int(module_def['class_number'])
-            reduction = int(module_def['reduction'])
-            coord_weight = float(module_def['coord_weight'])
-            noobject_weight = float(module_def['noobject_weight'])
-            object_weight = float(module_def['object_weight'])
-            class_weight = float(module_def['class_weight'])
-            iou_threshold = float(module_def['iou_threshold'])
-            loss_layer = Region2dLoss(class_number, anchor_sizes, reduction,
-                                      coord_weight=coord_weight, noobject_weight=noobject_weight,
-                                      object_weight=object_weight, class_weight=class_weight,
-                                      iou_threshold=iou_threshold)
-            self.add_block_list(LossType.Region2dLoss, loss_layer, self.filters)
-            self.input_channels = self.filters
-        elif module_def['type'] == LossType.YoloV3Loss:
-            anchor_sizes_str = (x for x in module_def['anchor_sizes'].split('|') if x.strip())
-            anchor_mask = [int(x) for x in module_def['anchor_mask'].split(',')]
-            anchor_sizes = []
-            for data in anchor_sizes_str:
-                temp_value = [float(x) for x in data.split(',') if x.strip()]
-                anchor_sizes.append(temp_value)
-            class_number = int(module_def['class_number'])
-            reduction = int(module_def['reduction'])
-            coord_weight = float(module_def['coord_weight'])
-            noobject_weight = float(module_def['noobject_weight'])
-            object_weight = float(module_def['object_weight'])
-            class_weight = float(module_def['class_weight'])
-            iou_threshold = float(module_def['iou_threshold'])
-            yolo_layer = YoloV3Loss(class_number, anchor_sizes, anchor_mask, reduction,
-                                    coord_weight=coord_weight, noobject_weight=noobject_weight,
-                                    object_weight=object_weight, class_weight=class_weight,
-                                    iou_threshold=iou_threshold)
-            self.add_block_list(LossType.YoloV3Loss, yolo_layer, self.filters)
-            self.input_channels = self.filters
-        elif module_def['type'] == LossType.MultiBoxLoss:
-            class_number = int(module_def['class_number'])
-            iou_threshold = float(module_def['iou_threshold'])
-            input_size = (int(x) for x in module_def['input_size'].split(',') if x.strip())
-            anchor_counts = (int(x) for x in module_def['anchor_counts'].split(',') if x.strip())
-            anchor_sizes = (int(x) for x in module_def['anchor_sizes'].split(',') if x.strip())
-            aspect_ratio_str = (x for x in module_def['aspect_ratio_list'].split('|') if x.strip())
-            aspect_ratio_list = []
-            for data in aspect_ratio_str:
-                temp_value = [int(x) for x in data.split(',') if x.strip()]
-                aspect_ratio_list.append(temp_value)
-            loss_layer = MultiBoxLoss(class_number, iou_threshold,
-                                      input_size=input_size, anchor_counts=anchor_counts,
-                                      anchor_sizes=anchor_sizes, aspect_ratio_list=aspect_ratio_list)
-            self.add_block_list(LossType.MultiBoxLoss, loss_layer, self.filters)
-            self.input_channels = self.filters
-        elif module_def['type'] == LossType.KeyPoints2dRegionLoss:
-            class_number = int(module_def['class_number'])
-            point_count = int(module_def['point_count'])
-            loss_layer = KeyPoints2dRegionLoss(class_number, point_count)
-            self.add_block_list(LossType.KeyPoints2dRegionLoss, loss_layer, self.filters)
-            self.input_channels = self.filters
+        loss = self.loss_factory.get_loss(module_def)
+        self.add_block_list(loss.get_name(), loss, self.filters)
+        self.input_channels = self.filters
 
     def add_block_list(self, block_name, block, out_channel):
         block_name = "%s_%d" % (block_name, self.index)

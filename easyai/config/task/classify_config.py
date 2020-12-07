@@ -4,12 +4,12 @@
 
 import os
 from easyai.base_name.task_name import TaskName
-from easyai.config.utility.image_train_config import ImageTrainConfig
+from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.Classify_Task)
-class ClassifyConfig(ImageTrainConfig):
+class ClassifyConfig(CommonTrainConfig):
 
     def __init__(self):
         super().__init__()
@@ -70,7 +70,7 @@ class ClassifyConfig(ImageTrainConfig):
         self.data_mean = (0.5070751592371323, 0.48654887331495095, 0.4409178433670343)
         self.data_std = (0.2666410733740041, 0.2666410733740041, 0.2666410733740041)
         self.resize_type = 0
-        self.normalize_type = 1
+        self.normalize_type = -1
         self.save_result_name = "classify_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
@@ -82,18 +82,24 @@ class ClassifyConfig(ImageTrainConfig):
     def get_train_default_value(self):
         self.train_data_augment = True
         self.train_batch_size = 16
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'cls_latest.pt'
         self.best_weights_name = 'cls_best.pt'
 
+        self.latest_optimizer_name = "cls_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
         self.max_epochs = 200
 
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
+
         self.base_lr = 0.01
-        self.optimizer_config = {0: {'optimizer': 'SGD',
+        self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
                                  }
@@ -103,6 +109,9 @@ class ClassifyConfig(ImageTrainConfig):
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = "route_0"

@@ -3,17 +3,19 @@
 # Author:
 
 
-class LossType():
+class LossName():
 
     # utility
     MeanSquaredErrorLoss = "mseLoss"
 
     # cls
-    CrossEntropy2d = "crossEntropy2d"
-    BinaryCrossEntropy2d = "bceLoss"
+    CrossEntropy2dLoss = "crossEntropy2dLoss"
+    BinaryCrossEntropy2dLoss = "bceLoss"
     LabelSmoothCE2dLoss = "LabelSmoothCE2dLoss"
     FocalLoss = "FocalLoss"
     FocalBinaryLoss = "FocalBinaryLoss"
+    OhemCrossEntropy2dLoss = "OhemCE2dLoss"
+    OhemBinaryCrossEntropy2dLoss = "OhemBCELoss"
 
     # det2d
     Region2dLoss = "Region2dLoss"
@@ -25,4 +27,9 @@ class LossType():
 
     # seg
     EncNetLoss = "encNetLoss"
-    OhemCrossEntropy2d = "OhemCrossEntropy2d"
+    MixCrossEntropy2dLoss = "MixCE2dLoss"
+    MixBinaryCrossEntropy2dLoss = "MixBCELoss"
+
+    # gan
+    MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"
+    MNISTGeneratorLoss = "MNISTGeneratorLoss"

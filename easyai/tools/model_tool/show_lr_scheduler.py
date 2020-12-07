@@ -2,11 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
-from easyai.solver.torch_optimizer import TorchOptimizer
-from easyai.solver.lr_factory import LrSchedulerFactory
+from easyai.solver.optimizer.torch_optimizer import TorchOptimizer
+from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.helper.arguments_parse import ToolArgumentsParse
 

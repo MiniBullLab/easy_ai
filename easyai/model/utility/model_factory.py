@@ -6,9 +6,10 @@ import os
 from easyai.model.utility.model_parse import ModelParse
 from easyai.model.utility.my_model import MyModel
 from easyai.model.utility.registry import REGISTERED_CLS_MODEL
-from easyai.model.utility.registry import REGISTERED_Det2D_MODEL
+from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 from easyai.model.utility.registry import REGISTERED_SR_MODEL
+from easyai.model.utility.registry import REGISTERED_GAN_MODEL
 from easyai.utility.registry import build_from_cfg
 
 from easyai.model.utility.mode_weight_init import ModelWeightInit
@@ -25,8 +26,6 @@ class ModelFactory():
         model_args = model_config.copy()
         if input_name.endswith("cfg"):
             model_args.pop("type")
-            if model_args.get('class_number'):
-                model_args.pop("class_number")
             result = self.get_model_from_cfg(input_name, model_args)
         else:
             result = self.get_model_from_name(model_args)
@@ -53,12 +52,14 @@ class ModelFactory():
         model_config['type'] = model_name
         if REGISTERED_CLS_MODEL.has_class(model_name):
             model = self.get_cls_model(model_config)
-        elif REGISTERED_Det2D_MODEL.has_class(model_name):
+        elif REGISTERED_DET2D_MODEL.has_class(model_name):
             model = self.get_det2d_model(model_config)
         elif REGISTERED_SEG_MODEL.has_class(model_name):
             model = self.get_seg_model(model_config)
         elif REGISTERED_SR_MODEL.has_class(model_name):
             model = self.get_sr_model(model_config)
+        elif REGISTERED_GAN_MODEL.has_class(model_name):
+            model = self.get_gan_model(model_config)
         else:
             model = None
         return model
@@ -68,14 +69,18 @@ class ModelFactory():
         return model
 
     def get_det2d_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_Det2D_MODEL)
+        model = build_from_cfg(model_config, REGISTERED_DET2D_MODEL)
         return model
 
     def get_seg_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_Det2D_MODEL)
+        model = build_from_cfg(model_config, REGISTERED_SEG_MODEL)
         return model
 
     def get_sr_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_Det2D_MODEL)
+        model = build_from_cfg(model_config, REGISTERED_SR_MODEL)
+        return model
+
+    def get_gan_model(self, model_config):
+        model = build_from_cfg(model_config, REGISTERED_GAN_MODEL)
         return model
 

@@ -2,15 +2,18 @@
 # -*- coding:utf-8 -*-
 # Author:
 
+from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.yolo_loss import YoloLoss
+from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 
 
+@REGISTERED_DET2D_LOSS.register_module(LossName.KeyPoints2dRegionLoss)
 class KeyPoints2dRegionLoss(YoloLoss):
     def __init__(self, class_number, point_count,
                  coord_weight=1.0/2.0, noobject_weight=1.0,
                  object_weight=5.0, class_weight=2.0, iou_threshold=0.6):
-        super().__init__(LossType.KeyPoints2dRegionLoss, class_number)
+        super().__init__(LossName.KeyPoints2dRegionLoss, class_number)
         self.point_count = point_count
         self.loc_count = point_count * 2
         self.coord_scale = coord_weight
@@ -23,8 +26,8 @@ class KeyPoints2dRegionLoss(YoloLoss):
         self.mse_loss = nn.MSELoss()
         self.ce_loss = nn.CrossEntropyLoss()
 
-        self.info = {'num_ground_truth': 0, 'num_det_correct': 0,
-                     'x_loss': 0.0, 'y_loss': 0.0, 'conf_loss': 0.0, 'cls_loss': 0.0}
+        self.loss_info = {'num_ground_truth': 0, 'num_det_correct': 0,
+                          'x_loss': 0.0, 'y_loss': 0.0, 'conf_loss': 0.0, 'cls_loss': 0.0}
 
     def normaliza_points(self, pred_corners, batch_size, H, W):
         for index in range(batch_size):
@@ -195,12 +198,12 @@ class KeyPoints2dRegionLoss(YoloLoss):
 
             loss = loss_x + loss_y + loss_conf + loss_cls
 
-            self.info['num_ground_truth'] = num_ground_truth
-            self.info['num_det_correct'] = num_det_correct
-            self.info['x_loss'] = loss_x.item()
-            self.info['y_loss'] = loss_y.item()
-            self.info['conf_loss'] = loss_conf.item()
-            self.info['cls_loss'] = loss_cls.item()
-            self.print_info()
+            self.loss_info['num_ground_truth'] = num_ground_truth
+            self.loss_info['num_det_correct'] = num_det_correct
+            self.loss_info['x_loss'] = loss_x.item()
+            self.loss_info['y_loss'] = loss_y.item()
+            self.loss_info['conf_loss'] = loss_conf.item()
+            self.loss_info['cls_loss'] = loss_cls.item()
+            self.print_loss_info()
             return loss
 

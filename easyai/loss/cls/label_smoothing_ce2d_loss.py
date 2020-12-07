@@ -2,14 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:
 
+from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.utility.label_smoothing import LabelSmoothing
+from easyai.loss.utility.registry import REGISTERED_CLS_LOSS
 
 
+@REGISTERED_CLS_LOSS.register_module(LossName.LabelSmoothCE2dLoss)
 class LabelSmoothCE2dLoss(BaseLoss):
 
     def __init__(self, class_number, epsilon=0.1, reduction='mean', ignore_index=250):
-        super().__init__(LossType.LabelSmoothCE2dLoss)
+        super().__init__(LossName.LabelSmoothCE2dLoss)
         self.class_number = class_number
         self.epsilon = epsilon
         self.reduction = reduction
@@ -33,10 +36,11 @@ class LabelSmoothCE2dLoss(BaseLoss):
         return loss
 
 
+# @REGISTERED_CLS_LOSS.register_module(LossName.LabelSmoothCE2dLoss)
 class LabelSmoothCE2dLossV2(BaseLoss):
 
     def __init__(self, class_number, epsilon=0.1, reduction='mean', ignore_index=250):
-        super().__init__(LossType.LabelSmoothCE2dLoss)
+        super().__init__(LossName.LabelSmoothCE2dLoss)
         self.class_number = class_number
         self.epsilon = epsilon
         self.reduction = reduction

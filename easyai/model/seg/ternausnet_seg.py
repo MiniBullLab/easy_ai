@@ -86,7 +86,7 @@ class UNet11(BaseClassifyModel):
 
         self.final = nn.Conv2d(self.num_filters, self.class_number, kernel_size=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     def forward(self, x):
@@ -186,7 +186,7 @@ class UNet16(BaseClassifyModel):
                                         activationName=self.activation_name)
         self.final = nn.Conv2d(self.num_filters, self.class_number, kernel_size=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     def forward(self, x):
@@ -274,7 +274,7 @@ class AlbuNet(BaseClassifyModel):
                                         activationName=self.activation_name)
         self.final = nn.Conv2d(self.num_filters, self.class_number, kernel_size=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     def forward(self, x):
@@ -341,7 +341,7 @@ class LinkNet34(BaseClassifyModel):
         self.finalrelu2 = nn.ReLU(inplace=True)
         self.finalconv3 = nn.Conv2d(32, self.class_number, 2, padding=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     # noinspection PyCallingNonCallable

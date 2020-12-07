@@ -149,5 +149,22 @@ class FcBNActivationBlock(BaseBlock):
         return x
 
 
+class FcActivationBlock(BaseBlock):
+
+    def __init__(self, in_features, out_features, bias=True,
+                 activationName=ActivationType.ReLU):
+        super().__init__(BlockType.FcActivationBlock)
+        fc = nn.Linear(in_features, out_features, bias=bias)
+        activation = ActivationFunction.get_function(activationName)
+        self.block = nn.Sequential(OrderedDict([
+            (LayerType.FcLinear, fc),
+            (activationName, activation)
+        ]))
+
+    def forward(self, x):
+        x = self.block(x)
+        return x
+
+
 if __name__ == "__main__":
     pass

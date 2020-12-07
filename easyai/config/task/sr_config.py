@@ -4,12 +4,12 @@
 
 import os
 from easyai.base_name.task_name import TaskName
-from easyai.config.utility.image_train_config import ImageTrainConfig
+from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.SuperResolution_Task)
-class SuperResolutionConfig(ImageTrainConfig):
+class SuperResolutionConfig(CommonTrainConfig):
 
     def __init__(self):
         super().__init__()
@@ -58,16 +58,22 @@ class SuperResolutionConfig(ImageTrainConfig):
     def get_train_default_value(self):
         self.train_data_augment = False
         self.train_batch_size = 2
-        self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'sr_latest.pt'
         self.best_weights_name = 'sr_best.pt'
+        self.latest_optimizer_name = "sr_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
 
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
+
         self.base_lr = 1e-3
-        self.optimizer_config = {0: {'optimizer': 'Adam',
+        self.optimizer_config = {0: {'type': 'Adam',
                                      'betas': (0.9, 0.999),
                                      'eps': 1e-08,
                                      'weight_decay': 0}
@@ -79,6 +85,9 @@ class SuperResolutionConfig(ImageTrainConfig):
                                     'warmup_iters': 1000}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = "route_0"

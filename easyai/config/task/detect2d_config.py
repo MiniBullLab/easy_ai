@@ -4,12 +4,12 @@
 
 import os
 from easyai.base_name.task_name import TaskName
-from easyai.config.utility.image_train_config import ImageTrainConfig
+from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.Detect2d_Task)
-class Detect2dConfig(ImageTrainConfig):
+class Detect2dConfig(CommonTrainConfig):
 
     def __init__(self):
         super().__init__()
@@ -18,7 +18,6 @@ class Detect2dConfig(ImageTrainConfig):
         self.detect2d_class = None
         self.confidence_th = 1.0
         self.nms_th = 1.0
-        self.post_prcoess_type = 0
         self.save_result_name = None
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_results')
@@ -70,16 +69,10 @@ class Detect2dConfig(ImageTrainConfig):
     def get_data_default_value(self):
         self.image_size = (416, 416)  # W * H
         self.data_channel = 3
-        self.detect2d_class = ("bike",
-                               "bus",
-                               "car",
-                               "motor",
-                               "person",
-                               "rider",
-                               "traffic light",
-                               "traffic sign",
-                               "train",
-                               "truck")
+        self.detect2d_class = ("orange",
+                               "apple",
+                               "pear",
+                               "potato")
         self.confidence_th = 0.24
         self.nms_th = 0.45
         self.post_prcoess_type = 0
@@ -100,18 +93,24 @@ class Detect2dConfig(ImageTrainConfig):
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False
-        self.train_batch_size = 1
-        self.enable_mixed_precision = False
+        self.train_batch_size = 4
         self.is_save_epoch_model = False
         self.latest_weights_name = 'det2d_latest.pt'
         self.best_weights_name = 'det2d_best.pt'
+        self.latest_optimizer_name = "det2d_optimizer.pt"
+
+        self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
         self.max_epochs = 100
 
+        self.amp_config = {'enable_amp': False,
+                           'opt_level': 'O1',
+                           'keep_batchnorm_fp32': True}
+
         self.base_lr = 2e-4
-        self.optimizer_config = {0: {'optimizer': 'SGD',
+        self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
                                  }
@@ -121,6 +120,9 @@ class Detect2dConfig(ImageTrainConfig):
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
+
+        self.clip_grad_config = {'enable_clip': False,
+                                 'max_norm': 20}
 
         self.freeze_layer_type = 1
         self.freeze_layer_name = "baseNet_0"
