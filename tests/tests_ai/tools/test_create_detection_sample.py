@@ -36,3 +36,4 @@ if __name__ == "__main__":
 
     # test_balance_sample(config_path, train_path, output_dir)
     test_detection_sample(config_path, input_dir, output_path, 10)
+
