@@ -23,9 +23,12 @@ class YoloV3Det2d(BaseDetectionModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.LeakyReLU
 
-        self.anchor_sizes = "8.95,8.57|12.43,26.71|19.71,14.43|" \
-                            "26.36,58.52|36.09,25.55|64.42,42.90|" \
-                            "96.44,79.10|158.37,115.59|218.65,192.90"
+        # self.anchor_sizes = "8.95,8.57|12.43,26.71|19.71,14.43|" \
+        #                     "26.36,58.52|36.09,25.55|64.42,42.90|" \
+        #                     "96.44,79.10|158.37,115.59|218.65,192.90"
+        self.anchor_sizes = "10,10|24,26|33,68|" \
+                            "61,131|70,36|117,78|" \
+                            "128,209|277,107|311,251"
         self.loss_config = {"type": LossName.YoloV3Loss,
                             "anchor_sizes": self.anchor_sizes,
                             "class_number": class_number,

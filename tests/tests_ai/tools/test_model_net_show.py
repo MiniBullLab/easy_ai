@@ -16,7 +16,6 @@ def test_model_show(model):
     show.model_show(model)
     print("End of game, have a nice day!")
 
-
 def test_backbone_show(backbone):
     print("start...")
     show = ModelNetShow()
