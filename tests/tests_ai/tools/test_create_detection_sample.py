@@ -5,23 +5,21 @@
 
 import os
 import sys
-import json
 sys.path.insert(0, os.getcwd() + "/..")
 
 from easyai.tools.sample.create_detection_sample import CreateDetectionSample
 
 
-def test_balance_sample(train_path, output_dir, class_name):
+def test_balance_sample(config_path, train_path, output_dir):
     print("start...")
-    test = CreateDetectionSample()
+    test = CreateDetectionSample(config_path)
     test.createBalanceSample(train_path,
-                             output_dir,
-                             class_name)
+                             output_dir)
     print("End of game, have a nice day!")
 
-def test_detection_sample(input_dir, output_path, probability):
+def test_detection_sample(config_path, input_dir, output_path, probability):
     print("start...")
-    test = CreateDetectionSample()
+    test = CreateDetectionSample(config_path)
     test.createTrainAndTest(input_dir,
                             output_path,
                             probability)
@@ -29,16 +27,12 @@ def test_detection_sample(input_dir, output_path, probability):
 
 
 if __name__ == "__main__":
-    data_name = "Object365_small"
-    class_file = open("/home/wfw/data/VOCdevkit/" + data_name + "/class.json", 'r')
-    classes_ = json.load(class_file)
-    classes = [value for key, value in classes_.items()]
+    config_path = "../.log/config/detection2d_config.json"
+    train_path = "/home/wfw/data/VOCdevkit/COCO/ImageSets/trainvalno5k.txt"
+    output_dir = "/home/wfw/data/VOCdevkit/COCO/ImageSets"
 
-    train_path = "/home/wfw/data/VOCdevkit/" + data_name + "/ImageSets/train_val.txt"
-    output_dir = "/home/wfw/data/VOCdevkit/" + data_name + "/ImageSets"
+    input_dir = "/home/wfw/data/VOCdevkit/COCO/JPEGImages"
+    output_path = "/home/wfw/data/VOCdevkit/COCO/ImageSets"
 
-    input_dir = "/home/wfw/data/VOCdevkit/" + data_name + "/JPEGImages"
-    output_path = "/home/wfw/data/VOCdevkit/" + data_name + "/ImageSets"
-
-    test_balance_sample(train_path, output_dir, classes)
-    # test_detection_sample(input_dir, output_path, 10)
+    # test_balance_sample(config_path, train_path, output_dir)
+    test_detection_sample(config_path, input_dir, output_path, 10)
