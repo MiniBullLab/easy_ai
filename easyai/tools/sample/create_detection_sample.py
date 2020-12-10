@@ -6,8 +6,7 @@ import cv2
 import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
-from easyai.config.utility.config_factory import ConfigFactory
-from easyai.base_name.task_name import TaskName
+from easyai.tools.sample.detection_sample_process import DetectionSampleProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 
 
@@ -16,15 +15,17 @@ class CreateDetectionSample():
     def __init__(self,):
         self.dirProcess = DirProcess()
         self.json_process = JsonProcess()
+        self.sample_process = DetectionSampleProcess()
         self.annotation_post = ".json"
 
-    def createBalanceSample(self, inputTrainPath, outputPath, class_name):
+    def createBalanceSample(self, inputTrainPath, outputPath):
         if not os.path.exists(outputPath):
             os.makedirs(outputPath)
         path, _ = os.path.split(inputTrainPath)
         annotationDir = os.path.join(path, "../Annotations")
         imagesDir = os.path.join(path, "../JPEGImages")
-        writeFile = self.createWriteFile(outputPath, class_name)
+        class_names = self.sample_process.create_class_names(inputTrainPath)
+        writeFile = self.createWriteFile(outputPath, class_names)
         for fileNameAndPost in self.dirProcess.getFileData(inputTrainPath):
             fileName, post = os.path.splitext(fileNameAndPost)
             annotationFileName = fileName + self.annotation_post
@@ -76,9 +77,13 @@ def test():
     print("start...")
     options = ToolArgumentsParse.process_sample_parse()
     test = CreateDetectionSample()
-    test.createTrainAndTest(options.inputPath,
-                            options.outputPath,
-                            options.probability)
+    if options.type.strip() == "train_val":
+        test.createTrainAndTest(options.inputPath,
+                                options.outputPath,
+                                options.probability)
+    elif options.type.strip() == "balance":
+        test.createBalanceSample(options.inputPath,
+                                 options.outputPath)
     print("End of game, have a nice day!")
 
 
