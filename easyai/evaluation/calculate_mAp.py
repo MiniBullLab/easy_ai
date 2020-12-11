@@ -22,14 +22,10 @@ class CalculateMeanAp():
         aps = []
         for index, name in enumerate(self.class_names):
             file_path = os.path.join(result_dir, "%s.txt" % name)
-            if not os.path.exists(file_path):
-                aps.append(0)
-            else:
-                gt_boxes = self.get_gt_boxes(val_path, name)
-                detect_boxes = self.get_detect_boxes(file_path)
-                recall, precision, ap = self.calculate_ap(gt_boxes, detect_boxes, 0.5)
-                aps += [ap]
-        self.print_evaluation(aps)
+            gt_boxes = self.get_gt_boxes(val_path, name)
+            detect_boxes = self.get_detect_boxes(file_path)
+            recall, precision, ap = self.calculate_ap(gt_boxes, detect_boxes, 0.5)
+            aps += [ap]
         return np.mean(aps), aps
 
     def result_eval(self, result_path, val_path):
@@ -37,11 +33,8 @@ class CalculateMeanAp():
         for index, name in enumerate(self.class_names):
             gt_boxes = self.get_gt_boxes(val_path, name)
             detect_boxes = self.get_detect_boxes(result_path, name)
-            if len(detect_boxes) == 0:
-                aps.append(0)
-            else:
-                recall, precision, ap = self.calculate_ap(gt_boxes, detect_boxes, 0.5)
-                aps += [ap]
+            recall, precision, ap = self.calculate_ap(gt_boxes, detect_boxes, 0.5)
+            aps += [ap]
         return np.mean(aps), aps
 
     def print_evaluation(self, aps):
@@ -67,6 +60,8 @@ class CalculateMeanAp():
 
     def get_detect_boxes(self, result_path, class_name=None):
         result = []
+        if not os.path.exists(result_path):
+            return result
         if class_name is None:
             for line_data in self.dir_process.getFileData(result_path):
                 split_datas = [x.strip() for x in line_data.split(' ') if x.strip()]
@@ -98,20 +93,28 @@ class CalculateMeanAp():
         return result
 
     def calculate_ap(self, gt_boxes, detect_boxes, iou_thresh=0.5):
-        class_recs, npos = self.process_gt_boxes(gt_boxes)
-        image_ids, sorted_scores, boxes = self.process_detect_result(detect_boxes)
-        tp, fp, iou = self.get_tp_fp(image_ids, class_recs, boxes, iou_thresh)
+        if len(detect_boxes) == 0 and len(gt_boxes) == 0:
+            return 1, 1, 1
+        elif len(detect_boxes) == 0:
+            return 0, 0, 0
+        else:
+            class_recs, npos = self.process_gt_boxes(gt_boxes)
+            image_ids, sorted_scores, boxes = self.process_detect_result(detect_boxes)
+            tp, fp, iou = self.get_tp_fp(image_ids, class_recs, boxes, iou_thresh)
 
-        # compute precision recall
-        fp = np.cumsum(fp)
-        tp = np.cumsum(tp)
-        recall = tp / float(npos)
-        # avg_iou = sum(iou) / len(iou)
-        # avoid divide by zero in case the first detection matches a difficult
-        # ground truth
-        precision = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
-        ap = self.get_ap(recall, precision)
-        return recall, precision, ap
+            # compute precision recall
+            fp = np.cumsum(fp)
+            tp = np.cumsum(tp)
+            if npos == 0:
+                recall = tp
+            else:
+                recall = tp / float(npos)
+            # avg_iou = sum(iou) / len(iou)
+            # avoid divide by zero in case the first detection matches a difficult
+            # ground truth
+            precision = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
+            ap = self.get_ap(recall, precision)
+            return recall, precision, ap
 
     def process_gt_boxes(self, gt_boxes):
         class_recs = {}

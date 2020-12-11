@@ -35,6 +35,9 @@ class CreateClassifySample():
 
         save_train_path = os.path.join(output_dir, "train.txt")
         save_val_path = os.path.join(output_dir, "val.txt")
+        if os.path.exists(save_train_path):
+            print("%s exits" % save_train_path)
+            return
         save_train_file = open(save_train_path, "w")
         save_val_file = open(save_val_path, "w")
 
@@ -44,7 +47,7 @@ class CreateClassifySample():
                                                            "*.*"))
             random.shuffle(image_list)
             for image_index, image_path in enumerate(image_list):
-                print(image_path)
+                # print(image_path)
                 if (image_index + 1) % probability == 0:
                     self.write_data(image_path, class_name, class_index, save_val_file)
                 else:
@@ -58,6 +61,8 @@ class CreateClassifySample():
         data_class = self.get_data_class(input_dir)
 
         save_train_path = os.path.join(output_dir, "%s.txt" % flag)
+        if os.path.exists(save_train_path):
+            return
         save_train_file = open(save_train_path, "w")
 
         for class_index, class_name in enumerate(data_class):
@@ -66,7 +71,7 @@ class CreateClassifySample():
                                                            "*.*"))
             random.shuffle(image_list)
             for image_index, image_path in enumerate(image_list):
-                print(image_path)
+                # print(image_path)
                 self.write_data(image_path, class_name, class_index, save_train_file)
 
         save_train_file.close()
