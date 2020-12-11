@@ -1,5 +1,17 @@
 #!/bin/bash
 
+if [ -n "$1" ]; then
+    dataset_train_path=$1
+else
+    dataset_train_path=/easy_ai/ImageSets/train.txt
+fi
+
+if [ -n "$2" ]; then
+    dataset_val_path=$2
+else
+    dataset_val_path=/easy_ai/ImageSets/val.txt
+fi
+
 #cuda10
 export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
@@ -9,7 +21,7 @@ export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
 rm -rf ./log/detect2d*
 
-CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath $1 --valPath $2
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 python3 -m easy_tools.easy_convert --task DeNET --input ./log/snapshot/denet.onnx
 
 set -v

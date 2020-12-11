@@ -5,11 +5,7 @@
 import os
 import inspect
 from optparse import OptionParser
-from easyai.tools.utility.copy_image import CopyImage
-from easyai.train_task import TrainTask
-from easyai.base_name.task_name import TaskName
-from easyai.config.utility.image_task_config import ImageTaskConfig
-from easyai.tools.sample.detection_sample_process import DetectionSampleProcess
+from easy_tools.easyai_train import EasyAiModelTrain
 
 
 def parse_arguments():
@@ -52,35 +48,16 @@ def parse_arguments():
 def train_main():
     print("process start...")
     options = parse_arguments()
-    copy_process = CopyImage()
-    config = ImageTaskConfig()
     current_path = inspect.getfile(inspect.currentframe())
     dir_name = os.path.dirname(current_path)
+    train_process = EasyAiModelTrain(options.trainPath, options.valPath, options.gpu_id, options.config_path)
+
     if options.task_name.strip() == "ClassNet":
-        pretrain_model_path = os.path.join(dir_name, "./data/classnet.pt")
-        train_task = TrainTask(TaskName.Classify_Task, options.trainPath, options.valPath, True)
-        train_task.train('classnet', options.gpu_id, options.config_path, pretrain_model_path)
-        save_image_dir = os.path.join(config.root_save_dir, "cls_img")
-        copy_process.copy(options.trainPath, save_image_dir)
+        train_process.classify_model_train(dir_name)
     elif options.task_name.strip() == "DeNET":
-        pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
-        sample_process = DetectionSampleProcess()
-        class_names = sample_process.create_class_names(options.trainPath)
-        if len(class_names) > 0:
-            train_task = TrainTask(TaskName.Detect2d_Task, options.trainPath, options.valPath, True)
-            train_task.train("denet", options.gpu_id, options.config_path, pretrain_model_path)
-            # easy_model_convert(options.task_name, train_task.save_onnx_path)
-            save_image_dir = os.path.join(config.root_save_dir, "det_img")
-            copy_process.copy(options.trainPath, save_image_dir)
-        else:
-            print("class name empty!")
+        train_process.det2d_model_train(dir_name)
     elif options.task_name.strip() == "SegNET":
-        pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
-        cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
-        train_task = TrainTask(TaskName.Segment_Task, options.trainPath, options.valPath, True)
-        train_task.train(cfg_path, options.gpu_id, options.config_path, pretrain_model_path)
-        save_image_dir = os.path.join(config.root_save_dir, "seg_img")
-        copy_process.copy(options.trainPath, save_image_dir)
+        train_process.segment_model_train(dir_name)
     else:
         print("input task error!")
     print("process end!")
