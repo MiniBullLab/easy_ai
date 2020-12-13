@@ -34,13 +34,13 @@ def parse_arguments():
 
     (options, args) = parser.parse_args()
 
-    if options.trainPath:
-        if not os.path.exists(options.trainPath):
-            parser.error("Could not find the input train file")
-        else:
-            options.input_path = os.path.normpath(options.trainPath)
-    else:
-        parser.error("'trainPath' option is required to run this program")
+    # if options.trainPath:
+    #     if not os.path.exists(options.trainPath):
+    #         parser.error("Could not find the input train file")
+    #     else:
+    #         options.input_path = os.path.normpath(options.trainPath)
+    # else:
+    #     parser.error("'trainPath' option is required to run this program")
 
     return options
 

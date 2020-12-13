@@ -48,7 +48,8 @@ class CreateDetectionSample():
                     writeFile[className].write(fileNameAndPost + "\n")
 
     def createTrainAndTest(self, inputDir, outputPath, probability):
-
+        if not os.path.exists(outputPath):
+            os.makedirs(outputPath)
         annotations_dir = os.path.join(inputDir, "../%s" % self.annotation_name)
         save_train_path = os.path.join(outputPath, "train.txt")
         save_val_path = os.path.join(outputPath, "val.txt")

@@ -22,6 +22,8 @@ class CreateSegmentionSample():
         self.annotation_post = ".png"
 
     def create_train_and_test(self, inputDir, outputPath, probability):
+        if not os.path.exists(outputPath):
+            os.makedirs(outputPath)
         annotations_dir = os.path.join(inputDir, "../%s" % self.segment_dir_name)
         save_train_path = os.path.join(outputPath, "train.txt")
         save_val_path = os.path.join(outputPath, "val.txt")
