@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:Lipeijie
 
 import torch.nn as nn
 from collections import OrderedDict
@@ -25,7 +25,6 @@ class CreateModuleList():
         self.index = 0
         self.outChannelList = []
         self.blockDict = OrderedDict()
-
         self.loss_factory = LossFactory()
 
         self.filters = 0
@@ -69,10 +68,11 @@ class CreateModuleList():
                 self.filters = -1
                 self.add_block_list(BlockType.Detection2dBlock, block, self.filters)
                 self.input_channels = self.filters
+            elif self.loss_factory.has_loss(block_def['type'].strip()):
+                self.create_loss(block_def)
             else:
                 self.create_layer(block_def, input_channels)
                 self.create_convolutional(block_def)
-                self.create_loss(block_def)
 
     def create_layer(self, module_def, input_channels):
         if module_def['type'] == LayerType.MyMaxPool2d:
