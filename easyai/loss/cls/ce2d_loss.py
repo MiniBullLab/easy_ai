@@ -27,7 +27,7 @@ class CrossEntropy2dLoss(BaseLoss):
         if self.weight_type == 1:
             result = 0
             class_number = len(self.weight)
-            self.weight = target.type(loss.dtype)
+            self.weight = self.weight.type(loss.dtype)
             for index in range(class_number):
                 result += self.weight[index] * target.eq(index).type(loss.dtype) * loss
         elif self.weight_type == 2:
@@ -82,7 +82,8 @@ class BinaryCrossEntropy2dLoss(BaseLoss):
     def compute_loss_from_weight(self, loss, target):
         ignore = target == self.ignore_index
         valid_count = (ignore == 0).sum()
-        self.weight = target.type(loss.dtype)
+
+        self.weight = self.weight.type(loss.dtype)
         if self.weight_type == 1:
             result = self.weight[0] * target.eq(0).type(loss.dtype) * loss + \
                      self.weight[1] * target.eq(1).type(loss.dtype) * loss

@@ -13,9 +13,9 @@ def numpy_compute_weight(labels, ignore_index=250):
     for i in range(batch_size):
         y = labels[i].reshape(-1)
         lb = np.unique(y)
-        classes = np.setdiff1d(lb, np.array([ignore_index]))
-        cls_weight = compute_class_weight('balanced', classes, y)
-        cls_weight_list.append(cls_weight)
+        # classes = np.setdiff1d(lb, np.array([ignore_index]))
+        cls_weight = compute_class_weight('balanced', lb, y)
+        cls_weight_list.append(cls_weight[:-1])
         del y
     cls_weight_list = np.asarray(cls_weight_list)
     result = np.sum(cls_weight_list, axis=0) / batch_size
