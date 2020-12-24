@@ -19,14 +19,14 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 #caffe
 export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
-rm -rf ./log/detect2d*
+rm -rf ./.easy_log/detect2d*
 
 CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_ai"
       exit 1
 fi
-python3 -m easy_tools.easy_convert --task DeNET --input ./log/snapshot/denet.onnx
+python3 -m easy_tools.easy_convert --task DeNET --input ./.easy_log/snapshot/denet.onnx
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_convert"
       exit 1
@@ -34,9 +34,9 @@ fi
 
 set -v
 root_path=$(pwd)
-modelDir="./log/snapshot"
-imageDir="./log/det_img"
-outDir="${root_path}/log/out"
+modelDir="./.easy_log/snapshot"
+imageDir="./.easy_log/det_img"
+outDir="${root_path}/.easy_log/out"
 caffeNetName=denet
 outNetName=denet
 
@@ -95,4 +95,3 @@ cavalry_gen -d $outDir/out_parser/vas_output/ \
 rm -rf vas_output
 
 cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
-# python3 -m easyAI.easy_encrypt -i $outDir/cavalry/$outNetName.bin -o ${root_path}/${outNetName}.bin

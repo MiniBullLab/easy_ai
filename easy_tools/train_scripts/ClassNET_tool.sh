@@ -19,7 +19,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 #caffe
 export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
-rm -rf ./log/classify*
+rm -rf ./.easy_log/classify*
 CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task ClassNet --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_ai"
@@ -28,9 +28,9 @@ fi
 
 set -v
 root_path=$(pwd)
-modelDir="./log/snapshot"
-imageDir="./log/cls_img"
-outDir="${root_path}/log/out"
+modelDir="./.easy_log/snapshot"
+imageDir="./.easy_log/cls_img"
+outDir="${root_path}/.easy_log/out"
 modelName=classnet
 outNetName=classnet
 
@@ -87,4 +87,3 @@ cavalry_gen -d $outDir/out_parser/vas_output/ \
 rm -rf vas_output
 
 cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
-# python3 -m easyAI.easy_encrypt -i $outDir/cavalry/$outNetName.bin -o ${root_path}/${outNetName}.bin
