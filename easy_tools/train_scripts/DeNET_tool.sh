@@ -12,12 +12,6 @@ else
     dataset_val_path=/easy_ai/ImageSets/val.txt
 fi
 
-#cuda10
-export PATH=/usr/local/cuda/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-
-#caffe
-export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
 rm -rf ./log/detect2d*
 
@@ -95,4 +89,3 @@ cavalry_gen -d $outDir/out_parser/vas_output/ \
 rm -rf vas_output
 
 cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
-# python3 -m easyAI.easy_encrypt -i $outDir/cavalry/$outNetName.bin -o ${root_path}/${outNetName}.bin
