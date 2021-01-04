@@ -120,15 +120,20 @@ class TaskArgumentsParse():
                           default=False,
                           help="show result")
 
+        parser.add_option("-d", "--data_type", dest="data_type",
+                          action="store", type="int", default=1,
+                          help="images path or video path")
+
         (options, args) = parser.parse_args()
 
-        if options.inputPath:
-            if not os.path.exists(options.inputPath):
-                parser.error("Could not find the input file")
+        if options.data_type != 0:
+            if options.inputPath:
+                if not os.path.exists(options.inputPath):
+                    parser.error("Could not find the input file")
+                else:
+                    options.input_path = os.path.normpath(options.inputPath)
             else:
-                options.input_path = os.path.normpath(options.inputPath)
-        else:
-            parser.error("'input' option is required to run this program")
+                parser.error("'input' option is required to run this program")
 
         return options
 

@@ -19,7 +19,7 @@ class Classify(BaseInference):
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
         self.result_show = ClassifyShow()
 
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         dataloader = self.get_image_data_lodaer(input_path)
         for index, (file_path, src_image, image) in enumerate(dataloader):

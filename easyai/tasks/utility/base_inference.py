@@ -29,7 +29,7 @@ class BaseInference(BaseTask):
                            }
 
     @abc.abstractmethod
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         pass
 
     @abc.abstractmethod

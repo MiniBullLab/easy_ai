@@ -21,26 +21,38 @@ class GenerateImage(BaseInference):
 
         self.model_args['image_size'] = self.task_config.image_size
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.get_device()
 
         self.result_process = GenerateImageResultProcess(self.task_config.image_size)
         self.result_show = ImageShow()
         self.image_process = ImageProcess()
 
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         os.makedirs(self.task_config.save_result_path, exist_ok=True)
-        dataloader = self.get_image_data_lodaer(input_path)
-        for index, (file_path, src_image, image) in enumerate(dataloader):
+        if data_type == 0:
+            file_path = "generate_image.png"
+            batch_data = torch.randn((1, 1))
             self.timer.tic()
-            prediction, _ = self.infer(image)
+            prediction, _ = self.infer(batch_data)
             result = self.postprocess(prediction)
-            print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
+            print('Done. (%.3fs)' % (self.timer.toc()))
             if is_show:
                 if not self.result_show.show(result):
-                    break
+                    pass
             else:
                 self.save_result(file_path, result)
+        else:
+            dataloader = self.get_image_data_lodaer(input_path)
+            for index, (file_path, src_image, image) in enumerate(dataloader):
+                self.timer.tic()
+                prediction, _ = self.infer(image)
+                result = self.postprocess(prediction)
+                print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
+                if is_show:
+                    if not self.result_show.show(result):
+                        break
+                else:
+                    self.save_result(file_path, result)
 
     def save_result(self, file_path, prediction):
         path, filename_post = os.path.split(file_path)

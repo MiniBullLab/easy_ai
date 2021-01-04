@@ -21,7 +21,7 @@ class KeyPoints2d(BaseInference):
 
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
         for i, (file_path, src_image, img) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')

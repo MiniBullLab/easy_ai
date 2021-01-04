@@ -25,7 +25,7 @@ class Detection2d(BaseInference):
         self.model_args['class_number'] = len(self.task_config.detect2d_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         dataloader = self.get_image_data_lodaer(input_path)
         for i, (file_path, src_image, img) in enumerate(dataloader):

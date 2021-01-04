@@ -28,7 +28,7 @@ class Segmentation(BaseInference):
 
         self.threshold = 0.5  # binary class threshold
 
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         os.makedirs(self.task_config.save_result_path, exist_ok=True)
 

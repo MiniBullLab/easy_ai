@@ -9,9 +9,10 @@ from easyai.helper.arguments_parse import TaskArgumentsParse
 
 class InferenceTask():
 
-    def __init__(self, task_name, input_path, is_show=True):
+    def __init__(self, task_name, input_path, data_type, is_show=True):
         self.task_name = task_name
         self.input_path = input_path
+        self.data_type = data_type
         self.is_show = is_show
 
     def infer(self, cfg_path, gpu_id, weight_path, config_path):
@@ -31,7 +32,8 @@ class InferenceTask():
 def main():
     print("process start...")
     options = TaskArgumentsParse.inference_parse_arguments()
-    inference_task = InferenceTask(options.task_name, options.inputPath, options.show)
+    inference_task = InferenceTask(options.task_name, options.inputPath,
+                                   options.data_type, options.show)
     inference_task.infer(options.model, 0, options.weights, options.config_path)
     print("process end!")
 
