@@ -45,6 +45,7 @@ class MyModel(BaseModel):
         for key, block in input_dict.items():
             if self.loss_factory.has_loss(key):
                 self.lossList.append(block)
+        assert len(self.lossList) > 0
 
     def creat_backbone(self):
         input_name = ''

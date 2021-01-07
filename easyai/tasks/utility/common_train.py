@@ -42,6 +42,12 @@ class CommonTrain(BaseTrain):
         else:
             print("model is not create!")
 
+    def adjust_epoch_optimizer(self, epoch):
+        if len(self.train_task_config.optimizer_config) <= 1:
+            return
+        optimizer_args = self.optimizer_process.get_optimizer_config(epoch,
+                                                                     self.train_task_config.optimizer_config)
+
     def loss_backward(self, loss):
         if self.train_task_config.amp_config['enable_amp']:
             loss = loss / self.train_task_config.accumulated_batches
