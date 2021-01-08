@@ -253,6 +253,23 @@ class ToolArgumentsParse():
         return options
 
     @classmethod
+    def roc_show_path_parse(cls):
+        parser = OptionParser()
+        parser.description = "This program ROC show"
+
+        parser.add_option("-t", "--task", dest="task_name",
+                          type="string", default=None,
+                          help="task name")
+
+        parser.add_option("-i", "--target", dest="targetPath",
+                          metavar="PATH", type="string", default=None,
+                          help="target txt images path")
+
+        parser.add_option("-r", "--result", dest="resultPath",
+                          metavar="PATH", type="string", default=None,
+                          help="txt result path")
+
+    @classmethod
     def images_path_parse(cls):
         parser = OptionParser()
         parser.description = "This program"
