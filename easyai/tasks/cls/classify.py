@@ -40,7 +40,7 @@ class Classify(BaseInference):
         with open(self.task_config.save_result_path, 'a') as file:
             file.write("{} {} {}\n".format(filename_post,
                                            class_index[0].cpu().numpy(),
-                                           class_confidence[0].cpu().numpy()))
+                                           class_confidence[0][0].cpu().numpy()))
 
     def infer(self, input_data, threshold=0.0):
         with torch.no_grad():
@@ -50,7 +50,7 @@ class Classify(BaseInference):
 
     def postprocess(self, result):
         class_indices = torch.argmax(result, dim=1)
-        class_confidence = result[class_indices]
+        class_confidence = result[:, class_indices]
         return class_indices, class_confidence
 
     def compute_output(self, output_list):

@@ -268,6 +268,15 @@ class ToolArgumentsParse():
         parser.add_option("-r", "--result", dest="resultPath",
                           metavar="PATH", type="string", default=None,
                           help="txt result path")
+        (options, args) = parser.parse_args()
+        if options.targetPath:
+            if not os.path.exists(options.targetPath):
+                parser.error("Could not find the input file")
+            else:
+                options.targetPath = os.path.normpath(options.targetPath)
+        else:
+            parser.error("'target' option is required to run this program")
+        return options
 
     @classmethod
     def images_path_parse(cls):
