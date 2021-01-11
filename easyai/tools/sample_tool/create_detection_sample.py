@@ -10,7 +10,8 @@ import cv2
 import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
-from easyai.tools.sample_tool.sample_info_get import DetectionSampleProcess
+from easyai.tools.sample_tool.sample_info_get import SampleInformation
+from easyai.base_name.task_name import TaskName
 from easyai.helper.arguments_parse import ToolArgumentsParse
 
 
@@ -95,8 +96,9 @@ def test():
                                 options.outputPath,
                                 options.probability)
     elif options.type.strip() == "balance":
-        sample_process = DetectionSampleProcess()
-        class_names = sample_process.create_class_names(options.inputPath)
+        sample_process = SampleInformation()
+        class_names = sample_process.create_class_names(options.inputPath,
+                                                        TaskName.Detect2d_Task)
         test.createBalanceSample(options.inputPath,
                                  options.outputPath,
                                  class_names)
