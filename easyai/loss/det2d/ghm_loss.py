@@ -26,8 +26,8 @@ class GHM_Loss(nn.Module):
         input [batch_num, class_num]:
             The direct prediction of classification fc layer.
         target [batch_num, class_num]:
-            Binary target (0 or 1) for each sample each class. The value is -1
-            when the sample is ignored.
+            Binary target (0 or 1) for each sample_tool each class. The value is -1
+            when the sample_tool is ignored.
         """
         edges = self.edges
         mmt = self.momentum
@@ -71,8 +71,8 @@ class GHMC_Loss:
         input [batch_num, class_num]:
             The direct prediction of classification fc layer.
         target [batch_num, class_num]:
-            Binary target (0 or 1) for each sample each class. The value is -1
-            when the sample is ignored.
+            Binary target (0 or 1) for each sample_tool each class. The value is -1
+            when the sample_tool is ignored.
         """
         edges = self.edges
         mmt = self.momentum

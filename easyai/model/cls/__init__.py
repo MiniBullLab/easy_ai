@@ -1,3 +1,4 @@
+from . import binary_classnet
 from . import classnet
 from . import ghostnet_cls
 from . import inceptionv4_cls

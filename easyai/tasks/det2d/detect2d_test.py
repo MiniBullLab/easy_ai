@@ -35,8 +35,8 @@ class Detection2dTest(BaseTest):
 
             self.detect_inference.set_src_size(src_image.numpy()[0])
 
-            result, output_list = self.detect_inference.infer(input_image, self.threshold_det)
-            detection_objects = self.detect_inference.postprocess(result)
+            prediction, output_list = self.detect_inference.infer(input_image)
+            detection_objects = self.detect_inference.postprocess(prediction, self.threshold_det)
 
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
             self.detect_inference.save_result(image_path[0], detection_objects, 1)

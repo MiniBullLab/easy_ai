@@ -33,11 +33,11 @@ class BaseInference(BaseTask):
         pass
 
     @abc.abstractmethod
-    def infer(self, input_data, threshold=0.0):
+    def infer(self, input_data):
         pass
 
     @abc.abstractmethod
-    def postprocess(self, result):
+    def postprocess(self, prediction, threshold=None):
         pass
 
     def load_weights(self, weights_path):

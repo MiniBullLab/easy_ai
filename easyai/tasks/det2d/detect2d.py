@@ -33,8 +33,8 @@ class Detection2d(BaseInference):
             self.set_src_size(src_image)
 
             self.timer.tic()
-            result, _ = self.infer(img, self.task_config.confidence_th)
-            detection_objects = self.postprocess(result)
+            prediction, _ = self.infer(img)
+            detection_objects = self.postprocess(prediction, self.task_config.confidence_th)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image, detection_objects):
@@ -72,15 +72,15 @@ class Detection2d(BaseInference):
                 with open(temp_save_path, 'a') as file:
                     file.write("{} {} {} {} {} {}\n".format(filename_post, confidence, x1, y1, x2, y2))
 
-    def infer(self, input_data, threshold=0.0):
+    def infer(self, input_data):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list)
-            result = self.result_process.get_detection_result(output, threshold,
-                                                              self.task_config.post_prcoess_type)
-        return result, output_list
+        return output, output_list
 
-    def postprocess(self, result):
+    def postprocess(self, prediction, threshold=0.0):
+        result = self.result_process.get_detection_result(prediction, threshold,
+                                                          self.task_config.post_prcoess_type)
         detection_objects = self.nms_process.multi_class_nms(result, self.task_config.nms_th)
         detection_objects = self.result_process.resize_detection_objects(self.src_size,
                                                                          self.task_config.image_size,

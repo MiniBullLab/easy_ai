@@ -253,7 +253,7 @@ class ToolArgumentsParse():
         return options
 
     @classmethod
-    def roc_show_path_parse(cls):
+    def evaluation_show_path_parse(cls):
         parser = OptionParser()
         parser.description = "This program ROC show"
 
@@ -268,6 +268,9 @@ class ToolArgumentsParse():
         parser.add_option("-r", "--result", dest="resultPath",
                           metavar="PATH", type="string", default=None,
                           help="txt result path")
+        parser.add_option("-c", "--config", dest="config_path",
+                          metavar="PATH", type="string", default=None,
+                          help="config path")
         (options, args) = parser.parse_args()
         if options.targetPath:
             if not os.path.exists(options.targetPath):
@@ -388,7 +391,7 @@ class ToolArgumentsParse():
     @classmethod
     def process_sample_parse(cls):
         parser = OptionParser()
-        parser.description = "This program process sample"
+        parser.description = "This program process sample_tool"
 
         parser.add_option("-i", "--input", dest="inputPath",
                           metavar="PATH", type="string", default=None,
@@ -400,7 +403,7 @@ class ToolArgumentsParse():
 
         parser.add_option("-t", "--type", dest="type",
                           metavar="PATH", type="string", default="train_val",
-                          help="create sample type")
+                          help="create sample_tool type")
 
         parser.add_option("-p", '--probability', dest='probability', type='int',
                           default=10, metavar='EVICTINTERVAL',

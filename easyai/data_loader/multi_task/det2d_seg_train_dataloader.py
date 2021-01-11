@@ -13,8 +13,8 @@ from easyai.data_loader.multi_task.multi_task_sample import MultiTaskSample
 from easyai.data_loader.multi_task.det2d_seg_data_augment import Det2dSegDataAugment
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.data_loader.seg.segment_dataset_process import SegmentDatasetProcess
-from easyai.tools.sample.create_detection_sample import CreateDetectionSample
-from easyai.tools.sample.convert_segment_label import ConvertSegmentionLable
+from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
+from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 
 
 class Det2dSegTrainDataloader(DataLoader):

@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
-from easyai.tools.sample.detection_sample_process import DetectionSampleProcess
+from easyai.tools.sample_tool.sample_info_get import DetectionSampleProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 
 

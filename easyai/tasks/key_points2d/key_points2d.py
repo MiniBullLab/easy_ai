@@ -28,27 +28,27 @@ class KeyPoints2d(BaseInference):
             self.set_src_size(src_image)
 
             self.timer.tic()
-            result = self.infer(img, self.task_config.confidence_th)
-            result_objects = self.postprocess(result)
+            prediction = self.infer(img)
+            _, result_objects = self.postprocess(prediction, self.task_config.confidence_th)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
 
             if not self.result_show.show(src_image, result_objects):
                 break
 
-    def infer(self, input_data, threshold=0.0):
+    def infer(self, input_data):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list)
-            result = self.result_process.get_keypoints_result(output, threshold,
-                                                              self.task_config.post_prcoess_type)
-        return result
+        return output
 
-    def postprocess(self, result):
+    def postprocess(self, prediction, threshold=0.0):
+        result = self.result_process.get_keypoints_result(prediction, threshold,
+                                                          self.task_config.post_prcoess_type)
         result_objects = self.result_process.resize_keypoints_objects(self.src_size,
                                                                       self.task_config.image_size,
                                                                       result,
                                                                       self.task_config.points_class)
-        return result_objects
+        return result, result_objects
 
     def compute_output(self, output_list):
         count = len(output_list)

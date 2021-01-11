@@ -7,7 +7,7 @@ from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.calculate_mAp import CalculateMeanAp
 from easyai.data_loader.multi_task.det2d_seg_val_dataloader import get_det2d_seg_val_dataloader
 from easyai.tasks.multi_task.det2d_seg_task import Det2dSegTask
-from easyai.evaluation.segmention_metric import SegmentionMetric
+from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
@@ -39,10 +39,11 @@ class Det2dSegTaskTest(BaseTest):
 
             self.multi_task_inference.set_src_size(src_image.numpy()[0])
 
-            result_dets, result_seg = self.multi_task_inference.infer(input_image,
-                                                                      threshold_det=self.threshold_det,
-                                                                      threshold_seg=self.threshold_seg)
-            detection_objects, _ = self.multi_task_inference.postprocess((result_dets, result_seg))
+            predict_dets, predict_seg = self.multi_task_inference.infer(input_image)
+            detection_objects, _, result_seg = self.multi_task_inference.postprocess((predict_dets,
+                                                                                      predict_seg),
+                                                                                     (self.threshold_det,
+                                                                                      self.threshold_seg))
 
             gt = segment_targets[0].data.cpu().numpy()
             self.seg_metric.numpy_eval(result_seg, gt)

@@ -33,7 +33,7 @@ class OfflineClassifyEvaluation(BaseOfflineEvaluation):
         result = []
         for line_data in self.dirProcess.getFileData(test_path):
             data_list = [x.strip() for x in line_data.split() if x.strip()]
-            if len(data_list) == 2:
+            if len(data_list) == 3:
                 # print(data_list[0])
                 result.append((data_list[0], int(data_list[1])))
         return result

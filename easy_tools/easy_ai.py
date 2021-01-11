@@ -52,6 +52,8 @@ def train_main():
     dir_name = os.path.dirname(current_path)
     train_process = EasyAiModelTrain(options.trainPath, options.valPath, options.gpu_id, options.config_path)
 
+    if options.task_name.strip() == "NG_OK":
+        train_process.binary_classidy_model_train(dir_name)
     if options.task_name.strip() == "ClassNet":
         train_process.classify_model_train(dir_name)
     elif options.task_name.strip() == "DeNET":

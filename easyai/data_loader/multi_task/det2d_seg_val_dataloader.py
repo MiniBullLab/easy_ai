@@ -7,7 +7,7 @@ from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.multi_task.multi_task_sample import MultiTaskSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.data_loader.seg.segment_dataset_process import SegmentDatasetProcess
-from easyai.tools.sample.convert_segment_label import ConvertSegmentionLable
+from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 
 
 class Det2dSegValDataloader(TorchDataLoader):

@@ -21,5 +21,5 @@ def detection2d_image_weights(labels, class_number, class_weights):
     n = len(labels)
     class_counts = np.array([np.bincount(labels[i][:, 0].astype(np.int), minlength=class_number) for i in range(n)])
     image_weights = (class_weights.reshape(1, class_number) * class_counts).sum(1)
-    # index = random.choices(range(n), weights=image_weights, k=1)  # weight image sample
+    # index = random.choices(range(n), weights=image_weights, k=1)  # weight image sample_tool
     return image_weights

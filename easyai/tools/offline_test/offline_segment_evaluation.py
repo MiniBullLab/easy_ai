@@ -4,9 +4,9 @@
 
 import os
 from easyai.helper.imageProcess import ImageProcess
-from easyai.tools.sample.convert_segment_label import ConvertSegmentionLable
+from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 from easyai.data_loader.seg.segment_sample import SegmentSample
-from easyai.evaluation.segmention_metric import SegmentionMetric
+from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation

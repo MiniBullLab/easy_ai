@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 from PyQt5.QtCore import QThread, pyqtSignal
-from easyai.tools.offline_evaluation import OfflineEvaluation
+from easyai.tools.eval_tool.offline_evaluation import OfflineEvaluation
 
 
 class AccuracyTestThread(QThread):

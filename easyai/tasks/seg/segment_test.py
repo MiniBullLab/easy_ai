@@ -7,7 +7,7 @@ from easyai.tasks.utility.base_test import BaseTest
 from easyai.data_loader.seg.segment_dataloader import get_segment_val_dataloader
 from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
-from easyai.evaluation.segmention_metric import SegmentionMetric
+from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.helper.average_meter import AverageMeter
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
@@ -39,10 +39,11 @@ class SegmentionTest(BaseTest):
         self.metric.reset()
         self.epoch_loss_average.reset()
         for i, (images, segment_targets) in enumerate(dataloader):
-            prediction, output_list = self.segment_inference.infer(images, self.threshold)
+            prediction, output_list = self.segment_inference.infer(images)
+            result, _ = self.segment_inference.postprocess(prediction, self.threshold)
             loss = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()
-            self.metric.numpy_eval(prediction, gt)
+            self.metric.numpy_eval(result, gt)
             self.metirc_loss(i, loss)
 
         score, class_score = self.metric.get_score()

@@ -36,34 +36,42 @@ class Segmentation(BaseInference):
         for index, (file_path, src_image, image) in enumerate(dataloader):
             self.timer.tic()
             self.set_src_size(src_image)
-            prediction, _ = self.infer(image, self.threshold)
-            result = self.postprocess(prediction)
+            prediction, _ = self.infer(image)
+            _, seg_image = self.postprocess(prediction, self.threshold)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image, result,
+                if not self.result_show.show(src_image, seg_image,
                                              self.task_config.segment_class):
                     break
             else:
-                self.save_result(file_path, result)
+                self.save_result_confidence(file_path, prediction)
+                self.save_result(file_path, seg_image)
 
-    def save_result(self, file_path, prediction):
+    def save_result(self, file_path, seg_image):
         path, filename_post = os.path.split(file_path)
         filename, post = os.path.splitext(filename_post)
         save_result_path = os.path.join(self.task_config.save_result_path, "%s.png" % filename)
-        self.image_process.opencv_save_image(save_result_path, prediction)
+        self.image_process.opencv_save_image(save_result_path, seg_image)
 
-    def infer(self, input_data, threshold=0.0):
+    def save_result_confidence(self, file_path, prediction):
+        if prediction.ndim == 2:
+            path, filename_post = os.path.split(file_path)
+            filename, post = os.path.splitext(filename_post)
+            save_result_path = os.path.join(self.task_config.save_result_path, "%s.txt" % filename)
+            np.savetxt(save_result_path, prediction, fmt='%0.8f')
+
+    def infer(self, input_data):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list[:])
-            prediction = self.result_process.get_segmentation_result(output, threshold)
-        return prediction, output_list
+        return output, output_list
 
-    def postprocess(self, result):
-        result = self.result_process.resize_segmention_result(self.src_size,
-                                                              self.task_config.image_size,
-                                                              result)
-        return result
+    def postprocess(self, prediction, threshold=None):
+        result = self.result_process.get_segmentation_result(prediction, threshold)
+        seg_image = self.result_process.resize_segmention_result(self.src_size,
+                                                                 self.task_config.image_size,
+                                                                 result)
+        return result, seg_image
 
     def compute_output(self, output_list):
         count = len(output_list)

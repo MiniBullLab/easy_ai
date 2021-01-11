@@ -12,12 +12,12 @@ class ClassifyPrecisionAndRecall():
     def __init__(self, class_number):
         self.class_number = class_number
         self.dir_process = DirProcess()
+        self.classify_sample = ClassifySample(None)
 
     def eval(self, result_path, val_path):
         result = {}
         result_data_list = self.get_result(result_path)
-        classify_sample = ClassifySample(val_path)
-        gt_data_list = classify_sample.get_image_and_label_list(val_path)
+        gt_data_list = self.classify_sample.get_image_and_label_list(val_path)
         for class_index in range(self.class_number):
             class_result_data_list = [x for x in result_data_list if x[1] == class_index]
             class_gt_data_list = [x for x in gt_data_list if x[1] == class_index]
@@ -27,8 +27,8 @@ class ClassifyPrecisionAndRecall():
 
     def calculate_roc_value(self, result_data_list, gt_data_list):
         result = []
-        for threshold in range(0, 11, 1):
-            threshold = threshold / 10.0
+        for threshold in range(0, 100, 1):
+            threshold = threshold / 100.0
             input_data_list = [x for x in result_data_list if x[2] >= threshold]
             pecision, recall = self.calculate_pr(input_data_list, gt_data_list)
             result.append((pecision, recall))

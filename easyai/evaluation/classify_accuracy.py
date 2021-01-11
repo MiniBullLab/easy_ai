@@ -12,6 +12,7 @@ class ClassifyAccuracy():
         self.top1 = AverageMeter()
         self.topK = AverageMeter()
         self.param_top = top_k
+        self.threshold = 0.5  # binary class threshold
         self.clean_data()
 
     def torch_eval(self, output, target):
@@ -58,8 +59,13 @@ class ClassifyAccuracy():
         """Computes the precision@k for the specified values of k"""
         maxk = max(top)
         batch_size = target.size(0)
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
+        class_number = output.size(1)
+        if class_number > 1:
+            _, pred = output.topk(maxk, 1, True, True)
+            pred = pred.t()
+        else:
+            pred = (output >= self.threshold).astype(int)
+
         correct = pred.eq(target.view(1, -1).expand_as(pred))
 
         res = []

@@ -60,14 +60,14 @@ class GenerateImage(BaseInference):
         save_result_path = os.path.join(self.task_config.save_result_path, "%s.png" % filename)
         self.image_process.opencv_save_image(save_result_path, prediction)
 
-    def infer(self, input_data, threshold=0.0):
+    def infer(self, input_data):
         with torch.no_grad():
             fake_images = self.model.generator_input_data(input_data, 1)
             output_list = self.model(fake_images.to(self.device))
             output = self.compute_output(output_list)
         return output, output_list
 
-    def postprocess(self, result):
+    def postprocess(self, result, threshold=0.0):
         result_image = None
         if result is not None:
             result_image = self.result_process.get_result_image(result,
