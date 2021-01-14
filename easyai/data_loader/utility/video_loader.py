@@ -15,6 +15,7 @@ class VideoLoader(DataLoader):
                  resize_type=0, normalize_type=0, mean=0, std=1):
         super().__init__(data_channel)
         self.video_process = VideoProcess()
+        self.image_process = ImageDataSetProcess()
         self.dataset_process = TaskDataSetProcess(resize_type, normalize_type,
                                                   mean, std,
                                                   pad_color=self.get_pad_color())
@@ -53,9 +54,9 @@ class VideoLoader(DataLoader):
     def read_src_image(self, cv_image):
         src_image = None
         if self.data_channel == 1:
-            src_image = self.dataset_process.dataset_process.cv_image_color_convert(cv_image, 0)
+            src_image = self.image_process.cv_image_color_convert(cv_image, 0)
         elif self.data_channel == 3:
-            src_image = self.dataset_process.dataset_process.cv_image_color_convert(cv_image, 1)
+            src_image = self.image_process.cv_image_color_convert(cv_image, 1)
         else:
             print("read src image error!")
         return cv_image, src_image
