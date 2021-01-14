@@ -51,7 +51,7 @@ class GenerateImageConfig(GanTrainConfig):
         self.post_prcoess_type = 0
 
     def get_train_default_value(self):
-        self.train_batch_size = 2
+        self.train_batch_size = 128
         self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'generate_latest.pt'
@@ -63,7 +63,7 @@ class GenerateImageConfig(GanTrainConfig):
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
         self.max_epochs = 100
 
-        self.base_lr = 0.0002
+        self.base_lr = 0.0001
         self.d_optimizer_config = {0: {'type': 'Adam',
                                        'betas': (0.9, 0.999),
                                        'eps': 1e-08,
@@ -85,6 +85,9 @@ class GenerateImageConfig(GanTrainConfig):
                                       'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
                                       'warmup_type': 0,
                                       'warmup_iters': 1000}
+
+        self.d_skip_batch_backward = 1
+        self.g_skip_batch_backward = 5
 
         self.accumulated_batches = 1
         self.display = 1

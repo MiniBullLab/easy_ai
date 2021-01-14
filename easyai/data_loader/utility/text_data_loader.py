@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 from easyai.helper import DirProcess
 from easyai.data_loader.utility.data_loader import *
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 
 class TextDataLoader(DataLoader):
@@ -24,7 +24,9 @@ class TextDataLoader(DataLoader):
         self.resize_type = resize_type
         self.image_process = ImageProcess()
         self.dirProcess = DirProcess()
-        self.dataset_process = ImageDataSetProcess()
+        self.dataset_process = TaskDataSetProcess(resize_type, normalize_type,
+                                                  mean, std,
+                                                  pad_color=self.get_pad_color())
         self.files = self.get_image_list(input_path)
         self.count = len(self.files)
         self.image_pad_color = (0, 0, 0)
@@ -39,13 +41,8 @@ class TextDataLoader(DataLoader):
             raise StopIteration
         image_path = self.files[self.index]
         cv_image, src_image = self.read_src_image(image_path)
-        image = self.dataset_process.resize(src_image, self.image_size, self.resize_type,
-                                            pad_color=self.image_pad_color)
-        image = self.dataset_process.normalize(input_data=image,
-                                               normalize_type=self.normalize_type,
-                                               mean=self.mean, std=self.std)
-        numpy_image = self.dataset_process.numpy_transpose(image)
-        torch_image = self.all_numpy_to_tensor(numpy_image)
+        image = self.dataset_process.resize_image(src_image, self.image_size)
+        torch_image = self.dataset_process.normalize_image(image)
         return image_path, cv_image, torch_image
 
     def __len__(self):

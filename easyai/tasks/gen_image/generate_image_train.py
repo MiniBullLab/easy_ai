@@ -6,6 +6,7 @@ import os
 from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.gan_train import GanTrain
+from easyai.tasks.gen_image.generate_image import GenerateImage
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
@@ -19,7 +20,11 @@ class GenerateImageTrain(GanTrain):
         self.model_args['image_size'] = self.train_task_config.image_size
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
+        self.gen_test = GenerateImage(cfg_path, gpu_id, config_path)
+
         self.best_score = 0
+        # self.pre_d_loss_values = None
+        # self.pre_g_loss_values = None
 
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
@@ -62,15 +67,19 @@ class GenerateImageTrain(GanTrain):
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
 
-    def compute_backward(self, input_datas, targets, setp_index):
+    def compute_backward(self, input_datas, targets, step_index):
         # Compute loss, compute gradient, update parameters
-        d_loss_values = self.discriminator_backward(input_datas, targets)
-        g_loss_values = self.generator_backward(input_datas, targets)
+        d_loss_values = None
+        g_loss_values = None
+        if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
+            d_loss_values = self.discriminator_backward(input_datas, targets)
+        if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
+            g_loss_values = self.generator_backward(input_datas, targets)
         return d_loss_values, g_loss_values
 
     def discriminator_backward(self, input_datas, targets):
-        real_images = self.model.generator_input_data(input_datas, 0)
-        fake_images = self.model.generator_input_data(input_datas, 1)
+        fake_images = self.model.generator_input_data(input_datas, 0)
+        real_images = self.model.generator_input_data(input_datas, 1)
         output_list = self.model(fake_images.to(self.device),
                                  real_images.to(self.device),
                                  net_type=1)
@@ -82,7 +91,7 @@ class GenerateImageTrain(GanTrain):
         return loss
 
     def generator_backward(self, input_datas, targets):
-        fake_images = self.model.generator_input_data(input_datas, 1)
+        fake_images = self.model.generator_input_data(input_datas, 0)
         output_list = self.model(fake_images.to(self.device),
                                  net_type=2)
         loss = self.compute_loss(output_list, targets, 1)
@@ -139,35 +148,46 @@ class GenerateImageTrain(GanTrain):
         return loss
 
     def update_logger(self, index, total, epoch, loss_values):
-        step = epoch * total + index
         d_loss_values, g_loss_values = loss_values
+        self.update_d_logger(index, total, epoch, d_loss_values)
+        self.update_g_logger(index, total, epoch, g_loss_values)
+        print('Epoch: {} \t Time: {:.5f}\t'.format(epoch, self.timer.toc(True)))
+
+    def update_d_logger(self, index, total, epoch, d_loss_values):
+        if d_loss_values is None:
+            return
+        step = epoch * total + index
         all_d_loss_value = 0
-        all_g_loss_value = 0
         for index, d_loss in enumerate(d_loss_values):
             tag = "d_loss_%d" % index
             all_d_loss_value += d_loss.item()
             self.train_logger.add_scalar(tag, d_loss.item(), step)
-        for index, g_loss in enumerate(g_loss_values):
-            tag = "g_loss_%d" % index
-            all_g_loss_value += g_loss.item()
-            self.train_logger.add_scalar(tag, g_loss.item(), step)
-
         for index, optimizer in enumerate(self.d_optimizer_list):
             tag = "d_lr_%d" % index
             d_lr = optimizer.param_groups[0]['lr']
             self.train_logger.add_scalar(tag, d_lr, step)
+            print("d Lr:", d_lr)
+        self.d_loss_average.update(all_d_loss_value)
+        print('Epoch: {}[{}/{}]\t  D Loss: {:.7f}\t'.format(epoch, index, total,
+                                                            self.d_loss_average.avg))
+
+    def update_g_logger(self, index, total, epoch, g_loss_values):
+        if g_loss_values is None:
+            return
+        step = epoch * total + index
+        all_g_loss_value = 0
+        for index, g_loss in enumerate(g_loss_values):
+            tag = "g_loss_%d" % index
+            all_g_loss_value += g_loss.item()
+            self.train_logger.add_scalar(tag, g_loss.item(), step)
         for index, optimizer in enumerate(self.g_optimizer_list):
             tag = "g_lr_%d" % index
             g_lr = optimizer.param_groups[0]['lr']
             self.train_logger.add_scalar(tag, g_lr, step)
-
-        self.d_loss_average.update(all_d_loss_value)
+            print("g Lr:", g_lr)
         self.g_loss_average.update(all_g_loss_value)
-
-        print('Epoch: {} \t Time: {:.5f}\t'.format(epoch, self.timer.toc(True)))
-        print('Epoch: {}[{}/{}]\t  D Loss: {:.7f}\t G Loss: {:.7f} \t'.format(epoch, index, total,
-                                                                              self.d_loss_average.avg,
-                                                                              self.g_loss_average.avg))
+        print('Epoch: {}[{}/{}]\t  G Loss: {:.7f}\t'.format(epoch, index, total,
+                                                            self.g_loss_average.avg))
 
     def save_train_model(self, epoch):
         self.train_logger.add_scalar("train epoch d loss",
@@ -187,4 +207,6 @@ class GenerateImageTrain(GanTrain):
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
-        pass
+        if epoch % 5 == 0:
+            self.gen_test.load_weights(save_model_path)
+            self.gen_test.process(None, 0, False)

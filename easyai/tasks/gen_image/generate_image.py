@@ -25,12 +25,10 @@ class GenerateImage(BaseInference):
         self.result_process = GenerateImageResultProcess(self.task_config.image_size)
         self.result_show = ImageShow()
         self.image_process = ImageProcess()
+        self.save_index = 0
 
     def process(self, input_path, data_type=1, is_show=False):
-        os.system('rm -rf ' + self.task_config.save_result_path)
-        os.makedirs(self.task_config.save_result_path, exist_ok=True)
         if data_type == 0:
-            file_path = "generate_image.png"
             batch_data = torch.randn((1, 1))
             self.timer.tic()
             prediction, _ = self.infer(batch_data)
@@ -40,8 +38,11 @@ class GenerateImage(BaseInference):
                 if not self.result_show.show(result):
                     pass
             else:
+                file_path = "%d_generate_image.png" % self.save_index
+                self.save_index += 1
                 self.save_result(file_path, result)
         else:
+            os.system('rm -rf ' + self.task_config.save_result_path)
             dataloader = self.get_image_data_lodaer(input_path)
             for index, (file_path, src_image, image) in enumerate(dataloader):
                 self.timer.tic()
@@ -55,6 +56,7 @@ class GenerateImage(BaseInference):
                     self.save_result(file_path, result)
 
     def save_result(self, file_path, prediction):
+        os.makedirs(self.task_config.save_result_path, exist_ok=True)
         path, filename_post = os.path.split(file_path)
         filename, post = os.path.splitext(filename_post)
         save_result_path = os.path.join(self.task_config.save_result_path, "%s.png" % filename)
@@ -62,7 +64,7 @@ class GenerateImage(BaseInference):
 
     def infer(self, input_data):
         with torch.no_grad():
-            fake_images = self.model.generator_input_data(input_data, 1)
+            fake_images = self.model.generator_input_data(input_data)
             output_list = self.model(fake_images.to(self.device))
             output = self.compute_output(output_list)
         return output, output_list

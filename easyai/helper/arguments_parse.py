@@ -122,7 +122,7 @@ class TaskArgumentsParse():
 
         parser.add_option("-d", "--data_type", dest="data_type",
                           action="store", type="int", default=1,
-                          help="images path or video path")
+                          help="input data type(none, images, video)")
 
         (options, args) = parser.parse_args()
 

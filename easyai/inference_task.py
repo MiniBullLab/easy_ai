@@ -24,7 +24,7 @@ class InferenceTask():
                 REGISTERED_INFERENCE_TASK.has_class(self.task_name):
             task = build_from_cfg(task_args, REGISTERED_INFERENCE_TASK)
             task.load_weights(weight_path)
-            task.process(self.input_path, self.is_show)
+            task.process(self.input_path, self.data_type, self.is_show)
         else:
             print("This task(%s) not exits!" % self.task_name)
 

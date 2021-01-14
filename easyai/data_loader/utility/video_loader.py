@@ -6,6 +6,7 @@ import numpy as np
 from easyai.helper import VideoProcess
 from easyai.data_loader.utility.data_loader import *
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 
 class VideoLoader(DataLoader):
@@ -14,7 +15,9 @@ class VideoLoader(DataLoader):
                  resize_type=0, normalize_type=0, mean=0, std=1):
         super().__init__(data_channel)
         self.video_process = VideoProcess()
-        self.dataset_process = ImageDataSetProcess()
+        self.dataset_process = TaskDataSetProcess(resize_type, normalize_type,
+                                                  mean, std,
+                                                  pad_color=self.get_pad_color())
         if not self.video_process.isVideoFile(video_path) or \
                 not self.video_process.openVideo(video_path):
             raise Exception("Invalid path!", video_path)
@@ -39,13 +42,8 @@ class VideoLoader(DataLoader):
             raise StopIteration
 
         src_image = self.read_src_image(cv_image)
-        image = self.dataset_process.resize(src_image, self.image_size, self.resize_type,
-                                            pad_color=self.image_pad_color)
-        image = self.dataset_process.normalize(input_data=image,
-                                               normalize_type=self.normalize_type,
-                                               mean=self.mean, std=self.std)
-        numpy_image = self.dataset_process.numpy_transpose(image)
-        torch_image = self.all_numpy_to_tensor(numpy_image)
+        image = self.dataset_process.resize_image(src_image, self.image_size)
+        torch_image = self.dataset_process.normalize_image(image)
         video_name = self.video_path + "_%d" % self.index
         return video_name, cv_image, torch_image
 
@@ -55,9 +53,9 @@ class VideoLoader(DataLoader):
     def read_src_image(self, cv_image):
         src_image = None
         if self.data_channel == 1:
-            src_image = self.dataset_process.cv_image_color_convert(cv_image, 0)
+            src_image = self.dataset_process.dataset_process.cv_image_color_convert(cv_image, 0)
         elif self.data_channel == 3:
-            src_image = self.dataset_process.cv_image_color_convert(cv_image, 1)
+            src_image = self.dataset_process.dataset_process.cv_image_color_convert(cv_image, 1)
         else:
             print("read src image error!")
         return cv_image, src_image

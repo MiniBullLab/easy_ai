@@ -41,7 +41,7 @@ class BaseTrain(BaseTask):
         pass
 
     @abc.abstractmethod
-    def compute_backward(self, input_datas, targets, setp_index):
+    def compute_backward(self, input_datas, targets, step_index):
         pass
 
     @abc.abstractmethod

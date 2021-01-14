@@ -21,8 +21,8 @@ class MNISTDiscriminatorLoss(BaseLoss):
             real_loss = self.loss_function(outputs[0].to(targets.device), real_labels)
             fake_loss = self.loss_function(outputs[1].to(targets.device), fake_labels)
             loss = real_loss + fake_loss
-            print('MNIST_GAN D(x): {:.6f}, D(G(z)): {:.6f}'.format(torch.mean(outputs[0]).item(),
-                                                                   torch.mean(outputs[1]).item()))
+            # print('MNIST_GAN D(x): {:.6f}, D(G(z)): {:.6f}'.format(torch.mean(outputs[0]).item(),
+            #                                                        torch.mean(outputs[1]).item()))
         else:
             loss = None
         return loss

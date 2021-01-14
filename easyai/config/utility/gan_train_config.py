@@ -20,6 +20,8 @@ class GanTrainConfig(ImageTaskConfig):
         self.g_optimizer_config = None
         self.d_lr_scheduler_config = None
         self.g_lr_scheduler_config = None
+        self.d_skip_batch_backward = 1
+        self.g_skip_batch_backward = 1
 
         self.is_save_epoch_model = False
         self.latest_weights_name = None
@@ -28,6 +30,7 @@ class GanTrainConfig(ImageTaskConfig):
         self.latest_weights_path = None
         self.latest_optimizer_path = None
         self.best_weights_path = None
+
         self.accumulated_batches = 1
         self.display = 1
 
@@ -72,9 +75,15 @@ class GanTrainConfig(ImageTaskConfig):
             self.d_lr_scheduler_config = config_dict['d_lr_scheduler_config']
         if config_dict.get('g_lr_scheduler_config', None) is not None:
             self.g_lr_scheduler_config = config_dict['g_lr_scheduler_config']
-        if config_dict.get('accumulated_batches', None) is not None:
+
+        if config_dict.get('d_skip_batch_backward', 1) is not None:
+            self.d_skip_batch_backward = int(config_dict['d_skip_batch_backward'])
+        if config_dict.get('g_skip_batch_backward', 1) is not None:
+            self.g_skip_batch_backward = int(config_dict['g_skip_batch_backward'])
+
+        if config_dict.get('accumulated_batches', 1) is not None:
             self.accumulated_batches = int(config_dict['accumulated_batches'])
-        if config_dict.get('display', None) is not None:
+        if config_dict.get('display', 1) is not None:
             self.display = int(config_dict['display'])
 
         if config_dict.get('clip_grad_config', None) is not None:
@@ -107,6 +116,10 @@ class GanTrainConfig(ImageTaskConfig):
             config_dict['d_lr_scheduler_config'] = self.d_lr_scheduler_config
         if self.g_lr_scheduler_config is not None:
             config_dict['g_lr_scheduler_config'] = self.g_lr_scheduler_config
+
+        config_dict['d_skip_batch_backward'] = self.d_skip_batch_backward
+        config_dict['g_skip_batch_backward'] = self.g_skip_batch_backward
+
         config_dict['accumulated_batches'] = self.accumulated_batches
         config_dict['display'] = self.display
 

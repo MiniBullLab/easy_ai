@@ -61,10 +61,10 @@ class MNISTGan(BaseGanModel):
     def generator_input_data(self, inputs_data, data_type=0):
         result = None
         if data_type == 0:
-            result = torch.flatten(inputs_data, start_dim=1)
-        elif data_type == 1:
             # Random noise from N(0,1)
             result = torch.randn((inputs_data.size(0), self.z_dimension))
+        elif data_type == 1:
+            result = torch.flatten(inputs_data, start_dim=1)
         return result
 
     def forward(self, fake_data, real_data=None, net_type=0):
