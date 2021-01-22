@@ -23,7 +23,7 @@ class GenerateImageTrain(GanTrain):
         self.gen_test = GenerateImage(cfg_path, gpu_id, config_path)
 
         self.best_score = 0
-        
+
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
             self.start_epoch, self.best_score \
