@@ -91,6 +91,8 @@ class BlockType():
     ResidualBlock = "residualBlock"
     InvertedResidual = "invertedResidual"
 
+    FPNBlock = "FPNBlock"
+
     SEBlock = "seBlock"
     SEConvBlock = "seConvBlock"
 

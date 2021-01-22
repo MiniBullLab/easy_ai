@@ -156,7 +156,7 @@ class CreateModuleList():
             dilation = int(module_def.get('dilation', 1))
             groups = int(module_def.get("groups", 1))
             if dilation > 1:
-                pad = dilation
+                pad = dilation * (kernel_size - 1) // 2
             block = nn.Conv2d(in_channels=self.input_channels,
                               out_channels=self.filters,
                               kernel_size=kernel_size,
@@ -179,7 +179,7 @@ class CreateModuleList():
             dilation = int(module_def.get("dilation", 1))
             groups = int(module_def.get("groups", 1))
             if dilation > 1:
-                pad = dilation
+                pad = dilation * (kernel_size - 1) // 2
             block = ConvActivationBlock(in_channels=self.input_channels,
                                         out_channels=self.filters,
                                         kernel_size=kernel_size,
@@ -203,7 +203,7 @@ class CreateModuleList():
             dilation = int(module_def.get("dilation", 1))
             groups = int(module_def.get("groups", 1))
             if dilation > 1:
-                pad = dilation
+                pad = dilation * (kernel_size - 1) // 2
             block = ConvBNActivationBlock(in_channels=self.input_channels,
                                           out_channels=self.filters,
                                           kernel_size=kernel_size,

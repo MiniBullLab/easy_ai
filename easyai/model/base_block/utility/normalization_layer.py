@@ -4,7 +4,9 @@
 
 import torch
 import torch.nn as nn
+from easyai.base_name.block_name import LayerType
 from easyai.base_name.block_name import NormalizationType
+from easyai.model.base_block.utility.utility_layer import EmptyLayer
 
 
 class FrozenBatchNorm2d(nn.Module):
@@ -62,3 +64,7 @@ class NormalizationFunction():
             return nn.InstanceNorm2d(input_channel, momentum=0.1)
         elif name == NormalizationType.BatchNormalize1d:
             return nn.InstanceNorm1d(input_channel, momentum=0.1)
+        elif name == LayerType.EmptyLayer:
+            return EmptyLayer()
+        else:
+            print("%s Normalization function error!" % name)
