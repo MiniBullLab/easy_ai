@@ -59,4 +59,4 @@ class VideoLoader(DataLoader):
             src_image = self.image_process.cv_image_color_convert(cv_image, 1)
         else:
             print("read src image error!")
-        return cv_image, src_image
+        return src_image
