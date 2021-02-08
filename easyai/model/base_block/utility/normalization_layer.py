@@ -2,11 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-import torch
-import torch.nn as nn
-from easyai.base_name.block_name import LayerType
 from easyai.base_name.block_name import NormalizationType
-from easyai.model.base_block.utility.utility_layer import EmptyLayer
+from easyai.model.base_block.utility.base_block import *
+
+
+class EmptyNormalization(BaseBlock):
+
+    def __init__(self):
+        super().__init__(NormalizationType.EmptyNormalization)
+
+    def forward(self, x):
+        pass
 
 
 class FrozenBatchNorm2d(nn.Module):
@@ -64,7 +70,7 @@ class NormalizationFunction():
             return nn.InstanceNorm2d(input_channel, momentum=0.1)
         elif name == NormalizationType.BatchNormalize1d:
             return nn.InstanceNorm1d(input_channel, momentum=0.1)
-        elif name == LayerType.EmptyLayer:
-            return EmptyLayer()
+        elif name == NormalizationType.EmptyNormalization:
+            return EmptyNormalization()
         else:
             print("%s Normalization function error!" % name)

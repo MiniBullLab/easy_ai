@@ -28,6 +28,8 @@ class NormalizationType():
     InstanceNorm2d = "in2d"
     InstanceNorm1d = "in1d"
 
+    EmptyNormalization = "empty"
+
 
 class LayerType():
 

@@ -98,7 +98,7 @@ class ClassifyConfig(CommonTrainConfig):
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 0.01
+        self.base_lr = 0.1
         self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
