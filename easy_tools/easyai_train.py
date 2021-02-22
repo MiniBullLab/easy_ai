@@ -26,11 +26,12 @@ class EasyAiModelTrain():
         self.images_dir = os.path.join(self.dataset_path, "../JPEGImages")
 
     def classify_model_train(self, dir_name):
+        cfg_path = os.path.join(dir_name, "./data/classnet.cfg")
         pretrain_model_path = os.path.join(dir_name, "./data/classnet.pt")
         create_cls_sample = CreateClassifySample()
         create_cls_sample.process_sample(self.images_dir, self.dataset_path, "train_val", 10)
         train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path, True)
-        train_task.train('classnet', self.gpu_id, self.config_path, pretrain_model_path)
+        train_task.train(cfg_path, self.gpu_id, self.config_path, pretrain_model_path)
         save_image_dir = os.path.join(self.config.root_save_dir, "cls_img")
         self.copy_process.copy(self.train_path, save_image_dir)
 
