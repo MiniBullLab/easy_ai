@@ -11,6 +11,7 @@ class BaseClassifyModel(BaseModel):
 
     def __init__(self, data_channel, class_number):
         super().__init__(data_channel)
+        assert class_number > 0
         self.class_number = class_number
         self.backbone_factory = BackboneFactory()
         self.loss_factory = LossFactory()

@@ -24,6 +24,7 @@ class ModelName():
     MobilenetDeepLabV3Plus = "MobilenetDeepLabV3Plus"
     MobileV2FCN = "MobileV2FCN"
     AttentionUnetSeg = "AttentionUnetSeg"
+    SegNet = "segnet"
 
     ComplexYOLO = "ComplexYOLO"
 

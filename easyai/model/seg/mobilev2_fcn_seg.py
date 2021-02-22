@@ -29,8 +29,7 @@ class MobileV2FCN(BaseClassifyModel):
         self.create_block_list()
 
     def create_block_list(self):
-        self.block_out_channels = []
-        self.index = 0
+        self.clear_list()
 
         backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()

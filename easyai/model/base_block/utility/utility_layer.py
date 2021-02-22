@@ -25,6 +25,13 @@ class MultiplyLayer(BaseBlock):
         self.layers = [int(x) for x in layers.split(',') if x.strip()]
         assert len(self.layers) >= 2
 
+    def get_output_channel(self, base_out_channels, block_out_channels):
+        index = self.layers[0]
+        if index < 0:
+            return block_out_channels[index]
+        else:
+            return base_out_channels[index]
+
     def forward(self, layer_outputs, base_outputs):
         temp_layer_outputs = [layer_outputs[i] if i < 0 else base_outputs[i]
                               for i in self.layers]
@@ -40,6 +47,13 @@ class AddLayer(BaseBlock):
         super().__init__(LayerType.AddLayer)
         self.layers = [int(x) for x in layers.split(',') if x.strip()]
         assert len(self.layers) >= 2
+
+    def get_output_channel(self, base_out_channels, block_out_channels):
+        index = self.layers[0]
+        if index < 0:
+            return block_out_channels[index]
+        else:
+            return base_out_channels[index]
 
     def forward(self, layer_outputs, base_outputs):
         temp_layer_outputs = [layer_outputs[i] if i < 0 else base_outputs[i]

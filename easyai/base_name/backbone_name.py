@@ -20,6 +20,7 @@ class BackboneName():
     ShuffleNetV2V05 = "shufflenetv2_0_5"
     MobileNetV2_1_0 = "mobilenetv2_1_0"
     MobileNetV2V10Dilated8 = "mobilenetv2_1_0_dilated8"
+    MobileNetV2Down4 = "mobileNetv2_down4"
     MobileNetv3_large = "mobilenetv3_large"
     MobileNetv3_small = "mobilenetv3_small"
     mixnet_s = "mixnet_s"
