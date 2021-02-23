@@ -70,6 +70,7 @@ class Segmentation(BaseInference):
         result = self.result_process.get_segmentation_result(prediction, threshold)
         seg_image = self.result_process.resize_segmention_result(self.src_size,
                                                                  self.task_config.image_size,
+                                                                 self.task_config.resize_type,
                                                                  result)
         return result, seg_image
 

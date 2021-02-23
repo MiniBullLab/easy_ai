@@ -26,6 +26,20 @@ class ImageDataSetProcess(BaseDataSetProcess):
                                               pad_color=pad_color)
         return result
 
+    def inv_resize(self, src_size, dst_size, resize_type, image_data, **param):
+        result = None
+        if resize_type == 0:
+            result = self.cv_image_resize(image_data, src_size)
+        elif resize_type == 1:
+            ratio, pad = self.get_square_size(src_size, dst_size)
+            start_h = pad[1] // 2
+            stop_h = dst_size[1] - (pad[1] - (pad[1] // 2))
+            start_w = pad[0] // 2
+            stop_w = dst_size[0] - (pad[0] - (pad[0] // 2))
+            temp_result = image_data[start_h:stop_h, start_w:stop_w]
+            result = self.cv_image_resize(temp_result, src_size)
+        return result
+
     def normalize(self, input_data, normalize_type, **param):
         result = None
         if normalize_type == 0:
@@ -91,6 +105,7 @@ class ImageDataSetProcess(BaseDataSetProcess):
 
     def get_square_size(self, src_size, dst_size):
         # ratio  = old / new
+        assert src_size[0] != 0 and src_size[1] != 0
         ratio = min(float(dst_size[0]) / src_size[0], float(dst_size[1]) / src_size[1])
         new_shape = (round(src_size[0] * ratio), round(src_size[1] * ratio))
         dw = dst_size[0] - new_shape[0]  # width padding

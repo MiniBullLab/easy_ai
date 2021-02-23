@@ -24,17 +24,14 @@ class SegmentResultProcess():
         return result
 
     def resize_segmention_result(self, src_size, image_size,
-                                 segmention_result):
-        ratio, pad = self.dataset_process.get_square_size(src_size,
-                                                          image_size)
-        start_h = pad[1] // 2
-        stop_h = image_size[1] - (pad[1] - (pad[1] // 2))
-        start_w = pad[0] // 2
-        stop_w = image_size[0] - (pad[0] - (pad[0] // 2))
-        result = segmention_result[start_h:stop_h, start_w:stop_w]
-        result = result.astype(np.float32)
-        result = self.dataset_process.cv_image_resize(result, src_size)
-        return result
+                                 resize_type, segmention_result):
+        if src_size[0] == 0 or src_size[1] == 0:
+            return None
+        else:
+            result = self.dataset_process.inv_resize(src_size, image_size,
+                                                     resize_type, segmention_result)
+            result = result.astype(np.float32)
+            return result
 
     def output_feature_map_resize(self, input_data, target):
         n, c, h, w = input_data.size()
