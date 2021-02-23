@@ -32,7 +32,8 @@ class EasyAiModelTrain():
         create_cls_sample.process_sample(self.images_dir, self.dataset_path, "train_val", 10)
         class_names = self.sample_process.create_class_names(self.train_path, TaskName.Classify_Task)
         if len(class_names) == 2:
-            train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path, True)
+            train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
+            train_task.set_convert_param(True, ['ng_input'], ['ng_output'])
             train_task.train('binarynet', self.gpu_id, self.config_path, pretrain_model_path)
             save_image_dir = os.path.join(self.config.root_save_dir, "binary_cls_img")
             self.copy_process.copy(self.train_path, save_image_dir)
@@ -45,7 +46,8 @@ class EasyAiModelTrain():
         create_cls_sample.process_sample(self.images_dir, self.dataset_path, "train_val", 10)
         class_names = self.sample_process.create_class_names(self.train_path, TaskName.Classify_Task)
         if len(class_names) > 1:
-            train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path, True)
+            train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
+            train_task.set_convert_param(True, ['cls_input'], ['cls_output'])
             train_task.train('classnet', self.gpu_id, self.config_path, pretrain_model_path)
             save_image_dir = os.path.join(self.config.root_save_dir, "cls_img")
             self.copy_process.copy(self.train_path, save_image_dir)
@@ -58,7 +60,9 @@ class EasyAiModelTrain():
         create_det2d_sample.createTrainAndTest(self.images_dir, self.dataset_path, 10)
         class_names = self.sample_process.create_class_names(self.train_path, TaskName.Detect2d_Task)
         if len(class_names) > 0:
-            train_task = TrainTask(TaskName.Detect2d_Task, self.train_path, self.val_path, True)
+            train_task = TrainTask(TaskName.Detect2d_Task, self.train_path, self.val_path)
+            train_task.set_convert_param(True, ['det_input'],
+                                         ['det_output0', 'det_output1', 'det_output2'])
             train_task.train("denet", self.gpu_id, self.config_path, pretrain_model_path)
             # easy_model_convert(options.task_name, train_task.save_onnx_path)
             save_image_dir = os.path.join(self.config.root_save_dir, "det_img")
@@ -71,7 +75,8 @@ class EasyAiModelTrain():
         cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
         create_seg_sample = CreateSegmentionSample()
         create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
-        train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path, True)
+        train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
+        train_task.set_convert_param(True, ['seg_input'], ['seg_output'])
         train_task.train(cfg_path, self.gpu_id, self.config_path, pretrain_model_path)
         save_image_dir = os.path.join(self.config.root_save_dir, "seg_img")
         self.copy_process.copy(self.train_path, save_image_dir)
