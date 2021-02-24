@@ -101,7 +101,7 @@ class SegmentionConfig(CommonTrainConfig):
                                  'max_norm': 20}
 
         self.freeze_layer_type = 2
-        self.freeze_layer_name = "base_convBNActivationBlock_38"
+        self.freeze_layer_name = "down_invertedResidual_11"
 
         self.freeze_bn_type = 0
         self.freeze_bn_layer_name = "route_0"
