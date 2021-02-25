@@ -10,8 +10,8 @@ from keras.utils.vis_utils import plot_model
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-from easy_converter.keras_models.seg.multires_unet import MultiResUnet
-from easy_converter.keras_models.seg.multires_unet3d import MultiResUnet3D
+from model_process.keras_models.seg.multires_unet import MultiResUnet
+from model_process.keras_models.seg.multires_unet3d import MultiResUnet3D
 
 
 def dice_coef(y_true, y_pred):

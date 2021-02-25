@@ -8,7 +8,7 @@ import keras
 from keras.layers import Dropout
 from keras.layers import BatchNormalization
 from keras.models import Model
-from easy_converter.keras_models.utility.keras_model_name import KerasModelName
+from model_process.keras_models.utility.keras_model_name import KerasModelName
 
 
 class KerasModelProcess():

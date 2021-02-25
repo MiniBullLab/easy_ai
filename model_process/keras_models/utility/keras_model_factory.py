@@ -3,14 +3,14 @@
 # Author:
 
 from keras import models
-from easy_converter.keras_models.utility.keras_model_name import KerasModelName
-from easy_converter.keras_models.utility.keras_model_process import KerasModelProcess
-from easy_converter.keras_models.seg.instance_normalization import InstanceNormalization
-from easy_converter.keras_models.seg.my_upsampling_2d import MyUpSampling2D
-from easy_converter.keras_models.seg.fgsegnetv2 import acc, loss
-from easy_converter.keras_models.seg.fgsegnetv2 import FgSegNetV2
-from easy_converter.keras_models.seg.my_fgsegnetv2 import MyFgSegNetV2
-from easy_converter.keras_models.seg.unet import UNet
+from model_process.keras_models.utility.keras_model_name import KerasModelName
+from model_process.keras_models.utility.keras_model_process import KerasModelProcess
+from model_process.keras_models.seg.instance_normalization import InstanceNormalization
+from model_process.keras_models.seg.my_upsampling_2d import MyUpSampling2D
+from model_process.keras_models.seg.fgsegnetv2 import acc, loss
+from model_process.keras_models.seg.fgsegnetv2 import FgSegNetV2
+from model_process.keras_models.seg.my_fgsegnetv2 import MyFgSegNetV2
+from model_process.keras_models.seg.unet import UNet
 
 
 class KerasModelFactory():

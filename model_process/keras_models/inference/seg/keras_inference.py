@@ -6,7 +6,7 @@ import os
 from optparse import OptionParser
 import numpy as np
 from keras.preprocessing import image
-from easy_converter.keras_models.utility.keras_model_factory import KerasModelFactory
+from model_process.keras_models.utility.keras_model_factory import KerasModelFactory
 import matplotlib.pyplot as plt
 
 

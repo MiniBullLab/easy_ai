@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easy_converter.keras_models.utility.base_model import BaseModel
-from easy_converter.keras_models.utility.keras_model_name import KerasModelName
+from model_process.keras_models.utility.base_model import BaseModel
+from model_process.keras_models.utility.keras_model_name import KerasModelName
 
 import os
 import skimage.io as io

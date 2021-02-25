@@ -7,8 +7,8 @@ Ibtehaz, Nabil, and M. Sohel Rahman.
 Neural Networks 121 (2020): 74-87.
 """
 
-from easy_converter.keras_models.utility.base_model import BaseModel
-from easy_converter.keras_models.utility.keras_model_name import KerasModelName
+from model_process.keras_models.utility.base_model import BaseModel
+from model_process.keras_models.utility.keras_model_name import KerasModelName
 from keras.layers import Input, Conv2D, MaxPooling2D, Conv2DTranspose
 from keras.layers import concatenate, BatchNormalization, Activation, add
 from keras.models import Model

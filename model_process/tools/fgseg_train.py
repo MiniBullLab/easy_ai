@@ -29,10 +29,10 @@ import keras
 from keras.preprocessing import image
 from sklearn.utils import compute_class_weight
 import matplotlib.pyplot as plt
-from easy_converter.helper.dirProcess import DirProcess
-from easy_converter.keras_models.seg.fgsegnetv2 import FgSegNetV2
-from easy_converter.keras_models.seg.my_fgsegnetv2 import MyFgSegNetV2
-from easy_converter.config import fgseg_config
+from model_process.utility.dirProcess import DirProcess
+from model_process.keras_models.seg.fgsegnetv2 import FgSegNetV2
+from model_process.keras_models.seg.my_fgsegnetv2 import MyFgSegNetV2
+from model_process.config import fgseg_config
 
 
 class FgSegV2Train():

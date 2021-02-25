@@ -25,8 +25,8 @@ tf.set_random_seed(1234)
 sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
 keras.set_session(sess)
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from easy_converter.keras_models.seg.unet import UNet
-from easy_converter.keras_models.data_process.data_augment import trainGenerator, testGenerator, saveResult
+from model_process.keras_models.seg.unet import UNet
+from model_process.keras_models.data_process.data_augment import trainGenerator, testGenerator, saveResult
 
 
 data_gen_args = dict(rotation_range=0.2,

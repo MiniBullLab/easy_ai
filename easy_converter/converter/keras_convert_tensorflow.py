@@ -9,9 +9,9 @@ from pathlib import Path
 from absl import app
 from absl import flags
 from absl import logging
+import keras
 from keras import backend as K
 from keras.models import model_from_json, model_from_yaml
-from easy_converter.keras_models.utility.keras_model_factory import KerasModelFactory
 
 K.set_learning_phase(0)
 FLAGS = flags.FLAGS
@@ -144,7 +144,8 @@ class KerasConvertTensorflow():
             raise FileNotFoundError(
                 'Model file `{}` does not exist.'.format(input_model_path))
         try:
-            model = self.keras_model_factory.load_model(input_model_path, self.input_model_name)
+            model = keras.models.load_model(input_model_path)
+            print(self.input_model_name)
             return model
         except FileNotFoundError as err:
             logging.error('Input mode file (%s) does not exist.', self.input_model)

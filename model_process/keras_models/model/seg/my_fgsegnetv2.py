@@ -9,9 +9,9 @@ from keras.layers.convolutional import Conv2D, UpSampling2D
 from keras.layers.pooling import MaxPooling2D, GlobalAveragePooling2D
 from keras.layers import concatenate, add, multiply
 from keras.layers import BatchNormalization
-from easy_converter.keras_models.utility.base_model import BaseModel
-from easy_converter.keras_models.utility.keras_model_name import KerasModelName
-from easy_converter.keras_models.seg.fgsegnetv2 import acc, loss
+from model_process.keras_models.utility.base_model import BaseModel
+from model_process.keras_models.utility.keras_model_name import KerasModelName
+from model_process.keras_models.seg.fgsegnetv2 import acc, loss
 
 
 class MyFgSegNetV2(BaseModel):
