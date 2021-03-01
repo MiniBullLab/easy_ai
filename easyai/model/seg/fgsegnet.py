@@ -107,7 +107,7 @@ class FgSegNet(BaseClassifyModel):
         if self.class_number == 1:
             loss_config = {'type': LossName.BinaryCrossEntropy2dLoss,
                            'weight_type': 1,
-                           'weight': '1, 2',
+                           'weight': '1, 5',
                            'reduction': 'mean',
                            'ignore_index': 250}
             loss = self.loss_factory.get_loss(loss_config)
