@@ -54,7 +54,7 @@ def train_main():
 
     if options.task_name.strip() == "NG_OK":
         train_process.binary_classidy_model_train(dir_name)
-    if options.task_name.strip() == "ClassNet":
+    if options.task_name.strip() == "ClassNET":
         train_process.classify_model_train(dir_name)
     elif options.task_name.strip() == "DeNET":
         train_process.det2d_model_train(dir_name)

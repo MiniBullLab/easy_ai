@@ -60,7 +60,7 @@ def get_classify_val_dataloader(val_path, data_config, num_workers=8):
     std = data_config.data_std
     image_size = data_config.image_size
     data_channel = data_config.data_channel
-    batch_size = data_config.train_batch_size
+    batch_size = data_config.test_batch_size
     dataloader = ClassifyDataloader(val_path, resize_type, normalize_type, mean, std,
                                     image_size, data_channel, is_augment=False)
     result = data.DataLoader(dataset=dataloader, num_workers=num_workers,

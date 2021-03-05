@@ -9,9 +9,9 @@ from easyai.base_name.model_name import ModelName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType
 from easyai.base_name.loss_name import LossName
-from easyai.model.base_block.seg.unet_blcok import UNetBlockName
-from easyai.model.base_block.seg.unet_blcok import UpBlock
-from easyai.model.base_block.seg.unet_blcok import RRCNNBlock
+from easyai.model.model_block.base_block.seg.unet_blcok import UNetBlockName
+from easyai.model.model_block.base_block.seg.unet_blcok import UpBlock
+from easyai.model.model_block.base_block.seg.unet_blcok import RRCNNBlock
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 

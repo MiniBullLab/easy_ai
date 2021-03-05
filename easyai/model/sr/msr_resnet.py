@@ -7,8 +7,8 @@ from easyai.base_name.block_name import ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
 from easyai.base_name.loss_name import LossName
 from easyai.model.utility.base_model import *
-from easyai.model.base_block.utility.utility_block import ConvActivationBlock
-from easyai.model.base_block.sr.msr_resnet_block import ResidualBlockNoBN
+from easyai.model.model_block.base_block.utility.utility_block import ConvActivationBlock
+from easyai.model.model_block.base_block.sr.msr_resnet_block import ResidualBlockNoBN
 from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model.utility.registry import REGISTERED_SR_MODEL
 

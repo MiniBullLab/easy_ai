@@ -37,8 +37,11 @@ class ModelName():
     BinaryClassNet = "binarynet"
     ClassNet = "classnet"
 
+    RPNDet2d = "rpnDet2d"
     YoloV3Det2d = "yolov3"
     DetNet = "denet"
+
+    KeyPointRCNN = "KeyPointRCNN"
 
     # sr
     MSRResNet = "MSRResNet"

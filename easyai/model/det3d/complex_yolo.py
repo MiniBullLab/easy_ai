@@ -5,9 +5,9 @@
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.model.base_block.utility.utility_layer import RouteLayer
-from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.base_block.cls.darknet_block import ReorgBlock
+from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
+from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
+from easyai.model.model_block.base_block import ReorgBlock
 from easyai.model.utility.base_det_model import *
 
 

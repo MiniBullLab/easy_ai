@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, os.getcwd() + "/..")
 import torch
 from easyai.base_name.backbone_name import BackboneName
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
 
 
 def main():

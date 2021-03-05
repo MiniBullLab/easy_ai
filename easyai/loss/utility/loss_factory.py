@@ -62,6 +62,14 @@ class LossFactory():
 
         return False
 
+    def get_loss_input(self, key, model_output, multi_output):
+        loss_input = []
+        if LossName.MultiBoxLoss in key:
+            loss_input.extend(multi_output)
+        else:
+            loss_input.append(model_output)
+        return loss_input
+
     def get_common_loss(self, loss_config):
         loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
         return loss

@@ -51,11 +51,11 @@ class TorchModelProcess():
         checkpoint = None
         if os.path.exists(weight_path):
             if count > 1:
-                checkpoint = torch.load(weight_path, map_location='cpu')
+                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
                 state = self.convert_state_dict(checkpoint['model'])
                 model.load_state_dict(state)
             else:
-                checkpoint = torch.load(weight_path, map_location='cpu')
+                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
                 model.load_state_dict(checkpoint['model'])
         else:
             print("Loading model %s fail" % weight_path)

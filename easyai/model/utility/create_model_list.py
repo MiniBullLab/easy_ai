@@ -5,17 +5,17 @@
 import torch.nn as nn
 from collections import OrderedDict
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
-from easyai.model.base_block.utility.utility_layer import NormalizeLayer, ActivationLayer
-from easyai.model.base_block.utility.utility_layer import MultiplyLayer, AddLayer
-from easyai.model.base_block.utility.utility_layer import RouteLayer, ShortRouteLayer
-from easyai.model.base_block.utility.utility_layer import ShortcutLayer
-from easyai.model.base_block.utility.utility_layer import FcLayer
-from easyai.model.base_block.utility.pooling_layer import MyMaxPool2d, GlobalAvgPool2d
-from easyai.model.base_block.utility.pooling_layer import SpatialPyramidPooling
-from easyai.model.base_block.utility.upsample_layer import Upsample
-from easyai.model.base_block.utility.detection_block import Detection2dBlock
-from easyai.model.base_block.cls.darknet_block import ReorgBlock, DarknetBlockName
+from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
+from easyai.model.model_block.base_block.utility.utility_layer import NormalizeLayer, ActivationLayer
+from easyai.model.model_block.base_block.utility.utility_layer import MultiplyLayer, AddLayer
+from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer, ShortRouteLayer
+from easyai.model.model_block.base_block.utility.utility_layer import ShortcutLayer
+from easyai.model.model_block.base_block.utility.utility_layer import FcLayer
+from easyai.model.model_block.base_block.utility.pooling_layer import MyMaxPool2d, GlobalAvgPool2d
+from easyai.model.model_block.base_block.utility.pooling_layer import SpatialPyramidPooling
+from easyai.model.model_block.base_block.utility.upsample_layer import Upsample
+from easyai.model.model_block.base_block.det2d.detection_block import Detection2dBlock
+from easyai.model.model_block.base_block.cls.darknet_block import ReorgBlock, DarknetBlockName
 from easyai.loss.utility.loss_factory import LossFactory
 
 

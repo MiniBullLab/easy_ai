@@ -7,9 +7,9 @@ from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
 from easyai.base_name.loss_name import LossName
-from easyai.model.base_block.utility.utility_layer import RouteLayer
-from easyai.model.base_block.utility.upsample_layer import Upsample
-from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
+from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
+from easyai.model.model_block.base_block.utility.upsample_layer import Upsample
+from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
 from easyai.model.utility.base_det_model import *
 from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 
@@ -22,6 +22,8 @@ class YoloV3Det2d(BaseDetectionModel):
         self.set_name(ModelName.YoloV3Det2d)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.LeakyReLU
+
+        self.model_args['type'] = BackboneName.Darknet53
 
         # self.anchor_sizes = "8.95,8.57|12.43,26.71|19.71,14.43|" \
         #                     "26.36,58.52|36.09,25.55|64.42,42.90|" \
@@ -39,8 +41,6 @@ class YoloV3Det2d(BaseDetectionModel):
                             "object_weight": 1.0,
                             "class_weight": 1.0,
                             "iou_threshold": 0.5}
-
-        self.model_args['type'] = BackboneName.Darknet53
 
         self.create_block_list()
 

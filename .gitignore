@@ -6,5 +6,6 @@
 .vscode/
 log/
 .easy_log/
+easyai.egg-info/
 build/
 result/

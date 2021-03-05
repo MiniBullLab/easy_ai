@@ -5,7 +5,7 @@
 from flashtorch.utils import apply_transforms, load_image
 from flashtorch.saliency import Backprop
 
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 

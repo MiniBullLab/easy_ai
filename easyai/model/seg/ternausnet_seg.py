@@ -10,8 +10,8 @@
 
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.model.base_block.utility.utility_block import ConvActivationBlock
-from easyai.model.base_block.seg.ternausnet_block import DecoderBlock, DecoderBlockLinkNet
+from easyai.model.model_block.base_block.utility.utility_block import ConvActivationBlock
+from easyai.model.model_block.base_block.seg.ternausnet_block import DecoderBlock, DecoderBlockLinkNet
 from easyai.model.utility.base_classify_model import *
 import torchvision
 

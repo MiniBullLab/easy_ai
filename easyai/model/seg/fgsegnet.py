@@ -7,10 +7,10 @@ from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.block_name import LayerType, BlockType
 from easyai.base_name.loss_name import LossName
-from easyai.model.base_block.utility.utility_layer import RouteLayer, AddLayer, MultiplyLayer
-from easyai.model.base_block.utility.pooling_layer import GlobalAvgPool2d
-from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
-from easyai.model.base_block.utility.upsample_layer import Upsample
+from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer, AddLayer, MultiplyLayer
+from easyai.model.model_block.base_block.utility.pooling_layer import GlobalAvgPool2d
+from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
+from easyai.model.model_block.base_block.utility.upsample_layer import Upsample
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 

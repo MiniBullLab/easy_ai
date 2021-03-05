@@ -22,6 +22,7 @@ class LossName():
     YoloV3Loss = "YoloV3Loss"
     MultiBoxLoss = "MultiBoxLoss"
     KeyPoints2dRegionLoss = "KeyPoints2dRegionLoss"
+    RPNLoss = "RPNLoss"
 
     # det3d
 

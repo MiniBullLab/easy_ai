@@ -29,6 +29,19 @@ class OptimizerProcess():
         # self.print_param()
         return self.optimizer
 
+    def get_optim_params(self, model):
+        params = []
+        for key, value in model.named_parameters():
+            if not value.requires_grad:
+                continue
+            lr = self.base_lr
+            weight_decay = 0.0001
+            if "bias" in key:
+                lr = self.base_lr * 2
+                weight_decay = 0.0001
+            params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
+        return params
+
     def adjust_optimizer(self, config):
         config_args = config.copy()
         config_args['params'] = None

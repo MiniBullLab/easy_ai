@@ -4,7 +4,7 @@
 
 import os
 from easyai.base_name.block_name import LayerType, BlockType
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model.utility.create_model_list import CreateModuleList
 from easyai.model.utility.base_model import *
@@ -94,7 +94,8 @@ class MyModel(BaseModel):
                 x = block(x)
                 multi_output.extend(x)
             elif self.loss_factory.has_loss(key):
-                output.append(x)
+                temp_output = self.loss_factory.get_loss_input(key, x, multi_output)
+                output.extend(temp_output)
             else:
                 x = block(x)
             # print(key, x.shape)

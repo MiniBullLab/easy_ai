@@ -25,6 +25,8 @@ class NormalizationType():
     BatchNormalize2d = "bn2d"
     BatchNormalize1d = "bn1d"
 
+    FrozenBatchNorm2d = "frozen_bn2d"
+
     InstanceNorm2d = "in2d"
     InstanceNorm1d = "in1d"
 
@@ -101,4 +103,9 @@ class BlockType():
     SpatialPyramidPooling = "SPPBlock"
 
     Detection2dBlock = "detection2dBlock"
+
+
+class HeadType():
+
+    MultiRPNHead = "multiRPN"
 

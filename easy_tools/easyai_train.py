@@ -72,11 +72,10 @@ class EasyAiModelTrain():
 
     def segment_model_train(self, dir_name):
         pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
-        cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
         create_seg_sample = CreateSegmentionSample()
         create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
         train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
         train_task.set_convert_param(True, ['seg_input'], ['seg_output'])
-        train_task.train(cfg_path, self.gpu_id, self.config_path, pretrain_model_path)
+        train_task.train("segnet", self.gpu_id, self.config_path, pretrain_model_path)
         save_image_dir = os.path.join(self.config.root_save_dir, "seg_img")
         self.copy_process.copy(self.train_path, save_image_dir)
