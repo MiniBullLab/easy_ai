@@ -12,8 +12,14 @@ else
     dataset_val_path=/easy_ai/ImageSets/val.txt
 fi
 
+#cuda10
+export PATH=/usr/local/cuda/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
-rm -rf ./log/segment*
+#caffe
+export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
+
+rm -rf ./.easy_log/segment*
 CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task SegNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 
 if [ $? -ne 0 ]; then
@@ -23,15 +29,15 @@ fi
 
 set -v
 root_path=$(pwd)
-modelDir="./log/snapshot"
-imageDir="./log/seg_img"
-outDir="${root_path}/log/out"
+modelDir="./.easy_log/snapshot"
+imageDir="./.easy_log/seg_img"
+outDir="${root_path}/.easy_log/out"
 modelName=segnet
 outNetName=segnet
 
 inputColorFormat=1
-outputShape=1,3,400,500
-outputLayerName="o:507|ot:0,1,2,3|odf:fp32"
+outputShape=1,3,448,512
+outputLayerName="o:seg_output|ot:0,1,2,3|odf:fp32"
 inputDataFormat=0,0,0,0
 
 mean=0.0

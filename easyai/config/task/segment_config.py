@@ -52,7 +52,7 @@ class SegmentionConfig(CommonTrainConfig):
         config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (512, 440)  # w * H
+        self.image_size = (512, 448)  # w * H
         self.data_channel = 3
         self.seg_label_type = 1
         self.segment_class = [('background', '255'),

@@ -158,8 +158,12 @@ class AnchorGenerator(nn.Module):
                 & (bbox[..., 3] < image_height + self.straddle_thresh)
             )
         else:
+            device = bbox.device
             inds_inside = torch.ones(bbox.shape[0], dtype=torch.bool, device=device)
         return inds_inside
+
+    def set_image_size(self, size):
+        self.image_size = size
 
     def forward(self, feature_maps):
         batch_size, _, _, _ = feature_maps[0].size()
@@ -167,7 +171,7 @@ class AnchorGenerator(nn.Module):
         anchors_over_all_feature_maps = self.grid_anchors(grid_sizes)
         anchors = []
         inside_anchors = []
-        for i, (image_height, image_width) in range(batch_size):
+        for _ in range(batch_size):
             anchors_in_image = []
             index_inside = []
             for anchors_per_feature_map in anchors_over_all_feature_maps:

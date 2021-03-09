@@ -12,15 +12,21 @@ else
     dataset_val_path=/easy_ai/ImageSets/val.txt
 fi
 
+#cuda10
+export PATH=/usr/local/cuda/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
-rm -rf ./log/detect2d*
+#caffe
+export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
+
+rm -rf ./.easy_log/detect2d*
 
 CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_ai"
       exit 1
 fi
-python3 -m easy_tools.easy_convert --task DeNET --input ./log/snapshot/denet.onnx
+python3 -m easy_tools.easy_convert --task DeNET --input ./.easy_log/snapshot/denet.onnx
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_convert"
       exit 1
@@ -28,17 +34,17 @@ fi
 
 set -v
 root_path=$(pwd)
-modelDir="./log/snapshot"
-imageDir="./log/det_img"
-outDir="${root_path}/log/out"
+modelDir="./.easy_log/snapshot"
+imageDir="./.easy_log/det_img"
+outDir="${root_path}/.easy_log/out"
 caffeNetName=denet
 outNetName=denet
 
 inputColorFormat=0
 outputShape=1,3,416,416
-outputLayerName="o:636|odf:fp32"
-outputLayerName1="o:662|odf:fp32"
-outputLayerName2="o:688|odf:fp32"
+outputLayerName0="o:det_output0|odf:fp32"
+outputLayerName1="o:det_output1|odf:fp32"
+outputLayerName2="o:det_output2|odf:fp32"
 inputDataFormat=0,0,8,0
 
 mean=0.0
@@ -74,7 +80,7 @@ caffeparser.py -p $modelDir/$caffeNetName.prototxt \
                -o $outNetName \
                -of $outDir/out_parser \
                -it 0,1,2,3 \
-               -iq -idf $inputDataFormat -odst $outputLayerName -odst $outputLayerName1 -odst $outputLayerName2 # -c act-force-fx16,coeff-force-fx16 
+               -iq -idf $inputDataFormat -odst $outputLayerName0 -odst $outputLayerName1 -odst $outputLayerName2 # -c act-force-fx16,coeff-force-fx16
 
 cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 

@@ -65,8 +65,8 @@ def torch_corners_box2d_ious(box1, box2):
         box2[:, 2:4].unsqueeze(0).expand(N, M, 2)   # [M,2] -> [1,M,2] -> [N,M,2]
     )
 
-    wh = rb - lt  # [N,M,2]
-    wh[wh < 0] = 0  # clip at 0
+    TO_REMOVE = 1
+    wh = (rb - lt + TO_REMOVE).clamp(min=0)  # [N,M,2]
     inter = wh[:, :, 0] * wh[:, :, 1]  # [N,M]
 
     area1 = (box1[:, 2]-box1[:, 0]) * (box1[:, 3]-box1[:, 1])  # [N,]

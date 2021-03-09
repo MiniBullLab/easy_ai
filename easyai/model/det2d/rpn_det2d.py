@@ -26,7 +26,6 @@ class RPNDet2d(BaseDetectionModel):
 
         self.loss_config = {"type": LossName.RPNLoss,
                             "input_size": "640,640",
-                            "class_number": self.class_number,
                             "anchor_sizes": "32,64,128,256,512",
                             "aspect_ratios": "0.5,1.0,2.0",
                             "anchor_strides": "4,8,16,32,64",
@@ -34,7 +33,7 @@ class RPNDet2d(BaseDetectionModel):
                             "bg_iou_threshold": 0.5,
                             "per_image_sample": 256,
                             "positive_fraction": 0.5}
-        self.anchor_number = 3 * 5
+        self.anchor_number = 3
 
         self.create_block_list()
 
@@ -80,7 +79,8 @@ class RPNDet2d(BaseDetectionModel):
                 x = block(x)
                 multi_output.extend(x)
             elif self.loss_factory.has_loss(key):
-                output.append(x)
+                temp_output = self.loss_factory.get_loss_input(key, x, multi_output)
+                output.extend(temp_output)
             else:
                 x = block(x)
             # print(key, x.shape)

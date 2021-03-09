@@ -66,6 +66,8 @@ class LossFactory():
         loss_input = []
         if LossName.MultiBoxLoss in key:
             loss_input.extend(multi_output)
+        elif LossName.RPNLoss in key:
+            loss_input.extend(multi_output)
         else:
             loss_input.append(model_output)
         return loss_input
@@ -153,6 +155,19 @@ class LossFactory():
         elif input_name == LossName.KeyPoints2dRegionLoss:
             loss_config['class_number'] = int(loss_config['class_number'])
             loss_config['point_count'] = int(loss_config['point_count'])
+        elif input_name == LossName.RPNLoss:
+            loss_config['input_size'] = (int(x) for x in
+                                         loss_config['input_size'].split(',') if x.strip())
+            loss_config['anchor_sizes'] = (int(x) for x in
+                                           loss_config['anchor_sizes'].split(',') if x.strip())
+            loss_config['anchor_sizes'] = (float(x) for x in loss_config['aspect_ratios'].split(',')
+                                           if x.strip())
+            loss_config['anchor_strides'] = (int(x) for x in loss_config['anchor_strides'].split(',')
+                                             if x.strip())
+            loss_config['fg_iou_threshold'] = float(loss_config['fg_iou_threshold'])
+            loss_config['bg_iou_threshold'] = float(loss_config['bg_iou_threshold'])
+            loss_config['per_image_sample'] = int(loss_config['per_image_sample'])
+            loss_config['positive_fraction'] = float(loss_config['positive_fraction'])
         loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
         return loss
 

@@ -183,4 +183,5 @@ class MultiBoxLoss(BaseLoss):
             self.loss_info['loc_loss'] = float(loc_loss.item())
             self.loss_info['cls_loss'] = float(cls_loss.item())
 
-            return loc_loss + cls_loss
+            all_loss = loc_loss + cls_loss
+            return all_loss

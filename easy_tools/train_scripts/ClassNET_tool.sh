@@ -12,9 +12,15 @@ else
     dataset_val_path=/easy_ai/ImageSets/val.txt
 fi
 
+#cuda10
+export PATH=/usr/local/cuda/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
-rm -rf ./log/classify*
-CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task ClassNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
+#caffe
+export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
+
+rm -rf ./.easy_log/classify*
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task ClassNet --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_ai"
       exit 1
@@ -22,15 +28,15 @@ fi
 
 set -v
 root_path=$(pwd)
-modelDir="./log/snapshot"
-imageDir="./log/cls_img"
-outDir="${root_path}/log/out"
+modelDir="./.easy_log/snapshot"
+imageDir="./.easy_log/cls_img"
+outDir="${root_path}/.easy_log/out"
 modelName=classnet
 outNetName=classnet
 
 inputColorFormat=1
 outputShape=1,3,224,224
-outputLayerName="o:198|ot:0,1,2,3|odf:fp32"
+outputLayerName="o:cls_output|ot:0,1,2,3|odf:fp32"
 inputDataFormat=0,0,0,0
 
 mean=129.3041,124.0699,112.4340
