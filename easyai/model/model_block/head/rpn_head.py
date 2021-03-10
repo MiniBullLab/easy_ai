@@ -21,8 +21,12 @@ class MultiRPNHead(BaseBlock):
                                         stride=1,
                                         padding=1,
                                         activationName=activation_name)
-        self.cls_logits = nn.Conv2d(input_channle, anchor_number,
-                                    kernel_size=1, stride=1)
+        self.cls_logits = ConvActivationBlock(in_channels=input_channle,
+                                              out_channels=anchor_number,
+                                              kernel_size=1,
+                                              stride=1,
+                                              padding=0,
+                                              activationName=ActivationType.Sigmoid)
 
         self.bbox_pred = nn.Conv2d(input_channle, anchor_number * 4,
                                    kernel_size=1, stride=1)

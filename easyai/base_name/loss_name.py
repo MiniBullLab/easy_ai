@@ -23,6 +23,7 @@ class LossName():
     MultiBoxLoss = "MultiBoxLoss"
     KeyPoints2dRegionLoss = "KeyPoints2dRegionLoss"
     RPNLoss = "RPNLoss"
+    FastRCNNLoss = "FastRCNNLoss"
 
     # det3d
 

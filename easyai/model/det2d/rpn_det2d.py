@@ -67,6 +67,7 @@ class RPNDet2d(BaseDetectionModel):
         base_outputs = []
         layer_outputs = []
         output = []
+        fpn_output = []
         multi_output = []
         for key, block in self._modules.items():
             if BlockType.BaseNet in key:
@@ -74,9 +75,10 @@ class RPNDet2d(BaseDetectionModel):
                 x = base_outputs[-1]
             elif BlockType.FPNBlock in key:
                 x = block(layer_outputs, base_outputs)
-                multi_output.extend(x)
+                fpn_output = x
             elif HeadType.MultiRPNHead in key:
                 x = block(x)
+                multi_output.extend(fpn_output)
                 multi_output.extend(x)
             elif self.loss_factory.has_loss(key):
                 temp_output = self.loss_factory.get_loss_input(key, x, multi_output)

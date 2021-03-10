@@ -101,6 +101,7 @@ class BlockType():
     SEConvBlock = "seConvBlock"
 
     SpatialPyramidPooling = "SPPBlock"
+    MultiROIPooling = "multiROIPool"
 
     Detection2dBlock = "detection2dBlock"
 
@@ -108,4 +109,5 @@ class BlockType():
 class HeadType():
 
     MultiRPNHead = "multiRPN"
+    MultiROIBoxHead = "multiROIBox"
 

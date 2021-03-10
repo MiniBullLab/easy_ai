@@ -131,7 +131,7 @@ class ActivationConvBNBlock(BaseBlock):
 
 class FcBNActivationBlock(BaseBlock):
 
-    def __init__(self, in_features, out_features, bias=True,
+    def __init__(self, in_features, out_features, bias=False,
                  bnName=NormalizationType.BatchNormalize1d,
                  activationName=ActivationType.ReLU):
         super().__init__(BlockType.FcBNActivationBlock)

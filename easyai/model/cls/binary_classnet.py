@@ -9,6 +9,7 @@ from easyai.base_name.block_name import LayerType, BlockType
 from easyai.base_name.loss_name import LossName
 from easyai.model.model_block.base_block.utility.utility_layer import FcLayer
 from easyai.model.model_block.base_block.utility.pooling_layer import GlobalAvgPool2d
+from easyai.model.model_block.base_block.utility.utility_layer import ActivationLayer
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.registry import REGISTERED_CLS_MODEL
 
@@ -47,6 +48,9 @@ class BinaryClassNet(BaseClassifyModel):
 
         layer1 = FcLayer(self.block_out_channels[-1], self.class_number)
         self.add_block_list(layer1.get_name(), layer1, self.class_number)
+
+        layer2 = ActivationLayer(ActivationType.Sigmoid)
+        self.add_block_list(layer2.get_name(), layer2, self.class_number)
 
         self.create_loss_list()
 

@@ -4,9 +4,9 @@
 
 
 import torch
-import numpy as np
 from easyai.helper.dataType import DetectionObject
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.tasks.utility.box2d_process import box2d_xywh2xyxy
 
 
 class Detect2dResultProcess():
@@ -41,7 +41,7 @@ class Detect2dResultProcess():
         class_confidence = class_confidence[index_list]
         class_index = class_index[index_list]
         # Box (center x, center y, width, height) to (x1, y1, x2, y2)
-        prediction[:, :4] = self.xywh2xyxy(prediction[:, :4])
+        prediction[:, :4] = box2d_xywh2xyxy(prediction[:, :4])
         for index, value in enumerate(prediction):
             temp_object = DetectionObject()
             temp_object.min_corner.x = value[0]
@@ -65,7 +65,7 @@ class Detect2dResultProcess():
         class_confidence = class_confidence[index_list]
         class_index = class_index[index_list]
         # Box (center x, center y, width, height) to (x1, y1, x2, y2)
-        prediction[:, :4] = self.xywh2xyxy(prediction[:, :4])
+        prediction[:, :4] = box2d_xywh2xyxy(prediction[:, :4])
         for index, value in enumerate(prediction):
             if class_index[index] != 0:
                 temp_object = DetectionObject()
@@ -101,12 +101,3 @@ class Detect2dResultProcess():
             result.append(temp_object)
         return result
 
-    # Convert bounding box format from [x, y, w, h] to [x1, y1, x2, y2]
-    def xywh2xyxy(self, x):
-        result = torch.zeros(x.shape) if x.dtype is torch.float32 else np.zeros(x.shape)
-        if len(x) > 0:
-            result[:, 0] = (x[:, 0] - x[:, 2] / 2)
-            result[:, 1] = (x[:, 1] - x[:, 3] / 2)
-            result[:, 2] = (x[:, 0] + x[:, 2] / 2)
-            result[:, 3] = (x[:, 1] + x[:, 3] / 2)
-        return result
