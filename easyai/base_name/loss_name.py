@@ -21,7 +21,6 @@ class LossName():
     Region2dLoss = "Region2dLoss"
     YoloV3Loss = "YoloV3Loss"
     MultiBoxLoss = "MultiBoxLoss"
-    KeyPoints2dRegionLoss = "KeyPoints2dRegionLoss"
     RPNLoss = "RPNLoss"
     FastRCNNLoss = "FastRCNNLoss"
 
@@ -31,6 +30,10 @@ class LossName():
     EncNetLoss = "encNetLoss"
     MixCrossEntropy2dLoss = "MixCE2dLoss"
     MixBinaryCrossEntropy2dLoss = "MixBCELoss"
+
+    # pose
+    Keypoint2dRegionLoss = "Keypoint2dRegionLoss"
+    Keypoint2dRCNNLoss = "Keypoint2dRCNNLoss"
 
     # gan
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"

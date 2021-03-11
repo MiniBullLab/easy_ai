@@ -9,6 +9,7 @@ from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 from easyai.loss.utility.registry import REGISTERED_SEG_LOSS
 from easyai.loss.utility.registry import REGISTERED_GAN_D_LOSS
 from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
+from easyai.loss.utility.registry import REGISTERED_POSE_LOSS
 from easyai.utility.registry import build_from_cfg
 
 
@@ -28,6 +29,8 @@ class LossFactory():
             result = self.get_det2d_loss(loss_args)
         elif REGISTERED_SEG_LOSS.has_class(input_name):
             result = self.get_seg_loss(loss_args)
+        elif REGISTERED_POSE_LOSS.has_class(input_name):
+            result = self.get_pose_loss(loss_args)
         else:
             result = self.get_gan_loss(loss_args)
         if result is None:
@@ -52,6 +55,10 @@ class LossFactory():
             if loss_name in key:
                 return True
 
+        for loss_name in REGISTERED_POSE_LOSS.get_keys():
+            if loss_name in key:
+                return True
+
         for loss_name in REGISTERED_GAN_D_LOSS.get_keys():
             if loss_name in key:
                 return True
@@ -67,7 +74,11 @@ class LossFactory():
         if LossName.MultiBoxLoss in key:
             loss_input.extend(multi_output)
         elif LossName.RPNLoss in key:
-            loss_input.extend(multi_output)
+            loss_input.append(multi_output)
+        elif LossName.FastRCNNLoss in key:
+            loss_input.append(multi_output)
+        elif LossName.Keypoint2dRCNNLoss:
+            loss_input.append(model_output)
         else:
             loss_input.append(model_output)
         return loss_input
@@ -152,9 +163,6 @@ class LossFactory():
                 temp_value = [int(x) for x in data.split(',') if x.strip()]
                 aspect_ratio_list.append(temp_value)
             loss_config['aspect_ratio_list'] = aspect_ratio_list
-        elif input_name == LossName.KeyPoints2dRegionLoss:
-            loss_config['class_number'] = int(loss_config['class_number'])
-            loss_config['point_count'] = int(loss_config['point_count'])
         elif input_name == LossName.RPNLoss:
             loss_config['input_size'] = (int(x) for x in
                                          loss_config['input_size'].split(',') if x.strip())
@@ -164,6 +172,11 @@ class LossFactory():
                                            if x.strip())
             loss_config['anchor_strides'] = (int(x) for x in loss_config['anchor_strides'].split(',')
                                              if x.strip())
+            loss_config['fg_iou_threshold'] = float(loss_config['fg_iou_threshold'])
+            loss_config['bg_iou_threshold'] = float(loss_config['bg_iou_threshold'])
+            loss_config['per_image_sample'] = int(loss_config['per_image_sample'])
+            loss_config['positive_fraction'] = float(loss_config['positive_fraction'])
+        elif input_name == LossName.FastRCNNLoss:
             loss_config['fg_iou_threshold'] = float(loss_config['fg_iou_threshold'])
             loss_config['bg_iou_threshold'] = float(loss_config['bg_iou_threshold'])
             loss_config['per_image_sample'] = int(loss_config['per_image_sample'])
@@ -194,6 +207,14 @@ class LossFactory():
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
             loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
+        return loss
+
+    def get_pose_loss(self, loss_config):
+        input_name = loss_config['type'].strip()
+        if input_name == LossName.Keypoint2dRegionLoss:
+            loss_config['class_number'] = int(loss_config['class_number'])
+            loss_config['point_count'] = int(loss_config['point_count'])
+        loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
         return loss
 
     def get_gan_loss(self, loss_config):

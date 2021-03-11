@@ -8,6 +8,7 @@ from easyai.model.utility.my_model import MyModel
 from easyai.model.utility.registry import REGISTERED_CLS_MODEL
 from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.registry import REGISTERED_POSE_MODEL
 from easyai.model.utility.registry import REGISTERED_SR_MODEL
 from easyai.model.utility.registry import REGISTERED_GAN_MODEL
 from easyai.utility.registry import build_from_cfg
@@ -60,6 +61,8 @@ class ModelFactory():
             model = self.get_sr_model(model_config)
         elif REGISTERED_GAN_MODEL.has_class(model_name):
             model = self.get_gan_model(model_config)
+        elif REGISTERED_POSE_MODEL.has_class(model_name):
+            model = self.get_pose_model(model_config)
         else:
             model = None
         return model
@@ -82,5 +85,9 @@ class ModelFactory():
 
     def get_gan_model(self, model_config):
         model = build_from_cfg(model_config, REGISTERED_GAN_MODEL)
+        return model
+
+    def get_pose_model(self, model_config):
+        model = build_from_cfg(model_config, REGISTERED_POSE_MODEL)
         return model
 

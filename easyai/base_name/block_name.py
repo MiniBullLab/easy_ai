@@ -110,4 +110,5 @@ class HeadType():
 
     MultiRPNHead = "multiRPN"
     MultiROIBoxHead = "multiROIBox"
+    MultiROIKeypointHead = "multiROIKeypoint"
 

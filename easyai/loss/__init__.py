@@ -5,4 +5,6 @@ from . import seg
 from . import gan
 from . import sr
 from . import common
+from . import pose
+
 

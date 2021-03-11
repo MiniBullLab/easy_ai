@@ -14,8 +14,8 @@ class RPNPostProcessor(torch.nn.Module):
         super().__init__()
         self.input_size = input_size
         self.box_coder = BoxCoder(weights=(1.0, 1.0, 1.0, 1.0))
-        self.post_nms_top_n = 2000
         self.pre_nms_top_n = 2000
+        self.post_nms_top_n = 2000
         self.fpn_post_nms_top_n = 2000
 
     def reshape_outputs(self, box_cls, box_regression):
@@ -85,7 +85,7 @@ class RPNPostProcessor(torch.nn.Module):
         keep = ((widths >= min_size) & (heights >= min_size)).nonzero().squeeze(1)
         return box_list[keep]
 
-    def box_list_nms(self, box_list, nms_thresh, max_proposals=-1):
+    def box_list_nms(self, box_list, nms_thresh):
         """
         Performs non-maximum suppression on a boxlist, with scores specified
         in a boxlist field via score_field.
@@ -102,15 +102,17 @@ class RPNPostProcessor(torch.nn.Module):
         score = box_list[:, 4]
         score = score.squeeze()
         keep = _box_nms(boxes, score, nms_thresh)
-        if max_proposals > 0:
-            keep = keep[: max_proposals]
+        if self.post_nms_top_n > 0:
+            keep = keep[: self.post_nms_top_n]
         box_list = box_list[keep]
         return box_list
 
     def select_over_all_levels(self, box_list, is_train=False):
         num_images = len(box_list)
         if is_train:
-            objectness = box_list[:, :, 4]
+            objectness = torch.cat(
+                [boxes[:, 4] for boxes in box_list], dim=0
+            )
             objectness = objectness.squeeze()
             box_sizes = [len(boxes) for boxes in box_list]
             post_nms_top_n = min(self.fpn_post_nms_top_n, len(objectness))
@@ -136,11 +138,11 @@ class RPNPostProcessor(torch.nn.Module):
             targets: list[tensor]
         """
         # Get the device we're operating on
-        device = proposals.bbox.device
+        device = proposals[0].bbox.device
         gt_boxes = []
         for target in targets:
             bbox = torch.as_tensor(target, dtype=torch.float32, device=device)
-            score = torch.ones(len(target), device=device)
+            score = torch.ones((len(target), 1), device=device)
             gt_box = torch.cat([bbox, score], dim=1)
             gt_boxes.append(gt_box)
 
@@ -151,8 +153,8 @@ class RPNPostProcessor(torch.nn.Module):
         return proposals
 
     def forward(self, anchors, objectness, box_regression):
+        predict_boxes = []
         anchors = list(zip(*anchors))
-        sampled_boxes = []
         for anchor, cls, box in zip(anchors, objectness, box_regression):
-            sampled_boxes.append(self.process_for_single_feature_map(anchor, cls, box))
-        return sampled_boxes
+            predict_boxes.append(self.process_for_single_feature_map(anchor, cls, box))
+        return predict_boxes

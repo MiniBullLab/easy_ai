@@ -18,7 +18,7 @@ class RPNLoss(BaseLoss):
 
     def __init__(self, input_size, anchor_sizes,
                  aspect_ratios, anchor_strides,
-                 fg_iou_threshold=0.5, bg_iou_threshold=0.5,
+                 fg_iou_threshold=0.7, bg_iou_threshold=0.3,
                  per_image_sample=256, positive_fraction=0.5):
         super().__init__(LossName.RPNLoss)
         if len(anchor_strides) > 1:
@@ -45,7 +45,10 @@ class RPNLoss(BaseLoss):
 
         self.rpn_postprocess = RPNPostProcessor(input_size)
 
-        self.loss_info = {'box_loss': 0.0, 'cls_loss': 0.0}
+        self.loss_info = {'rpn_box_loss': 0.0, 'rpn_cls_loss': 0.0}
+
+        self.anchors = None
+        self.inside_anchors = None
 
     def match_targets_to_anchors(self, anchor, target):
         match_quality_matrix = torch_corners_box2d_ious(target, anchor)
@@ -89,6 +92,11 @@ class RPNLoss(BaseLoss):
 
         return labels, regression_targets
 
+    def build_anchors(self, features):
+        if self.anchors is None:
+            self.anchors, self.inside_anchors = self.anchor_generator(features)
+        return self.anchors, self.inside_anchors
+
     def forward(self, outputs, targets=None):
         """
         Arguments:
@@ -108,11 +116,11 @@ class RPNLoss(BaseLoss):
 
         objectness, box_regression = self.rpn_postprocess.reshape_outputs(objectness, box_regression)
 
-        anchors, inside_anchors = self.anchor_generator(features)
+        anchors, inside_anchors = self.build_anchors(features)
 
         if targets is None:
-            proposals = self.rpn_postprocess(anchors, objectness, box_regression)
-            return torch.cat(proposals, dim=1)
+            predict_boxes = self.rpn_postprocess(anchors, objectness, box_regression)
+            return torch.cat(predict_boxes, dim=1)
         else:
             anchors = [torch.cat(anchors_per_image, dim=0) for anchors_per_image in anchors]
             inside_anchors = [torch.cat(inside_per_image, dim=0) for inside_per_image in inside_anchors]
@@ -133,12 +141,14 @@ class RPNLoss(BaseLoss):
             regression_targets = torch.cat(regression_targets, dim=0)
 
             box_loss = F.smooth_l1_loss(box_regression[sampled_pos_inds],
-                                        regression_targets[sampled_pos_inds])
+                                        regression_targets[sampled_pos_inds],
+                                        reduction='none')
+            box_loss = box_loss.sum() / sampled_inds.numel()
             objectness_loss = F.binary_cross_entropy(
                 objectness[sampled_inds], labels[sampled_inds])
 
-            self.loss_info['box_loss'] = float(box_loss.item())
-            self.loss_info['cls_loss'] = float(objectness_loss.item())
+            self.loss_info['rpn_box_loss'] = float(box_loss.item())
+            self.loss_info['rpn_cls_loss'] = float(objectness_loss.item())
 
             all_loss = box_loss + objectness_loss
 

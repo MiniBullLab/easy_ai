@@ -19,6 +19,7 @@ class RPNDet2d(BaseDetectionModel):
 
     def __init__(self, data_channel=3, class_number=1):
         super().__init__(data_channel, 1)
+        self.set_name(ModelName.RPNDet2d)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
 
@@ -35,6 +36,8 @@ class RPNDet2d(BaseDetectionModel):
                             "positive_fraction": 0.5}
         self.anchor_number = 3
 
+        self.feature_out_channels = 256
+
         self.create_block_list()
 
     def create_block_list(self):
@@ -48,20 +51,20 @@ class RPNDet2d(BaseDetectionModel):
         down_layer_outputs = [self.block_out_channels[i] if i < 0 else base_out_channels[i]
                               for i in down_layers]
         temp_str = ",".join('%s' % index for index in down_layers)
-        fpn_layer = FPNBlock(temp_str, down_layer_outputs, 256)
+        fpn_layer = FPNBlock(temp_str, down_layer_outputs, self.feature_out_channels)
         self.add_block_list(fpn_layer.get_name(), fpn_layer, 256)
 
-        head_layer = MultiRPNHead(256, self.anchor_number,
+        head_layer = MultiRPNHead(self.feature_out_channels, self.anchor_number,
                                   activation_name=self.activation_name)
-        self.add_block_list(head_layer.get_name(), head_layer, 256)
+        self.add_block_list(head_layer.get_name(), head_layer, self.self.anchor_number)
 
         self.create_loss_list()
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = self.loss_factory.get_loss(self.loss_config)
-        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
-        self.lossList.append(loss)
+        rpn_loss = self.loss_factory.get_loss(self.loss_config)
+        self.add_block_list(rpn_loss.get_name(), rpn_loss, self.block_out_channels[-1])
+        self.lossList.append(rpn_loss)
 
     def forward(self, x):
         base_outputs = []
@@ -78,11 +81,12 @@ class RPNDet2d(BaseDetectionModel):
                 fpn_output = x
             elif HeadType.MultiRPNHead in key:
                 x = block(x)
+                multi_output.clear()
                 multi_output.extend(fpn_output)
                 multi_output.extend(x)
             elif self.loss_factory.has_loss(key):
                 temp_output = self.loss_factory.get_loss_input(key, x, multi_output)
-                output.extend(temp_output)
+                output = temp_output[0]
             else:
                 x = block(x)
             # print(key, x.shape)

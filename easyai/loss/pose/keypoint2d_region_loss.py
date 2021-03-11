@@ -5,15 +5,15 @@
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.yolo_loss import YoloLoss
-from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
+from easyai.loss.utility.registry import REGISTERED_POSE_LOSS
 
 
-@REGISTERED_DET2D_LOSS.register_module(LossName.KeyPoints2dRegionLoss)
-class KeyPoints2dRegionLoss(YoloLoss):
+@REGISTERED_POSE_LOSS.register_module(LossName.Keypoint2dRegionLoss)
+class Keypoint2dRegionLoss(YoloLoss):
     def __init__(self, class_number, point_count,
                  coord_weight=1.0/2.0, noobject_weight=1.0,
                  object_weight=5.0, class_weight=2.0, iou_threshold=0.6):
-        super().__init__(LossName.KeyPoints2dRegionLoss, class_number)
+        super().__init__(LossName.Keypoint2dRegionLoss, class_number)
         self.point_count = point_count
         self.loc_count = point_count * 2
         self.coord_scale = coord_weight

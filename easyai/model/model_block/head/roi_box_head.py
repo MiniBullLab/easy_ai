@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.block_name import ActivationType, NormalizationType
+from easyai.base_name.block_name import ActivationType
 from easyai.base_name.block_name import HeadType
 from easyai.model.model_block.base_block.utility.utility_layer import FcLayer, ActivationLayer
 from easyai.model.model_block.base_block.utility.utility_block import FcActivationBlock
