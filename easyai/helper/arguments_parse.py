@@ -333,11 +333,15 @@ class ToolArgumentsParse():
     @classmethod
     def model_parse(cls):
         parser = OptionParser()
-        parser.description = "This program show model net"
+        parser.description = "This program model parse"
 
         parser.add_option("-m", "--model", dest="model",
                           action="store", type="string", default=None,
                           help="model name or cfg file path")
+
+        parser.add_option("-b", "--backbone", dest="backbone",
+                          action="store", type="string", default=None,
+                          help="backbone name or cfg file path")
 
         (options, args) = parser.parse_args()
         return options

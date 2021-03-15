@@ -16,7 +16,6 @@ numpy
 scipy
 pillow
 sklearn
-netron
 absl-py
 pathlib
 future

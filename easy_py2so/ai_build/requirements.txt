@@ -13,6 +13,6 @@ matplotlib
 pandas
 tabulate
 pydot
-netron
+netron==4.6.9
 graphviz
 flashtorch

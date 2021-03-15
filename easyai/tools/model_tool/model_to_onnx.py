@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
@@ -43,18 +43,18 @@ class ModelConverter():
         return save_onnx_path
 
 
-def main(input_param):
+def main(options_param):
     config_factory = ConfigFactory()
-    task_config = config_factory.get_config(input_param.task_name, config_path=None)
+    task_config = config_factory.get_config(options_param.task_name, config_path=None)
     converter = ModelConverter(task_config.image_size)
-    if input_param.model is not None:
-        model_config = {"type": input_param.model,
+    if options_param.model is not None:
+        model_config = {"type": options_param.model,
                         "data_channel": 3}
-        converter.model_convert(model_config, input_param.weight_path, input_param.save_dir)
-    elif input_param.base_model is not None:
-        model_config = {"type": input_param.backbone,
+        converter.model_convert(model_config, options_param.weight_path, options_param.save_dir)
+    elif options_param.backbone is not None:
+        model_config = {"type": options_param.backbone,
                         "data_channel": 3}
-        converter.base_model_convert(model_config, input_param.weight_path, input_param.save_dir)
+        converter.base_model_convert(model_config, options_param.weight_path, options_param.save_dir)
 
 
 if __name__ == '__main__':

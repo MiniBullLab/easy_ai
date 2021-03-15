@@ -35,16 +35,16 @@ class ModelNetShow():
         self.show_process.show_from_onnx(onnx_path)
 
 
-def main():
-    pass
+def main(options_param):
+    show = ModelNetShow()
+    if options_param.model is not None:
+        show.model_show(options.model)
+    elif options_param.backbone is not None:
+        show.backbone_show(options.backbone)
+    elif options_param.onnx_path is not None:
+        show.onnx_show(options.onnx_path)
 
 
 if __name__ == '__main__':
     options = ToolArgumentsParse.model_show_parse()
-    show = ModelNetShow()
-    if options.model is not None:
-        show.model_show(options.model)
-    elif options.backbone is not None:
-        show.backbone_show(options.backbone)
-    elif options.onnx_path is not None:
-        show.onnx_show(options.onnx_path)
+    main(options)
