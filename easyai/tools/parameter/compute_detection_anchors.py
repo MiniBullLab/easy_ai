@@ -14,14 +14,13 @@ from easyai.helper.json_process import JsonProcess
 from easyai.helper import ImageProcess
 from easyai.base_name.task_name import TaskName
 from easyai.config.utility.config_factory import ConfigFactory
+from easyai.helper.arguments_parse import ToolArgumentsParse
 
 
-class CreateDetectionAnchors():
+class ComputeDetectionAnchors():
 
-    def __init__(self, train_path, config_path):
-        self.config_factory = ConfigFactory()
-        self.task_config = self.config_factory.get_config(TaskName.Detect2d_Task, config_path)
-
+    def __init__(self, train_path, task_config):
+        self.task_config = task_config
         # image & label process
         self.json_process = JsonProcess()
         self.image_process = ImageProcess()
@@ -30,13 +29,15 @@ class CreateDetectionAnchors():
                                                 self.task_config.detect2d_class)
         self.detection_sample.read_sample()
 
-        self.dataset_process = DetectionDataSetProcess(1, 0)
+        self.dataset_process = DetectionDataSetProcess(task_config.resize_type,
+                                                       task_config.normalize_type)
 
     def get_anchors(self, number):
         wh_numpy = self.get_width_height()
         indices = [random.randrange(wh_numpy.shape[0]) for _ in range(number)]
         centroids = wh_numpy[indices]
-        self.kmeans(wh_numpy, centroids)
+        centroids = self.kmeans(wh_numpy, centroids)
+        self.anchor_visual(centroids)
 
     def get_width_height(self):
         count = self.detection_sample.get_sample_count()
@@ -81,8 +82,7 @@ class CreateDetectionAnchors():
             assignments = np.argmin(dists, axis=1)
 
             if (assignments == prev_assignments).all():
-                self.anchor_visual(centroids)
-                return
+                return centroids
 
             # calculate new centroids
             centroid_sums = np.zeros((k, dim), np.float)
@@ -126,16 +126,22 @@ class CreateDetectionAnchors():
         cv2.namedWindow("image", 0)
         cv2.resizeWindow("image", int(img.shape[1] * 3.0), int(img.shape[0] * 3.0))
         cv2.imshow("image", img)
-        cv2.waitKey()
+        if cv2.waitKey() & 0xFF == 27:
+            return False
+        else:
+            return True
 
 
-def test():
+def main(options_param):
     print("start...")
-    test = CreateDetectionAnchors("/home/wfw/data/VOCdevkit/BerkeleyDet/ImageSets/train.txt",
-                                  "/home/wfw/EDGE/HV_YOLO/log/config/detection2d_config.json")
+    config_factory = ConfigFactory()
+    task_config = config_factory.get_config(TaskName.Detect2d_Task,
+                                            config_path=options_param.config_path)
+    test = ComputeDetectionAnchors(options_param.inputPath, task_config)
     test.get_anchors(9)
     print("End of game, have a nice day!")
 
 
 if __name__ == "__main__":
-   test()
+    options = ToolArgumentsParse.images_path_parse()
+    main(options)

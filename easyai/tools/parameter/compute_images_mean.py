@@ -41,16 +41,18 @@ class ComputeImagesMean():
         return mean, std
 
 
-def main():
+def main(options_param):
     print("start...")
-    options = ToolArgumentsParse.images_path_parse()
     config_factory = ConfigFactory()
-    task_config = config_factory.get_config(options.task_name, config_path=options.config_path)
+    task_config = config_factory.get_config(options_param.task_name,
+                                            config_path=options_param.config_path)
     test = ComputeImagesMean(image_size=task_config.image_size)
-    mean, std = test.compute(options.inputPath)
+    mean, std = test.compute(options_param.inputPath)
     print(mean, std)
     print("End of game, have a nice day!")
 
 
 if __name__ == "__main__":
-   main()
+    options = ToolArgumentsParse.images_path_parse()
+    main(options)
+
