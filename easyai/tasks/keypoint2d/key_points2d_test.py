@@ -5,7 +5,7 @@
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
 from easyai.data_loader.key_point2d.key_point2d_dataloader import get_key_points2d_val_dataloader
-from easyai.tasks.key_points2d.key_points2d import KeyPoints2d
+from easyai.tasks.keypoint2d.key_points2d import KeyPoints2d
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 

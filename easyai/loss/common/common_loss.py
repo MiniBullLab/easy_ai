@@ -15,6 +15,16 @@ def smooth_l1_loss(x, t):
     return y.sum()
 
 
+@REGISTERED_COMMON_LOSS.register_module(LossName.EmptyLoss)
+class EmptyLoss(BaseLoss):
+
+    def __init__(self):
+        super().__init__(LossName.EmptyLoss)
+
+    def forward(self, input_data, target=None):
+        pass
+
+
 @REGISTERED_COMMON_LOSS.register_module(LossName.MeanSquaredErrorLoss)
 class MeanSquaredErrorLoss(BaseLoss):
 

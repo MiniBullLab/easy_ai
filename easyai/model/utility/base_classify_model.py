@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.model.utility.base_model import *
+from easyai.model.utility.base_model import BaseModel
 from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 

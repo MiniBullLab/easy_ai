@@ -102,7 +102,7 @@ class XMLProcess():
             nodeObject = doc.createElement("rectObject")
             nodeObjectName = doc.createElement("name")
             nodeObjectName.appendChild(doc.createTextNode(str(box.name)))
-            nodeObjectPose = doc.createElement("pose")
+            nodeObjectPose = doc.createElement("pose2d")
             nodeObjectPose.appendChild(doc.createTextNode(str("Unspecified")))
             nodeObjectTruncated = doc.createElement("truncated")
             nodeObjectTruncated.appendChild(doc.createTextNode(str(0)))

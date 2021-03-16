@@ -42,6 +42,7 @@ class ModelName():
     DetNet = "denet"
 
     KeyPointRCNN = "KeyPointRCNN"
+    MobilePose = "MobilePose"
 
     # sr
     MSRResNet = "MSRResNet"

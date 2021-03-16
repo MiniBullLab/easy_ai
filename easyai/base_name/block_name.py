@@ -48,6 +48,7 @@ class LayerType():
     ShortcutLayer = "shortcut"
 
     Upsample = "upsample"
+    DenseUpsamplingConvBlock = "ducBlock"
     PixelShuffle = "pixelShuffle"
 
     MyMaxPool2d = "maxpool"

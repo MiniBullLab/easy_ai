@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.base_name.block_name import LayerType, BlockType
 from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model.utility.create_model_list import CreateModuleList
-from easyai.model.utility.base_model import *
+from easyai.model.utility.base_model import BaseModel
 
 
 class MyModel(BaseModel):

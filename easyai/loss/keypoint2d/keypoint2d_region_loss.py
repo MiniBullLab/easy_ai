@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.yolo_loss import YoloLoss
-from easyai.loss.utility.registry import REGISTERED_POSE_LOSS
+from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
 
 
-@REGISTERED_POSE_LOSS.register_module(LossName.Keypoint2dRegionLoss)
+@REGISTERED_KEYPOINT2D_LOSS.register_module(LossName.Keypoint2dRegionLoss)
 class Keypoint2dRegionLoss(YoloLoss):
     def __init__(self, class_number, point_count,
                  coord_weight=1.0/2.0, noobject_weight=1.0,

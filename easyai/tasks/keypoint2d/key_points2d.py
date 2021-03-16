@@ -4,7 +4,7 @@
 
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.tasks.key_points2d.key_points2d_result_process import KeyPoints2dResultProcess
+from easyai.tasks.keypoint2d.key_points2d_result_process import KeyPoints2dResultProcess
 from easyai.visualization.task_show.key_points2d_show import KeyPointsShow
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK

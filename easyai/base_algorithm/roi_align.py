@@ -5,9 +5,16 @@ from torch.autograd import Function
 from torch.autograd.function import once_differentiable
 from torch.nn.modules.utils import _pair
 
-from maskrcnn_benchmark import _C
+try:
+    from easyai import _C
+except ImportError:
+    print("import _C fail!")
 
-from apex import amp
+try:
+    from apex import amp
+except ImportError:
+    print("import amp fail!")
+
 
 class _ROIAlign(Function):
     @staticmethod
@@ -46,6 +53,7 @@ class _ROIAlign(Function):
 
 
 roi_align = _ROIAlign.apply
+
 
 class ROIAlign(nn.Module):
     def __init__(self, output_size, spatial_scale, sampling_ratio):

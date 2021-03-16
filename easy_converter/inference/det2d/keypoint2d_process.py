@@ -32,7 +32,7 @@ class KeyPoint2dProcess():
     def resize_keypoint_objects(self, boxes):
         best_conf_est = -1
         # If the prediction has the highest confidence,
-        # choose it as our prediction for single object pose estimation
+        # choose it as our prediction for single object pose2d estimation
         for j in range(len(boxes)):
             if (boxes[j][18] > best_conf_est):
                 box_pr = boxes[j]

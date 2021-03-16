@@ -5,5 +5,5 @@ from . import det3d
 from . import seg
 from . import sr
 from . import gan
-from . import pose
+from . import pose2d
 

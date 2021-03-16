@@ -6,6 +6,7 @@
 class LossName():
 
     # utility
+    EmptyLoss = "emptyLoss"
     MeanSquaredErrorLoss = "mseLoss"
 
     # cls
@@ -31,9 +32,12 @@ class LossName():
     MixCrossEntropy2dLoss = "MixCE2dLoss"
     MixBinaryCrossEntropy2dLoss = "MixBCELoss"
 
-    # pose
+    # keypoint2d2d
     Keypoint2dRegionLoss = "Keypoint2dRegionLoss"
     Keypoint2dRCNNLoss = "Keypoint2dRCNNLoss"
+
+    # pose2d
+    DSNTLoss = "DSNTLoss"
 
     # gan
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"

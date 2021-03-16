@@ -4,7 +4,7 @@
 
 from easyai.base_name.block_name import LayerType
 from easyai.model.utility.create_model_list import CreateModuleList
-from easyai.model.model_block.backbone.utility.base_backbone import *
+from easyai.model.model_block.backbone.utility.base_backbone import BaseBackbone
 
 
 class MyBackbone(BaseBackbone):
