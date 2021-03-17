@@ -12,13 +12,6 @@ else
     dataset_val_path=/easy_ai/ImageSets/val.txt
 fi
 
-#cuda10
-export PATH=/usr/local/cuda/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-
-#caffe
-export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
-
 rm -rf ./.easy_log/detect2d*
 
 CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
@@ -60,6 +53,9 @@ source /usr/local/amba-cv-tools-2.1.7-20190815.ubuntu-18.04/env/cv22.env
 #cuda10
 export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/usr/local/cyberRT/third_party/gflags/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/cyberRT/third_party/glog/lib:$LD_LIBRARY_PATH
 
 #caffe
 export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
