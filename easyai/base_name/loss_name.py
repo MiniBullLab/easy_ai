@@ -38,6 +38,7 @@ class LossName():
 
     # pose2d
     DSNTLoss = "DSNTLoss"
+    JointsMSELoss = "JointsMSELoss"
 
     # gan
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"

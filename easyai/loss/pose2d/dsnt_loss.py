@@ -5,9 +5,10 @@
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.pose2d import dsntnn
-from easyai.loss.utility.registry import REGISTERED_POSE_LOSS
+from easyai.loss.utility.registry import REGISTERED_POSE2D_LOSS
 
 
+@REGISTERED_POSE2D_LOSS.register_module(LossName.DSNTLoss)
 class DSNTLoss(BaseLoss):
 
     def __init__(self):

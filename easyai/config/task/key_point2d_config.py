@@ -8,12 +8,12 @@ from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 
 
-@REGISTERED_TASK_CONFIG.register_module(TaskName.KeyPoints2d_Task)
+@REGISTERED_TASK_CONFIG.register_module(TaskName.KeyPoint2d_Task)
 class KeyPoint2dConfig(CommonTrainConfig):
 
     def __init__(self):
         super().__init__()
-        self.set_task_name(TaskName.KeyPoints2d_Task)
+        self.set_task_name(TaskName.KeyPoint2d_Task)
         # data
         self.points_class = None
         self.points_count = 0

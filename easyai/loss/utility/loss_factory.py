@@ -10,6 +10,7 @@ from easyai.loss.utility.registry import REGISTERED_SEG_LOSS
 from easyai.loss.utility.registry import REGISTERED_GAN_D_LOSS
 from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
 from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
+from easyai.loss.utility.registry import REGISTERED_POSE2D_LOSS
 from easyai.utility.registry import build_from_cfg
 
 
@@ -31,6 +32,8 @@ class LossFactory():
             result = self.get_seg_loss(loss_args)
         elif REGISTERED_KEYPOINT2D_LOSS.has_class(input_name):
             result = self.get_keypoint2d_loss(loss_args)
+        elif REGISTERED_POSE2D_LOSS.has_class(input_name):
+            result = self.get_pose2d_loss(loss_args)
         else:
             result = self.get_gan_loss(loss_args)
         if result is None:
@@ -56,6 +59,10 @@ class LossFactory():
                 return True
 
         for loss_name in REGISTERED_KEYPOINT2D_LOSS.get_keys():
+            if loss_name in key:
+                return True
+
+        for loss_name in REGISTERED_POSE2D_LOSS.get_keys():
             if loss_name in key:
                 return True
 
@@ -214,6 +221,10 @@ class LossFactory():
         if input_name == LossName.Keypoint2dRegionLoss:
             loss_config['class_number'] = int(loss_config['class_number'])
             loss_config['point_count'] = int(loss_config['point_count'])
+        loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
+        return loss
+
+    def get_pose2d_loss(self, loss_config):
         loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
         return loss
 

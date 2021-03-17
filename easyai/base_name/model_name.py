@@ -42,7 +42,9 @@ class ModelName():
     DetNet = "denet"
 
     KeyPointRCNN = "KeyPointRCNN"
+
     MobilePose = "MobilePose"
+    ResnetPose = "ResnetPose"
 
     # sr
     MSRResNet = "MSRResNet"
@@ -50,6 +52,9 @@ class ModelName():
 
     # gan
     MNISTGan = "MNISTGan"
+
+    # multi
+    DetPoes2dModel = "DetPoes2d"
 
 
 

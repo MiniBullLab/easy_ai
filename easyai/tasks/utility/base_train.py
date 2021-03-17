@@ -7,7 +7,7 @@ from easyai.helper.timer_process import TimerProcess
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.freeze_process import FreezePorcess
-from easyai.utility.train_log import TrainLogger
+from easyai.torch_utility.train_log import TrainLogger
 from easyai.tasks.utility.base_task import BaseTask
 
 

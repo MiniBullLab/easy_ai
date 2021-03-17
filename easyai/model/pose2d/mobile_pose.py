@@ -11,10 +11,10 @@ from easyai.model.model_block.base_block.utility.utility_layer import MeanLayer
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.model_block.base_block.utility.upsample_layer import DenseUpsamplingConvBlock
 from easyai.model.utility.base_pose_model import *
-from easyai.model.utility.registry import REGISTERED_POSE_MODEL
+from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
 
 
-@REGISTERED_POSE_MODEL.register_module(ModelName.MobilePose)
+@REGISTERED_POSE2D_MODEL.register_module(ModelName.MobilePose)
 class MobilePose(BasePoseModel):
 
     def __init__(self, data_channel=3, keypoints_number=16):
@@ -25,7 +25,7 @@ class MobilePose(BasePoseModel):
 
         self.model_args['type'] = BackboneName.MobileNetV2_1_0
 
-        self.loss_config = {"type": LossName.EmptyLoss}
+        self.loss_config = {"type": LossName.DSNTLoss}
 
         self.create_block_list()
 

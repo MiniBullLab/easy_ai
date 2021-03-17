@@ -48,7 +48,6 @@ class LayerType():
     ShortcutLayer = "shortcut"
 
     Upsample = "upsample"
-    DenseUpsamplingConvBlock = "ducBlock"
     PixelShuffle = "pixelShuffle"
 
     MyMaxPool2d = "maxpool"
@@ -62,6 +61,8 @@ class LayerType():
     Convolutional1d = "convolutional1d"
 
     Convolutional = "convolutional"
+
+    ConvTranspose = "deconv"
 
     MeanLayer = "mean"
 
@@ -103,6 +104,9 @@ class BlockType():
 
     SpatialPyramidPooling = "SPPBlock"
     MultiROIPooling = "multiROIPool"
+
+    DenseUpsamplingConvBlock = "ducBlock"
+    DeConvBNActivationBlock = "deconvBNActivationBlock"
 
     Detection2dBlock = "detection2dBlock"
 
