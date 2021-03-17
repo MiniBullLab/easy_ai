@@ -8,7 +8,7 @@ from easyai.helper.dataType import Rect2D
 from easyai.data_loader.utility.image_data_augment import ImageDataAugment
 
 
-class KeyPoints2dDataAugment():
+class Pose2dDataAugment():
 
     def __init__(self):
         self.is_augment_hsv = True

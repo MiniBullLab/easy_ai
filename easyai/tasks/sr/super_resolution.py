@@ -50,7 +50,7 @@ class SuperResolution(BaseInference):
         #     if cv2.waitKey() & 0xFF == 27:
         #         break
 
-    def infer(self, input_data):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             prediction = self.compute_output(output_list[:])

@@ -6,16 +6,35 @@
 import torch
 from easyai.helper.dataType import DetectionObject
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
 from easyai.tasks.utility.box2d_process import box2d_xywh2xyxy
 
 
 class Detect2dResultProcess():
 
-    def __init__(self):
+    def __init__(self, post_prcoess_type, nms_threshold,
+                 image_size, detect2d_class):
+        self.post_prcoess_type = post_prcoess_type
+        self.nms_threshold = nms_threshold
+        self.image_size = image_size
+        self.detect2d_class = detect2d_class
         self.min_width = 2  # (pixels)
         self.min_height = 2  # (pixels)
         self.use_new_confidence = False
         self.dataset_process = ImageDataSetProcess()
+        self.nms_process = FastNonMaxSuppression()
+
+    def postprocess(self, prediction, src_size, threshold=0.0):
+        if prediction is None:
+            return None
+        result = self.get_detection_result(prediction, threshold,
+                                           self.post_prcoess_type)
+        detection_objects = self.nms_process.multi_class_nms(result, self.nms_threshold)
+        detection_objects = self.resize_detection_objects(src_size,
+                                                          self.image_size,
+                                                          detection_objects,
+                                                          self.detect2d_class)
+        return detection_objects
 
     def get_detection_result(self, prediction, conf_thresh, result_type=0):
         result = None

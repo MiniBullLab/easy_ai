@@ -22,7 +22,8 @@ class GenerateImage(BaseInference):
         self.model_args['image_size'] = self.task_config.image_size
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-        self.result_process = GenerateImageResultProcess(self.task_config.image_size)
+        self.result_process = GenerateImageResultProcess(self.task_config.post_prcoess_type,
+                                                         self.task_config.image_size)
         self.result_show = ImageShow()
         self.image_process = ImageProcess()
         self.save_index = 0
@@ -32,7 +33,7 @@ class GenerateImage(BaseInference):
             batch_data = torch.randn((1, 1))
             self.timer.tic()
             prediction, _ = self.infer(batch_data)
-            result = self.postprocess(prediction)
+            result = self.result_process.postprocess(prediction)
             print('Done. (%.3fs)' % (self.timer.toc()))
             if is_show:
                 if not self.result_show.show(result):
@@ -47,7 +48,7 @@ class GenerateImage(BaseInference):
             for index, (file_path, src_image, image) in enumerate(dataloader):
                 self.timer.tic()
                 prediction, _ = self.infer(image)
-                result = self.postprocess(prediction)
+                result = self.result_process.postprocess(prediction)
                 print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
                 if is_show:
                     if not self.result_show.show(result):
@@ -62,19 +63,12 @@ class GenerateImage(BaseInference):
         save_result_path = os.path.join(self.task_config.save_result_path, "%s.png" % filename)
         self.image_process.opencv_save_image(save_result_path, prediction)
 
-    def infer(self, input_data):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
             fake_images = self.model.generator_input_data(input_data)
             output_list = self.model(fake_images.to(self.device))
             output = self.compute_output(output_list)
         return output, output_list
-
-    def postprocess(self, result, threshold=0.0):
-        result_image = None
-        if result is not None:
-            result_image = self.result_process.get_result_image(result,
-                                                                self.task_config.post_prcoess_type)
-        return result_image
 
     def compute_output(self, output_list):
         output = None

@@ -3,6 +3,7 @@
 # Author:
 
 import torch.utils.data as data
+import numpy as np
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
@@ -28,7 +29,9 @@ class DetectionValDataLoader(TorchDataLoader):
         image = self.dataset_process.resize_image(src_image,
                                                   self.image_size)
         image = self.dataset_process.normalize_image(image)
-        return img_path, cv_image, image
+        src_size = np.array([cv_image.shape[1], cv_image.shape[0]])  # [width, height]
+        src_size = self.dataset_process.numpy_to_torch(src_size, flag=0)
+        return img_path, src_size, image
 
     def __len__(self):
         return self.detection_sample.get_sample_count()

@@ -7,8 +7,15 @@ import numpy as np
 
 class GenerateImageResultProcess():
 
-    def __init__(self, input_size):
+    def __init__(self, post_prcoess_type, input_size):
+        self.post_prcoess_type = post_prcoess_type
         self.input_size = input_size
+
+    def postprocess(self, result):
+        result_image = None
+        if result is not None:
+            result_image = self.get_result_image(result, self.post_prcoess_type)
+        return result_image
 
     def get_result_image(self, prediction, result_type=0):
         result = None

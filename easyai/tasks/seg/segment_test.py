@@ -40,7 +40,8 @@ class SegmentionTest(BaseTest):
         self.epoch_loss_average.reset()
         for i, (images, segment_targets) in enumerate(dataloader):
             prediction, output_list = self.segment_inference.infer(images)
-            result, _ = self.segment_inference.postprocess(prediction, self.threshold)
+            result = self.segment_inference.result_process.self.get_segmentation_result(prediction,
+                                                                                        self.threshold)
             loss = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()
             self.metric.numpy_eval(result, gt)

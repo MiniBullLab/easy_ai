@@ -19,7 +19,7 @@ class Pose2dConfig(CommonTrainConfig):
         self.det_config = Detect2dConfig()
 
         # data
-        self.keypoint_number = 0
+        self.points_count = 0
         self.save_result_name = None
 
         # train
@@ -40,8 +40,8 @@ class Pose2dConfig(CommonTrainConfig):
         self.det_config.load_data_value(det_dict)
 
         self.load_image_data_value(config_dict)
-        if config_dict.get('keypoint_number', None) is not None:
-            self.keypoint_number = tuple(config_dict['keypoint_number'])
+        if config_dict.get('points_count', None) is not None:
+            self.points_count = tuple(config_dict['points_count'])
 
     def save_data_value(self, config_dict):
         det_dict = config_dict.get('det_config', {})
@@ -49,7 +49,7 @@ class Pose2dConfig(CommonTrainConfig):
         config_dict['det_config'] = det_dict
 
         self.save_image_data_value(config_dict)
-        config_dict['keypoint_number'] = self.keypoint_number
+        config_dict['points_count'] = self.points_count
 
     def load_test_value(self, config_dict):
         det_dict = config_dict['det_config']
@@ -94,7 +94,7 @@ class Pose2dConfig(CommonTrainConfig):
 
         self.image_size = (224, 224)
         self.data_channel = 3
-        self.keypoint_number = 17
+        self.points_count = 17
         self.resize_type = 0
         self.normalize_type = -1
         self.save_result_name = "pose2d_result.txt"

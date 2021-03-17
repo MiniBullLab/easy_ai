@@ -1,3 +1,3 @@
-from . import key_points2d
-from . import key_points2d_test
-from . import key_points2d_train
+from . import keypoint2d
+from . import keypoint2d_test
+from . import keypoint2d_train

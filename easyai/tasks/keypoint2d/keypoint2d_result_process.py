@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 
 import torch
@@ -9,12 +9,25 @@ from easyai.helper.dataType import Point2d, DetectionObject
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 
 
-class KeyPoints2dResultProcess():
+class KeyPoint2dResultProcess():
 
-    def __init__(self, points_count):
+    def __init__(self, post_prcoess_type, image_size,
+                 points_count, points_class):
         self.use_new_confidence = False
+        self.post_prcoess_type = post_prcoess_type
+        self.image_size = image_size
+        self.points_class = points_class
         self.points_count = points_count
         self.dataset_process = ImageDataSetProcess()
+
+    def postprocess(self, prediction, src_size, threshold=0.0):
+        result = self.get_keypoints_result(prediction, threshold,
+                                           self.post_prcoess_type)
+        result_objects = self.resize_keypoints_objects(src_size,
+                                                       self.image_size,
+                                                       result,
+                                                       self.points_class)
+        return result, result_objects
 
     def get_keypoints_result(self, prediction, conf_thresh, flag=0):
         result = None

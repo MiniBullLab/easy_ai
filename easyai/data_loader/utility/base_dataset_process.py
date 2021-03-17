@@ -18,7 +18,7 @@ class BaseDataSetProcess():
             result = torch.from_numpy(data)
         elif flag == 1:  # torchvision to tensor
             # data(numpy or PIL.Image) convert to 0~1.0 and tensor(C,H, W)
-            transform = self.torchvision_process.torch_normalize(flag=1)
+            transform = self.torchvision_process.torch_normalize(normalize_type=-2)
             result = transform(data)
         return result
 

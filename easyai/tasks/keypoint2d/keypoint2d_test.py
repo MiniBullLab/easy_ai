@@ -4,18 +4,18 @@
 
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
-from easyai.data_loader.key_point2d.key_point2d_dataloader import get_key_points2d_val_dataloader
-from easyai.tasks.keypoint2d.key_points2d import KeyPoints2d
+from easyai.data_loader.keypoint2d.keypoint2d_dataloader import get_key_points2d_val_dataloader
+from easyai.tasks.keypoint2d.keypoint2d import KeyPoint2d
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 
-@REGISTERED_TEST_TASK.register_module(TaskName.KeyPoints2d_Task)
-class KeyPoints2dTest(BaseTest):
+@REGISTERED_TEST_TASK.register_module(TaskName.KeyPoint2d_Task)
+class KeyPoint2dTest(BaseTest):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.KeyPoints2d_Task)
-        self.inference = KeyPoints2d(cfg_path, gpu_id, config_path)
+        super().__init__(config_path, TaskName.KeyPoint2d_Task)
+        self.inference = KeyPoint2d(cfg_path, gpu_id, config_path)
         self.evaluator = KeyPointAccuracy(self.test_task_config.points_count,
                                           self.test_task_config.points_class)
 

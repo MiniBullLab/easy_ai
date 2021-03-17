@@ -10,6 +10,10 @@ class ClassifyResultProcess():
     def __init__(self):
         self.threshold = 0.5  # binary class threshold
 
+    def postprocess(self, prediction):
+        class_indices, class_confidence = self.get_classify_result(prediction)
+        return class_indices, class_confidence
+
     def get_classify_result(self, prediction):
         output_count = prediction.size(1)
         if output_count == 1:

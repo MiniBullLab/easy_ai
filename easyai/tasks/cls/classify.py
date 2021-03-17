@@ -27,7 +27,7 @@ class Classify(BaseInference):
         for index, (file_path, src_image, image) in enumerate(dataloader):
             self.timer.tic()
             prediction, _ = self.infer(image)
-            class_index, class_confidence = self.postprocess(prediction)
+            class_index, class_confidence = self.result_process.postprocess(prediction)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image,
@@ -48,15 +48,11 @@ class Classify(BaseInference):
                                            class_index[0].cpu().numpy(),
                                            class_confidence[0][0].cpu().numpy()))
 
-    def infer(self, input_data):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list)
         return output, output_list
-
-    def postprocess(self, prediction, threshold=0.0):
-        class_indices, class_confidence = self.result_process.get_classify_result(prediction)
-        return class_indices, class_confidence
 
     def compute_output(self, output_list):
         output = None

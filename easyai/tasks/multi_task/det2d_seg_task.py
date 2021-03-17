@@ -56,7 +56,7 @@ class Det2dSegTask(BaseInference):
             with open(temp_save_path, 'a') as file:
                 file.write("{} {} {} {} {} {}\n".format(filename, confidence, x1, y1, x2, y2))
 
-    def infer(self, input_data):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output_dets, output_seg = self.compute_output(output_list)

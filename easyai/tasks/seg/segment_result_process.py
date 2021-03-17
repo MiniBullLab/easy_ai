@@ -9,8 +9,21 @@ from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 
 class SegmentResultProcess():
 
-    def __init__(self):
+    def __init__(self, image_size, resize_type):
+        self.image_size = image_size
+        self.resize_type = resize_type
         self.dataset_process = ImageDataSetProcess()
+
+    def postprocess(self, prediction, src_size, threshold=None):
+        result = self.get_segmentation_result(prediction, threshold)
+        if src_size[0] == 0 or src_size[1] == 0:
+            seg_image = None
+        else:
+            seg_image = self.resize_segmention_result(src_size,
+                                                      self.image_size,
+                                                      self.resize_type,
+                                                      result)
+        return result, seg_image
 
     def get_segmentation_result(self, prediction, threshold=0):
         result = None
@@ -25,13 +38,10 @@ class SegmentResultProcess():
 
     def resize_segmention_result(self, src_size, image_size,
                                  resize_type, segmention_result):
-        if src_size[0] == 0 or src_size[1] == 0:
-            return None
-        else:
-            result = self.dataset_process.inv_resize(src_size, image_size,
-                                                     resize_type, segmention_result)
-            result = result.astype(np.float32)
-            return result
+        result = self.dataset_process.inv_resize(src_size, image_size,
+                                                 resize_type, segmention_result)
+        result = result.astype(np.float32)
+        return result
 
     def output_feature_map_resize(self, input_data, target):
         n, c, h, w = input_data.size()

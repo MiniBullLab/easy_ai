@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os.path
 import re
@@ -46,17 +46,17 @@ class TorchModelProcess():
             else:
                 print("pretain model %s not exist" % weight_path)
 
-    def load_latest_model(self, weight_path, model):
+    def load_latest_model(self, weight_path, model, dict_name="model"):
         count = self.torchDeviceProcess.getCUDACount()
         checkpoint = None
         if os.path.exists(weight_path):
             if count > 1:
                 checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                state = self.convert_state_dict(checkpoint['model'])
+                state = self.convert_state_dict(checkpoint[dict_name])
                 model.load_state_dict(state)
             else:
                 checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                model.load_state_dict(checkpoint['model'])
+                model.load_state_dict(checkpoint[dict_name])
         else:
             print("Loading model %s fail" % weight_path)
         result = self.get_latest_model_value(checkpoint)

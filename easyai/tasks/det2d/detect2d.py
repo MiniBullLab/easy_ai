@@ -6,7 +6,6 @@ import os
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.det2d.detect2d_result_process import Detect2dResultProcess
-from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
 from easyai.visualization.task_show.detect2d_show import DetectionShow
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
@@ -18,8 +17,10 @@ class Detection2d(BaseInference):
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.Detect2d_Task)
 
-        self.result_process = Detect2dResultProcess()
-        self.nms_process = FastNonMaxSuppression()
+        self.result_process = Detect2dResultProcess(self.task_config.post_prcoess_type,
+                                                    self.task_config.nms_th,
+                                                    self.task_config.image_size,
+                                                    self.task_config.detect2d_class)
         self.result_show = DetectionShow()
 
         self.model_args['class_number'] = len(self.task_config.detect2d_class)
@@ -30,17 +31,22 @@ class Detection2d(BaseInference):
         dataloader = self.get_image_data_lodaer(input_path)
         for i, (file_path, src_image, img) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
-            self.set_src_size(src_image)
-
             self.timer.tic()
-            prediction, _ = self.infer(img)
-            detection_objects = self.postprocess(prediction, self.task_config.confidence_th)
+            result = self.single_image_process(src_image, img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image, detection_objects):
+                if not self.result_show.show(src_image, result):
                     break
             else:
-                self.save_result(file_path, detection_objects, 0)
+                self.save_result(file_path, result, 0)
+
+    def single_image_process(self, src_image, input_image):
+        self.set_src_size(src_image)
+        prediction, _ = self.infer(input_image)
+        detection_objects = self.result_process.postprocess(prediction,
+                                                            self.src_size,
+                                                            self.task_config.confidence_th)
+        return detection_objects
 
     def save_result(self, file_path, detection_objects, flag=0):
         path, filename_post = os.path.split(file_path)
@@ -53,8 +59,8 @@ class Detection2d(BaseInference):
                 x2 = temp_object.max_corner.x
                 y2 = temp_object.max_corner.y
                 save_data = save_data + "{} {} {} {} {} {}|".format(temp_object.name,
-                                                                 confidence,
-                                                                 x1, y1, x2, y2)
+                                                                    confidence,
+                                                                    x1, y1, x2, y2)
             save_data += "\n"
             with open(self.task_config.save_result_path, 'a') as file:
                 file.write(save_data)
@@ -72,21 +78,11 @@ class Detection2d(BaseInference):
                 with open(temp_save_path, 'a') as file:
                     file.write("{} {} {} {} {} {}\n".format(filename_post, confidence, x1, y1, x2, y2))
 
-    def infer(self, input_data):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list)
         return output, output_list
-
-    def postprocess(self, prediction, threshold=0.0):
-        result = self.result_process.get_detection_result(prediction, threshold,
-                                                          self.task_config.post_prcoess_type)
-        detection_objects = self.nms_process.multi_class_nms(result, self.task_config.nms_th)
-        detection_objects = self.result_process.resize_detection_objects(self.src_size,
-                                                                         self.task_config.image_size,
-                                                                         detection_objects,
-                                                                         self.task_config.detect2d_class)
-        return detection_objects
 
     def compute_output(self, output_list):
         count = len(output_list)

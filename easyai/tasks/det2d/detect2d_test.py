@@ -30,13 +30,13 @@ class Detection2dTest(BaseTest):
 
         dataloader = get_detection_val_dataloader(val_path, self.test_task_config)
         self.timer.tic()
-        for i, (image_path, src_image, input_image) in enumerate(dataloader):
+        for i, (image_path, src_size, input_image) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
 
-            self.detect_inference.set_src_size(src_image.numpy()[0])
-
             prediction, output_list = self.detect_inference.infer(input_image)
-            detection_objects = self.detect_inference.postprocess(prediction, self.threshold_det)
+            detection_objects = self.detect_inference.result_process.postprocess(prediction,
+                                                                                 src_size.numpy()[0],
+                                                                                 self.threshold_det)
 
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
             self.detect_inference.save_result(image_path[0], detection_objects, 1)

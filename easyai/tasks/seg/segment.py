@@ -22,7 +22,8 @@ class Segmentation(BaseInference):
         self.model_args['class_number'] = len(self.task_config.segment_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-        self.result_process = SegmentResultProcess()
+        self.result_process = SegmentResultProcess(self.task_config.image_size,
+                                                   self.task_config.resize_type)
         self.result_show = SegmentionShow()
         self.image_process = ImageProcess()
 
@@ -37,7 +38,9 @@ class Segmentation(BaseInference):
             self.timer.tic()
             self.set_src_size(src_image)
             prediction, _ = self.infer(image)
-            _, seg_image = self.postprocess(prediction, self.threshold)
+            _, seg_image = self.result_process.postprocess(prediction,
+                                                           self.src_size,
+                                                           self.threshold)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image, seg_image,
@@ -60,19 +63,11 @@ class Segmentation(BaseInference):
             save_result_path = os.path.join(self.task_config.save_result_path, "%s.txt" % filename)
             np.savetxt(save_result_path, prediction, fmt='%0.8f')
 
-    def infer(self, input_data):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))
             output = self.compute_output(output_list[:])
         return output, output_list
-
-    def postprocess(self, prediction, threshold=None):
-        result = self.result_process.get_segmentation_result(prediction, threshold)
-        seg_image = self.result_process.resize_segmention_result(self.src_size,
-                                                                 self.task_config.image_size,
-                                                                 self.task_config.resize_type,
-                                                                 result)
-        return result, seg_image
 
     def compute_output(self, output_list):
         count = len(output_list)

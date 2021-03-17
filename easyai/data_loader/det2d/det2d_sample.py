@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os.path
 import numpy as np
@@ -108,7 +108,7 @@ class DetectionSample():
             annotation_filename = filename + self.annotation_post
             annotation_path = os.path.join(annotation_dir, annotation_filename)
             image_path = os.path.join(images_dir, filename_and_post)
-            #print(image_path)
+            # print(image_path)
             if os.path.exists(annotation_path) and \
                     os.path.exists(image_path):
                 result.append((image_path, annotation_path))

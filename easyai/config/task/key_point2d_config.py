@@ -20,7 +20,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.confidence_th = 1.0
         # test
         # train
-        self.log_name = "key_point2d"
+        self.log_name = "keypoint2d"
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False
@@ -81,7 +81,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.log_name = "key_point2d"
+        self.log_name = "keypoint2d"
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False

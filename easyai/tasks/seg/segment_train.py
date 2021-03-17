@@ -21,7 +21,8 @@ class SegmentionTrain(CommonTrain):
         self.model_args['class_number'] = len(self.train_task_config.segment_class)
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-        self.output_process = SegmentResultProcess()
+        self.output_process = SegmentResultProcess(self.train_task_config.image_size,
+                                                   self.train_task_config.resize_type)
 
         self.segment_test = SegmentionTest(cfg_path, gpu_id, config_path)
         self.bestmIoU = 0
