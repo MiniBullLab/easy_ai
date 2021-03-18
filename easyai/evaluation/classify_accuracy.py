@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.helper.average_meter import AverageMeter
 import numpy as np
+from easyai.helper.average_meter import AverageMeter
 
 
 class ClassifyAccuracy():

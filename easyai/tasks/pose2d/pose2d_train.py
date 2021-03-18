@@ -19,7 +19,7 @@ class Pose2dTrain(CommonTrain):
 
         self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
-        self.detect_test = Pose2dTest(cfg_path, gpu_id, config_path)
+        self.pose2d_test = Pose2dTest(cfg_path, gpu_id, config_path)
         self.best_value = 0
         self.avg_loss = -1
 
@@ -39,10 +39,7 @@ class Pose2dTrain(CommonTrain):
 
         self.build_optimizer()
 
-    def trian(self, train_path, val_path):
-        pass
-
-    def train_pose(self, train_path, val_path):
+    def train(self, train_path, val_path):
         dataloader = get_pose2d_train_dataloader(train_path,
                                                  self.train_task_config.det_config.detect2d_class,
                                                  self.train_task_config)
@@ -70,7 +67,7 @@ class Pose2dTrain(CommonTrain):
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters
-        output_list = self.model(input_datas.to(self.device), 1)
+        output_list = self.model(input_datas.to(self.device))
         loss, loss_info = self.compute_loss(output_list, targets)
 
         self.loss_backward(loss)
@@ -139,4 +136,17 @@ class Pose2dTrain(CommonTrain):
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
-       pass
+        if val_path is not None and os.path.exists(val_path):
+            self.pose2d_test.load_weights(save_model_path)
+            precision, average_loss = self.classify_test.test(val_path)
+            self.classify_test.save_test_value(epoch)
+
+            self.train_logger.epoch_eval_loss_log(epoch, average_loss)
+            print("Val epoch loss: {}".format(average_loss))
+
+            # save best model
+            self.best_value = self.torchModelProcess.save_best_model(precision,
+                                                                     save_model_path,
+                                                                     self.train_task_config.best_weights_path)
+        else:
+            print("no test!")

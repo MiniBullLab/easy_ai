@@ -11,8 +11,18 @@ from easyai.loss.utility.registry import REGISTERED_POSE2D_LOSS
 @REGISTERED_POSE2D_LOSS.register_module(LossName.DSNTLoss)
 class DSNTLoss(BaseLoss):
 
-    def __init__(self):
+    def __init__(self, input_size, points_count):
         super().__init__(LossName.DSNTLoss)
+        self.input_size = input_size
+        self.points_count = points_count
+
+    def build_targets(self, targets):
+        result = targets.detach()
+        for target in result:
+            for index in range(self.points_count):
+                target[index][0] = (target[index][0] * 2 + 1) / self.image_size[0] - 1  # [-1,1]
+                target[index][1] = (target[index][1] * 2 + 1) / self.image_size[1] - 1  # [-1,1]
+        return result
 
     def forward(self, outputs, targets=None):
         """
@@ -31,10 +41,11 @@ class DSNTLoss(BaseLoss):
         if targets is None:
             return coords
         else:
+            result_targets = self.build_targets(targets)
             # Per-location euclidean losses
-            euc_losses = dsntnn.euclidean_losses(coords, targets)
+            euc_losses = dsntnn.euclidean_losses(coords, result_targets)
             # Per-location regularization losses
-            reg_losses = dsntnn.js_reg_losses(heatmaps, targets, sigma_t=1.0)
+            reg_losses = dsntnn.js_reg_losses(heatmaps, result_targets, sigma_t=1.0)
             # Combine losses into an overall loss
             loss = dsntnn.average_loss(euc_losses + reg_losses)
             return loss

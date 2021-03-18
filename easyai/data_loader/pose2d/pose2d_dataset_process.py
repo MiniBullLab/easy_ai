@@ -46,18 +46,13 @@ class Pose2dDataSetProcess(TaskDataSetProcess):
         label = self.resize_label(box, class_name, src_size, image_size)
         return image, label
 
-    def normalize_label(self, box, image_size):
+    def normalize_label(self, box):
         key_points = box.get_key_points()
-        temp_data = []
-        for point in key_points:
-            x, y, = point.x, point.y
-            # x = (x * 2 + 1) / image_size[0] - 1  # [-1,1]
-            # y = (y * 2 + 1) / image_size[0] - 1  # [-1,1]
-            x /= image_size[0]
-            y /= image_size[1]
-            temp_data.append(x)
-            temp_data.append(y)
-        return np.array(temp_data)
+        result = np.zeros((len(key_points), 2), dtype=np.float)
+        for index, point in enumerate(key_points):
+            result[index][0] = point.x
+            result[index][1] = point.y
+        return result
 
     def resize_label(self, box, class_name, src_size, dst_size):
         result = None

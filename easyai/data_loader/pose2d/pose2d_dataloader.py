@@ -34,7 +34,7 @@ class Pose2dDataLoader(TorchDataLoader):
                                                          self.class_name)
         torch_image = self.dataset_process.normalize_image(image)
 
-        label = self.dataset_process.normalize_label(box, self.image_size)
+        label = self.dataset_process.normalize_label(box)
         torch_label = self.dataset_process.numpy_to_torch(label, flag=0)
 
         return torch_image, torch_label
@@ -43,7 +43,8 @@ class Pose2dDataLoader(TorchDataLoader):
         return self.pose2d_sample.get_sample_count()
 
 
-def get_pose2d_train_dataloader(train_path, class_name, data_config, num_workers=8):
+def get_pose2d_train_dataloader(train_path, data_config, num_workers=8):
+    class_name = data_config.pose_class
     resize_type = data_config.resize_type
     normalize_type = data_config.normalize_type
     mean = data_config.data_mean
@@ -61,7 +62,8 @@ def get_pose2d_train_dataloader(train_path, class_name, data_config, num_workers
     return result
 
 
-def get_poes2d_val_dataloader(val_path, class_name, data_config, num_workers=8):
+def get_poes2d_val_dataloader(val_path, data_config, num_workers=8):
+    class_name = data_config.pose_class
     resize_type = data_config.resize_type
     normalize_type = data_config.normalize_type
     mean = data_config.data_mean

@@ -62,7 +62,7 @@ class MobilePose(BasePoseModel):
 
         hm_conv = nn.Conv2d(duc3.get_output_channel(), self.keypoints_number,
                             kernel_size=1, bias=False)
-        self.add_block_list(LayerType.Convolutional, hm_conv, self.keypoints_number)
+        self.add_block_list(LayerType.Convolutional, hm_conv, self.keypoints_number*2)
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []

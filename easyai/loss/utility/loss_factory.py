@@ -225,6 +225,12 @@ class LossFactory():
         return loss
 
     def get_pose2d_loss(self, loss_config):
+        input_name = loss_config['type'].strip()
+        if input_name == LossName.JointsMSELoss:
+            loss_config['reduction'] = int(loss_config['reduction'])
+            loss_config['input_size'] = (int(x) for x in
+                                         loss_config['input_size'].split(',') if x.strip())
+            loss_config['points_count'] = int(loss_config['points_count'])
         loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
         return loss
 

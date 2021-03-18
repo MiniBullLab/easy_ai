@@ -32,7 +32,8 @@ class Detection2d(BaseInference):
         for i, (file_path, src_image, img) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
             self.timer.tic()
-            result = self.single_image_process(src_image, img)
+            self.set_src_size(src_image)
+            result = self.single_image_process(self.src_size, img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image, result):
@@ -40,11 +41,10 @@ class Detection2d(BaseInference):
             else:
                 self.save_result(file_path, result, 0)
 
-    def single_image_process(self, src_image, input_image):
-        self.set_src_size(src_image)
+    def single_image_process(self, src_size, input_image):
         prediction, _ = self.infer(input_image)
         detection_objects = self.result_process.postprocess(prediction,
-                                                            self.src_size,
+                                                            src_size,
                                                             self.task_config.confidence_th)
         return detection_objects
 

@@ -23,7 +23,10 @@ class ResnetPose(BasePoseModel):
 
         self.model_args['type'] = BackboneName.ResNet50
 
-        self.loss_config = {"type": LossName.JointsMSELoss}
+        self.loss_config = {"type": LossName.JointsMSELoss,
+                            "input_size": "224,224",
+                            "reduction": 4,
+                            "points_count": keypoints_number}
 
         self.create_block_list()
 
