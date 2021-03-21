@@ -51,17 +51,17 @@ class Pose2d(BaseInference):
 
     def compute_output(self, output_list):
         count = len(output_list)
-        loss_count = len(self.model.pose_model.lossList)
+        loss_count = len(self.model.lossList)
         output_count = len(output_list)
         prediction = None
         if loss_count == 1 and output_count == 1:
-            prediction = self.model.pose_model.lossList[0](output_list[0])
+            prediction = self.model.lossList[0](output_list[0])
         elif loss_count == 1 and output_count > 1:
-            prediction = self.model.pose_model.lossList[0](output_list)
+            prediction = self.model.lossList[0](output_list)
         elif loss_count > 1 and loss_count == output_count:
             preds = []
             for i in range(0, count):
-                temp = self.model.pose_model.lossList[i](output_list[i])
+                temp = self.model.lossList[i](output_list[i])
                 preds.append(temp)
             prediction = torch.cat(preds, 1)
         else:
