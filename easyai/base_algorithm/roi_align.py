@@ -10,11 +10,6 @@ try:
 except ImportError:
     print("import _C fail!")
 
-try:
-    from apex import amp
-except ImportError:
-    print("import amp fail!")
-
 
 class _ROIAlign(Function):
     @staticmethod
@@ -54,24 +49,49 @@ class _ROIAlign(Function):
 
 roi_align = _ROIAlign.apply
 
+try:
+    from apex import amp
 
-class ROIAlign(nn.Module):
-    def __init__(self, output_size, spatial_scale, sampling_ratio):
-        super(ROIAlign, self).__init__()
-        self.output_size = output_size
-        self.spatial_scale = spatial_scale
-        self.sampling_ratio = sampling_ratio
+    class ROIAlign(nn.Module):
+        def __init__(self, output_size, spatial_scale, sampling_ratio):
+            super().__init__()
+            self.output_size = output_size
+            self.spatial_scale = spatial_scale
+            self.sampling_ratio = sampling_ratio
 
-    @amp.float_function
-    def forward(self, input, rois):
-        return roi_align(
-            input, rois, self.output_size, self.spatial_scale, self.sampling_ratio
-        )
+        @amp.float_function
+        def forward(self, input, rois):
+            return roi_align(
+                input, rois, self.output_size, self.spatial_scale, self.sampling_ratio
+            )
 
-    def __repr__(self):
-        tmpstr = self.__class__.__name__ + "("
-        tmpstr += "output_size=" + str(self.output_size)
-        tmpstr += ", spatial_scale=" + str(self.spatial_scale)
-        tmpstr += ", sampling_ratio=" + str(self.sampling_ratio)
-        tmpstr += ")"
-        return tmpstr
+        def __repr__(self):
+            tmpstr = self.__class__.__name__ + "("
+            tmpstr += "output_size=" + str(self.output_size)
+            tmpstr += ", spatial_scale=" + str(self.spatial_scale)
+            tmpstr += ", sampling_ratio=" + str(self.sampling_ratio)
+            tmpstr += ")"
+            return tmpstr
+except ImportError:
+
+    class ROIAlign(nn.Module):
+        def __init__(self, output_size, spatial_scale, sampling_ratio):
+            super().__init__()
+            self.output_size = output_size
+            self.spatial_scale = spatial_scale
+            self.sampling_ratio = sampling_ratio
+
+        def forward(self, input, rois):
+            return roi_align(
+                input, rois, self.output_size, self.spatial_scale, self.sampling_ratio
+            )
+
+        def __repr__(self):
+            tmpstr = self.__class__.__name__ + "("
+            tmpstr += "output_size=" + str(self.output_size)
+            tmpstr += ", spatial_scale=" + str(self.spatial_scale)
+            tmpstr += ", sampling_ratio=" + str(self.sampling_ratio)
+            tmpstr += ")"
+            return tmpstr
+    print("import amp fail!")
+

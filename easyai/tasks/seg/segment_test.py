@@ -22,7 +22,8 @@ class SegmentionTest(BaseTest):
         self.model = self.segment_inference.model
         self.device = self.segment_inference.device
 
-        self.output_process = SegmentResultProcess()
+        self.output_process = SegmentResultProcess(self.test_task_config.image_size,
+                                                   self.test_task_config.resize_type)
 
         self.epoch_loss_average = AverageMeter()
 
@@ -40,8 +41,8 @@ class SegmentionTest(BaseTest):
         self.epoch_loss_average.reset()
         for i, (images, segment_targets) in enumerate(dataloader):
             prediction, output_list = self.segment_inference.infer(images)
-            result = self.segment_inference.result_process.self.get_segmentation_result(prediction,
-                                                                                        self.threshold)
+            result = self.output_process.get_segmentation_result(prediction,
+                                                                 self.threshold)
             loss = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()
             self.metric.numpy_eval(result, gt)
