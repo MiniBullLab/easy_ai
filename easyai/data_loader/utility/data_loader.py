@@ -23,6 +23,16 @@ class DataLoader():
             result = torch.from_numpy(input_data)
         return result
 
+    def expand_dim(self, input_data):
+        result = None
+        if input_data is None:
+            result = None
+        elif input_data.ndim == 3:
+            result = input_data.unsqueeze(0)
+        elif input_data.ndim == 4:
+            result = input_data
+        return result
+
     @abc.abstractmethod
     def __next__(self):
         pass
