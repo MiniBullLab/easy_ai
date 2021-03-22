@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import numpy as np
@@ -43,6 +43,7 @@ class TextDataLoader(DataLoader):
         cv_image, src_image = self.read_src_image(image_path)
         image = self.dataset_process.resize_image(src_image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
+        torch_image = torch_image.unsqueeze(0)
         return image_path, cv_image, torch_image
 
     def __len__(self):

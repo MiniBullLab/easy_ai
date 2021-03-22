@@ -45,6 +45,7 @@ class VideoLoader(DataLoader):
         src_image = self.read_src_image(cv_image)
         image = self.dataset_process.resize_image(src_image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
+        torch_image = torch_image.unsqueeze(0)
         video_name = self.video_path + "_%d" % self.index
         return video_name, cv_image, torch_image
 
