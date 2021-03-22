@@ -19,6 +19,7 @@ class Pose2dConfig(CommonTrainConfig):
         # data
         self.pose_class = None
         self.points_count = 0
+        self.skeleton = ()
         self.save_result_name = None
 
         # train
@@ -38,8 +39,10 @@ class Pose2dConfig(CommonTrainConfig):
         self.load_image_data_value(config_dict)
         if config_dict.get('points_class', None) is not None:
             self.pose_class = tuple(config_dict['points_class'])
-        if config_dict.get('points_count', None) is not None:
-            self.points_count = tuple(config_dict['points_count'])
+        if config_dict.get('points_count', 0) is not None:
+            self.points_count = int(config_dict['points_count'])
+        if config_dict.get('skeleton', ()) is not None:
+            self.skeleton = tuple(config_dict['skeleton'])
         if config_dict.get('post_prcoess_type', None) is not None:
             self.post_prcoess_type = int(config_dict['post_prcoess_type'])
 
@@ -47,6 +50,7 @@ class Pose2dConfig(CommonTrainConfig):
         self.save_image_data_value(config_dict)
         config_dict['points_class'] = self.points_class
         config_dict['points_count'] = self.points_count
+        config_dict['skeleton'] = self.skeleton
         config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_test_value(self, config_dict):
@@ -83,6 +87,9 @@ class Pose2dConfig(CommonTrainConfig):
 
         self.pose_class = ('person',)
         self.points_count = 17
+        self.skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12],
+                         [5, 11], [6, 12], [5, 6], [5, 7], [6, 8], [7, 9], [8, 10],
+                         [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
         self.post_prcoess_type = 0
 
     def get_test_default_value(self):

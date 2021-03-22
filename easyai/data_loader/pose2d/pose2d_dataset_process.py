@@ -35,9 +35,12 @@ class Pose2dDataSetProcess(TaskDataSetProcess):
         box.min_corner.y = new_top
         box.max_corner.x = new_right
         box.max_corner.y = new_bottom
-        for point in box.get_key_points():
+        points = box.get_key_points()
+        box.clear_key_points()
+        for point in points:
             point.x = point.x - new_left
             point.y = point.y - new_top
+            box.add_key_points(point)
         return image, box
 
     def resize_dataset(self, src_image, image_size, box, class_name):

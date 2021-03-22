@@ -37,7 +37,7 @@ class Pose2dSample():
     def get_image_and_box_list(self, image_and_label_list):
         result = []
         for image_path, label_path in image_and_label_list:
-            _, boxes = self.json_process.parse_key_points_data(label_path)
+            _, boxes = self.json_process.parse_pose2d_data(label_path)
             for box in boxes:
                 if box.name in self.class_name:
                     result.append((image_path, box))

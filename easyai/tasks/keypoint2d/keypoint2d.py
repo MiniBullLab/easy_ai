@@ -37,7 +37,7 @@ class KeyPoint2d(BaseInference):
                                                                 self.task_config.confidence_th)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
 
-            if not self.result_show.show(src_image, result_objects):
+            if not self.result_show.show(src_image, result_objects, self.task_config.skeleton):
                 break
 
     def infer(self, input_data, net_type=0):

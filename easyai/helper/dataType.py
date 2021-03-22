@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 
 class Point2d():
@@ -42,6 +42,7 @@ class Rect2D(MyObject):
         self.min_corner = Point2d(0, 0)
         self.max_corner = Point2d(0, 0)
         self.key_points = []
+        self.key_points_skeleton = ()
 
     def copy(self):
         b = Rect2D()
@@ -76,6 +77,9 @@ class Rect2D(MyObject):
 
     def get_key_points(self):
         return self.key_points
+
+    def set_key_points_skeleton(self, skeleton):
+        self.key_points_skeleton = skeleton
 
     def __str__(self):
         return '%s:%d %d %d %d' % (self.name, self.min_corner.x, self.min_corner.y, self.max_corner.x, self.max_corner.y)

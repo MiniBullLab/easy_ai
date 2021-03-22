@@ -6,7 +6,7 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.data_loader.pose2d.box2d_dataloader import Box2dLoader
-from easyai.visualization.task_show.pose2d_show import Pose2dShow
+from easyai.visualization.task_show.det_pose2d_show import DetAndPose2dShow
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
@@ -19,7 +19,7 @@ class DetPose2dTask(BaseInference):
         model_name_list = cfg_path.split("|")
         self.det2d_inference = Detection2d(model_name_list[0], gpu_id)
         self.pose2d_inference = Pose2d(model_name_list[0], gpu_id)
-        self.result_show = Pose2dShow()
+        self.result_show = DetAndPose2dShow()
 
     def load_weights(self, weights_path):
         weights_path_list = weights_path.split("|")
@@ -51,7 +51,8 @@ class DetPose2dTask(BaseInference):
                 objects_pose.append(pose)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
 
-            if not self.result_show.show(src_image, detection_objects, objects_pose):
+            if not self.result_show.show(src_image, detection_objects, objects_pose,
+                                         self.pose2d_inference.task_config.skeleton):
                 break
 
     def infer(self, input_data, net_type=0):

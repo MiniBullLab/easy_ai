@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import codecs
@@ -71,5 +71,39 @@ class JsonProcess():
             for index in range(0, point_count, 2):
                 point = Point2d(int(key_points_list[index]), int(key_points_list[index+1]))
                 box.add_key_points(point)
+            boxes.append(box)
+        return image_name, boxes
+
+    def parse_pose2d_data(self, json_path):
+        if not os.path.exists(json_path):
+            print("error:%s file not exists" % json_path)
+            return
+        with codecs.open(json_path, 'r', encoding='utf-8') as f:
+            data_dict = json.load(f)
+        image_name = data_dict['filename']
+        objects_dict = data_dict['objects']
+        rect_objects_list = objects_dict['rectObject']
+        boxes = []
+        for rect_dict in rect_objects_list:
+            class_name = rect_dict['class']
+            xmin = rect_dict['minX']
+            ymin = rect_dict['minY']
+            xmax = rect_dict['maxX']
+            ymax = rect_dict['maxY']
+            pose_dict = rect_dict['pose']
+            pose_index = pose_dict['index']
+            skeleton = pose_dict.get('skeleton', ())
+            box = Rect2D()
+            box.min_corner.x = xmin
+            box.min_corner.y = ymin
+            box.max_corner.x = xmax
+            box.max_corner.y = ymax
+            box.name = class_name
+            box.clear_key_points()
+            for index_name in pose_index:
+                temp_data = pose_dict.get(index_name, (-1, 1))
+                point = Point2d(int(temp_data[0]), int(temp_data[1]))
+                box.add_key_points(point)
+            box.set_key_points_skeleton(skeleton)
             boxes.append(box)
         return image_name, boxes

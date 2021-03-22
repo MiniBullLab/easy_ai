@@ -33,7 +33,7 @@ class Pose2d(BaseInference):
             objects_pose = self.single_image_process(self.src_size, img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
 
-            if not self.result_show.show(src_image, (), objects_pose):
+            if not self.result_show.show(src_image, objects_pose, self.task_config.skeleton):
                 break
 
     def single_image_process(self, src_size, input_image):

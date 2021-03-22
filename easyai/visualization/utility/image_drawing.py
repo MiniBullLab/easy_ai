@@ -47,22 +47,11 @@ class ImageDrawing():
 
         return rgb
 
-    def draw_keypoint2d_result(self, src_image, result):
-        edges_corners = [[1, 2], [2, 4], [4, 3], [3, 1], [1, 5], [5, 6],
-                         [6, 8], [8, 7], [7, 5], [7, 3], [8, 4], [6, 2]]
+    def draw_keypoint2d_result(self, src_image, result, skeleton):
         for result_object in result:
             key_points = result_object.get_key_points()
-            for edge in edges_corners:
+            for edge in skeleton:
                 point1 = key_points[edge[0]]
                 point2 = key_points[edge[1]]
                 cv2.line(src_image, (point1.x, point1.y), (point2.x, point2.y), (0, 0, 255), 2)
 
-    def draw_pose2d_result(self, src_image, result):
-        edges_corners = [[1, 2], [2, 4], [4, 3], [3, 1], [1, 5], [5, 6],
-                         [6, 8], [8, 7], [7, 5], [7, 3], [8, 4], [6, 2]]
-        for result_object in result:
-            key_points = result_object.get_key_points()
-            for edge in edges_corners:
-                point1 = key_points[edge[0]]
-                point2 = key_points[edge[1]]
-                cv2.line(src_image, (point1.x, point1.y), (point2.x, point2.y), (0, 0, 255), 2)
