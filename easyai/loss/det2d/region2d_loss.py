@@ -5,7 +5,7 @@
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.yolo_loss import YoloLoss
-from easyai.tasks.utility.box2d_process import torch_rect_box_ious
+from easyai.loss.utility.box2d_process import torch_rect_box_ious
 import math
 from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 

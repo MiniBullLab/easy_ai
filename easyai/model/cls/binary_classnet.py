@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.backbone_name import BackboneName
@@ -12,6 +12,8 @@ from easyai.model.model_block.base_block.utility.pooling_layer import GlobalAvgP
 from easyai.model.model_block.base_block.utility.utility_layer import ActivationLayer
 from easyai.model.utility.base_classify_model import BaseClassifyModel
 from easyai.model.utility.registry import REGISTERED_CLS_MODEL
+
+__all__ = ['BinaryClassNet']
 
 
 @REGISTERED_CLS_MODEL.register_module(ModelName.BinaryClassNet)

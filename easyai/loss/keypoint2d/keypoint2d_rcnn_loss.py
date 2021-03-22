@@ -6,8 +6,7 @@ from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.matcher import Matcher
 from easyai.loss.det2d.utility.select_positive_negative_sampler import SelectPositiveNegativeSampler
-from easyai.tasks.utility.box2d_process import torch_corners_box2d_ious
-from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
+from easyai.loss.utility.box2d_process import torch_corners_box2d_ious
 
 
 class Keypoint2dRCNNLoss(BaseLoss):

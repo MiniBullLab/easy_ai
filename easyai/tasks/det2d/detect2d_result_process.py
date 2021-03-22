@@ -7,7 +7,7 @@ import torch
 from easyai.helper.dataType import DetectionObject
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
-from easyai.tasks.utility.box2d_process import box2d_xywh2xyxy
+from easyai.loss.utility.box2d_process import box2d_xywh2xyxy
 
 
 class Detect2dResultProcess():
