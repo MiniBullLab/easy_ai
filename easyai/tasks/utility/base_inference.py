@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import abc
@@ -25,7 +25,7 @@ class BaseInference(BaseTask):
         self.src_size = (0, 0)
         self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
         self.model_args = {"type": model_name,
-                           "data_channel": self.task_config.data_channel
+                           # "data_channel": self.task_config.data_channel
                            }
 
     @abc.abstractmethod
@@ -40,6 +40,7 @@ class BaseInference(BaseTask):
         self.torchModelProcess.load_latest_model(weights_path, self.model)
         self.model = self.torchModelProcess.model_test_init(self.model)
         self.model.eval()
+        self.task_config.save_config()
 
     def get_image_data_lodaer(self, input_path):
         if not os.path.exists(input_path):

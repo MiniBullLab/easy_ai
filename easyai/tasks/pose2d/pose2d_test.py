@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-import os
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.pose2d_accuracy import Pose2dAccuracy
@@ -19,6 +18,8 @@ class Pose2dTest(BaseTest):
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(config_path, TaskName.Pose2d_Task)
         self.pose2d_inference = Pose2d(cfg_path, gpu_id, config_path)
+        self.model = self.pose2d_inference.model
+        self.device = self.pose2d_inference.device
         self.evaluation = Pose2dAccuracy(self.test_task_config.points_count,
                                          self.test_task_config.image_size)
         self.epoch_loss_average = AverageMeter()

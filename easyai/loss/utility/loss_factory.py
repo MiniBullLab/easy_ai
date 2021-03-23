@@ -158,27 +158,27 @@ class LossFactory():
         elif input_name == LossName.MultiBoxLoss:
             loss_config['class_number'] = int(loss_config['class_number'])
             loss_config['iou_threshold'] = float(loss_config['iou_threshold'])
-            loss_config['input_size'] = (int(x) for x in
-                                         loss_config['input_size'].split(',') if x.strip())
-            loss_config['anchor_counts'] = (int(x) for x in
-                                            loss_config['anchor_counts'].split(',') if x.strip())
-            loss_config['anchor_sizes'] = (int(x) for x in
-                                           loss_config['anchor_sizes'].split(',') if x.strip())
-            aspect_ratio_str = (x for x in loss_config['aspect_ratio_list'].split('|') if x.strip())
+            loss_config['input_size'] = tuple(int(x) for x in
+                                              loss_config['input_size'].split(',') if x.strip())
+            loss_config['anchor_counts'] = tuple(int(x) for x in
+                                                 loss_config['anchor_counts'].split(',') if x.strip())
+            loss_config['anchor_sizes'] = tuple(int(x) for x in
+                                                loss_config['anchor_sizes'].split(',') if x.strip())
+            aspect_ratio_str = tuple(x for x in loss_config['aspect_ratio_list'].split('|') if x.strip())
             aspect_ratio_list = []
             for data in aspect_ratio_str:
                 temp_value = [int(x) for x in data.split(',') if x.strip()]
                 aspect_ratio_list.append(temp_value)
             loss_config['aspect_ratio_list'] = aspect_ratio_list
         elif input_name == LossName.RPNLoss:
-            loss_config['input_size'] = (int(x) for x in
-                                         loss_config['input_size'].split(',') if x.strip())
-            loss_config['anchor_sizes'] = (int(x) for x in
-                                           loss_config['anchor_sizes'].split(',') if x.strip())
-            loss_config['anchor_sizes'] = (float(x) for x in loss_config['aspect_ratios'].split(',')
-                                           if x.strip())
-            loss_config['anchor_strides'] = (int(x) for x in loss_config['anchor_strides'].split(',')
-                                             if x.strip())
+            loss_config['input_size'] = tuple(int(x) for x in
+                                              loss_config['input_size'].split(',') if x.strip())
+            loss_config['anchor_sizes'] = tuple(int(x) for x in
+                                                loss_config['anchor_sizes'].split(',') if x.strip())
+            loss_config['anchor_sizes'] = tuple(float(x) for x in loss_config['aspect_ratios'].split(',')
+                                                if x.strip())
+            loss_config['anchor_strides'] = tuple(int(x) for x in loss_config['anchor_strides'].split(',')
+                                                  if x.strip())
             loss_config['fg_iou_threshold'] = float(loss_config['fg_iou_threshold'])
             loss_config['bg_iou_threshold'] = float(loss_config['bg_iou_threshold'])
             loss_config['per_image_sample'] = int(loss_config['per_image_sample'])
@@ -221,17 +221,17 @@ class LossFactory():
         if input_name == LossName.Keypoint2dRegionLoss:
             loss_config['class_number'] = int(loss_config['class_number'])
             loss_config['point_count'] = int(loss_config['point_count'])
-        loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
+        loss = build_from_cfg(loss_config, REGISTERED_KEYPOINT2D_LOSS)
         return loss
 
     def get_pose2d_loss(self, loss_config):
         input_name = loss_config['type'].strip()
         if input_name == LossName.JointsMSELoss:
             loss_config['reduction'] = int(loss_config['reduction'])
-            loss_config['input_size'] = (int(x) for x in
-                                         loss_config['input_size'].split(',') if x.strip())
+            loss_config['input_size'] = tuple(int(x) for x in
+                                              loss_config['input_size'].split(',') if x.strip())
             loss_config['points_count'] = int(loss_config['points_count'])
-        loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
+        loss = build_from_cfg(loss_config, REGISTERED_POSE2D_LOSS)
         return loss
 
     def get_gan_loss(self, loss_config):

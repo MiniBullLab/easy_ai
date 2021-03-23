@@ -20,14 +20,14 @@ class Pose2dAccuracy():
         self.count = 0
 
     def numpy_eval(self, prediction, targets):
-        heatmap_size = (prediction.shape[-1], prediction[-2])
+        heatmap_size = (prediction.shape[-1], prediction.shape[-2])
         coords, maxvals = self.result_process.parse_heatmaps(prediction)
         batch_size = coords.shape[0]
         target_coords = np.zeros((batch_size, self.points_count, 2), dtype=np.float)
         for n in range(batch_size):
             for index in range(self.points_count):
-                target_coords[n][index] = targets[index][index] / np.array(self.image_size)
-                coords[n][index] = coords[index] / np.array(heatmap_size)
+                target_coords[n][index] = targets[n][index] / np.array(self.image_size)
+                coords[n][index] = coords[n][index] / np.array(heatmap_size)
         norm = np.ones((batch_size, 2)) / 10
 
         dists = self.compute_dists(coords, target_coords, norm)

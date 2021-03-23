@@ -3,13 +3,13 @@
 # Author:
 
 import cv2
-from easyai.visualization.utility.image_drawing import ImageDrawing
+from easyai.visualization.task_show.base_show import BaseShow
 
 
-class ClassifyShow():
+class ClassifyShow(BaseShow):
 
     def __init__(self):
-        self.drawing = ImageDrawing()
+        super().__init__()
 
     def show(self, src_image, result,
              class_name, scale=1.0):
@@ -21,7 +21,6 @@ class ClassifyShow():
         cv2.resizeWindow("image", int(src_image.shape[1] * scale), int(src_image.shape[0] * scale))
         cv2.imshow('image', src_image)
 
-        if cv2.waitKey() & 0xFF == 27:
+        if cv2.getWindowProperty('image', 1) < 0:
             return False
-        else:
-            return True
+        return self.wait_key()

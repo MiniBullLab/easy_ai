@@ -64,6 +64,8 @@ class MobilePose(BasePoseModel):
                             kernel_size=1, bias=False)
         self.add_block_list(LayerType.Convolutional, hm_conv, self.keypoints_number*2)
 
+        self.create_loss_list()
+
     def create_loss_list(self, input_dict=None):
         self.lossList = []
         loss = self.loss_factory.get_loss(self.loss_config)

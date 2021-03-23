@@ -19,6 +19,9 @@ class CommonTrain(BaseTrain):
         self.total_images = 0
         self.start_epoch = 0
 
+    def load_pretrain_model(self, weights_path):
+        self.torchModelProcess.load_pretain_model(weights_path, self.model)
+
     def build_optimizer(self):
         if self.model is not None:
             optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,

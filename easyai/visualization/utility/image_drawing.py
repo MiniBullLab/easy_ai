@@ -53,5 +53,32 @@ class ImageDrawing():
             for edge in skeleton:
                 point1 = key_points[edge[0]]
                 point2 = key_points[edge[1]]
-                cv2.line(src_image, (point1.x, point1.y), (point2.x, point2.y), (0, 0, 255), 2)
+                x1 = int(point1.x)
+                y1 = int(point1.y)
+                x2 = int(point2.x)
+                y2 = int(point2.y)
+                if x1 < 0 or y1 < 0 or x2 < 0 or y2 < 0:
+                    continue
+                cv2.line(src_image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            for point in key_points:
+                cv2.circle(src_image, (int(point.x), int(point.y)), 5, (0, 255, 225), 2)
+
+    def draw_det_keypoint2d_result(self, src_image, result, skeleton):
+        for result_object in result:
+            point1 = (int(result_object.min_corner.x), int(result_object.min_corner.y))
+            point2 = (int(result_object.max_corner.x), int(result_object.max_corner.y))
+            cv2.rectangle(src_image, point1, point2, (255, 255, 255), 2)
+            key_points = result_object.get_key_points()
+            for edge in skeleton:
+                point1 = key_points[edge[0]]
+                point2 = key_points[edge[1]]
+                x1 = int(point1.x)
+                y1 = int(point1.y)
+                x2 = int(point2.x)
+                y2 = int(point2.y)
+                if x1 < 0 or y1 < 0 or x2 < 0 or y2 < 0:
+                    continue
+                cv2.line(src_image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            for point in key_points:
+                cv2.circle(src_image, (int(point.x), int(point.y)), 5, (0, 255, 225), 2)
 

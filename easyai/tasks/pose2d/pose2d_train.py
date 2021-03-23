@@ -23,17 +23,14 @@ class Pose2dTrain(CommonTrain):
         self.best_value = 0
         self.avg_loss = -1
 
-    def load_pretrain_model(self, weights_path):
-        self.torchModelProcess.load_pretain_model(weights_path, self.model.pose_model)
-
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
             self.start_epoch, self.best_value = \
-                self.torchModelProcess.load_latest_model(latest_weights_path, self.model.pose_model)
+                self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
 
-        self.model.pose_model = self.torchModelProcess.model_train_init(self.model.pose_model)
+        self.model = self.torchModelProcess.model_train_init(self.model)
 
-        self.freeze_process.freeze_block(self.model.pose_model,
+        self.freeze_process.freeze_block(self.model,
                                          self.train_task_config.freeze_layer_name,
                                          self.train_task_config.freeze_layer_type)
 
@@ -41,7 +38,6 @@ class Pose2dTrain(CommonTrain):
 
     def train(self, train_path, val_path):
         dataloader = get_pose2d_train_dataloader(train_path,
-                                                 self.train_task_config.det_config.detect2d_class,
                                                  self.train_task_config)
         self.total_images = len(dataloader)
 
@@ -131,15 +127,15 @@ class Pose2dTrain(CommonTrain):
         else:
             save_model_path = self.train_task_config.latest_weights_path
         self.torchModelProcess.save_latest_model(epoch, self.best_value,
-                                                 self.model.pose_model, save_model_path)
+                                                 self.model, save_model_path)
         self.save_optimizer(epoch)
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             self.pose2d_test.load_weights(save_model_path)
-            precision, average_loss = self.classify_test.test(val_path)
-            self.classify_test.save_test_value(epoch)
+            precision, average_loss = self.pose2d_test.test(val_path)
+            self.pose2d_test.save_test_value(epoch)
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
             print("Val epoch loss: {}".format(average_loss))

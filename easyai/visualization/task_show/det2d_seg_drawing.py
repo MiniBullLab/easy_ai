@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import cv2
-from easyai.visualization.utility.image_drawing import ImageDrawing
+from easyai.visualization.task_show.base_show import BaseShow
 
 
-class Det2dSegTaskShow():
+class Det2dSegTaskShow(BaseShow):
 
     def __init__(self):
-        self.drawing = ImageDrawing()
+        super().__init__()
 
     def show(self, src_image, result, class_name,
              detection_objects, scale=0.8):
@@ -20,7 +20,6 @@ class Det2dSegTaskShow():
         cv2.namedWindow("image", 0)
         cv2.resizeWindow("image", int(segment_image.shape[1] * scale), int(segment_image.shape[0] * scale))
         cv2.imshow("image", segment_image)
-        if cv2.waitKey() & 0xff == ord('q'):  # 按q退出
+        if cv2.getWindowProperty('image', 1) < 0:
             return False
-        else:
-            return True
+        return self.wait_key()

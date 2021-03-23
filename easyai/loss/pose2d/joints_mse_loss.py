@@ -19,9 +19,9 @@ class JointsMSELoss(BaseLoss):
         self.criterion = nn.MSELoss(reduction='mean')
         self.use_target_weight = True
         self.sigma = 2
-        self.heatmap_size = input_size / reduction
+        self.heatmap_size = tuple(int(x / reduction) for x in input_size)
 
-    def build_gaussian_map(self, targets):
+    def build_gaussian_map(self, targets, device):
         result_target = []
         result_weight = []
         for target in targets:
@@ -66,7 +66,8 @@ class JointsMSELoss(BaseLoss):
             target_weight = torch.from_numpy(target_weight)
             result_target.append(heatmap)
             result_weight.append(target_weight)
-        return torch.cat(result_target, dim=0), torch.cat(result_weight, dim=0)
+        return torch.stack(result_target, dim=0).to(device), \
+               torch.stack(result_weight, dim=0).to(device)
 
     def forward(self, outputs, targets=None):
         """
@@ -82,11 +83,10 @@ class JointsMSELoss(BaseLoss):
         else:
             device = outputs.device
             batch_size = outputs.size(0)
-            heatmaps_gt, target_weight = self.build_gaussian_map(targets.detach())
-            heatmaps_gt = heatmaps_gt.to(device)
-            target_weight = heatmaps_gt.to(device)
+            heatmaps_gt, target_weight = self.build_gaussian_map(targets.detach(), device)
+            # print(heatmaps_gt.shape, outputs.shape, target_weight.shape)
             heatmaps_pred = outputs.reshape((batch_size, self.points_count, -1)).split(1, 1)
-            heatmaps_gt = targets.reshape((batch_size, self.points_count, -1)).split(1, 1)
+            heatmaps_gt = heatmaps_gt.reshape((batch_size, self.points_count, -1)).split(1, 1)
             loss = 0
             for idx in range(self.points_count):
                 heatmap_pred = heatmaps_pred[idx].squeeze()

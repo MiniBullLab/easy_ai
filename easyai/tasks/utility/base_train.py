@@ -48,9 +48,6 @@ class BaseTrain(BaseTask):
     def compute_loss(self, output_list, targets, loss_type=0):
         pass
 
-    def load_pretrain_model(self, weights_path):
-        self.torchModelProcess.load_pretain_model(weights_path, self.model)
-
     def set_is_sparse_train(self, is_sparse=False, sparse_ratio=0.0):
         self.is_sparse = is_sparse
         self.sparse_ratio = sparse_ratio

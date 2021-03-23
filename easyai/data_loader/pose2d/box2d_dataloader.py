@@ -37,6 +37,7 @@ class Box2dLoader(DataLoader):
         image, box = self.dataset_process.expand_dataset(self.src_image, box, self.expand_ratio)
         image = self.dataset_process.resize_image(image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
+        torch_image = torch_image.unsqueeze(0)
         return box, torch_image
 
     def __len__(self):

@@ -24,7 +24,7 @@ class ResnetPose(BasePoseModel):
         self.model_args['type'] = BackboneName.ResNet50
 
         self.loss_config = {"type": LossName.JointsMSELoss,
-                            "input_size": "224,224",
+                            "input_size": "192,256",
                             "reduction": 4,
                             "points_count": keypoints_number}
 
@@ -55,6 +55,8 @@ class ResnetPose(BasePoseModel):
         final_conv = nn.Conv2d(input_channel, self.keypoints_number, 1,
                                stride=1, padding=0)
         self.add_block_list(LayerType.Convolutional, final_conv, self.keypoints_number)
+
+        self.create_loss_list()
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []

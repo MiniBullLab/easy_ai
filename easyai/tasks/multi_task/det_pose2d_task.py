@@ -16,17 +16,16 @@ class DetPose2dTask(BaseInference):
 
     def __init__(self, cfg_path, gpu_id, config_path=None):
         super().__init__(cfg_path, config_path, TaskName.DetPose2d_Task)
-        model_name_list = cfg_path.split("|")
-        self.det2d_inference = Detection2d(model_name_list[0], gpu_id)
-        self.pose2d_inference = Pose2d(model_name_list[0], gpu_id)
+        self.det2d_inference = Detection2d("yolov3", gpu_id)
+        self.pose2d_inference = Pose2d("ResnetPose", gpu_id)
         self.result_show = DetAndPose2dShow()
 
     def load_weights(self, weights_path):
-        weights_path_list = weights_path.split("|")
-        self.det2d_inference.load_weights(weights_path_list[0])
-        self.pose2d_inference.load_weights(weights_path_list[1])
+        self.det2d_inference.load_weights("/home/lpj/Desktop/yolov3_person/det2d_best_person.pt")
+        self.pose2d_inference.load_weights("/home/lpj/Desktop/resnet_pose.pt")
 
     def process(self, input_path, data_type=1, is_show=False):
+        self.task_config = self.det2d_inference.task_config
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
         for i, (file_path, src_image, img) in enumerate(dataloader):
@@ -46,6 +45,8 @@ class DetPose2dTask(BaseInference):
                 pose = self.pose2d_inference.single_image_process((box.width(), box.height()),
                                                                   roi_image)
                 for point in pose.get_key_points():
+                    if point.x < 0 or point.y < 0:
+                        continue
                     point.x = point.x + box.min_corner.x
                     point.y = point.y + box.min_corner.y
                 objects_pose.append(pose)

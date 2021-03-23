@@ -32,16 +32,16 @@ class Pose2d(BaseInference):
             self.set_src_size(src_image)
             objects_pose = self.single_image_process(self.src_size, img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
-
-            if not self.result_show.show(src_image, objects_pose, self.task_config.skeleton):
-                break
+            if is_show:
+                if not self.result_show.show(src_image, [objects_pose], self.task_config.skeleton):
+                    break
+            else:
+                pass
 
     def single_image_process(self, src_size, input_image):
-        objects_pose = []
         prediction, _ = self.infer(input_image)
         pose = self.pose_result_process.postprocess(prediction, src_size, 0.4)
-        objects_pose.append(pose)
-        return objects_pose
+        return pose
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
@@ -68,5 +68,5 @@ class Pose2d(BaseInference):
             print("compute loss error")
         if prediction is not None:
             prediction = prediction.squeeze(0)
-            prediction = prediction.detach().numpy()
+            prediction = prediction.data.cpu().numpy()
         return prediction

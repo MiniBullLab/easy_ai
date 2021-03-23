@@ -3,13 +3,13 @@
 # Author:lipeijie
 
 import cv2
-from easyai.visualization.utility.image_drawing import ImageDrawing
+from easyai.visualization.task_show.base_show import BaseShow
 
 
-class DetAndPose2dShow():
+class DetAndPose2dShow(BaseShow):
 
     def __init__(self):
-        self.drawing = ImageDrawing()
+        super().__init__()
 
     def show(self, src_image, detection_objects, objects_pose, skeleton):
         self.drawing.drawDetectObjects(src_image, detection_objects)
@@ -17,7 +17,6 @@ class DetAndPose2dShow():
         cv2.namedWindow("image", 0)
         cv2.resizeWindow("image", int(src_image.shape[1] * 0.8), int(src_image.shape[0] * 0.8))
         cv2.imshow("image", src_image)
-        if cv2.waitKey() & 0xff == ord('q'):  # 按q退出
+        if cv2.getWindowProperty('image', 1) < 0:
             return False
-        else:
-            return True
+        return self.wait_key()

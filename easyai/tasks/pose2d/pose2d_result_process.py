@@ -50,7 +50,7 @@ class Pose2dResultProcess():
         coords, maxvals = self.parse_heatmaps(prediction)
         coords = np.squeeze(coords)
         maxvals = np.squeeze(maxvals)
-        heatmaps = np.squeeze(prediction.detach().cpu().numpy())
+        heatmaps = np.squeeze(prediction)
         for p in range(coords.shape[0]):
             hm = heatmaps[p]
             px = int(math.floor(coords[p][0] + 0.5))
@@ -79,7 +79,8 @@ class Pose2dResultProcess():
             width = heatmaps.shape[3]
         elif heatmaps.ndim == 3:
             num_points = heatmaps.shape[0]
-            width = heatmaps.shape[1]
+            width = heatmaps.shape[2]
+        # print(batch_size, num_points, width)
         heatmaps_reshaped = heatmaps.reshape((batch_size, num_points, -1))
         idx = np.argmax(heatmaps_reshaped, 2)
         maxvals = np.amax(heatmaps_reshaped, 2)
@@ -103,9 +104,12 @@ class Pose2dResultProcess():
         result = DetectionObject()
         ratio, pad = self.dataset_process.get_square_size(src_size,
                                                           image_size)
-        for value in object_pose.get_key_points:
-            x = (value.x - pad[0] // 2) / ratio
-            y = (value.y - pad[1] // 2) / ratio
-            point = Point2d(x, y)
+        for value in object_pose.get_key_points():
+            if value.x != -1 and value.y != -1:
+                x = int((value.x - pad[0] // 2) / ratio)
+                y = int((value.y - pad[1] // 2) / ratio)
+                point = Point2d(x, y)
+            else:
+                point = value
             result.add_key_points(point)
         return result

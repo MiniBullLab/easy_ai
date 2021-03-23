@@ -14,7 +14,7 @@ class Pose2dDataLoader(TorchDataLoader):
     def __init__(self, data_path, class_name,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
-                 points_count=9, is_augment=False):
+                 points_count=17, is_augment=False):
         super().__init__(data_channel)
         self.class_name = class_name
         self.image_size = image_size
@@ -31,14 +31,16 @@ class Pose2dDataLoader(TorchDataLoader):
     def __getitem__(self, index):
         img_path, box = self.pose2d_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
+
         image, box = self.dataset_process.expand_dataset(src_image, box, self.expand_ratio)
 
         image, box = self.dataset_process.resize_dataset(image,
                                                          self.image_size,
                                                          box,
                                                          self.class_name)
+
         if self.is_augment:
-            image, target = self.dataset_augment.augment(image, box)
+            image, box = self.dataset_augment.augment(image, box)
 
         torch_image = self.dataset_process.normalize_image(image)
 

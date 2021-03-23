@@ -59,8 +59,10 @@ class JsonProcess():
             ymin = rect_dict['minY']
             xmax = rect_dict['maxX']
             ymax = rect_dict['maxY']
+            key_points_list = rect_dict.get('keyPoints', None)
+            if key_points_list is None:
+                continue
             point_count = rect_dict['pointCount']
-            key_points_list = rect_dict['keyPoints']
             box = Rect2D()
             box.min_corner.x = xmin
             box.min_corner.y = ymin
@@ -85,12 +87,16 @@ class JsonProcess():
         rect_objects_list = objects_dict['rectObject']
         boxes = []
         for rect_dict in rect_objects_list:
+            pose_dict = rect_dict.get('pose', None)
+            if pose_dict is None:
+                continue
+
             class_name = rect_dict['class']
             xmin = rect_dict['minX']
             ymin = rect_dict['minY']
             xmax = rect_dict['maxX']
             ymax = rect_dict['maxY']
-            pose_dict = rect_dict['pose']
+
             pose_index = pose_dict['index']
             skeleton = pose_dict.get('skeleton', ())
             box = Rect2D()
@@ -100,10 +106,17 @@ class JsonProcess():
             box.max_corner.y = ymax
             box.name = class_name
             box.clear_key_points()
+            is_available = False
             for index_name in pose_index:
                 temp_data = pose_dict.get(index_name, (-1, 1))
-                point = Point2d(int(temp_data[0]), int(temp_data[1]))
+                flag = int(temp_data[2])
+                if flag > 0:
+                    is_available = True
+                    point = Point2d(int(temp_data[0]), int(temp_data[1]))
+                else:
+                    point = Point2d(-1, -1)
                 box.add_key_points(point)
             box.set_key_points_skeleton(skeleton)
-            boxes.append(box)
+            if is_available:
+                boxes.append(box)
         return image_name, boxes

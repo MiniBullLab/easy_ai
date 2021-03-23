@@ -31,6 +31,7 @@ class ImageTaskConfig(BaseConfig):
     def load_config(self, config_path):
         if config_path is not None and os.path.exists(config_path):
             self.config_path = config_path
+
         if os.path.exists(self.config_path):
             with codecs.open(self.config_path, 'r', encoding='utf-8') as f:
                 config_dict = json.load(f)
