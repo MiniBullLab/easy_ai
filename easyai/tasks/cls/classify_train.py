@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.data_loader.cls.classify_dataloader import get_classify_train_dataloader
@@ -15,13 +15,12 @@ from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Classify_Task)
 class ClassifyTrain(CommonTrain):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.Classify_Task)
-
-        self.model_args['class_number'] = len(self.train_task_config.class_name)
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-
-        self.classify_test = ClassifyTest(cfg_path, gpu_id, config_path)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Classify_Task)
+        self.set_model_param(data_channel=self.train_task_config.data_channel,
+                             class_number=len(self.train_task_config.class_name))
+        self.set_model(gpu_id=gpu_id)
+        self.classify_test = ClassifyTest(model_name, gpu_id, self.train_task_config)
         self.best_precision = 0
 
     def load_latest_param(self, latest_weights_path):
@@ -55,13 +54,7 @@ class ClassifyTrain(CommonTrain):
         try:
             for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
                 self.optimizer.zero_grad()
-                for index, (images, targets) in enumerate(dataloader):
-                    current_iter = epoch * self.total_images + index
-                    lr = lr_scheduler.get_lr(epoch, current_iter)
-                    lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-                    loss_value = self.compute_backward(images, targets, index)
-                    self.update_logger(index, self.total_images, epoch, loss_value)
-
+                self.train_epoch(epoch, lr_scheduler, dataloader)
                 save_model_path = self.save_train_model(epoch)
                 self.test(val_path, epoch, save_model_path)
         except Exception as e:
@@ -69,6 +62,14 @@ class ClassifyTrain(CommonTrain):
             raise e
         finally:
             self.train_logger.close()
+
+    def train_epoch(self, epoch, lr_scheduler, dataloader):
+        for index, (images, targets) in enumerate(dataloader):
+            current_iter = epoch * self.total_images + index
+            lr = lr_scheduler.get_lr(epoch, current_iter)
+            lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+            loss_value = self.compute_backward(images, targets, index)
+            self.update_logger(index, self.total_images, epoch, loss_value)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters

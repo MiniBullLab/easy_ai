@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import torch
@@ -15,14 +15,16 @@ from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 @REGISTERED_TEST_TASK.register_module(TaskName.Detect2d_Task)
 class Detection2dTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Detect2d_Task)
-        self.detect_inference = Detection2d(cfg_path, gpu_id, config_path)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.Detect2d_Task)
+        self.inference = Detection2d(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
         self.evaluator = CalculateMeanAp(self.test_task_config.detect2d_class)
         self.threshold_det = 5e-3
 
     def load_weights(self, weights_path):
-        self.detect_inference.load_weights(weights_path)
+        self.inference.load_weights(weights_path)
 
     def test(self, val_path):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
@@ -34,13 +36,13 @@ class Detection2dTest(BaseTest):
         for i, (image_path, src_size, input_image) in enumerate(dataloader):
             print('%g/%g' % (i + 1, all_count), end=' ')
 
-            prediction, output_list = self.detect_inference.infer(input_image)
-            detection_objects = self.detect_inference.result_process.postprocess(prediction,
-                                                                                 src_size.numpy()[0],
-                                                                                 self.threshold_det)
+            prediction, output_list = self.inference.infer(input_image)
+            detection_objects = self.inference.result_process.postprocess(prediction,
+                                                                          src_size.numpy()[0],
+                                                                          self.threshold_det)
 
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
-            self.detect_inference.save_result(image_path[0], detection_objects, 1)
+            self.inference.save_result(image_path[0], detection_objects, 1)
 
         mAP, aps = self.evaluator.eval(self.test_task_config.save_result_dir, val_path)
         self.evaluator.print_evaluation(aps)

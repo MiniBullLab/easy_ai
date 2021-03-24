@@ -3,11 +3,13 @@
 # Author:
 
 import abc
+import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.freeze_process import FreezePorcess
 from easyai.torch_utility.train_log import TrainLogger
+from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
 
 
@@ -16,11 +18,11 @@ class BaseTrain(BaseTask):
     def __init__(self, model_name, config_path, task_name):
         super().__init__(config_path)
         self.set_task_name(task_name)
-        self.train_task_config = self.config_factory.get_config(self.task_name, config_path)
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
         self.freeze_process = FreezePorcess()
         self.model = None
+        self.train_task_config = None
         self.is_sparse = False
         self.sparse_ratio = 0.0
         self.optimizer_process = OptimizerProcess(base_lr=self.train_task_config.base_lr)
@@ -28,9 +30,34 @@ class BaseTrain(BaseTask):
         self.train_logger = TrainLogger(self.train_task_config.log_name,
                                         self.train_task_config.root_save_dir)
 
-        self.model_args = {"type": model_name,
-                           "data_channel": self.train_task_config.data_channel
-                           }
+        if isinstance(model_name, (list, tuple)):
+            self.model_args = {"type": model_name[0]}
+        elif isinstance(model_name, str):
+            self.model_args = {"type": model_name}
+
+        self.set_train_config(config_path)
+
+    def set_train_config(self, config=None):
+        if config is None:
+            self.train_task_config = self.config_factory.get_config(self.task_name, self.config_path)
+            self.train_task_config.save_config()
+        elif isinstance(config, str):
+            self.train_task_config = self.config_factory.get_config(self.task_name, self.config_path)
+            self.train_task_config.save_config()
+        elif isinstance(config, BaseConfig):
+            self.config_path = None
+            self.train_task_config = config
+
+    def set_model_param(self, data_channel, **params):
+        self.model_args["data_channel"] = data_channel
+        self.model_args.update(params)
+
+    def set_model(self, my_model=None, gpu_id=0):
+        if my_model is None:
+            self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+        elif isinstance(my_model, torch.nn.Module):
+            self.model = my_model
+            self.model.train()
 
     @abc.abstractmethod
     def load_latest_param(self, latest_weights_path):

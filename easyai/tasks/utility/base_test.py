@@ -3,18 +3,35 @@
 # Author:
 
 import abc
+import torch
 from easyai.helper.timer_process import TimerProcess
+from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
 
 
 class BaseTest(BaseTask):
 
-    def __init__(self, config_path, task_name):
+    def __init__(self, task_name):
         super().__init__()
         self.set_task_name(task_name)
         self.timer = TimerProcess()
-        self.config_path = config_path
-        self.test_task_config = self.config_factory.get_config(self.task_name, self.config_path)
+        self.test_task_config = None
+        self.inference = None
+        self.model = None
+        self.device = None
+
+    def set_test_config(self, config=None):
+        if isinstance(config, BaseConfig):
+            self.test_task_config = config
+
+    def set_model(self, my_model=None):
+        if my_model is None:
+            self.model = self.inference.model
+            self.device = self.inference.device
+        elif isinstance(my_model, torch.nn.Module):
+            self.model = my_model
+            self.device = my_model.device
+            self.model.eval()
 
     @abc.abstractmethod
     def load_weights(self, weights_path):

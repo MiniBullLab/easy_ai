@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import cv2
 import numpy as np
@@ -12,7 +12,12 @@ class ImageDrawing():
     def __init__(self):
         pass
 
-    def drawDetectObjects(self, src_image, result_objects):
+    def draw_image(self, widnow_name, image, scale=1.0):
+        cv2.namedWindow(widnow_name, 0)
+        cv2.resizeWindow(widnow_name, int(image.shape[1] * scale), int(image.shape[0] * scale))
+        cv2.imshow(widnow_name, image)
+
+    def draw_detect_objects(self, src_image, result_objects):
         for object in result_objects:
             point1 = (int(object.min_corner.x), int(object.min_corner.y))
             point2 = (int(object.max_corner.x), int(object.max_corner.y))

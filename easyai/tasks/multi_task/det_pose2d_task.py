@@ -11,18 +11,18 @@ from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 
-@REGISTERED_INFERENCE_TASK.register_module(TaskName.DetPose2d_Task)
+@REGISTERED_INFERENCE_TASK.register_module(TaskName.Det_Pose2d_Task)
 class DetPose2dTask(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.DetPose2d_Task)
-        self.det2d_inference = Detection2d("yolov3", gpu_id)
-        self.pose2d_inference = Pose2d("ResnetPose", gpu_id)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Det_Pose2d_Task)
+        self.det2d_inference = Detection2d(model_name[0], gpu_id, self.task_config.det_config)
+        self.pose2d_inference = Pose2d(model_name[1], gpu_id, self.task_config.pose_config)
         self.result_show = DetAndPose2dShow()
 
     def load_weights(self, weights_path):
-        self.det2d_inference.load_weights("/home/lpj/Desktop/yolov3_person/det2d_best_person.pt")
-        self.pose2d_inference.load_weights("/home/lpj/Desktop/resnet_pose.pt")
+        self.det2d_inference.load_weights(weights_path[0])
+        self.pose2d_inference.load_weights(weights_path[1])
 
     def process(self, input_path, data_type=1, is_show=False):
         self.task_config = self.det2d_inference.task_config

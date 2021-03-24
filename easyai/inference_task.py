@@ -15,11 +15,12 @@ class InferenceTask():
         self.data_type = data_type
         self.is_show = is_show
 
-    def infer(self, cfg_path, gpu_id, weight_path, config_path):
+    def infer(self, model_name, gpu_id, weight_path, config_path):
         task_args = {'type': self.task_name,
-                     'cfg_path': cfg_path,
+                     'model_name': model_name,
                      'gpu_id': gpu_id,
                      'config_path': config_path}
+        print(model_name, weight_path)
         if self.task_name is not None and \
                 REGISTERED_INFERENCE_TASK.has_class(self.task_name):
             task = build_from_cfg(task_args, REGISTERED_INFERENCE_TASK)

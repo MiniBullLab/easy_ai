@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.data_loader.seg.segment_dataloader import get_segment_train_dataloader
@@ -15,16 +15,15 @@ from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Segment_Task)
 class SegmentionTrain(CommonTrain):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.Segment_Task)
-
-        self.model_args['class_number'] = len(self.train_task_config.segment_class)
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Segment_Task)
+        self.set_model_param(data_channel=self.task_config.data_channel,
+                             points_count=len(self.task_config.segment_class))
+        self.set_model(gpu_id=gpu_id)
         self.output_process = SegmentResultProcess(self.train_task_config.image_size,
                                                    self.train_task_config.resize_type)
 
-        self.segment_test = SegmentionTest(cfg_path, gpu_id, config_path)
+        self.segment_test = SegmentionTest(model_name, gpu_id, self.train_task_config)
         self.bestmIoU = 0
 
     def load_latest_param(self, latest_weights_path):

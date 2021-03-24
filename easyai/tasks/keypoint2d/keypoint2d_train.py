@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.data_loader.keypoint2d.keypoint2d_dataloader import get_key_points2d_train_dataloader
@@ -14,12 +14,11 @@ from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 @REGISTERED_TRAIN_TASK.register_module(TaskName.KeyPoint2d_Task)
 class KeyPoints2dTrain(CommonTrain):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.KeyPoint2d_Task)
-
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-
-        self.keypoints_test = KeyPoint2dTest(cfg_path, gpu_id, config_path)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.KeyPoint2d_Task)
+        self.set_model_param(data_channel=self.train_task_config.data_channel)
+        self.set_model(gpu_id=gpu_id)
+        self.keypoints_test = KeyPoint2dTest(model_name, gpu_id, self.train_task_config)
         self.best_accuracy = 0
 
         self.avg_loss = -1
@@ -51,17 +50,19 @@ class KeyPoints2dTrain(CommonTrain):
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
-            for i, (images, targets) in enumerate(dataloader):
-                current_iter = epoch * self.total_images + i
-                lr = lr_scheduler.get_lr(epoch, current_iter)
-                lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-                if sum([len(x) for x in targets]) < 1:  # if no targets continue
-                    continue
-                loss = self.compute_backward(images, targets, i)
-                self.update_logger(i, self.total_images, epoch, loss)
-
+            self.train_epoch(epoch, lr_scheduler, dataloader)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
+
+    def train_epoch(self, epoch, lr_scheduler, dataloader):
+        for i, (images, targets) in enumerate(dataloader):
+            current_iter = epoch * self.total_images + i
+            lr = lr_scheduler.get_lr(epoch, current_iter)
+            lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+            if sum([len(x) for x in targets]) < 1:  # if no targets continue
+                continue
+            loss = self.compute_backward(images, targets, i)
+            self.update_logger(i, self.total_images, epoch, loss)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters

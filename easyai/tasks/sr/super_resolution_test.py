@@ -15,11 +15,11 @@ from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 @REGISTERED_TEST_TASK.register_module(TaskName.SuperResolution_Task)
 class SuperResolutionTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.SuperResolution_Task)
-        self.sr_inference = SuperResolution(cfg_path, gpu_id, config_path)
-        self.model = self.sr_inference.model
-        self.device = self.sr_inference.device
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.SuperResolution_Task)
+        self.sr_inference = SuperResolution(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
 
         self.epoch_loss_average = AverageMeter()
         self.epoch_avg_psnr = AverageMeter()

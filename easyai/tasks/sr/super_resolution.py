@@ -12,11 +12,11 @@ from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.SuperResolution_Task)
 class SuperResolution(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.SuperResolution_Task)
-
-        self.model_args['upscale_factor'] = self.task_config.upscale_factor
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.SuperResolution_Task)
+        self.set_model_param(data_channel=self.task_config.data_channel,
+                             upscale_factor=self.task_config.upscale_factor)
+        self.set_model(gpu_id=gpu_id)
 
     def process(self, input_path, data_type=1, is_show=False):
         pass

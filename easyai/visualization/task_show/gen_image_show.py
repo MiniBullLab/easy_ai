@@ -8,17 +8,16 @@ from easyai.visualization.utility.base_show import BaseShow
 from easyai.visualization.utility.registry import REGISTERED_TASK_SHOW
 
 
-@REGISTERED_TASK_SHOW.register_module(TaskName.KeyPoint2d_Task)
-class KeyPoint2dShow(BaseShow):
+@REGISTERED_TASK_SHOW.register_module(TaskName.GenerateImage)
+class GenerateImage(BaseShow):
 
     def __init__(self):
         super().__init__()
-        self.set_task_name(TaskName.KeyPoint2d_Task)
+        self.set_task_name(TaskName.GenerateImage)
 
-    def show(self, src_image, detection_objects, skeleton):
+    def show(self, src_image, scale=1.0):
         image = src_image.copy()
-        self.drawing.draw_det_keypoint2d_result(image, detection_objects, skeleton)
-        self.drawing.draw_image("image", image, 0.8)
+        self.drawing.draw_image('image', image, scale)
         if cv2.getWindowProperty('image', 1) < 0:
             return True
         return self.wait_key()

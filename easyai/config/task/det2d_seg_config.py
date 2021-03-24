@@ -9,7 +9,7 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.Det2d_Seg_Task)
-class MultiDet2dSegConfig(Detect2dConfig):
+class Det2dSegConfig(Detect2dConfig):
 
     def __init__(self):
         super().__init__()

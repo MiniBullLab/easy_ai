@@ -15,9 +15,11 @@ from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 @REGISTERED_TEST_TASK.register_module(TaskName.Det2d_Seg_Task)
 class Det2dSegTaskTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Det2d_Seg_Task)
-        self.multi_task_inference = Det2dSegTask(cfg_path, gpu_id, config_path)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.Det2d_Seg_Task)
+        self.inference = Det2dSegTask(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
         self.det2d_evaluator = CalculateMeanAp(self.test_task_config.detect2d_class)
         self.seg_metric = SegmentionMetric(len(self.test_task_config.segment_name))
         self.threshold_det = 5e-3

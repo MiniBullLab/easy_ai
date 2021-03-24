@@ -19,9 +19,9 @@ class TrainTask():
         self.is_convert = False
         self.save_onnx_path = None
 
-    def train(self, cfg_path, gpu_id, config_path, pretrain_model_path):
+    def train(self, model_name, gpu_id, config_path, pretrain_model_path):
         task_args = {'type': self.task_name,
-                     'cfg_path': cfg_path,
+                     'model_name': model_name,
                      'gpu_id': gpu_id,
                      'config_path': config_path}
         if self.task_name is not None and \

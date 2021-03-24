@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
@@ -15,24 +15,24 @@ from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 @REGISTERED_TEST_TASK.register_module(TaskName.Classify_Task)
 class ClassifyTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Classify_Task)
-        self.classify_inference = Classify(cfg_path, gpu_id, config_path)
-        self.model = self.classify_inference.model
-        self.device = self.classify_inference.device
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.Classify_Task)
+        self.inference = Classify(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
         self.topK = (1,)
         self.evaluation = ClassifyAccuracy(top_k=self.topK)
         self.epoch_loss_average = AverageMeter()
 
     def load_weights(self, weights_path):
-        self.classify_inference.load_weights(weights_path)
+        self.inference.load_weights(weights_path)
 
     def test(self, val_path):
         dataloader = get_classify_val_dataloader(val_path, self.test_task_config)
         self.evaluation.clean_data()
         self.epoch_loss_average.reset()
         for index, (images, labels) in enumerate(dataloader):
-            prediction, output_list = self.classify_inference.infer(images)
+            prediction, output_list = self.inference.infer(images)
             loss = self.compute_loss(output_list, labels)
             self.evaluation.torch_eval(prediction.data, labels.to(prediction.device))
             self.metirc_loss(index, loss)

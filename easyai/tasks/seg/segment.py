@@ -7,7 +7,6 @@ import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
-from easyai.visualization.task_show.segment_show import SegmentionShow
 from easyai.helper.imageProcess import ImageProcess
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
@@ -16,15 +15,13 @@ from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Segment_Task)
 class Segmentation(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.Segment_Task)
-
-        self.model_args['class_number'] = len(self.task_config.segment_class)
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Segment_Task)
+        self.set_model_param(data_channel=self.task_config.data_channel,
+                             points_count=len(self.task_config.segment_class))
+        self.set_model(gpu_id=gpu_id)
         self.result_process = SegmentResultProcess(self.task_config.image_size,
                                                    self.task_config.resize_type)
-        self.result_show = SegmentionShow()
         self.image_process = ImageProcess()
 
         self.threshold = 0.5  # binary class threshold

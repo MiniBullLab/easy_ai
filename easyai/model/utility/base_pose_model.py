@@ -9,8 +9,8 @@ from easyai.loss.utility.loss_factory import LossFactory
 
 class BasePoseModel(BaseModel):
 
-    def __init__(self, data_channel, keypoints_number):
+    def __init__(self, data_channel, points_count):
         super().__init__(data_channel)
-        self.keypoints_number = keypoints_number
+        self.points_count = points_count
         self.backbone_factory = BackboneFactory()
         self.loss_factory = LossFactory()

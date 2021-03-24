@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
@@ -14,13 +14,13 @@ from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 @REGISTERED_TRAIN_TASK.register_module(TaskName.GenerateImage)
 class GenerateImageTrain(GanTrain):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.GenerateImage)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.GenerateImage)
+        self.set_model_param(data_channel=self.train_task_config.data_channel,
+                             image_size=self.train_task_config.image_size)
+        self.set_model(gpu_id=gpu_id)
 
-        self.model_args['image_size'] = self.train_task_config.image_size
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-
-        self.gen_test = GenerateImage(cfg_path, gpu_id, config_path)
+        self.gen_test = GenerateImage(model_name, gpu_id, self.train_task_config)
 
         self.best_score = 0
 

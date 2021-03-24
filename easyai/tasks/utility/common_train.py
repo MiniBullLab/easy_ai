@@ -20,7 +20,10 @@ class CommonTrain(BaseTrain):
         self.start_epoch = 0
 
     def load_pretrain_model(self, weights_path):
-        self.torchModelProcess.load_pretain_model(weights_path, self.model)
+        if isinstance(weights_path, (list, tuple)):
+            self.torchModelProcess.load_pretain_model(weights_path[0], self.model)
+        else:
+            self.torchModelProcess.load_pretain_model(weights_path, self.model)
 
     def build_optimizer(self):
         if self.model is not None:
@@ -80,7 +83,6 @@ class CommonTrain(BaseTrain):
             print("optimizer is not build!")
 
     def start_train(self):
-        self.train_task_config.save_config()
         self.model.train()
         self.freeze_process.freeze_bn(self.model,
                                       self.train_task_config.freeze_bn_layer_name,

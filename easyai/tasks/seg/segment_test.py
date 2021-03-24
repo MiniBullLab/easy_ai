@@ -16,12 +16,11 @@ from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 @REGISTERED_TEST_TASK.register_module(TaskName.Segment_Task)
 class SegmentionTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Segment_Task)
-        self.segment_inference = Segmentation(cfg_path, gpu_id, config_path)
-        self.model = self.segment_inference.model
-        self.device = self.segment_inference.device
-
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.Segment_Task)
+        self.segment_inference = Segmentation(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
         self.output_process = SegmentResultProcess(self.test_task_config.image_size,
                                                    self.test_task_config.resize_type)
 

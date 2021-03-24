@@ -5,28 +5,57 @@
 import os
 import abc
 from pathlib import Path
+import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.utility.images_loader import ImagesLoader
 from easyai.data_loader.utility.video_loader import VideoLoader
 from easyai.data_loader.utility.text_data_loader import TextDataLoader
 from easyai.torch_utility.torch_model_process import TorchModelProcess
+from easyai.visualization.utility.task_show_factory import TaskShowFactory
+from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
 
 
 class BaseInference(BaseTask):
 
     def __init__(self, model_name, config_path, task_name):
-        super().__init__()
+        super().__init__(config_path)
         self.set_task_name(task_name)
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
-        self.config_path = config_path
+        self.show_factory = TaskShowFactory()
         self.model = None
+        self.task_config = None
         self.src_size = (0, 0)
-        self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
-        self.model_args = {"type": model_name,
-                           # "data_channel": self.task_config.data_channel
-                           }
+        self.result_show = self.show_factory.get_task_show(self.task_name)
+        if isinstance(model_name, (list, tuple)):
+            self.model_args = {"type": model_name[0]}
+        elif isinstance(model_name, str):
+            self.model_args = {"type": model_name}
+
+        self.set_task_config(config_path)
+
+    def set_task_config(self, config=None):
+        if config is None:
+            self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
+            self.task_config.save_config()
+        elif isinstance(config, str):
+            self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
+            self.task_config.save_config()
+        elif isinstance(config, BaseConfig):
+            self.config_path = None
+            self.task_config = config
+
+    def set_model_param(self, data_channel, **params):
+        self.model_args["data_channel"] = data_channel
+        self.model_args.update(params)
+
+    def set_model(self, my_model=None, gpu_id=0):
+        if my_model is None:
+            self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+        elif isinstance(my_model, torch.nn.Module):
+            self.model = my_model
+            self.model.eval()
 
     @abc.abstractmethod
     def process(self, input_path, data_type=1, is_show=False):
@@ -37,10 +66,12 @@ class BaseInference(BaseTask):
         pass
 
     def load_weights(self, weights_path):
-        self.torchModelProcess.load_latest_model(weights_path, self.model)
+        if isinstance(weights_path, (list, tuple)):
+            self.torchModelProcess.load_latest_model(weights_path[0], self.model)
+        else:
+            self.torchModelProcess.load_latest_model(weights_path, self.model)
         self.model = self.torchModelProcess.model_test_init(self.model)
         self.model.eval()
-        self.task_config.save_config()
 
     def get_image_data_lodaer(self, input_path):
         if not os.path.exists(input_path):

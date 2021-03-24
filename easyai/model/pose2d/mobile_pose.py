@@ -17,8 +17,8 @@ from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
 @REGISTERED_POSE2D_MODEL.register_module(ModelName.MobilePose)
 class MobilePose(BasePoseModel):
 
-    def __init__(self, data_channel=3, keypoints_number=16):
-        super().__init__(data_channel, keypoints_number)
+    def __init__(self, data_channel=3, points_count=17):
+        super().__init__(data_channel, points_count)
         self.set_name(ModelName.MobilePose)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU6
@@ -62,7 +62,7 @@ class MobilePose(BasePoseModel):
 
         hm_conv = nn.Conv2d(duc3.get_output_channel(), self.keypoints_number,
                             kernel_size=1, bias=False)
-        self.add_block_list(LayerType.Convolutional, hm_conv, self.keypoints_number*2)
+        self.add_block_list(LayerType.Convolutional, hm_conv, self.points_count*2)
 
         self.create_loss_list()
 

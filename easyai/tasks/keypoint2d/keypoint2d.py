@@ -5,7 +5,6 @@
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.keypoint2d.keypoint2d_result_process import KeyPoint2dResultProcess
-from easyai.visualization.task_show.keypoint2d_show import KeyPoint2dShow
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
@@ -13,16 +12,14 @@ from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.KeyPoint2d_Task)
 class KeyPoint2d(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.KeyPoint2d_Task)
-
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.KeyPoint2d_Task)
+        self.set_model_param(data_channel=self.task_config.data_channel)
+        self.set_model(gpu_id=gpu_id)
         self.result_process = KeyPoint2dResultProcess(self.task_config.post_prcoess_type,
                                                       self.task_config.image_size,
                                                       self.task_config.points_count,
                                                       self.task_config.points_class)
-        self.result_show = KeyPoint2dShow()
-
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)

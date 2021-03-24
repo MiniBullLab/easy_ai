@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
@@ -13,9 +13,11 @@ from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 @REGISTERED_TEST_TASK.register_module(TaskName.KeyPoint2d_Task)
 class KeyPoint2dTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.KeyPoint2d_Task)
-        self.inference = KeyPoint2d(cfg_path, gpu_id, config_path)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.KeyPoint2d_Task)
+        self.inference = KeyPoint2d(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
         self.evaluator = KeyPointAccuracy(self.test_task_config.points_count,
                                           self.test_task_config.points_class)
 

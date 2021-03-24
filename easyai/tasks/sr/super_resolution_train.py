@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.data_loader.sr.super_resolution_dataloader import get_sr_train_dataloader
@@ -14,13 +14,12 @@ from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 @REGISTERED_TRAIN_TASK.register_module(TaskName.SuperResolution_Task)
 class SuperResolutionTrain(CommonTrain):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.SuperResolution_Task)
-
-        self.model_args['upscale_factor'] = self.train_task_config.upscale_factor
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-
-        self.sr_test = SuperResolutionTest(cfg_path, gpu_id, config_path)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.SuperResolution_Task)
+        self.set_model_param(data_channel=self.train_task_config.data_channel,
+                             upscale_factor=self.train_task_config.upscale_factor)
+        self.set_model(gpu_id=gpu_id)
+        self.sr_test = SuperResolutionTest(model_name, gpu_id, self.train_task_config)
         self.best_score = 0
 
     def load_latest_param(self, latest_weights_path):
@@ -49,15 +48,17 @@ class SuperResolutionTrain(CommonTrain):
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
-            for idx, (images, labels) in enumerate(dataloader):
-                current_idx = epoch * self.total_images + idx
-                lr = lr_scheduler.get_lr(epoch, current_idx)
-                lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-                loss_value = self.compute_backward(images, labels, idx)
-                self.update_logger(idx, self.total_images, epoch, loss_value)
-
+            self.train_epoch(epoch, lr_scheduler, dataloader)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
+
+    def train_epoch(self, epoch, lr_scheduler, dataloader):
+        for idx, (images, labels) in enumerate(dataloader):
+            current_idx = epoch * self.total_images + idx
+            lr = lr_scheduler.get_lr(epoch, current_idx)
+            lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+            loss_value = self.compute_backward(images, labels, idx)
+            self.update_logger(idx, self.total_images, epoch, loss_value)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters

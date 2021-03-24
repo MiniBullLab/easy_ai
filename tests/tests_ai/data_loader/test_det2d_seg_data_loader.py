@@ -12,7 +12,7 @@ import numpy as np
 from easyai.helper.dataType import Rect2D
 from easyai.data_loader.multi_task.det2d_seg_train_dataloader import Det2dSegTrainDataloader
 from easyai.data_loader.multi_task.det2d_seg_val_dataloader import get_det2d_seg_val_dataloader
-from easyai.visualization.task_show.det2d_seg_drawing import Det2dSegTaskShow
+from easyai.visualization.task_show.det2d_seg_show import Det2dSegTaskShow
 from easyai.config.utility.config_factory import ConfigFactory
 
 

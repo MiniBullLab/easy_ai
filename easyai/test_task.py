@@ -13,9 +13,9 @@ class TestTask():
         self.val_path = val_path
         self.task_name = task_name
 
-    def test(self, cfg_path, gpu_id, weight_path, config_path):
+    def test(self, model_name, gpu_id, weight_path, config_path):
         task_args = {'type': self.task_name,
-                     'cfg_path': cfg_path,
+                     'model_name': model_name,
                      'gpu_id': gpu_id,
                      'config_path': config_path}
         if self.task_name is not None and \

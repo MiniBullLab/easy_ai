@@ -15,8 +15,8 @@ from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
 @REGISTERED_POSE2D_MODEL.register_module(ModelName.ResnetPose)
 class ResnetPose(BasePoseModel):
 
-    def __init__(self, data_channel=3, keypoints_number=17):
-        super().__init__(data_channel, keypoints_number)
+    def __init__(self, data_channel=3, points_count=17):
+        super().__init__(data_channel, points_count)
         self.set_name(ModelName.ResnetPose)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
@@ -26,7 +26,7 @@ class ResnetPose(BasePoseModel):
         self.loss_config = {"type": LossName.JointsMSELoss,
                             "input_size": "192,256",
                             "reduction": 4,
-                            "points_count": keypoints_number}
+                            "points_count": points_count}
 
         self.create_block_list()
 
@@ -52,9 +52,9 @@ class ResnetPose(BasePoseModel):
             self.add_block_list(deconv.get_name(), deconv, num_deconv_filters[i])
             input_channel = num_deconv_filters[i]
 
-        final_conv = nn.Conv2d(input_channel, self.keypoints_number, 1,
+        final_conv = nn.Conv2d(input_channel, self.points_count, 1,
                                stride=1, padding=0)
-        self.add_block_list(LayerType.Convolutional, final_conv, self.keypoints_number)
+        self.add_block_list(LayerType.Convolutional, final_conv, self.points_count)
 
         self.create_loss_list()
 

@@ -9,7 +9,6 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.det2d.detect2d_result_process import Detect2dResultProcess
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
-from easyai.visualization.task_show.det2d_seg_drawing import Det2dSegTaskShow
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
@@ -17,15 +16,13 @@ from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Det2d_Seg_Task)
 class Det2dSegTask(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.Det2d_Seg_Task)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Det2d_Seg_Task)
+        self.set_model_param(data_channel=self.task_config.data_channel)
+        self.set_model(gpu_id=gpu_id)
         self.det2d_result_process = Detect2dResultProcess()
         self.seg_result_process = SegmentResultProcess()
         self.nms_process = FastNonMaxSuppression()
-        self.result_show = Det2dSegTaskShow()
-
-        self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
-
         self.threshold_seg = 0.5  # binary class threshold
 
     def process(self, input_path, data_type=1, is_show=False):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 
 class TaskName():
@@ -13,5 +13,5 @@ class TaskName():
     Pose2d_Task = "pose2d"
     GenerateImage = "generate_image"
 
-    DetPose2d_Task = "det_pose2d"
+    Det_Pose2d_Task = "det_pose2d"
     Det2d_Seg_Task = "det2d_seg"
