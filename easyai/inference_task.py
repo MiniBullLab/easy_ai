@@ -20,7 +20,7 @@ class InferenceTask():
                      'model_name': model_name,
                      'gpu_id': gpu_id,
                      'config_path': config_path}
-        print(model_name, weight_path)
+        # print(model_name, weight_path)
         if self.task_name is not None and \
                 REGISTERED_INFERENCE_TASK.has_class(self.task_name):
             task = build_from_cfg(task_args, REGISTERED_INFERENCE_TASK)
