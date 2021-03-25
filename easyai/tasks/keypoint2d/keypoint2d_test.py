@@ -26,7 +26,7 @@ class KeyPoint2dTest(BaseTest):
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path):
+    def test(self, val_path, epoch=0):
         dataloader = get_key_points2d_val_dataloader(val_path,
                                                      self.test_task_config)
 
@@ -41,6 +41,7 @@ class KeyPoint2dTest(BaseTest):
             self.evaluator.eval(result, labels)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
         accuracy, _ = self.evaluator.get_accuracy()
+        self.save_test_value(epoch, accuracy)
         return accuracy
 
     def save_test_value(self, epoch, accuracy):

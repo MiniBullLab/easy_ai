@@ -5,7 +5,7 @@
 import os
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.calculate_mAp import CalculateMeanAp
+from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.data_loader.det2d.det2d_val_dataloader import get_detection_val_dataloader
 from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.base_name.task_name import TaskName
@@ -20,18 +20,19 @@ class Detection2dTest(BaseTest):
         self.inference = Detection2d(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.evaluator = CalculateMeanAp(self.test_task_config.detect2d_class)
+        self.evaluator = DetectionMeanAp(self.test_task_config.detect2d_class)
         self.threshold_det = 5e-3
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path):
+    def test(self, val_path, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
 
         dataloader = get_detection_val_dataloader(val_path, self.test_task_config)
         all_count = len(dataloader)
+        self.epoch_loss_average.reset()
         self.timer.tic()
         for i, (image_path, src_size, input_image) in enumerate(dataloader):
             print('%g/%g' % (i + 1, all_count), end=' ')
@@ -45,17 +46,8 @@ class Detection2dTest(BaseTest):
             self.inference.save_result(image_path[0], detection_objects, 1)
 
         mAP, aps = self.evaluator.eval(self.test_task_config.save_result_dir, val_path)
-        self.evaluator.print_evaluation(aps)
-        return mAP, aps
-
-    def save_test_value(self, epoch, mAP, aps):
-        # Write epoch results
-        with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            # file.write('%11.3g' * 2 % (mAP, aps[0]) + '\n')
-            file.write("Epoch: {} | mAP: {:.3f} | ".format(epoch, mAP))
-            for i, ap in enumerate(aps):
-                file.write(self.test_task_config.detect2d_class[i] + ": {:.3f} ".format(ap))
-            file.write("\n")
+        self.save_test_value(epoch, mAP, aps)
+        return mAP
 
     def compute_loss(self, output_list, targets):
         loss = 0
@@ -80,3 +72,13 @@ class Detection2dTest(BaseTest):
         print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
                                                                 loss_value,
                                                                 self.timer.toc(True)))
+
+    def save_test_value(self, epoch, mAP, aps):
+        # Write epoch results
+        with open(self.test_task_config.evaluation_result_path, 'a') as file:
+            # file.write('%11.3g' * 2 % (mAP, aps[0]) + '\n')
+            file.write("Epoch: {} | mAP: {:.3f} | ".format(epoch, mAP))
+            for i, ap in enumerate(aps):
+                file.write(self.test_task_config.detect2d_class[i] + ": {:.3f} ".format(ap))
+            file.write("\n")
+

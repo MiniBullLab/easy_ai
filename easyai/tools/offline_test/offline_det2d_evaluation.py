@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.evaluation.calculate_mAp import CalculateMeanAp
+from easyai.evaluation.calculate_rect_AP import CalculateMeanAp
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
 from easyai.config.utility.config_factory import ConfigFactory

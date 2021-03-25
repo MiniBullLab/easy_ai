@@ -25,5 +25,6 @@ class BaseLoss(nn.Module):
         info_str = ''
         for key, value in self.loss_info.items():
             info_str += "%s: %.5f|" % (key, value)
-        print('%s' % info_str)
+        if info_str:
+            print('%s' % info_str)
         return self.loss_info

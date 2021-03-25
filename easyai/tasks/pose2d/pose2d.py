@@ -38,7 +38,8 @@ class Pose2d(BaseInference):
 
     def single_image_process(self, src_size, input_image):
         prediction, _ = self.infer(input_image)
-        pose = self.pose_result_process.postprocess(prediction, src_size, 0.4)
+        pose = self.pose_result_process.postprocess(prediction, src_size,
+                                                    self.task_config.confidence_th)
         return pose
 
     def infer(self, input_data, net_type=0):

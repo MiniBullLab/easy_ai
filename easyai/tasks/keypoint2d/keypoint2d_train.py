@@ -128,8 +128,7 @@ class KeyPoints2dTrain(CommonTrain):
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             self.keypoints_test.load_weights(save_model_path)
-            accuracy = self.keypoints_test.test(val_path)
-            self.keypoints_test.save_test_value(epoch, accuracy)
+            accuracy = self.keypoints_test.test(val_path, epoch)
             # save best model
             self.best_accuracy = self.torchModelProcess.save_best_model(accuracy, save_model_path,
                                                                         self.train_task_config.best_weights_path)

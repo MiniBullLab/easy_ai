@@ -13,7 +13,7 @@ def parse_arguments():
 
     parser.add_option("-i", "--inputPath", dest="inputPath",
                       type="string", default=None,
-                      help="input path of dataset")
+                      help="input image dir path")
 
     (options, args) = parser.parse_args()
 
@@ -66,7 +66,7 @@ def parseRectData(xmlPath):
     return image_name, image_size, boxes, num
 
 
-def json_write(database, file_name, file_path, image_size, num, boxes):
+def json_write(database, file_name, file_path, image_size, num, boxes, json_path):
     annotation = {}
     # annotation
     annotation['annotation'] = 'Annotations'
@@ -90,7 +90,6 @@ def json_write(database, file_name, file_path, image_size, num, boxes):
         rectObject.append({'class': box[0], 'minX': box[1], 'minY': box[2], 'maxX': box[3], 'maxY': box[4]})
     annotation['objects'] = {'rectObject': rectObject}
 
-    json_path = file_path.replace("JPEGImages", "Annotations_json").replace("jpg", "json").replace("png", "json")
     a = json.dumps(annotation, indent=4)
     f = open(json_path, 'w')
     f.write(a)
@@ -100,16 +99,22 @@ def json_write(database, file_name, file_path, image_size, num, boxes):
 def main():
     print("process start...")
     options = parse_arguments()
-    if not os.path.exists(options.inputPath.replace("JPEGImages", "Annotations_json")):
-        os.mkdir(options.inputPath.replace("JPEGImages", "Annotations_json"))
+    json_dir = options.inputPath.replace("JPEGImages", "Annotations_json")
+    if not os.path.exists(json_dir):
+        os.mkdir(json_dir)
+    xml_dir = options.inputPath.replace("JPEGImages", "Annotations")
     for img_name in os.listdir(options.inputPath):
         img_path = os.path.join(options.inputPath, img_name)
-        xml_path = img_path.replace("JPEGImages", "Annotations").replace(".jpg", ".xml").replace(".png", ".xml")
+        path, file_name_and_post = os.path.split(img_path)
+        image_name, post = os.path.splitext(file_name_and_post)
+        xml_name = image_name + ".xml"
+        xml_path = os.path.join(xml_dir, xml_name)
+        json_path = os.path.join(json_dir, image_name + ".json")
         print(xml_path)
         if not os.path.exists(xml_path):
             continue
         image_name, image_size, boxes, num = parseRectData(xml_path)
-        json_write("DataSet", image_name, img_path, image_size, num, boxes)
+        json_write("DataSet", image_name, img_path, image_size, num, boxes, json_path)
 
 
 if __name__ == "__main__":

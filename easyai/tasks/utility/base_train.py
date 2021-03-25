@@ -25,10 +25,6 @@ class BaseTrain(BaseTask):
         self.train_task_config = None
         self.is_sparse = False
         self.sparse_ratio = 0.0
-        self.optimizer_process = OptimizerProcess(base_lr=self.train_task_config.base_lr)
-
-        self.train_logger = TrainLogger(self.train_task_config.log_name,
-                                        self.train_task_config.root_save_dir)
 
         if isinstance(model_name, (list, tuple)):
             self.model_args = {"type": model_name[0]}
@@ -36,6 +32,10 @@ class BaseTrain(BaseTask):
             self.model_args = {"type": model_name}
 
         self.set_train_config(config_path)
+
+        self.optimizer_process = OptimizerProcess(base_lr=self.train_task_config.base_lr)
+        self.train_logger = TrainLogger(self.train_task_config.log_name,
+                                        self.train_task_config.root_save_dir)
 
     def set_train_config(self, config=None):
         if config is None:

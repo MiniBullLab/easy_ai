@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
@@ -8,7 +8,6 @@ from easyai.data_loader.seg.segment_dataloader import get_segment_val_dataloader
 from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.evaluation.segmen_metric import SegmentionMetric
-from easyai.helper.average_meter import AverageMeter
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
@@ -24,15 +23,13 @@ class SegmentionTest(BaseTest):
         self.output_process = SegmentResultProcess(self.test_task_config.image_size,
                                                    self.test_task_config.resize_type)
 
-        self.epoch_loss_average = AverageMeter()
-
         self.metric = SegmentionMetric(len(self.test_task_config.segment_class))
         self.threshold = 0.5  # binary class threshold
 
     def load_weights(self, weights_path):
         self.segment_inference.load_weights(weights_path)
 
-    def test(self, val_path):
+    def test(self, val_path, epoch=0):
         dataloader = get_segment_val_dataloader(val_path, self.test_task_config)
         print("Eval data num: {}".format(len(dataloader)))
         self.timer.tic()
@@ -48,17 +45,9 @@ class SegmentionTest(BaseTest):
             self.metirc_loss(i, loss)
 
         score, class_score = self.metric.get_score()
-        average_loss = self.epoch_loss_average.avg
-        self.print_evaluation(score)
-        return score, class_score, average_loss
-
-    def save_test_value(self, epoch, score, class_score):
-        # write epoch results
-        with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | mIoU: {:.3f} | ".format(epoch, score['Mean IoU : \t']))
-            for i, iou in class_score.items():
-                file.write(self.test_task_config.segment_class[i][0] + ": {:.3f} ".format(iou))
-            file.write("\n")
+        self.save_test_value(epoch, score, class_score)
+        print("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
+        return score['Mean IoU'], self.epoch_loss_average.avg
 
     def compute_loss(self, output_list, targets):
         loss = 0
@@ -86,6 +75,11 @@ class SegmentionTest(BaseTest):
                                                                 loss_value,
                                                                 self.timer.toc(True)))
 
-    def print_evaluation(self, score):
-        for k, v in score.items():
-            print(k, v)
+    def save_test_value(self, epoch, score, class_score):
+        # write epoch results
+        with open(self.test_task_config.evaluation_result_path, 'a') as file:
+            file.write("Epoch: {} | mIoU: {:.3f} | ".format(epoch, score['Mean IoU : \t']))
+            for i, iou in class_score.items():
+                file.write(self.test_task_config.segment_class[i][0] + ": {:.3f} ".format(iou))
+            file.write("\n")
+

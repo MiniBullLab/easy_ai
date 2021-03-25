@@ -19,7 +19,7 @@ class JsonProcess():
     def parse_rect_data(self, json_path):
         if not os.path.exists(json_path):
             print("error:%s file not exists" % json_path)
-            return
+            return None, []
         with codecs.open(json_path, 'r', encoding='utf-8') as f:
             data_dict = json.load(f)
         image_name = data_dict['filename']
@@ -46,7 +46,7 @@ class JsonProcess():
     def parse_key_points_data(self, json_path):
         if not os.path.exists(json_path):
             print("error:%s file not exists" % json_path)
-            return
+            return None, []
         with codecs.open(json_path, 'r', encoding='utf-8') as f:
             data_dict = json.load(f)
         image_name = data_dict['filename']
@@ -79,7 +79,7 @@ class JsonProcess():
     def parse_pose2d_data(self, json_path):
         if not os.path.exists(json_path):
             print("error:%s file not exists" % json_path)
-            return
+            return None, []
         with codecs.open(json_path, 'r', encoding='utf-8') as f:
             data_dict = json.load(f)
         image_name = data_dict['filename']

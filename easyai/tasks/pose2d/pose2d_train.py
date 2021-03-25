@@ -17,7 +17,7 @@ class Pose2dTrain(CommonTrain):
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Pose2d_Task)
         self.set_model_param(data_channel=self.train_task_config.data_channel,
-                             points_count=len(self.train_task_config.points_count))
+                             points_count=self.train_task_config.points_count)
         self.set_model(gpu_id=gpu_id)
         self.pose2d_test = Pose2dTest(model_name, gpu_id, self.train_task_config)
         self.best_value = 0
@@ -136,12 +136,9 @@ class Pose2dTrain(CommonTrain):
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             self.pose2d_test.load_weights(save_model_path)
-            precision, average_loss = self.pose2d_test.test(val_path)
-            self.pose2d_test.save_test_value(epoch)
+            precision, average_loss = self.pose2d_test.test(val_path, epoch)
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
-            print("Val epoch loss: {}".format(average_loss))
-
             # save best model
             self.best_value = self.torchModelProcess.save_best_model(precision,
                                                                      save_model_path,

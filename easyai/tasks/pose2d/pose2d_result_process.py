@@ -21,16 +21,15 @@ class Pose2dResultProcess():
     def postprocess(self, prediction, src_size, threshold=0.0):
         if prediction is None:
             return None
-        object_pose = self.get_pose_result(prediction, threshold,
-                                           self.post_prcoess_type)
+        object_pose = self.get_pose_result(prediction, threshold)
         result = self.resize_object_pose(src_size, self.image_size, object_pose)
         return result
 
-    def get_pose_result(self, prediction, conf_thresh, prcoess_type=0):
+    def get_pose_result(self, prediction, conf_thresh):
         result = None
-        if prcoess_type == 0:
+        if self.post_prcoess_type == 0:
             result = self.get_heatmaps_result(prediction, conf_thresh)
-        elif prcoess_type == 1:
+        elif self.post_prcoess_type == 1:
             result = self.get_mobile_result(prediction)
         return result
 

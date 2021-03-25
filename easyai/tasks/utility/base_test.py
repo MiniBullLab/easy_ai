@@ -5,6 +5,7 @@
 import abc
 import torch
 from easyai.helper.timer_process import TimerProcess
+from easyai.helper.average_meter import AverageMeter
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
 
@@ -15,6 +16,7 @@ class BaseTest(BaseTask):
         super().__init__()
         self.set_task_name(task_name)
         self.timer = TimerProcess()
+        self.epoch_loss_average = AverageMeter()
         self.test_task_config = None
         self.inference = None
         self.model = None
@@ -38,5 +40,5 @@ class BaseTest(BaseTask):
         pass
 
     @abc.abstractmethod
-    def test(self, val_path):
+    def test(self, val_path, epoch=0):
         pass

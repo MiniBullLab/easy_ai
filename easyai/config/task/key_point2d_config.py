@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.base_name.task_name import TaskName
@@ -18,7 +18,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.points_class = None
         self.points_count = 0
         self.skeleton = ()
-        self.confidence_th = 1.0
+        self.confidence_th = 0
         # test
         # train
         self.log_name = "keypoint2d"

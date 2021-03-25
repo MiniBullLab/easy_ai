@@ -50,6 +50,7 @@ class ClassifyAccuracy():
         self.topK.reset()
 
     def get_top1(self):
+        self.print_evaluation()
         return self.top1.avg
 
     def get_topK(self):
@@ -73,3 +74,12 @@ class ClassifyAccuracy():
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+    def print_evaluation(self):
+        if max(self.param_top) > 1:
+            print('prec{}: {:.3f} \t prec{}: {:.3f}\t'.format(self.param_top[0],
+                                                              self.param_top[1],
+                                                              self.get_top1(),
+                                                              self.get_topK()))
+        else:
+            print('prec1: {:.3f} \t'.format(self.get_top1()))

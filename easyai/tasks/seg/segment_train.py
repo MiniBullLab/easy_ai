@@ -122,13 +122,11 @@ class SegmentionTrain(CommonTrain):
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             self.segment_test.load_weights(save_model_path)
-            score, class_score, average_loss = self.segment_test.test(val_path)
-            self.segment_test.save_test_value(epoch, score, class_score)
+            score, average_loss = self.segment_test.test(val_path, epoch)
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
-            print("Val epoch loss: {:.7f}".format(average_loss))
             # save best model
-            self.bestmIoU = self.torchModelProcess.save_best_model(score['Mean IoU : \t'],
+            self.bestmIoU = self.torchModelProcess.save_best_model(score,
                                                                    save_model_path,
                                                                    self.train_task_config.best_weights_path)
         else:

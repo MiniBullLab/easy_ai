@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from math import log10
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.data_loader.sr.super_resolution_dataloader import get_sr_val_dataloader
 from easyai.tasks.sr.super_resolution import SuperResolution
-from easyai.helper.average_meter import AverageMeter
+from easyai.evaluation.super_resolution_psnr import SuperResolutionPSNR
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
@@ -21,17 +20,16 @@ class SuperResolutionTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
 
-        self.epoch_loss_average = AverageMeter()
-        self.epoch_avg_psnr = AverageMeter()
+        self.evalution = SuperResolutionPSNR()
 
     def load_weights(self, weights_path):
         self.sr_inference.load_weights(weights_path)
 
-    def test(self, val_path):
+    def test(self, val_path, epoch=0):
         dataloader = get_sr_val_dataloader(val_path, self.test_task_config)
         print("Eval data num: {}".format(len(dataloader)))
         self.timer.tic()
-        self.epoch_avg_psnr.reset()
+        self.evalution.reset()
         self.epoch_loss_average.reset()
         for i, (images, sr_targets) in enumerate(dataloader):
             prediction, output_list = self.sr_inference.infer(images)
@@ -39,16 +37,10 @@ class SuperResolutionTest(BaseTest):
             self.compute_metric(loss)
             self.metirc_loss(i, loss)
 
-        score = self.epoch_avg_psnr.avg
-        average_loss = self.epoch_loss_average.avg
-        self.print_evaluation(score)
-        return score, average_loss
-
-    def save_test_value(self, epoch, score):
-        # write epoch results
-        with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | psnr: {:.5f} | ".format(epoch, score))
-            file.write("\n")
+        score = self.evalution.get_score()
+        self.save_test_value(epoch, score)
+        print("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
+        return score, self.epoch_loss_average.avg
 
     def compute_loss(self, output_list, targets):
         loss = 0
@@ -74,9 +66,9 @@ class SuperResolutionTest(BaseTest):
                                                            loss_value,
                                                            self.timer.toc(True)))
 
-    def compute_metric(self, loss):
-        psnr = 10 * log10(1 / loss.item())
-        self.epoch_avg_psnr.update(psnr, 1)
+    def save_test_value(self, epoch, score):
+        # write epoch results
+        with open(self.test_task_config.evaluation_result_path, 'a') as file:
+            file.write("Epoch: {} | psnr: {:.5f} | ".format(epoch, score))
+            file.write("\n")
 
-    def print_evaluation(self, score):
-        print("Average psnr: {.5f}".format(score))

@@ -137,8 +137,7 @@ class Det2dSegTaskTrain(CommonTrain):
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             self.multi_task_test.load_weights(save_model_path)
-            mAP, aps, score, class_score = self.multi_task_test.test(val_path)
-            self.multi_task_test.save_test_value(epoch, mAP, aps, score, class_score)
+            mAP, score = self.multi_task_test.test(val_path, epoch)
             # wrong !!! how to use best_iou
             # save best model
             self.best_mAP = self.torchModelProcess.save_best_model(mAP, save_model_path,

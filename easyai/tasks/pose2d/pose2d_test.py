@@ -6,7 +6,7 @@ import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.pose2d_accuracy import Pose2dAccuracy
 from easyai.data_loader.pose2d.pose2d_dataloader import get_poes2d_val_dataloader
-from easyai.helper.average_meter import AverageMeter
+from easyai.tasks.pose2d.pose2d_result_process import Pose2dResultProcess
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
@@ -20,14 +20,18 @@ class Pose2dTest(BaseTest):
         self.inference = Pose2d(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
+
+        self.result_process = Pose2dResultProcess(self.test_task_config.post_prcoess_type,
+                                                  self.test_task_config.points_count,
+                                                  self.test_task_config.image_size)
         self.evaluation = Pose2dAccuracy(self.test_task_config.points_count,
                                          self.test_task_config.image_size)
-        self.epoch_loss_average = AverageMeter()
+        self.point_threshold = 1e-5
 
     def load_weights(self, weights_path):
-        self.pose2d_inference.load_weights(weights_path)
+        self.inference.load_weights(weights_path)
 
-    def test(self, val_path):
+    def test(self, val_path, epoch=0):
         dataloader = get_poes2d_val_dataloader(val_path, self.test_task_config)
         all_count = len(dataloader)
         self.evaluation.reset()
@@ -35,20 +39,16 @@ class Pose2dTest(BaseTest):
         self.timer.tic()
         for index, (images, targets) in enumerate(dataloader):
             print('%g/%g' % (index + 1, all_count), end=' ')
-
-            prediction, output_list = self.pose2d_inference.infer(images)
+            prediction, output_list = self.inference.infer(images)
+            result = self.result_process.get_pose_result(prediction, self.point_threshold)
             loss = self.compute_loss(output_list, targets)
-            self.evaluation.numpy_eval(prediction, targets.detach().numpy())
+            self.evaluation.eval(result, targets.detach().numpy())
             self.metirc_loss(index, loss)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc(True)))
-        average_loss = self.epoch_loss_average.avg
-        self.print_evaluation()
-        return self.evaluation.get_score(), average_loss
-
-    def save_test_value(self, epoch):
-        # Write epoch results
-        with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | prec: {:.3f}\n".format(epoch, self.evaluation.get_score()))
+        average_socre = self.evaluation.get_score()
+        self.save_test_value(epoch)
+        print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        return average_socre, self.epoch_loss_average.avg
 
     def metirc_loss(self, step, loss):
         loss_value = loss.item()
@@ -74,5 +74,9 @@ class Pose2dTest(BaseTest):
                 print("compute loss error")
         return loss
 
-    def print_evaluation(self):
-        print('prec: {:.3f} \t'.format(self.evaluation.get_score()))
+    def save_test_value(self, epoch):
+        # Write epoch results
+        with open(self.test_task_config.evaluation_result_path, 'a') as file:
+            file.write("Epoch: {} | prec: {:.3f}\n".format(epoch, self.evaluation.get_score()))
+
+

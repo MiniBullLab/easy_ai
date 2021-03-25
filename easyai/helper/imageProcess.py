@@ -15,7 +15,7 @@ class ImageProcess():
 
     def isImageFile(self, imagePath):
         if os.path.exists(imagePath):
-            return any(imagePath.endswith(extension) for extension in [".png", ".jpg", ".jpeg"])
+            return any(imagePath.endswith(extension) for extension in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"])
         else:
             return False
 

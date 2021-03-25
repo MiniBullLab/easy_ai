@@ -40,14 +40,20 @@ class SegmentionMetric():
         fwavacc = (freq[freq > 0] * iu[freq > 0]).sum()
         cls_iu = dict(zip(range(self.number_class), iu))
 
-        return {'Overall Acc: \t': acc,
-                'Mean Acc : \t': acc_cls,
-                'FreqW Acc : \t': fwavacc,
-                'Mean IoU : \t': mean_iu}, cls_iu
+        score = {'Overall Acc': acc,
+                 'Mean Acc': acc_cls,
+                 'FreqW Acc': fwavacc,
+                 'Mean IoU': mean_iu}
+        self.print_evaluation(score)
+        return score, cls_iu
 
     def fast_hist(self, gt, pred, n_class):
         mask = (gt >= 0) & (gt < n_class)
         hist = np.bincount(n_class * gt[mask].astype(int) +
                            pred[mask], minlength=n_class**2).reshape(n_class, n_class)
         return hist
+
+    def print_evaluation(self, score):
+        for k, v in score.items():
+            print(k, v)
 
