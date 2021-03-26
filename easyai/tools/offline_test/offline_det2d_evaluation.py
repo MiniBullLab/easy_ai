@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.evaluation.calculate_rect_AP import CalculateMeanAp
+from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
 from easyai.config.utility.config_factory import ConfigFactory
@@ -16,7 +16,7 @@ class OfflineDet2dEvaluation(BaseOfflineEvaluation):
     def __init__(self, detect2d_class):
         super().__init__()
         self.detect2d_class = detect2d_class
-        self.evaluator = CalculateMeanAp(detect2d_class)
+        self.evaluator = DetectionMeanAp(detect2d_class)
 
     def process(self, test_path, target_path):
         mAP, aps = self.evaluator.result_eval(test_path, target_path)
