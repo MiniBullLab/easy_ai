@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import os
-from easyai.data_loader.gan.gan_dataloader import get_gan_train_dataloader
+from easyai.data_loader.gen_image.gen_image_dataloader import get_gen_image_train_dataloader
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.gan_train import GanTrain
 from easyai.tasks.gen_image.generate_image import GenerateImage
@@ -38,7 +38,7 @@ class GenerateImageTrain(GanTrain):
         self.build_optimizer()
 
     def train(self, train_path, val_path):
-        dataloader = get_gan_train_dataloader(train_path, self.train_task_config)
+        dataloader = get_gen_image_train_dataloader(train_path, self.train_task_config)
         self.total_images = len(dataloader)
 
         lr_factory = LrSchedulerFactory(self.train_task_config.base_lr,

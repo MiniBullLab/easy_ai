@@ -50,7 +50,7 @@ class ModelName():
     MSRResNet = "MSRResNet"
     SmallSRNet = "SmallSRNet"
 
-    # gan
+    # gen_image
     MNISTGan = "MNISTGan"
 
     # multi

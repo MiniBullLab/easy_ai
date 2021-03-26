@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.cls.classify_sample import ClassifySample
 from easyai.data_loader.cls.classify_dataset_process import ClassifyDatasetProcess
 from easyai.data_loader.cls.classify_data_augment import ClassifyDataAugment
+from easyai.base_name.task_name import TaskName
+from easyai.data_loader.utility.registry import REGISTERED_TRAIN_DATALOADER
+from easyai.data_loader.utility.registry import REGISTERED_VAL_DATALOADER
 
 
 class ClassifyDataloader(TorchDataLoader):
@@ -37,6 +40,7 @@ class ClassifyDataloader(TorchDataLoader):
         return self.classify_sample.get_sample_count()
 
 
+@REGISTERED_TRAIN_DATALOADER.register_module(TaskName.Classify_Task)
 def get_classify_train_dataloader(train_path, data_config, num_workers=8):
     resize_type = data_config.resize_type
     normalize_type = data_config.normalize_type
@@ -53,6 +57,7 @@ def get_classify_train_dataloader(train_path, data_config, num_workers=8):
     return result
 
 
+@REGISTERED_TRAIN_DATALOADER.register_module(TaskName.Classify_Task)
 def get_classify_val_dataloader(val_path, data_config, num_workers=8):
     resize_type = data_config.resize_type
     normalize_type = data_config.normalize_type

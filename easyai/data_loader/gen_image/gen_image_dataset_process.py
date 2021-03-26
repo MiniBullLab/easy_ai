@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 
-class GanDatasetProcess(TaskDataSetProcess):
+class GenImageDatasetProcess(TaskDataSetProcess):
 
     def __init__(self, resize_type, normalize_type,
                  mean=0, std=1, pad_color=0):

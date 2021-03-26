@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os.path
 from easyai.helper import DirProcess
 
 
-class GanSample():
+class GenImageSample():
 
     def __init__(self, train_path):
         self.train_path = train_path

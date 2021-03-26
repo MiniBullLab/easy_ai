@@ -40,6 +40,6 @@ class LossName():
     DSNTLoss = "DSNTLoss"
     JointsMSELoss = "JointsMSELoss"
 
-    # gan
+    # gen_image
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"
     MNISTGeneratorLoss = "MNISTGeneratorLoss"
