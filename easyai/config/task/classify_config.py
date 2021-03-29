@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.base_name.task_name import TaskName
@@ -12,14 +12,12 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class ClassifyConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.Classify_Task)
+        super().__init__(TaskName.Classify_Task)
         # data
         self.class_name = None
         self.save_result_name = None
         # test
         # train
-        self.log_name = "classify"
         self.train_data_augment = True
 
         self.config_path = os.path.join(self.config_save_dir, "classify_config.json")

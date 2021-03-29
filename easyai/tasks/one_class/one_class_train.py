@@ -3,23 +3,20 @@
 # Author:lipeijie
 
 import os
-from easyai.data_loader.gen_image.gen_image_dataloader import get_gen_image_train_dataloader
+from easyai.data_loader.one_class.one_class_dataloader import get_one_class_train_dataloader
 from easyai.tasks.utility.gan_train import GanTrain
-from easyai.tasks.gen_image.generate_image import GenerateImage
 from easyai.base_name.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 
-@REGISTERED_TRAIN_TASK.register_module(TaskName.GenerateImage)
-class GenerateImageTrain(GanTrain):
+@REGISTERED_TRAIN_TASK.register_module(TaskName.OneClass)
+class OneClassTrain(GanTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.GenerateImage)
         self.set_model_param(data_channel=self.train_task_config.data_channel,
                              image_size=self.train_task_config.image_size)
         self.set_model(gpu_id=gpu_id)
-
-        self.gen_test = GenerateImage(model_name, gpu_id, self.train_task_config)
 
         self.best_score = 0
 
@@ -32,7 +29,7 @@ class GenerateImageTrain(GanTrain):
         self.build_optimizer()
 
     def train(self, train_path, val_path):
-        dataloader = get_gen_image_train_dataloader(train_path, self.train_task_config)
+        dataloader = get_one_class_train_dataloader(train_path, self.train_task_config)
         self.total_batch_image = len(dataloader)
         self.lr_factory.set_epoch_iteration(self.total_batch_image)
         d_lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.d_lr_scheduler_config)
@@ -49,12 +46,14 @@ class GenerateImageTrain(GanTrain):
     def trian_epoch(self, epoch, d_lr_scheduler, g_lr_scheduler, dataloader):
         for i, (images, targets) in enumerate(dataloader):
             current_iter = epoch * self.total_images + i
-            d_lr = d_lr_scheduler.get_lr(epoch, current_iter)
-            for optimizer in self.d_optimizer_list:
-                d_lr_scheduler.adjust_learning_rate(optimizer, d_lr)
-            g_lr = g_lr_scheduler.get_lr(epoch, current_iter)
-            for optimizer in self.g_optimizer_list:
-                g_lr_scheduler.adjust_learning_rate(optimizer, g_lr)
+            if self.train_task_config.d_train:
+                d_lr = d_lr_scheduler.get_lr(epoch, current_iter)
+                for optimizer in self.d_optimizer_list:
+                    d_lr_scheduler.adjust_learning_rate(optimizer, d_lr)
+            if self.train_task_config.g_train:
+                g_lr = g_lr_scheduler.get_lr(epoch, current_iter)
+                for optimizer in self.g_optimizer_list:
+                    g_lr_scheduler.adjust_learning_rate(optimizer, g_lr)
             loss_values = self.compute_backward(images, targets, i)
             self.update_logger(i, self.total_images, epoch, loss_values)
 
@@ -62,9 +61,14 @@ class GenerateImageTrain(GanTrain):
         # Compute loss, compute gradient, update parameters
         d_loss_values = None
         g_loss_values = None
-        if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
+        if self.train_task_config.d_train and self.train_task_config.g_train:
+            if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
+                d_loss_values = self.discriminator_backward(input_datas, targets)
+            if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
+                g_loss_values = self.generator_backward(input_datas, targets)
+        elif self.train_task_config.d_train:
             d_loss_values = self.discriminator_backward(input_datas, targets)
-        if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
+        elif self.train_task_config.g_train:
             g_loss_values = self.generator_backward(input_datas, targets)
         return d_loss_values, g_loss_values
 

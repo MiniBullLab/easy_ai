@@ -12,8 +12,7 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class KeyPoint2dConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.KeyPoint2d_Task)
+        super().__init__(TaskName.KeyPoint2d_Task)
         # data
         self.points_class = None
         self.points_count = 0
@@ -21,7 +20,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.confidence_th = 0
         # test
         # train
-        self.log_name = "keypoint2d"
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False
@@ -42,8 +40,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
             self.skeleton = tuple(config_dict['skeleton'])
         if config_dict.get('confidence_th', None) is not None:
             self.confidence_th = float(config_dict['confidence_th'])
-        if config_dict.get('post_prcoess_type', None) is not None:
-            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
@@ -51,7 +47,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
         config_dict['points_count'] = self.points_count
         config_dict['skeleton'] = self.skeleton
         config_dict['confidence_th'] = self.confidence_th
-        config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)

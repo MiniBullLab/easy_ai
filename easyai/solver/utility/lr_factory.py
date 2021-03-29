@@ -9,11 +9,15 @@ from easyai.solver.utility.registry import REGISTERED_LR_SCHEDULER
 
 class LrSchedulerFactory():
 
-    def __init__(self, base_lr, max_epochs=0, epoch_iteration=0):
+    def __init__(self, base_lr, max_epochs=0):
         self.base_lr = base_lr
         self.max_epochs = max_epochs
+        self.epoch_iteration = 0
+        self.total_iters = 0
+
+    def set_epoch_iteration(self, epoch_iteration):
         self.epoch_iteration = epoch_iteration
-        self.total_iters = max_epochs * epoch_iteration
+        self.total_iters = self.max_epochs * epoch_iteration
 
     def get_lr_scheduler(self, lr_config):
         lr_class_name = lr_config['type'].strip()

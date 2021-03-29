@@ -4,7 +4,6 @@
 
 import os
 from easyai.data_loader.sr.super_resolution_dataloader import get_sr_train_dataloader
-from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.sr.super_resolution_test import SuperResolutionTest
 from easyai.base_name.task_name import TaskName
@@ -28,22 +27,16 @@ class SuperResolutionTrain(CommonTrain):
                 = self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
 
         self.model = self.torchModelProcess.model_train_init(self.model)
-
-        self.freeze_process.freeze_block(self.model,
-                                         self.train_task_config.freeze_layer_name,
-                                         self.train_task_config.freeze_layer_type)
-
         self.build_optimizer()
 
     def train(self, train_path, val_path):
         dataloader = get_sr_train_dataloader(train_path, self.train_task_config)
-        self.total_images = len(dataloader)
-        self.load_latest_param(self.train_task_config.latest_weights_path)
 
-        lr_factory = LrSchedulerFactory(self.train_task_config.base_lr,
-                                        self.train_task_config.max_epochs,
-                                        self.total_images)
-        lr_scheduler = lr_factory.get_lr_scheduler(self.train_task_config.lr_scheduler_config)
+        self.total_batch_image = len(dataloader)
+        self.lr_factory.set_epoch_iteration(self.total_batch_image)
+        lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.lr_scheduler_config)
+
+        self.load_latest_param(self.train_task_config.latest_weights_path)
 
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):

@@ -20,8 +20,7 @@ class Det2dSegConfig(Detect2dConfig):
         # test
 
         # train
-        self.log_name = "det2d_seg"
-
+        self.log_name = TaskName.Det2d_Seg_Task
         self.config_path = os.path.join(self.config_save_dir, "det2d_seg_config.json")
 
         self.get_data_default_value()

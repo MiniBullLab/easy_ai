@@ -12,15 +12,12 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class GenerateImageConfig(GanTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.GenerateImage)
+        super().__init__(TaskName.GenerateImage)
 
         # data
         self.save_result_dir_name = "generate_results"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
         # train
-        self.log_name = TaskName.GenerateImage
-
         self.config_path = os.path.join(self.config_save_dir, "generate_image_config.json")
 
         self.get_data_default_value()
@@ -28,12 +25,9 @@ class GenerateImageConfig(GanTrainConfig):
 
     def load_data_value(self, config_dict):
         self.load_image_data_value(config_dict)
-        if config_dict.get('post_prcoess_type', None) is not None:
-            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
-        config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)

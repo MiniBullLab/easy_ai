@@ -8,9 +8,10 @@ from easyai.config.utility.image_task_config import ImageTaskConfig
 
 class GanTrainConfig(ImageTaskConfig):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, task_name):
+        super().__init__(task_name)
         # train
+        self.log_name = task_name
         self.train_batch_size = 1
         self.enable_mixed_precision = False
         self.max_epochs = 0

@@ -12,13 +12,11 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class SuperResolutionConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.SuperResolution_Task)
+        super().__init__(TaskName.SuperResolution_Task)
         # data
         self.upscale_factor = 1
         # test
         # train
-        self.log_name = TaskName.SuperResolution_Task
         self.train_data_augment = False
 
         self.config_path = os.path.join(self.config_save_dir, "super_resolution_config.json")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.base_name.task_name import TaskName
@@ -12,8 +12,7 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class Pose2dConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.Pose2d_Task)
+        super().__init__(TaskName.Pose2d_Task)
 
         # data
         self.pose_class = None
@@ -23,10 +22,7 @@ class Pose2dConfig(CommonTrainConfig):
         self.save_result_name = None
 
         # train
-        self.log_name = "pose2d"
-
         self.train_data_augment = True
-
         self.config_path = os.path.join(self.config_save_dir, "pose2d_config.json")
 
         self.get_data_default_value()
@@ -43,8 +39,6 @@ class Pose2dConfig(CommonTrainConfig):
             self.confidence_th = int(config_dict['confidence_th'])
         if config_dict.get('skeleton', ()) is not None:
             self.skeleton = tuple(config_dict['skeleton'])
-        if config_dict.get('post_prcoess_type', None) is not None:
-            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
@@ -52,7 +46,6 @@ class Pose2dConfig(CommonTrainConfig):
         config_dict['points_count'] = self.points_count
         config_dict['confidence_th'] = self.confidence_th
         config_dict['skeleton'] = self.skeleton
-        config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_test_value(self, config_dict):
         if config_dict.get('test_batch_size', None) is not None:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.config.utility.image_task_config import ImageTaskConfig
@@ -8,9 +8,10 @@ from easyai.config.utility.image_task_config import ImageTaskConfig
 
 class CommonTrainConfig(ImageTaskConfig):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, task_name):
+        super().__init__(task_name)
         # train
+        self.log_name = task_name
         self.train_batch_size = 1
         self.max_epochs = 0
         self.base_lr = 0.0

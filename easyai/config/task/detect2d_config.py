@@ -12,8 +12,7 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class Detect2dConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.Detect2d_Task)
+        super().__init__(TaskName.Detect2d_Task)
         # data
         self.detect2d_class = None
         self.confidence_th = 0
@@ -22,7 +21,6 @@ class Detect2dConfig(CommonTrainConfig):
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_results')
         # train
-        self.log_name = "detect2d"
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False
@@ -41,15 +39,12 @@ class Detect2dConfig(CommonTrainConfig):
             self.confidence_th = float(config_dict['confidence_th'])
         if config_dict.get('nms_th', None) is not None:
             self.nms_th = float(config_dict['nms_th'])
-        if config_dict.get('post_prcoess_type', None) is not None:
-            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['detect2d_class'] = self.detect2d_class
         config_dict['confidence_th'] = self.confidence_th
         config_dict['nms_th'] = self.nms_th
-        config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)

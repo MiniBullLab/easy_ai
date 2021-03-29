@@ -12,8 +12,7 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class SegmentionConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.Segment_Task)
+        super().__init__(TaskName.Segment_Task)
         # data
         self.seg_label_type = None
         self.segment_class = None
@@ -21,9 +20,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
         # test
         # train
-        self.log_name = "segment"
         self.train_data_augment = True
-
         self.config_path = os.path.join(self.config_save_dir, "segmention_config.json")
 
         self.get_data_default_value()

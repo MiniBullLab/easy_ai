@@ -14,8 +14,8 @@ from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
 class DetPose2dConfig(ImageTaskConfig):
 
     def __init__(self):
-        super().__init__()
-        self.set_task_name(TaskName.Det_Pose2d_Task)
+        super().__init__(TaskName.Det_Pose2d_Task)
+
         self.det_config = Detect2dConfig()
         self.pose_config = Pose2dConfig()
 

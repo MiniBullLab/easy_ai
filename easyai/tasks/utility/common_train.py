@@ -16,7 +16,7 @@ class CommonTrain(BaseTrain):
     def __init__(self, model_name, config_path, task_name):
         super().__init__(model_name, config_path, task_name)
         self.optimizer = None
-        self.total_images = 0
+        self.total_batch_image = 0
         self.start_epoch = 0
 
     def load_pretrain_model(self, weights_path):
@@ -27,6 +27,9 @@ class CommonTrain(BaseTrain):
 
     def build_optimizer(self):
         if self.model is not None:
+            self.freeze_process.freeze_block(self.model,
+                                             self.train_task_config.freeze_layer_name,
+                                             self.train_task_config.freeze_layer_type)
             optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
                                                                          self.train_task_config.optimizer_config)
             self.optimizer = self.optimizer_process.get_optimizer(optimizer_args,

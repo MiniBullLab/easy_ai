@@ -15,11 +15,14 @@ class GanTrain(BaseTrain):
 
         self.d_optimizer_list = []
         self.g_optimizer_list = []
-        self.total_images = 0
+        self.total_batch_image = 0
         self.start_epoch = 0
 
     def build_optimizer(self):
         if self.model is not None:
+            # self.freeze_process.freeze_block(self.model,
+            #                                  self.train_task_config.freeze_layer_name,
+            #                                  self.train_task_config.freeze_layer_type)
             d_optimizer_args = self.optimizer_process.get_optimizer_config(self.start_epoch,
                                                                            self.train_task_config.
                                                                            d_optimizer_config)
@@ -39,7 +42,6 @@ class GanTrain(BaseTrain):
             print("model is not create!")
 
     def start_train(self):
-        self.train_task_config.save_config()
         self.d_loss_average.reset()
         self.g_loss_average.reset()
         self.model.train()

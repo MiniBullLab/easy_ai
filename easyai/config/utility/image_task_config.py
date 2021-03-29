@@ -10,8 +10,8 @@ from easyai.config.utility.base_config import BaseConfig
 
 class ImageTaskConfig(BaseConfig):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, task_name):
+        super().__init__(task_name)
         # data
         self.image_size = None  # W * H
         self.data_channel = 3
@@ -20,7 +20,9 @@ class ImageTaskConfig(BaseConfig):
         self.data_mean = (0, 0, 0)
         self.data_std = (1, 1, 1)
         self.post_prcoess_type = 0
+
         self.save_result_path = None
+
         # test
         self.test_batch_size = 1
         self.evaluation_result_name = None
@@ -65,6 +67,9 @@ class ImageTaskConfig(BaseConfig):
         if config_dict.get('data_std', None) is not None:
             self.data_std = tuple(config_dict['data_std'])
 
+        if config_dict.get('post_prcoess_type', None) is not None:
+            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
+
     def save_image_data_value(self, config_dict):
         config_dict['image_size'] = self.image_size
         config_dict['data_channel'] = self.data_channel
@@ -72,6 +77,8 @@ class ImageTaskConfig(BaseConfig):
         config_dict['normalize_type'] = self.normalize_type
         config_dict['data_mean'] = self.data_mean
         config_dict['data_std'] = self.data_std
+
+        config_dict['post_prcoess_type'] = self.post_prcoess_type
 
     def load_data_value(self, config_dict):
         pass

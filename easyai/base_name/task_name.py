@@ -12,6 +12,7 @@ class TaskName():
     KeyPoint2d_Task = "keypoint2d"
     Pose2d_Task = "pose2d"
     GenerateImage = "generate_image"
+    OneClass = "one_class"
 
     Det_Pose2d_Task = "det_pose2d"
     Det2d_Seg_Task = "det2d_seg"

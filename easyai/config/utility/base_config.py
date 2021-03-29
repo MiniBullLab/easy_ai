@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import abc
@@ -8,8 +8,8 @@ import abc
 
 class BaseConfig():
 
-    def __init__(self):
-        self.task_name = None
+    def __init__(self, task_name):
+        self.task_name = task_name
         self.root_save_dir = None
         self.model_save_dir_name = None
         self.snapshot_dir = None
