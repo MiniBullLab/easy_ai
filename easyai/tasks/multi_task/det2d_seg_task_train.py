@@ -71,7 +71,7 @@ class Det2dSegTaskTrain(CommonTrain):
             self.optimizer.zero_grad()
         return loss, loss_list
 
-    def compute_loss(self, output_list, targets, loss_type=0):
+    def compute_loss(self, output_list, targets):
         loss = 0
         loss_list = []
         loss_count = len(self.model.lossList)

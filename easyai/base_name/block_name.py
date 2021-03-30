@@ -108,7 +108,12 @@ class BlockType():
     DenseUpsamplingConvBlock = "ducBlock"
     DeConvBNActivationBlock = "deconvBNActivationBlock"
 
+    # det2d
     Detection2dBlock = "detection2dBlock"
+
+    # gan
+    DCEncoder = "DCEncoder"
+    DCDecoder = "DCDecoder"
 
 
 class HeadType():

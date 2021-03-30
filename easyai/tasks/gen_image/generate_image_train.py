@@ -62,62 +62,34 @@ class GenerateImageTrain(GanTrain):
         # Compute loss, compute gradient, update parameters
         d_loss_values = None
         g_loss_values = None
-        if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
-            d_loss_values = self.discriminator_backward(input_datas, targets)
         if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
             g_loss_values = self.generator_backward(input_datas, targets)
+        if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
+            d_loss_values = self.discriminator_backward(input_datas, targets)
         return d_loss_values, g_loss_values
-
-    def discriminator_backward(self, input_datas, targets):
-        fake_images = self.model.generator_input_data(input_datas, 0)
-        real_images = self.model.generator_input_data(input_datas, 1)
-        output_list = self.model(fake_images.to(self.device),
-                                 real_images.to(self.device),
-                                 net_type=1)
-        loss = self.compute_loss(output_list, targets, 0)
-        for index, optimizer in enumerate(self.d_optimizer_list):
-            optimizer.zero_grad()
-            loss[index].backward()
-            optimizer.step()
-        return loss
 
     def generator_backward(self, input_datas, targets):
         fake_images = self.model.generator_input_data(input_datas, 0)
         output_list = self.model(fake_images.to(self.device),
-                                 net_type=2)
-        loss = self.compute_loss(output_list, targets, 1)
+                                 net_type=1)
+        loss = self.compute_g_loss(output_list, targets)
         for index, optimizer in enumerate(self.g_optimizer_list):
             optimizer.zero_grad()
             loss[index].backward()
             optimizer.step()
         return loss
 
-    def compute_loss(self, output_list, targets, loss_type=0):
-        loss = []
-        if loss_type == 0:
-            loss = self.compute_d_loss(output_list, targets)
-        elif loss_type == 1:
-            loss = self.compute_g_loss(output_list, targets)
-        else:
-            print("compute loss error")
-        return loss
-
-    def compute_d_loss(self, output_list, targets):
-        loss = []
-        loss_count = len(self.model.d_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            result = self.model.d_loss_list[0](output_list[0], targets)
-            loss.append(result)
-        elif loss_count == 1 and output_count > 1:
-            result = self.model.d_loss_list[0](output_list, targets)
-            loss.append(result)
-        elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
-                result = self.model.d_loss_list[k](output_list[k], targets)
-                loss.append(result)
-        else:
-            print("compute discriminator loss error")
+    def discriminator_backward(self, input_datas, targets):
+        fake_images = self.model.generator_input_data(input_datas, 0)
+        real_images = self.model.generator_input_data(input_datas, 1)
+        output_list = self.model(fake_images.to(self.device),
+                                 real_images.to(self.device),
+                                 net_type=2)
+        loss = self.compute_d_loss(output_list, targets)
+        for index, optimizer in enumerate(self.d_optimizer_list):
+            optimizer.zero_grad()
+            loss[index].backward()
+            optimizer.step()
         return loss
 
     def compute_g_loss(self, output_list, targets):
@@ -136,6 +108,24 @@ class GenerateImageTrain(GanTrain):
                 loss.append(result)
         else:
             print("compute generator loss error")
+        return loss
+
+    def compute_d_loss(self, output_list, targets):
+        loss = []
+        loss_count = len(self.model.d_loss_list)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            result = self.model.d_loss_list[0](output_list[0], targets)
+            loss.append(result)
+        elif loss_count == 1 and output_count > 1:
+            result = self.model.d_loss_list[0](output_list, targets)
+            loss.append(result)
+        elif loss_count > 1 and loss_count == output_count:
+            for k in range(0, loss_count):
+                result = self.model.d_loss_list[k](output_list[k], targets)
+                loss.append(result)
+        else:
+            print("compute discriminator loss error")
         return loss
 
     def update_logger(self, index, total, epoch, loss_values):

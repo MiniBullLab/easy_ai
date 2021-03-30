@@ -16,8 +16,6 @@ class BaseGanModel(AbstractModel):
         self.d_loss_list = []
         self.g_loss_list = []
         self.data_channel = data_channel
-        self.d_model_args = {"data_channel": data_channel}
-        self.g_model_args = {"data_channel": data_channel}
 
         self.gan_base_factory = BackboneFactory()
         self.loss_factory = LossFactory()

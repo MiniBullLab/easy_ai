@@ -7,7 +7,7 @@ from easyai.base_name.task_name import TaskName
 from easyai.config.utility.image_task_config import ImageTaskConfig
 from easyai.config.task.detect2d_config import Detect2dConfig
 from easyai.config.task.pose2d_config import Pose2dConfig
-from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
+from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.Det_Pose2d_Task)

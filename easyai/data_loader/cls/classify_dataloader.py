@@ -49,7 +49,8 @@ def get_classify_train_dataloader(train_path, data_config, num_workers=8):
     dataloader = ClassifyDataloader(train_path, resize_type, normalize_type, mean, std,
                                     image_size, data_channel, is_augment=is_augment)
     result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=True)
+                             batch_size=batch_size, shuffle=True,
+                             drop_last=True, worker_init_fn=None)
     return result
 
 
@@ -64,5 +65,6 @@ def get_classify_val_dataloader(val_path, data_config, num_workers=8):
     dataloader = ClassifyDataloader(val_path, resize_type, normalize_type, mean, std,
                                     image_size, data_channel, is_augment=False)
     result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False)
+                             batch_size=batch_size, shuffle=False,
+                             drop_last=False, worker_init_fn=None)
     return result

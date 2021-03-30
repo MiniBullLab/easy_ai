@@ -43,3 +43,6 @@ class LossName():
     # gen_image
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"
     MNISTGeneratorLoss = "MNISTGeneratorLoss"
+
+    GANomalyGeneratorLoss = "GANomalyGeneratorLoss"
+    GANomalyDiscriminatorLoss = "GANomalyDiscriminatorLoss"

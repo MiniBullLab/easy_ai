@@ -29,17 +29,19 @@ class MNISTGan(BaseGanModel):
         self.d_model_list = []
         self.g_model_list = []
 
-        self.d_model_args['type'] = GanBaseModelName.MNISTDiscriminator
-        self.d_model_args["data_channel"] = self.image_size[0] * self.image_size[1]
-        discriminator = self.gan_base_factory.get_backbone_model(self.d_model_args)
+        d_model_args = dict()
+        d_model_args['type'] = GanBaseModelName.MNISTDiscriminator
+        d_model_args["data_channel"] = self.image_size[0] * self.image_size[1]
+        discriminator = self.gan_base_factory.get_backbone_model(d_model_args)
         d_out_channels = discriminator.get_outchannel_list()
         self.add_block_list(BlockType.Discriminator, discriminator, d_out_channels[-1], 1)
         self.d_model_list.append(discriminator)
 
-        self.g_model_args['type'] = GanBaseModelName.MNISTGenerator
-        self.g_model_args["data_channel"] = self.z_dimension
-        self.g_model_args['final_out_channel'] = self.image_size[0] * self.image_size[1]
-        generator = self.gan_base_factory.get_backbone_model(self.g_model_args)
+        g_model_args = dict()
+        g_model_args['type'] = GanBaseModelName.MNISTGenerator
+        g_model_args["data_channel"] = self.z_dimension
+        g_model_args['final_out_channel'] = self.image_size[0] * self.image_size[1]
+        generator = self.gan_base_factory.get_backbone_model(g_model_args)
         g_out_channels = generator.get_outchannel_list()
         self.add_block_list(BlockType.Generator, generator, g_out_channels[-1], 1)
         self.g_model_list.append(generator)
@@ -73,13 +75,13 @@ class MNISTGan(BaseGanModel):
             x = self._modules[BlockType.Generator](fake_data)
             output.append(x[-1])
         elif net_type == 1:
+            x = self._modules[BlockType.Generator](fake_data)
+            x = self._modules[BlockType.Discriminator](x[-1])
+            output.append(x[-1])
+        elif net_type == 2:
             x = self._modules[BlockType.Discriminator](real_data)
             output.append(x[-1])
             fake_x = self._modules[BlockType.Generator](fake_data)
             x = self._modules[BlockType.Discriminator](fake_x[-1].detach())
-            output.append(x[-1])
-        elif net_type == 2:
-            x = self._modules[BlockType.Generator](fake_data)
-            x = self._modules[BlockType.Discriminator](x[-1])
             output.append(x[-1])
         return output

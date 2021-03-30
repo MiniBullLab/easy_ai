@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
+import abc
 import sys
 import torch
 from easyai.tasks.utility.base_train import BaseTrain
@@ -91,3 +92,8 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_layer_name,
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
+
+    @abc.abstractmethod
+    def compute_loss(self, output_list, targets):
+        pass
+

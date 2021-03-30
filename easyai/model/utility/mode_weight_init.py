@@ -11,6 +11,9 @@ class ModelWeightInit():
     def __init__(self):
         self.init_type = "kaiming"
 
+    def set_init_type(self, init_type):
+        self.init_type = init_type
+
     def init_weight(self, model):
         # weight initialization
         if model is None:
@@ -33,7 +36,7 @@ class ModelWeightInit():
                 m.weight.data *= scale
                 if m.bias is not None:
                     m.bias.data.zero_()
-            elif isinstance(m, nn.BatchNorm2d):
+            elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm1d)):
                 nn.init.ones_(m.weight)
                 nn.init.zeros_(m.bias)
 
@@ -50,7 +53,8 @@ class ModelWeightInit():
                     raise NotImplementedError('initialization method [%s] is not implemented' % init_type)
                 if hasattr(m, 'bias') and m.bias is not None:
                     nn.init.constant_(m.bias.data, 0.0)
-            elif isinstance(m, nn.BatchNorm2d):
+            elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm1d)):
                 nn.init.normal_(m.weight.data, 1.0, gain)
                 nn.init.constant_(m.bias.data, 0.0)
         print('initialize network with %s' % init_type)
+

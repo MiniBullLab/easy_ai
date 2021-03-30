@@ -55,9 +55,10 @@ class BaseTrain(BaseTask):
         self.model_args["data_channel"] = data_channel
         self.model_args.update(params)
 
-    def set_model(self, my_model=None, gpu_id=0):
+    def set_model(self, my_model=None, gpu_id=0, init_type="kaiming"):
         if my_model is None:
             self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+            self.torchModelProcess.init_model(self.model, init_type)
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.model.train()
@@ -72,10 +73,6 @@ class BaseTrain(BaseTask):
 
     @abc.abstractmethod
     def compute_backward(self, input_datas, targets, step_index):
-        pass
-
-    @abc.abstractmethod
-    def compute_loss(self, output_list, targets, loss_type=0):
         pass
 
     def set_is_sparse_train(self, is_sparse=False, sparse_ratio=0.0):

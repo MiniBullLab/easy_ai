@@ -16,7 +16,7 @@ class OneClassTrain(GanTrain):
         super().__init__(model_name, config_path, TaskName.GenerateImage)
         self.set_model_param(data_channel=self.train_task_config.data_channel,
                              image_size=self.train_task_config.image_size)
-        self.set_model(gpu_id=gpu_id)
+        self.set_model(gpu_id=gpu_id, init_type="normal")
 
         self.best_score = 0
 
@@ -62,48 +62,59 @@ class OneClassTrain(GanTrain):
         d_loss_values = None
         g_loss_values = None
         if self.train_task_config.d_train and self.train_task_config.g_train:
-            if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
-                d_loss_values = self.discriminator_backward(input_datas, targets)
+            g_output_list = self.model(input_datas.to(self.device),
+                                       net_type=1)
+            d_output_list = self.model(g_output_list[0],
+                                       g_output_list[2],
+                                       net_type=2)
             if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
-                g_loss_values = self.generator_backward(input_datas, targets)
-        elif self.train_task_config.d_train:
-            d_loss_values = self.discriminator_backward(input_datas, targets)
+                g_loss_values = self.loss_backward(g_output_list, targets, 0)
+            if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
+                d_loss_values = self.loss_backward(d_output_list, targets, 1)
         elif self.train_task_config.g_train:
-            g_loss_values = self.generator_backward(input_datas, targets)
+            pass
+        elif self.train_task_config.d_train:
+            pass
         return d_loss_values, g_loss_values
 
-    def discriminator_backward(self, input_datas, targets):
-        fake_images = self.model.generator_input_data(input_datas, 0)
-        real_images = self.model.generator_input_data(input_datas, 1)
-        output_list = self.model(fake_images.to(self.device),
-                                 real_images.to(self.device),
-                                 net_type=1)
-        loss = self.compute_loss(output_list, targets, 0)
-        for index, optimizer in enumerate(self.d_optimizer_list):
-            optimizer.zero_grad()
-            loss[index].backward()
-            optimizer.step()
-        return loss
-
-    def generator_backward(self, input_datas, targets):
-        fake_images = self.model.generator_input_data(input_datas, 0)
-        output_list = self.model(fake_images.to(self.device),
-                                 net_type=2)
-        loss = self.compute_loss(output_list, targets, 1)
+    def generator_backward(self, output_list, targets):
+        loss = self.compute_g_loss(output_list, targets)
         for index, optimizer in enumerate(self.g_optimizer_list):
             optimizer.zero_grad()
             loss[index].backward()
             optimizer.step()
         return loss
 
-    def compute_loss(self, output_list, targets, loss_type=0):
+    def discriminator_backward(self, output_list, targets):
+        loss = self.compute_d_loss(output_list, targets)
+        for index, optimizer in enumerate(self.d_optimizer_list):
+            optimizer.zero_grad()
+            loss[index].backward()
+            optimizer.step()
+
+            if loss[index].item() < 1e-5:
+                self.torchModelProcess.init_model(self.d_model_list[index], init_type="normal")
+        return loss
+
+    def compute_g_loss(self, output_list, targets):
         loss = []
-        if loss_type == 0:
-            loss = self.compute_d_loss(output_list, targets)
-        elif loss_type == 1:
-            loss = self.compute_g_loss(output_list, targets)
+        loss_count = len(self.model.g_loss_list)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            result = self.model.g_loss_list[0](output_list[0], targets)
+            self.model.g_loss_list[0].print_loss_info()
+            loss.append(result)
+        elif loss_count == 1 and output_count > 1:
+            result = self.model.g_loss_list[0](output_list, targets)
+            self.model.g_loss_list[0].print_loss_info()
+            loss.append(result)
+        elif loss_count > 1 and loss_count == output_count:
+            for k in range(0, loss_count):
+                result = self.model.g_loss_list[k](output_list[k], targets)
+                self.model.g_loss_list[k].print_loss_info()
+                loss.append(result)
         else:
-            print("compute loss error")
+            print("compute generator loss error")
         return loss
 
     def compute_d_loss(self, output_list, targets):
@@ -122,24 +133,6 @@ class OneClassTrain(GanTrain):
                 loss.append(result)
         else:
             print("compute discriminator loss error")
-        return loss
-
-    def compute_g_loss(self, output_list, targets):
-        loss = []
-        loss_count = len(self.model.g_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            result = self.model.g_loss_list[0](output_list[0], targets)
-            loss.append(result)
-        elif loss_count == 1 and output_count > 1:
-            result = self.model.g_loss_list[0](output_list, targets)
-            loss.append(result)
-        elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
-                result = self.model.g_loss_list[k](output_list[k], targets)
-                loss.append(result)
-        else:
-            print("compute generator loss error")
         return loss
 
     def update_logger(self, index, total, epoch, loss_values):
@@ -202,6 +195,4 @@ class OneClassTrain(GanTrain):
         return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
-        if epoch % 5 == 0:
-            self.gen_test.load_weights(save_model_path)
-            self.gen_test.process(None, 0, False)
+        pass

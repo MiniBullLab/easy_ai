@@ -5,7 +5,7 @@
 import os
 from easyai.base_name.task_name import TaskName
 from easyai.config.utility.common_train_config import CommonTrainConfig
-from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
+from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.Segment_Task)

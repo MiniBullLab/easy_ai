@@ -13,7 +13,7 @@ class BaseLoss(nn.Module):
     def __init__(self, name):
         super().__init__()
         self.loss_name = name
-        self.loss_info = {}
+        self.loss_info = dict()
 
     def set_name(self, name):
         self.loss_name = name

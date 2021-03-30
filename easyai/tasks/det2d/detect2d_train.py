@@ -72,7 +72,7 @@ class Detection2dTrain(CommonTrain):
         loss_info['all_loss'] = loss.item()
         return loss_info
 
-    def compute_loss(self, output_list, targets, loss_type=0):
+    def compute_loss(self, output_list, targets):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)

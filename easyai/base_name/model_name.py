@@ -52,6 +52,7 @@ class ModelName():
 
     # gen_image
     MNISTGan = "MNISTGan"
+    GANomaly = "GANomaly"
 
     # multi
     DetPoes2dModel = "DetPoes2d"

@@ -68,7 +68,7 @@ class SuperResolutionTrain(CommonTrain):
             self.optimizer.zero_grad()
         return loss.item()
 
-    def compute_loss(self, output_list, targets, loss_type=0):
+    def compute_loss(self, output_list, targets):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)

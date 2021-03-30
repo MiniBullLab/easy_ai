@@ -103,4 +103,7 @@ class GanBaseModelName():
     MNISTDiscriminator = "mnist_discriminator"
     MNISTGenerator = "mnist_generator"
 
+    GANomalyDiscriminator = "ganomaly_discriminator"
+    GANomalyGenerator = "ganomaly_generator"
+
 
