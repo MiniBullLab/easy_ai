@@ -17,6 +17,7 @@ class BaseTest(BaseTask):
         self.set_task_name(task_name)
         self.timer = TimerProcess()
         self.epoch_loss_average = AverageMeter()
+        self.total_batch_image = 0
         self.test_task_config = None
         self.inference = None
         self.model = None
@@ -33,7 +34,12 @@ class BaseTest(BaseTask):
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.device = my_model.device
-            self.model.eval()
+
+    def start_test(self):
+        self.epoch_loss_average.reset()
+        self.model.eval()
+        self.timer.tic()
+        assert self.total_batch_image > 0
 
     @abc.abstractmethod
     def load_weights(self, weights_path):

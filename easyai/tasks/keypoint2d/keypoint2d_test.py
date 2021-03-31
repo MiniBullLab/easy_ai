@@ -29,9 +29,9 @@ class KeyPoint2dTest(BaseTest):
     def test(self, val_path, epoch=0):
         dataloader = get_key_points2d_val_dataloader(val_path,
                                                      self.test_task_config)
-
-        self.timer.tic()
+        self.total_batch_image = len(dataloader)
         self.evaluator.reset()
+        self.start_test()
         for i, (images, labels) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
 

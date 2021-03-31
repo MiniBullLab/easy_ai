@@ -92,6 +92,7 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_layer_name,
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
+        assert self.total_batch_image > 0
 
     @abc.abstractmethod
     def compute_loss(self, output_list, targets):

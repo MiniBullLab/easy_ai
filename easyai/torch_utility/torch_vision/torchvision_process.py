@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torchvision.transforms as transforms
 from torchvision.transforms import Compose, CenterCrop

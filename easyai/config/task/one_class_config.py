@@ -15,10 +15,9 @@ class OneClassConfig(GanTrainConfig):
         super().__init__(TaskName.OneClass)
 
         # data
+        self.confidence_th = 0
         self.save_result_name = None
         # train
-        self.train_d = False
-        self.train_g = False
 
         self.config_path = os.path.join(self.config_save_dir, "one_class_config.json")
 
@@ -28,9 +27,12 @@ class OneClassConfig(GanTrainConfig):
 
     def load_data_value(self, config_dict):
         self.load_image_data_value(config_dict)
+        if config_dict.get('confidence_th', None) is not None:
+            self.confidence_th = float(config_dict['confidence_th'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
+        config_dict['confidence_th'] = self.confidence_th
 
     def load_test_value(self, config_dict):
         if config_dict.get('test_batch_size', None) is not None:
@@ -41,15 +43,9 @@ class OneClassConfig(GanTrainConfig):
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_d', None) is not None:
-            self.train_d = bool(config_dict['train_d'])
-        if config_dict.get('train_g', None) is not None:
-            self.train_d = bool(config_dict['train_g'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
-        config_dict['train_d'] = self.train_d
-        config_dict['train_g'] = self.train_g
 
     def get_data_default_value(self):
         self.image_size = (32, 32)  # w * H
@@ -60,6 +56,8 @@ class OneClassConfig(GanTrainConfig):
         self.data_std = (0.5, 0.5, 0.5)
         self.post_prcoess_type = 0
 
+        self.confidence_th = 0
+
         self.save_result_name = "one_class_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
@@ -69,8 +67,6 @@ class OneClassConfig(GanTrainConfig):
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.train_d = True
-        self.train_g = True
         self.train_batch_size = 64
         self.enable_mixed_precision = False
         self.is_save_epoch_model = False

@@ -28,7 +28,8 @@ class ClassifyTest(BaseTest):
     def test(self, val_path, epoch=0):
         dataloader = get_classify_val_dataloader(val_path, self.test_task_config)
         self.evaluation.clean_data()
-        self.epoch_loss_average.reset()
+        self.total_batch_image = len(dataloader)
+        self.start_test()
         for index, (images, labels) in enumerate(dataloader):
             prediction, output_list = self.inference.infer(images)
             loss = self.compute_loss(output_list, labels)

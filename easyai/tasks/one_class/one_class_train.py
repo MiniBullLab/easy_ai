@@ -61,20 +61,14 @@ class OneClassTrain(GanTrain):
         # Compute loss, compute gradient, update parameters
         d_loss_values = None
         g_loss_values = None
-        if self.train_task_config.d_train and self.train_task_config.g_train:
-            g_output_list = self.model(input_datas.to(self.device),
-                                       net_type=1)
-            d_output_list = self.model(g_output_list[0],
-                                       g_output_list[2],
-                                       net_type=2)
-            if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
-                g_loss_values = self.loss_backward(g_output_list, targets, 0)
-            if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
-                d_loss_values = self.loss_backward(d_output_list, targets, 1)
-        elif self.train_task_config.g_train:
-            pass
-        elif self.train_task_config.d_train:
-            pass
+        g_output_list = self.model(input_datas.to(self.device),
+                                   net_type=1)
+        d_output_list = self.model(g_output_list[0], g_output_list[2],
+                                   net_type=2)
+        if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
+            g_loss_values = self.generator_backward(g_output_list, targets)
+        if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
+            d_loss_values = self.discriminator_backward(d_output_list, targets)
         return d_loss_values, g_loss_values
 
     def generator_backward(self, output_list, targets):
@@ -187,7 +181,7 @@ class OneClassTrain(GanTrain):
 
         if self.train_task_config.is_save_epoch_model:
             save_model_path = os.path.join(self.train_task_config.snapshot_path,
-                                           "generate_image_epoch_%d.pt" % epoch)
+                                           "one_class_epoch_%d.pt" % epoch)
         else:
             save_model_path = self.train_task_config.latest_weights_path
         self.torchModelProcess.save_latest_model(epoch, 0, self.model, save_model_path)

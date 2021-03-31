@@ -31,11 +31,10 @@ class Detection2dTest(BaseTest):
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
 
         dataloader = get_detection_val_dataloader(val_path, self.test_task_config)
-        all_count = len(dataloader)
-        self.epoch_loss_average.reset()
-        self.timer.tic()
+        self.total_batch_image = len(dataloader)
+        self.start_test()
         for i, (image_path, src_size, input_image) in enumerate(dataloader):
-            print('%g/%g' % (i + 1, all_count), end=' ')
+            print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
 
             prediction, output_list = self.inference.infer(input_image)
             detection_objects = self.inference.result_process.postprocess(prediction,

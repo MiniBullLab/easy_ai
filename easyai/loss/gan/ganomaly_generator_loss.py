@@ -2,9 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.common.common_loss import l2_loss
+from easyai.torch_utility.torch_vision.torchvision_visualizer import TorchVisionVisualizer
+from easyai.config.utility.image_task_config import ImageTaskConfig
 from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
 
 
@@ -20,8 +23,15 @@ class GANomalyGeneratorLoss(BaseLoss):
         self.con_loss = nn.L1Loss()
         self.enc_loss = l2_loss
 
+        self.config = ImageTaskConfig("gan")
+        self.vision = TorchVisionVisualizer()
+        self.save_dir = os.path.join(self.config.root_save_dir, "generate")
+        self.save_index = 0
+        if not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
         self.loss_info = {'adv_loss': 0, 'con_loss': 0,
-                          'enc_loss': 0}
+                          'enc_loss': 0, 'max_score': 0}
 
     def forward(self, outputs, targets=None):
         if targets is not None:
@@ -34,6 +44,12 @@ class GANomalyGeneratorLoss(BaseLoss):
             self.loss_info['adv_loss'] = adv_error.item()
             self.loss_info['con_loss'] = con_error.item()
             self.loss_info['enc_loss'] = enc_error.item()
+            if enc_error.item() > self.loss_info['max_score']:
+                self.loss_info['max_score'] = enc_error.item()
         else:
-            loss = self.enc_loss(outputs[2], outputs[0])
+            save_name = "gen_%d.png" % self.save_index
+            save_path = os.path.join(self.save_dir, save_name)
+            self.vision.save_current_images(outputs[1], save_path)
+            self.save_index += 1
+            loss = torch.mean(torch.pow((outputs[2] - outputs[0]), 2), dim=1)
         return loss

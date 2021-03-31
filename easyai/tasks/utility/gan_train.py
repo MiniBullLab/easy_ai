@@ -46,3 +46,4 @@ class GanTrain(BaseTrain):
         self.g_loss_average.reset()
         self.model.train()
         self.timer.tic()
+        assert self.total_batch_image > 0

@@ -21,7 +21,7 @@ class EasyAiModelTrain():
         self.gpu_id = gpu_id
         self.config_path = config_path
         self.copy_process = CopyImage()
-        self.config = ImageTaskConfig()
+        self.config = ImageTaskConfig("None")
         self.dataset_path, _ = os.path.split(self.train_path)
         self.images_dir = os.path.join(self.dataset_path, "../JPEGImages")
         self.sample_process = SampleInformation()

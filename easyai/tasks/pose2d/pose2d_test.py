@@ -33,12 +33,11 @@ class Pose2dTest(BaseTest):
 
     def test(self, val_path, epoch=0):
         dataloader = get_poes2d_val_dataloader(val_path, self.test_task_config)
-        all_count = len(dataloader)
+        self.total_batch_image = len(dataloader)
         self.evaluation.reset()
-        self.epoch_loss_average.reset()
-        self.timer.tic()
+        self.start_test()
         for index, (images, targets) in enumerate(dataloader):
-            print('%g/%g' % (index + 1, all_count), end=' ')
+            print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
             result = self.result_process.get_pose_result(prediction, self.point_threshold)
             loss = self.compute_loss(output_list, targets)

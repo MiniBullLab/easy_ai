@@ -31,10 +31,9 @@ class SegmentionTest(BaseTest):
 
     def test(self, val_path, epoch=0):
         dataloader = get_segment_val_dataloader(val_path, self.test_task_config)
-        print("Eval data num: {}".format(len(dataloader)))
-        self.timer.tic()
+        self.total_batch_image = len(dataloader)
         self.metric.reset()
-        self.epoch_loss_average.reset()
+        self.start_test()
         for i, (images, segment_targets) in enumerate(dataloader):
             prediction, output_list = self.segment_inference.infer(images)
             result = self.output_process.get_segmentation_result(prediction,
@@ -78,7 +77,7 @@ class SegmentionTest(BaseTest):
     def save_test_value(self, epoch, score, class_score):
         # write epoch results
         with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | mIoU: {:.3f} | ".format(epoch, score['Mean IoU : \t']))
+            file.write("Epoch: {} | mIoU: {:.3f} | ".format(epoch, score['Mean IoU']))
             for i, iou in class_score.items():
                 file.write(self.test_task_config.segment_class[i][0] + ": {:.3f} ".format(iou))
             file.write("\n")

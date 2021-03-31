@@ -43,9 +43,9 @@ class Classify(BaseInference):
     def save_result(self, file_path, class_index, class_confidence):
         path, filename_post = os.path.split(file_path)
         with open(self.task_config.save_result_path, 'a') as file:
-            file.write("{} {} {}\n".format(filename_post,
-                                           class_index[0].cpu().numpy(),
-                                           class_confidence[0][0].cpu().numpy()))
+            file.write("{} {} {:.5f}\n".format(filename_post,
+                                               class_index[0].cpu().numpy(),
+                                               class_confidence[0][0].cpu().numpy()))
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

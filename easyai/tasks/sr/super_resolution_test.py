@@ -27,10 +27,9 @@ class SuperResolutionTest(BaseTest):
 
     def test(self, val_path, epoch=0):
         dataloader = get_sr_val_dataloader(val_path, self.test_task_config)
-        print("Eval data num: {}".format(len(dataloader)))
-        self.timer.tic()
+        self.total_batch_image = len(dataloader)
         self.evalution.reset()
-        self.epoch_loss_average.reset()
+        self.start_test()
         for i, (images, sr_targets) in enumerate(dataloader):
             prediction, output_list = self.sr_inference.infer(images)
             loss = self.compute_loss(output_list, sr_targets)

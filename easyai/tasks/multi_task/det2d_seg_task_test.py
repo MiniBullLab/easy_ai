@@ -33,9 +33,10 @@ class Det2dSegTaskTest(BaseTest):
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
 
         dataloader = get_det2d_seg_val_dataloader(val_path, self.test_task_config)
+        self.total_batch_image = len(dataloader)
 
-        self.timer.tic()
         self.seg_metric.reset()
+        self.start_test()
         for i, (image_path, src_image, input_image, segment_targets) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
 
