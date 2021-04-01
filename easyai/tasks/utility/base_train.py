@@ -28,7 +28,10 @@ class BaseTrain(BaseTask):
         self.sparse_ratio = 0.0
 
         if isinstance(model_name, (list, tuple)):
-            self.model_args = {"type": model_name[0]}
+            if len(model_name) > 0:
+                self.model_args = {"type": model_name[0]}
+            else:
+                self.model_args = {"type": None}
         elif isinstance(model_name, str):
             self.model_args = {"type": model_name}
 
@@ -62,6 +65,10 @@ class BaseTrain(BaseTask):
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.model.train()
+
+    @abc.abstractmethod
+    def load_pretrain_model(self, weights_path):
+        pass
 
     @abc.abstractmethod
     def load_latest_param(self, latest_weights_path):

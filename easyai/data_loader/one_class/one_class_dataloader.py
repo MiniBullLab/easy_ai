@@ -22,7 +22,6 @@ class OneClassDataloader(TorchDataLoader):
 
     def __getitem__(self, index):
         img_path, label = self.gan_sample.get_sample_path(index)
-        assert int(label) == 0
         _, src_image = self.read_src_image(img_path)
         image = self.dataset_process.resize_image(src_image, self.image_size)
         image = self.dataset_process.normalize_image(image)
@@ -54,7 +53,7 @@ def get_one_class_val_dataloader(val_path, data_config, num_workers=8):
     std = data_config.data_std
     image_size = data_config.image_size
     data_channel = data_config.data_channel
-    batch_size = data_config.train_batch_size
+    batch_size = data_config.test_batch_size
     dataloader = OneClassDataloader(val_path, resize_type, normalize_type, mean, std,
                                     image_size, data_channel)
     result = data.DataLoader(dataset=dataloader, num_workers=num_workers,

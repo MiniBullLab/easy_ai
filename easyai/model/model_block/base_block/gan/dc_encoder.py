@@ -16,7 +16,7 @@ class DCEncoder(BaseBlock):
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.LeakyReLU):
         super().__init__(BlockType.DCEncoder)
-        assert csize % 16 == 0,  "csize has to be a multiple of 16"
+        assert csize % 16 == 0,  "csize(%d) has to be a multiple of 16" % csize
         csize = csize / 2
         self.block = nn.Sequential()
 
@@ -66,5 +66,7 @@ class DCEncoder(BaseBlock):
         return self.output_channel
 
     def forward(self, x):
-        x = self.block(x)
+        for layer in self.block.children():
+            x = layer(x)
+            # print(x.shape)
         return x

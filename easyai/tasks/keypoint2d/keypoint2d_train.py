@@ -47,7 +47,7 @@ class KeyPoints2dTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for i, (images, targets) in enumerate(dataloader):
-            current_iter = epoch * self.total_images + i
+            current_iter = epoch * self.total_batch_image + i
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             if sum([len(x) for x in targets]) < 1:  # if no targets continue

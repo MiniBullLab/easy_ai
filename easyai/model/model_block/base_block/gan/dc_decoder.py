@@ -16,7 +16,7 @@ class DCDecoder(BaseBlock):
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(BlockType.DCDecoder)
-        assert csize % 16 == 0, "csize has to be a multiple of 16"
+        assert csize % 16 == 0,  "csize(%d) has to be a multiple of 16" % csize
         self.block = nn.Sequential()
 
         out_channel, tisize = out_channel // 2, 4
@@ -46,7 +46,7 @@ class DCDecoder(BaseBlock):
                                                      bias=False,
                                                      bn_name=bn_name,
                                                      activation_name=activation_name)
-            temp_name = "pyramid_%s_%d" % (pyramid_deconv.get_name(), csize)
+            temp_name = "pyramid_%s_%d" % (pyramid_deconv.get_name(), in_size)
             self.block.add_module(temp_name, pyramid_deconv)
             out_channel = out_channel // 2
             in_size = in_size * 2
@@ -76,9 +76,8 @@ class DCDecoder(BaseBlock):
         self.block.add_module(temp_name, final_deconv)
 
     def forward(self, x):
-        x = self.block(x)
+        for layer in self.block.children():
+            x = layer(x)
+            # print(x.shape)
         return x
 
-    def forward(self, x):
-        x = self.block(x)
-        return x

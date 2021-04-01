@@ -49,7 +49,7 @@ class Pose2dTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for i, (images, targets) in enumerate(dataloader):
-            current_iter = epoch * self.total_images + i
+            current_iter = epoch * self.total_batch_image + i
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             loss_info = self.compute_backward(images, targets, i)

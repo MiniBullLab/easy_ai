@@ -29,7 +29,10 @@ class BaseInference(BaseTask):
         self.src_size = (0, 0)
         self.result_show = self.show_factory.get_task_show(self.task_name)
         if isinstance(model_name, (list, tuple)):
-            self.model_args = {"type": model_name[0]}
+            if len(model_name) > 0:
+                self.model_args = {"type": model_name[0]}
+            else:
+                self.model_args = {"type": None}
         elif isinstance(model_name, str):
             self.model_args = {"type": model_name}
 

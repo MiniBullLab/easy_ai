@@ -15,7 +15,7 @@ class EmptyLayer(BaseBlock):
         super().__init__(LayerType.EmptyLayer)
 
     def forward(self, x):
-        pass
+        return x
 
 
 class MultiplyLayer(BaseBlock):

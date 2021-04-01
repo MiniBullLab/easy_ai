@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.block_name import NormalizationType
 from easyai.model.model_block.base_block.utility.base_block import *
@@ -12,7 +12,7 @@ class EmptyNormalization(BaseBlock):
         super().__init__(NormalizationType.EmptyNormalization)
 
     def forward(self, x):
-        pass
+        return x
 
 
 class FrozenBatchNorm2d(BaseBlock):

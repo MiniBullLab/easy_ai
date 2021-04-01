@@ -77,7 +77,7 @@ class OneClassConfig(GanTrainConfig):
         self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
-        self.max_epochs = 15
+        self.max_epochs = 100
 
         self.base_lr = 0.0002
         self.d_optimizer_config = {0: {'type': 'Adam',
@@ -93,17 +93,17 @@ class OneClassConfig(GanTrainConfig):
                                    }
 
         self.d_lr_scheduler_config = {'type': 'MultiStageLR',
-                                      'lr_stages': [[100, 1], [300, 0.1], [500, 0.01]],
+                                      'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
                                       'warmup_type': 0,
                                       'warmup_iters': 1000}
 
         self.g_lr_scheduler_config = {'type': 'MultiStageLR',
-                                      'lr_stages': [[100, 1], [300, 0.1], [500, 0.01]],
+                                      'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
                                       'warmup_type': 0,
                                       'warmup_iters': 1000}
 
         self.d_skip_batch_backward = 1
-        self.g_skip_batch_backward = 2
+        self.g_skip_batch_backward = 1
 
         self.accumulated_batches = 1
         self.display = 1

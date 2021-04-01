@@ -34,7 +34,6 @@ class OneClassTest(BaseTest):
             loss = self.compute_loss(output_list, labels)
             self.evaluation.eval(prediction, labels.detach().numpy())
             self.metirc_loss(index, loss)
-            print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc(True)))
         roc_auc = self.evaluation.get_score()
         self.save_test_value(epoch, roc_auc)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))

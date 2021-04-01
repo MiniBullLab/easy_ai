@@ -22,7 +22,8 @@ class CommonTrain(BaseTrain):
 
     def load_pretrain_model(self, weights_path):
         if isinstance(weights_path, (list, tuple)):
-            self.torchModelProcess.load_pretain_model(weights_path[0], self.model)
+            if len(weights_path) > 0:
+                self.torchModelProcess.load_pretain_model(weights_path[0], self.model)
         else:
             self.torchModelProcess.load_pretain_model(weights_path, self.model)
 

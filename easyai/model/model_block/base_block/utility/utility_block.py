@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.block_name import ActivationType, NormalizationType
 from easyai.base_name.block_name import LayerType, BlockType

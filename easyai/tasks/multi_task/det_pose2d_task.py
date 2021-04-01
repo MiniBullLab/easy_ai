@@ -51,7 +51,6 @@ class DetPose2dTask(BaseInference):
                     point.y = point.y + box.min_corner.y
                 objects_pose.append(pose)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
-
             if not self.result_show.show(src_image, detection_objects, objects_pose,
                                          self.pose2d_inference.task_config.skeleton):
                 break

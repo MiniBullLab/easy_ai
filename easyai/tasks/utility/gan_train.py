@@ -18,6 +18,13 @@ class GanTrain(BaseTrain):
         self.total_batch_image = 0
         self.start_epoch = 0
 
+    def load_pretrain_model(self, weights_path):
+        if isinstance(weights_path, (list, tuple)):
+            if len(weights_path) > 0:
+                self.torchModelProcess.load_pretain_model(weights_path[0], self.model)
+        else:
+            self.torchModelProcess.load_pretain_model(weights_path, self.model)
+
     def build_optimizer(self):
         if self.model is not None:
             # self.freeze_process.freeze_block(self.model,

@@ -43,7 +43,7 @@ class Det2dSegTaskTrain(CommonTrain):
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
             for i, (images, detects, segments) in enumerate(dataloader):
-                current_iter = epoch * self.total_images + i
+                current_iter = epoch * self.total_batch_image + i
                 lr = lr_scheduler.get_lr(epoch, current_iter)
                 lr_scheduler.adjust_learning_rate(self.optimizer, lr)
                 if sum([len(x) for x in detects]) < 1:  # if no targets continue

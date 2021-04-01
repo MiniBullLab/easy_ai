@@ -48,7 +48,7 @@ class GenerateImageTrain(GanTrain):
 
     def trian_epoch(self, epoch, d_lr_scheduler, g_lr_scheduler, dataloader):
         for i, (images, targets) in enumerate(dataloader):
-            current_iter = epoch * self.total_images + i
+            current_iter = epoch * self.total_batch_image + i
             d_lr = d_lr_scheduler.get_lr(epoch, current_iter)
             for optimizer in self.d_optimizer_list:
                 d_lr_scheduler.adjust_learning_rate(optimizer, d_lr)
@@ -139,12 +139,12 @@ class GenerateImageTrain(GanTrain):
             return
         step = epoch * total + index
         all_d_loss_value = 0
-        for index, d_loss in enumerate(d_loss_values):
-            tag = "d_loss_%d" % index
+        for temp_index, d_loss in enumerate(d_loss_values):
+            tag = "d_loss_%d" % temp_index
             all_d_loss_value += d_loss.item()
             self.train_logger.add_scalar(tag, d_loss.item(), step)
-        for index, optimizer in enumerate(self.d_optimizer_list):
-            tag = "d_lr_%d" % index
+        for temp_index, optimizer in enumerate(self.d_optimizer_list):
+            tag = "d_lr_%d" % temp_index
             d_lr = optimizer.param_groups[0]['lr']
             self.train_logger.add_scalar(tag, d_lr, step)
             print("d Lr:", d_lr)
@@ -157,12 +157,12 @@ class GenerateImageTrain(GanTrain):
             return
         step = epoch * total + index
         all_g_loss_value = 0
-        for index, g_loss in enumerate(g_loss_values):
-            tag = "g_loss_%d" % index
+        for temp_index, g_loss in enumerate(g_loss_values):
+            tag = "g_loss_%d" % temp_index
             all_g_loss_value += g_loss.item()
             self.train_logger.add_scalar(tag, g_loss.item(), step)
-        for index, optimizer in enumerate(self.g_optimizer_list):
-            tag = "g_lr_%d" % index
+        for temp_index, optimizer in enumerate(self.g_optimizer_list):
+            tag = "g_lr_%d" % temp_index
             g_lr = optimizer.param_groups[0]['lr']
             self.train_logger.add_scalar(tag, g_lr, step)
             print("g Lr:", g_lr)

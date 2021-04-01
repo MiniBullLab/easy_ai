@@ -87,6 +87,7 @@ class ModelFactory():
         return model
 
     def get_gan_model(self, model_config):
+        # print(model_config)
         model = build_from_cfg(model_config, REGISTERED_GAN_MODEL)
         return model
 

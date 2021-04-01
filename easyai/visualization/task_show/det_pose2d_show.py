@@ -16,10 +16,10 @@ class DetAndPose2dShow(BaseShow):
         self.set_task_name(TaskName.Det_Pose2d_Task)
 
     def show(self, src_image, detection_objects, objects_pose, skeleton):
-        image = src_image.copy()
-        self.drawing.draw_detect_objects(image, detection_objects)
-        self.drawing.draw_keypoint2d_result(image, objects_pose, skeleton)
-        self.drawing.draw_image("image", image, 0.8)
+        # image = src_image.copy()
+        self.drawing.draw_detect_objects(src_image, detection_objects)
+        self.drawing.draw_keypoint2d_result(src_image, objects_pose, skeleton)
+        self.drawing.draw_image("image", src_image, 1.0)
         if cv2.getWindowProperty('image', 1) < 0:
             return False
         return self.wait_key()

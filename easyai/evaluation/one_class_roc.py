@@ -5,7 +5,9 @@
 import os
 import numpy as np
 from sklearn.metrics import roc_curve, auc
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
 
 
 class OneClassROC():
@@ -34,7 +36,7 @@ class OneClassROC():
         roc_auc = auc(fpr, tpr)
         self.draw_roc(fpr, tpr, roc_auc)
         self.print_evaluation(roc_auc)
-        return roc_auc
+        return float(roc_auc)
 
     def draw_roc(self, fpr, tpr, roc_auc):
         plt.figure()
@@ -50,6 +52,7 @@ class OneClassROC():
         save_name = "ROC_%d.pdf" % self.save_index
         plt.savefig(os.path.join(self.save_dir, save_name))
         plt.close()
+        self.save_index = (self.save_index + 1) % 100
 
     def print_evaluation(self, roc_auc):
-        print("AUC(Area Under Curve): {.5f}".format(roc_auc))
+        print("AUC(Area Under Curve): {:.5f}".format(roc_auc))

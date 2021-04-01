@@ -54,7 +54,7 @@ class ClassifyTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for index, (images, targets) in enumerate(dataloader):
-            current_iter = epoch * self.total_images + index
+            current_iter = epoch * self.total_batch_image + index
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             loss_value = self.compute_backward(images, targets, index)

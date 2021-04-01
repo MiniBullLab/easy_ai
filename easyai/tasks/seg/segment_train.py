@@ -45,7 +45,7 @@ class SegmentionTrain(CommonTrain):
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
             for idx, (images, segments) in enumerate(dataloader):
-                current_idx = epoch * self.total_images + idx
+                current_idx = epoch * self.total_batch_image + idx
                 lr = lr_scheduler.get_lr(epoch, current_idx)
                 lr_scheduler.adjust_learning_rate(self.optimizer, lr)
                 loss_value = self.compute_backward(images, segments, idx)
