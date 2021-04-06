@@ -97,6 +97,9 @@ class BackboneName():
     HRnet_w48 = "hrnet_w48"
     HRnet_w64 = "hrnet_w64"
     CSPDarknet53 = "csp_darknet53"
+    PeleeNet12 = "peleenet12"
+    PeleeNet24 = "peleenet24"
+    PeleeNet16 = "peleenet16"
 
 
 class GanBaseModelName():

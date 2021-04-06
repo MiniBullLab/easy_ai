@@ -25,3 +25,5 @@ from . import vgg
 from . import wider_resnet
 from . import xception
 from . import xception1
+from . import peleenet
+
