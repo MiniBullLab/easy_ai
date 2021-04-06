@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.block_name import NormalizationType, ActivationType
 from easyai.base_name.backbone_name import BackboneName
@@ -10,15 +10,18 @@ from easyai.model.model_block.backbone.utility.base_backbone import *
 from easyai.model.model_block.backbone.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 
-__all__ = ['MobileNetV2V10', 'MobileNetV2V10Dilated8']
+__all__ = ['MobileNetV2V01', 'MobileNetV2V05', 'MobileNetV2V10',
+           'MobileNetV2V10Dilated8', 'MobileNetV2Down4']
 
 
 class MobileNetV2(BaseBackbone):
 
-    def __init__(self, data_channel=3, input_stride=2,
+    def __init__(self, data_channel=3, input_stride=2, width_mult=1.,
                  num_blocks=(1, 2, 3, 4, 3, 3, 1),
-                 out_channels=(16, 24, 32, 64, 96, 160, 320), strides=(1, 2, 2, 2, 1, 2, 1),
-                 dilations=(1, 1, 1, 1, 1, 1, 1), expand_ratios=(1, 6, 6, 6, 6, 6, 6),
+                 out_channels=(16, 24, 32, 64, 96, 160, 320),
+                 strides=(1, 2, 2, 2, 1, 2, 1),
+                 dilations=(1, 1, 1, 1, 1, 1, 1),
+                 expand_ratios=(1, 6, 6, 6, 6, 6, 6),
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU6):
         super().__init__(data_channel)
@@ -31,7 +34,8 @@ class MobileNetV2(BaseBackbone):
         self.bnName = bn_name
         self.expand_ratios = expand_ratios
         self.input_stride = input_stride
-        self.first_output = 32
+        self.width_mult = width_mult
+        self.first_output = self.make_divisible(32 * width_mult, 4 if width_mult == 0.1 else 8)
 
         self.create_block_list()
 
@@ -50,7 +54,8 @@ class MobileNetV2(BaseBackbone):
 
         self.in_channels = self.first_output
         for index, num_block in enumerate(self.num_blocks):
-            self.make_mobile_layer(self.out_channels[index], self.num_blocks[index],
+            output_channel = self.make_divisible(self.out_channels[index] * self.width_mult, 4 if self.width_mult == 0.1 else 8)
+            self.make_mobile_layer(output_channel, self.num_blocks[index],
                                    self.strides[index], self.dilations[index],
                                    self.bnName, self.activationName,
                                    self.expand_ratios[index])
@@ -70,6 +75,15 @@ class MobileNetV2(BaseBackbone):
                                      dilation=dilation, bnName=bnName, activationName=activationName)
             self.add_block_list(layer.get_name(), layer, out_channels)
 
+    def make_divisible(self, v, divisor, min_value=None):
+        if min_value is None:
+            min_value = divisor
+        new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
+        # Make sure that round down does not go down by more than 10%.
+        if new_v < 0.9 * v:
+            new_v += divisor
+        return new_v
+
     def forward(self, x):
         output_list = []
         for block in self._modules.values():
@@ -78,12 +92,29 @@ class MobileNetV2(BaseBackbone):
         return output_list
 
 
+@REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV2_0_1)
+class MobileNetV2V01(MobileNetV2):
+
+    def __init__(self, data_channel):
+        super().__init__(data_channel=data_channel,
+                         width_mult=0.1)
+        self.set_name(BackboneName.MobileNetV2_0_1)
+
+
+@REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV2_0_5)
+class MobileNetV2V05(MobileNetV2):
+
+    def __init__(self, data_channel):
+        super().__init__(data_channel=data_channel,
+                         width_mult=0.5)
+        self.set_name(BackboneName.MobileNetV2_0_5)
+
+
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV2_1_0)
 class MobileNetV2V10(MobileNetV2):
 
     def __init__(self, data_channel):
-        super().__init__(data_channel=data_channel,
-                         num_blocks=(1, 2, 3, 4, 3, 3, 1))
+        super().__init__(data_channel=data_channel)
         self.set_name(BackboneName.MobileNetV2_1_0)
 
 
@@ -92,7 +123,6 @@ class MobileNetV2V10Dilated8(MobileNetV2):
 
     def __init__(self, data_channel):
         super().__init__(data_channel=data_channel,
-                         num_blocks=(1, 2, 3, 4, 3, 3, 1),
                          dilations=(1, 1, 1, 2, 2, 4, 4))
         self.set_name(BackboneName.MobileNetV2V10Dilated8)
 
@@ -103,7 +133,6 @@ class MobileNetV2Down4(MobileNetV2):
     def __init__(self, data_channel):
         super().__init__(data_channel=data_channel,
                          input_stride=1,
-                         num_blocks=(1, 2, 3, 4, 3, 3, 1),
                          strides=(1, 2, 1, 2, 1, 1, 1))
         self.set_name(BackboneName.MobileNetV2Down4)
 

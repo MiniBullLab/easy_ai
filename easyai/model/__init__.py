@@ -1,3 +1,4 @@
+from .model_block import backbone
 from . import cls
 from . import det2d
 from . import det3d

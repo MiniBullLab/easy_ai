@@ -4,7 +4,7 @@
 
 import torch.nn as nn
 from collections import OrderedDict
-from easyai.base_name.block_name import LayerType, BlockType
+from easyai.base_name.block_name import LayerType, BlockType, HeadType
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock, ConvActivationBlock
 from easyai.model.model_block.base_block.utility.utility_layer import NormalizeLayer, ActivationLayer
 from easyai.model.model_block.base_block.utility.utility_layer import MultiplyLayer, AddLayer
@@ -14,7 +14,7 @@ from easyai.model.model_block.base_block.utility.utility_layer import FcLayer
 from easyai.model.model_block.base_block.utility.pooling_layer import MyMaxPool2d, GlobalAvgPool2d
 from easyai.model.model_block.base_block.utility.pooling_layer import SpatialPyramidPooling
 from easyai.model.model_block.base_block.utility.upsample_layer import Upsample
-from easyai.model.model_block.base_block.det2d.detection_block import Detection2dBlock
+from easyai.model.model_block.head.ssd_box_head import SSDBoxHead
 from easyai.model.model_block.base_block.cls.darknet_block import ReorgBlock, DarknetBlockName
 from easyai.loss.utility.loss_factory import LossFactory
 
@@ -61,12 +61,12 @@ class CreateModuleList():
                 self.filters = (len(pool_sizes) + 1) * self.outChannelList[-1]
                 self.add_block_list(BlockType.SpatialPyramidPooling, block, self.filters)
                 self.input_channels = self.filters
-            elif block_def['type'] == BlockType.Detection2dBlock:
+            elif block_def['type'] == HeadType.SSDBoxHead:
                 anchor_number = int(block_def['anchor_number'])
                 class_number = int(block_def['class_number'])
-                block = Detection2dBlock(self.input_channels, anchor_number, class_number)
+                block = SSDBoxHead(self.input_channels, anchor_number, class_number)
                 self.filters = -1
-                self.add_block_list(BlockType.Detection2dBlock, block, self.filters)
+                self.add_block_list(HeadType.SSDBoxHead, block, self.filters)
                 self.input_channels = self.filters
             elif self.loss_factory.has_loss(block_def['type'].strip()):
                 self.create_loss(block_def)

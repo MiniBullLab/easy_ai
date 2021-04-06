@@ -54,5 +54,5 @@ class GANomalyGeneratorLoss(BaseLoss):
             save_path = os.path.join(self.save_dir, save_name)
             self.vision.save_current_images(outputs[1], save_path)
             self.save_index = (self.save_index + 1) % 500
-            loss = torch.mean(torch.pow((outputs[2] - outputs[0]), 2), dim=1)
+            loss = torch.mean(torch.pow((outputs[0] - outputs[2]), 2), dim=1)
         return loss

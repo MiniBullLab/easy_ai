@@ -90,6 +90,7 @@ class BlockType():
 
     SeperableConv2dBlock = "seperableConv2dBlock"
     DepthwiseConv2dBlock = "depthwiseConv2dBlock"
+    LiteConv2dBlock = "liteConv2dBlock"
     SeparableConv2dBNActivation = "separableConv2dBNActivation"
     ShuffleBlock = "shuffleBlock"
     MixConv2dBlock = "mixConv2dBlock"
@@ -98,6 +99,7 @@ class BlockType():
     InvertedResidual = "invertedResidual"
 
     FPNBlock = "FPNBlock"
+    FPNV2Block = "FPNV2Block"
 
     SEBlock = "seBlock"
     SEConvBlock = "seConvBlock"
@@ -109,7 +111,6 @@ class BlockType():
     DeConvBNActivationBlock = "deconvBNActivationBlock"
 
     # det2d
-    Detection2dBlock = "detection2dBlock"
 
     # gan
     DCEncoder = "DCEncoder"
@@ -117,6 +118,9 @@ class BlockType():
 
 
 class HeadType():
+
+    SSDBoxHead = "ssdBox"
+    MultiSSDBoxHead = "multiSSDBox"
 
     MultiRPNHead = "multiRPN"
     MultiROIBoxHead = "multiROIBox"

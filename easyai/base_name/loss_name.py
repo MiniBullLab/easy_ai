@@ -22,6 +22,7 @@ class LossName():
     Region2dLoss = "Region2dLoss"
     YoloV3Loss = "YoloV3Loss"
     MultiBoxLoss = "MultiBoxLoss"
+    RefineMultiBoxLoss = "RefineMultiBoxLoss"
     RPNLoss = "RPNLoss"
     FastRCNNLoss = "FastRCNNLoss"
 

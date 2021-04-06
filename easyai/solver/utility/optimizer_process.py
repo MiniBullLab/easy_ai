@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.utility.registry import build_from_cfg
 from easyai.solver.utility.registry import REGISTERED_OPTIMIZER
@@ -24,6 +24,22 @@ class OptimizerProcess():
         config_args = config.copy()
         params = filter(lambda p: p.requires_grad, model.parameters())
         config_args['params'] = params
+        config_args['lr'] = self.base_lr
+        self.optimizer = build_from_cfg(config_args, REGISTERED_OPTIMIZER)
+        # self.print_param()
+        return self.optimizer
+
+    def bias_not_weight_decay(self, config, model):
+        config_args = config.copy()
+        spe_params = []
+        conv_params = []
+        for k, v in model.named_parameters():
+            if 'bn' in k or 'bias' in k:
+                spe_params.append(v)
+            else:
+                conv_params.append(v)
+        params_group = [{'params': spe_params, 'weight_decay': 0.0}, {'params': conv_params}]
+        config_args['params'] = params_group
         config_args['lr'] = self.base_lr
         self.optimizer = build_from_cfg(config_args, REGISTERED_OPTIMIZER)
         # self.print_param()

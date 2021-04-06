@@ -39,6 +39,7 @@ class ModelName():
 
     RPNDet2d = "rpnDet2d"
     YoloV3Det2d = "yolov3"
+    MobileV2RefineDet2d = "mbv2Refine"
     DetNet = "denet"
 
     KeyPointRCNN = "KeyPointRCNN"

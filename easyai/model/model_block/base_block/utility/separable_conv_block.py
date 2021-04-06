@@ -75,6 +75,29 @@ class DepthwiseConv2dBlock(BaseBlock):
         return x
 
 
+class LiteConv2dBlock(BaseBlock):
+    '''
+    Replace Conv2d with a depthwise Conv2d and Pointwise Conv2s.
+    '''
+
+    def __init__(self, in_channel, out_channel, kernel_size=1,
+                 padding=0, stride=1, dilation=1, bias=True,
+                 bn_name=NormalizationType.BatchNormalize2d,
+                 activation_name=ActivationType.ReLU):
+        super().__init__(BlockType.LiteConv2dBlock)
+        conv1 = DepthwiseConv2dBlock(in_channel, kernel_size, padding,
+                                     stride, dilation, bias, bn_name, activation_name)
+        conv2 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel, kernel_size=1)
+        self.block = nn.Sequential(OrderedDict([
+            (conv1.get_name(), conv1),
+            (LayerType.Convolutional, conv2)
+        ]))
+
+    def forward(self, x):
+        x = self.block(x)
+        return x
+
+
 class SeparableConv2dBNActivation(BaseBlock):
     def __init__(self, inplanes, planes, kernel_size=3, stride=1, dilation=1, relu_first=True,
                  bias=False, bn_name=NormalizationType.BatchNormalize2d,

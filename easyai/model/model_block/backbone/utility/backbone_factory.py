@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os.path
 from easyai.model.model_block.backbone.utility.my_backbone import MyBackbone

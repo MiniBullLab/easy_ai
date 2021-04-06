@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import os
-from easyai.base_name.block_name import LayerType, BlockType
+from easyai.base_name.block_name import LayerType, BlockType, HeadType
 from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model.utility.create_model_list import CreateModuleList
@@ -90,7 +90,7 @@ class MyModel(BaseModel):
                 x = block(layer_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif BlockType.Detection2dBlock in key:
+            elif HeadType.SSDBoxHead in key:
                 x = block(x)
                 multi_output.extend(x)
             elif self.loss_factory.has_loss(key):

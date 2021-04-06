@@ -18,6 +18,8 @@ class BackboneName():
     Darknet53_Dilated16 = "darknet53_dilated16"
     ShuffleNetV2_1_0 = "shufflenetv2_1_0"
     ShuffleNetV2V05 = "shufflenetv2_0_5"
+    MobileNetV2_0_1 = "mobilenetv2_0_1"
+    MobileNetV2_0_5 = "mobilenetv2_0_5"
     MobileNetV2_1_0 = "mobilenetv2_1_0"
     MobileNetV2V10Dilated8 = "mobilenetv2_1_0_dilated8"
     MobileNetV2Down4 = "mobileNetv2_down4"

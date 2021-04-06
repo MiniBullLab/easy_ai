@@ -96,7 +96,7 @@ class CreateOneClassSample():
             else:
                 for image_index, image_path in enumerate(image_list):
                     # print(image_path)
-                    self.write_data(image_path, class_name, 0, save_val_file)
+                    self.write_data(image_path, class_name, 1, save_val_file)
 
         save_val_file.close()
 
