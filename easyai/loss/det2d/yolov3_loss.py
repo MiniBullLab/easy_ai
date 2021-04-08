@@ -5,7 +5,7 @@
 
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.det2d.utility.yolo_loss import YoloLoss
+from easyai.loss.det2d.utility.base_yolo_loss import BaseYoloLoss
 from easyai.loss.utility.box2d_process import torch_rect_box_ious
 from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 import math
@@ -14,7 +14,7 @@ __all__ = ['YoloV3Loss']
 
 
 @REGISTERED_DET2D_LOSS.register_module(LossName.YoloV3Loss)
-class YoloV3Loss(YoloLoss):
+class YoloV3Loss(BaseYoloLoss):
 
     def __init__(self, class_number, anchor_sizes, anchor_mask, reduction,
                  coord_weight=3.0, noobject_weight=1.0,

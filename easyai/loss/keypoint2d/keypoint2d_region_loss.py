@@ -4,12 +4,12 @@
 
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.det2d.utility.yolo_loss import YoloLoss
+from easyai.loss.det2d.utility.base_yolo_loss import BaseYoloLoss
 from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
 
 
 @REGISTERED_KEYPOINT2D_LOSS.register_module(LossName.Keypoint2dRegionLoss)
-class Keypoint2dRegionLoss(YoloLoss):
+class Keypoint2dRegionLoss(BaseYoloLoss):
     def __init__(self, class_number, point_count,
                  coord_weight=1.0/2.0, noobject_weight=1.0,
                  object_weight=5.0, class_weight=2.0, iou_threshold=0.6):

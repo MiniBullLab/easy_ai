@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import math
 import torch
@@ -33,57 +33,180 @@ class BufferList(nn.Module):
 
 class SSDPriorBoxGenerator():
 
-    def __init__(self):
-        self.anchor_size = None
-        self.aspect_ratio_list = None
-        self.anchor_count = None
+    def __init__(self, anchor_counts, aspect_ratios,
+                 min_sizes, max_sizes):
+        self.anchor_counts = anchor_counts
+        self.aspect_ratios = aspect_ratios
+        self.min_sizes = min_sizes
+        self.max_sizes = max_sizes
         self.clip = False
 
-    def set_anchor_param(self, anchor_count, anchor_size, aspect_ratio_list):
-        self.anchor_count = anchor_count
-        self.anchor_size = anchor_size
-        self.aspect_ratio_list = aspect_ratio_list
-
-    def __call__(self, feature_size, input_size):
+    def __call__(self, input_size, feature_sizes):
         image_w, image_h = input_size
-        feature_map_w, feature_map_h = feature_size
-        stride_w = image_w / feature_map_w
-        stride_h = image_h / feature_map_h
+        anchor_boxes_list = []
+        for index, feature_size in enumerate(feature_sizes):
+            feature_map_w, feature_map_h = feature_size
+            stride_w = image_w / feature_map_w
+            stride_h = image_h / feature_map_h
 
-        boxes = []
-        stride_offset_w, stride_offset_h = 0.5 * stride_w, 0.5 * stride_h
-        s_w = self.anchor_size[0]
-        s_h = self.anchor_size[0]
-        boxes.append((stride_offset_w, stride_offset_h, s_w, s_h))
-        extra_s = math.sqrt(self.anchor_size[0] * self.anchor_size[1])
-        boxes.append((stride_offset_w, stride_offset_h, extra_s, extra_s))
-
-        for ratio in self.aspect_ratio_list:
+            boxes = []
+            stride_offset_w, stride_offset_h = 0.5 * stride_w, 0.5 * stride_h
             boxes.append((stride_offset_w, stride_offset_h,
-                          s_w * math.sqrt(ratio), s_h / math.sqrt(ratio)))
-            boxes.append((stride_offset_w, stride_offset_h,
-                          s_w / math.sqrt(ratio), s_h * math.sqrt(ratio)))
+                          self.min_sizes[index], self.min_sizes[index]))
+            extra_s = math.sqrt(self.min_sizes[index] * self.max_sizes[index])
+            boxes.append((stride_offset_w, stride_offset_h, extra_s, extra_s))
 
-        anchor_bases = torch.FloatTensor(np.array(boxes))
-        assert anchor_bases.size(0) == self.anchor_count
-        anchors = anchor_bases.contiguous().view(1, -1, 4).\
-            repeat(feature_map_h * feature_map_w, 1, 1).contiguous().view(-1, 4)
-        grid_len_h = np.arange(0, image_h - stride_offset_h, stride_h)
-        grid_len_w = np.arange(0, image_w - stride_offset_w, stride_w)
-        a, b = np.meshgrid(grid_len_w, grid_len_h)
+            for ratio in self.aspect_ratios[index]:
+                boxes.append((stride_offset_w, stride_offset_h,
+                              self.min_sizes[index] * math.sqrt(ratio),
+                              self.min_sizes[index] / math.sqrt(ratio)))
+                boxes.append((stride_offset_w, stride_offset_h,
+                              self.min_sizes[index] / math.sqrt(ratio),
+                              self.min_sizes[index] * math.sqrt(ratio)))
 
-        x_offset = torch.FloatTensor(a).view(-1, 1)
-        y_offset = torch.FloatTensor(b).view(-1, 1)
+            anchor_bases = torch.FloatTensor(np.array(boxes))
+            assert anchor_bases.size(0) == self.anchor_counts[index]
+            anchors = anchor_bases.contiguous().view(1, -1, 4).\
+                repeat(feature_map_h * feature_map_w, 1, 1).contiguous().view(-1, 4)
+            grid_len_h = np.arange(0, image_h - stride_offset_h, stride_h)
+            grid_len_w = np.arange(0, image_w - stride_offset_w, stride_w)
+            a, b = np.meshgrid(grid_len_w, grid_len_h)
 
-        x_y_offset = torch.cat((x_offset, y_offset), 1).contiguous().view(-1, 1, 2)
-        x_y_offset = x_y_offset.repeat(1, self.anchor_count, 1).contiguous().view(-1, 2)
-        anchors[:, :2] = anchors[:, :2] + x_y_offset
+            x_offset = torch.FloatTensor(a).view(-1, 1)
+            y_offset = torch.FloatTensor(b).view(-1, 1)
 
+            x_y_offset = torch.cat((x_offset, y_offset), 1).contiguous().view(-1, 1, 2)
+            x_y_offset = x_y_offset.repeat(1, self.anchor_counts[index], 1).contiguous().view(-1, 2)
+            anchors[:, :2] = anchors[:, :2] + x_y_offset
+
+            if self.clip:
+                anchors[:, 0::2].clamp_(min=0., max=image_w - 1)
+                anchors[:, 1::2].clamp_(min=0., max=image_h - 1)
+            anchor_boxes_list.append(anchors)
+        return torch.cat(anchor_boxes_list, 0)
+
+
+class PriorBoxGenerator(nn.Module):
+
+    def __init__(self, input_size=(320, 256),
+                 min_sizes=([10, 16, 32], 64, 128, 256),
+                 max_sizes=([10, 16, 32], 64, 128, 256),
+                 aspect_ratios=([2.0, 0.5], [2.0, 0.5], [2.0, 0.5], [2.0, 0.5]),
+                 anchor_strides=([8, 8], [16, 16], [32, 32], [64, 64])):
+        super().__init__()
+        self.input_size = input_size
+        self.min_sizes = min_sizes
+        self.max_sizes = max_sizes
+        self.aspect_ratios = aspect_ratios
+        self.anchor_strides = anchor_strides
+        self.use_max_sizes = False
+        self.clip = True
+
+    def point_form(self, boxes):
+        """ Convert prior_boxes to (xmin, ymin, xmax, ymax)
+        representation for comparison to point form ground truth data.
+        Args:
+            boxes: (tensor) center-size default boxes from priorbox layers.
+        Return:
+            boxes: (tensor) Converted xmin, ymin, xmax, ymax form of boxes.
+        """
+        return torch.cat(
+            (
+                boxes[:, :2] - boxes[:, 2:] / 2,  # xmin, ymin
+                boxes[:, :2] + boxes[:, 2:] / 2),
+            1)  # xmax, ymax
+
+    def center_size(self, boxes):
+        """ Convert prior_boxes to (cx, cy, w, h)
+        representation for comparison to center-size form ground truth data.
+        Args:
+            boxes: (tensor) point_form boxes
+        Return:
+            boxes: (tensor) Converted xmin, ymin, xmax, ymax form of boxes.
+        """
+        return torch.cat(
+            [(boxes[:, 2:] + boxes[:, :2]) / 2, boxes[:, 2:] - boxes[:, :2]],
+            1)  # w, h
+
+    def forward(self, input_size, feature_sizes):
+        self.input_size = input_size
+        mean = []
+        for k, feature in enumerate(self.feature_sizes):
+            grid_h, grid_w = feature[1], feature[0]
+            for i in range(grid_h):
+                for j in range(grid_w):
+                    if isinstance(self.min_sizes[k], int):
+                        f_k_h = self.input_size[1] / self.anchor_strides[k][1]
+                        f_k_w = self.input_size[0] / self.anchor_strides[k][0]
+                        # unit center x,y
+                        cx = (j + 0.5) / f_k_w
+                        cy = (i + 0.5) / f_k_h
+
+                        # aspect_ratio: 1
+                        # rel size: min_size
+                        s_k_h = self.min_sizes[k] / self.input_size[1]
+                        s_k_w = self.min_sizes[k] / self.input_size[0]
+                        mean += [cx, cy, s_k_w, s_k_h]
+
+                        if self.use_max_sizes:
+                            s_k_prime_w = math.sqrt(s_k_w * (self.max_sizes[k] / self.input_size[0]))
+                            s_k_prime_h = math.sqrt(s_k_h * (self.max_sizes[k] / self.input_size[1]))
+                            mean += [cx, cy, s_k_prime_w, s_k_prime_h]
+
+                        for ar in self.aspect_ratios[k]:
+                            mean += [cx, cy, s_k_w * math.sqrt(ar), s_k_h / math.sqrt(ar)]
+                    elif isinstance(self.min_sizes[k], list):
+                        if self.use_max_sizes:
+                            for min_sizes, max_sizes in zip(self.min_sizes[k], self.max_sizes[k]):
+                                if len(self.min_sizes[k]) != len(self.max_sizes[k]):
+                                    raise Exception('the max size must have same formate')
+                                f_k_h = self.input_size[1] / self.anchor_strides[k][1]
+                                f_k_w = self.input_size[0] / self.anchor_strides[k][0]
+                                # unit center x,y
+                                cx = (j + 0.5) / f_k_w
+                                cy = (i + 0.5) / f_k_h
+
+                                # aspect_ratio: 1
+                                # rel size: min_size
+                                s_k_h = min_sizes / self.input_size[1]
+                                s_k_w = min_sizes / self.input_size[0]
+                                mean += [cx, cy, s_k_w, s_k_h]
+
+                                # aspect_ratio: 1
+                                # rel size: sqrt(s_k * s_(k+1))
+
+                                s_k_prime_w = math.sqrt(
+                                    s_k_w * (max_sizes / self.img_wh[0]))
+                                s_k_prime_h = math.sqrt(
+                                    s_k_h * (max_sizes / self.img_wh[1]))
+                                mean += [cx, cy, s_k_prime_w, s_k_prime_h]
+
+                                for ar in self.aspect_ratios[k]:
+                                    mean += [cx, cy, s_k_w * math.sqrt(ar), s_k_h / math.sqrt(ar)]
+                        else:
+                            for min_sizes in self.min_sizes[k]:
+                                f_k_h = self.input_size[1] / self.anchor_strides[k][1]
+                                f_k_w = self.input_size[0] / self.anchor_strides[k][0]
+                                # unit center x,y
+                                cx = (j + 0.5) / f_k_w
+                                cy = (i + 0.5) / f_k_h
+
+                                # aspect_ratio: 1
+                                # rel size: min_size
+                                s_k_h = min_sizes / self.img_wh[1]
+                                s_k_w = min_sizes / self.img_wh[0]
+                                mean += [cx, cy, s_k_w, s_k_h]
+                                for ar in self.aspect_ratios[k]:
+                                    mean += [cx, cy, s_k_w * math.sqrt(ar), s_k_h / math.sqrt(ar)]
+                    else:
+                        raise Exception('please check min_sizes')
+
+        output = torch.Tensor(mean).view(-1, 4)
         if self.clip:
-            anchors[:, 0::2].clamp_(min=0., max=image_w - 1)
-            anchors[:, 1::2].clamp_(min=0., max=image_h - 1)
-
-        return anchors
+            output_point = self.point_form(output)
+            output_point.clamp_(max=1, min=0)
+            output = self.center_size(output_point)
+        return output
 
 
 class AnchorGenerator(nn.Module):

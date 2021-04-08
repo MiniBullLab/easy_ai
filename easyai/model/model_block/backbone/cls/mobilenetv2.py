@@ -86,9 +86,10 @@ class MobileNetV2(BaseBackbone):
 
     def forward(self, x):
         output_list = []
-        for block in self._modules.values():
+        for key, block in self._modules.items():
             x = block(x)
             output_list.append(x)
+            print(key, x.shape)
         return output_list
 
 

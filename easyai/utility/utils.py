@@ -7,8 +7,18 @@ import torch.nn as nn
 import torch.nn.functional as F
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
+import hashlib
 import logging
 import matplotlib.pyplot as plt
+from zipfile import ZipFile
+
+
+def calculate_md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
 def setup_logging(log_file='log.txt'):

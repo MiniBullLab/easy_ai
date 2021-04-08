@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.det2d_gt_process import Det2dGroundTruthProcess
 
 
-class YoloLoss(BaseLoss):
+class BaseYoloLoss(BaseLoss):
 
     def __init__(self, name, class_number, anchor_sizes=None, anchor_mask=None):
         super().__init__(name)

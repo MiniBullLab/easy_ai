@@ -162,14 +162,18 @@ class LossFactory():
                                               loss_config['input_size'].split(',') if x.strip())
             loss_config['anchor_counts'] = tuple(int(x) for x in
                                                  loss_config['anchor_counts'].split(',') if x.strip())
-            loss_config['anchor_sizes'] = tuple(int(x) for x in
-                                                loss_config['anchor_sizes'].split(',') if x.strip())
-            aspect_ratio_str = tuple(x for x in loss_config['aspect_ratio_list'].split('|') if x.strip())
+            aspect_ratio_str = tuple(x for x in loss_config['aspect_ratios'].split('|') if x.strip())
             aspect_ratio_list = []
             for data in aspect_ratio_str:
                 temp_value = [int(x) for x in data.split(',') if x.strip()]
                 aspect_ratio_list.append(temp_value)
-            loss_config['aspect_ratio_list'] = aspect_ratio_list
+            loss_config['aspect_ratios'] = aspect_ratio_list
+            loss_config['min_sizes'] = tuple(int(x) for x in
+                                             loss_config['min_sizes'].split(',') if x.strip())
+            max_sizes_str = loss_config.get("max_sizes", None)
+            if max_sizes_str is not None:
+                loss_config['max_sizes'] = tuple(int(x) for x in
+                                                 loss_config['max_sizes'].split(',') if x.strip())
         elif input_name == LossName.RPNLoss:
             loss_config['input_size'] = tuple(int(x) for x in
                                               loss_config['input_size'].split(',') if x.strip())
