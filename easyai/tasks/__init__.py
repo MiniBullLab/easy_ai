@@ -7,5 +7,6 @@ from . import seg
 from . import sr
 from . import gen_image
 from . import one_class
+from . import landmark
 from . import multi_task
 

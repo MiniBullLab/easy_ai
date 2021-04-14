@@ -13,6 +13,7 @@ class TaskName():
     Pose2d_Task = "pose2d"
     GenerateImage = "generate_image"
     OneClass = "one_class"
+    Landmark = "landmark"
 
     Det_Pose2d_Task = "det_pose2d"
     Det2d_Seg_Task = "det2d_seg"

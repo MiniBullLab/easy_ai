@@ -47,7 +47,7 @@ class LandmarkDataLoader(TorchDataLoader):
         torch_points = self.dataset_process.numpy_to_torch(points, flag=0)
         torch_box = self.dataset_process.numpy_to_torch(box, flag=0)
 
-        return torch_image, torch_points
+        return torch_image, torch_points, torch_box
 
     def __len__(self):
         return self.pose2d_sample.get_sample_count()

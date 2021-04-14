@@ -6,7 +6,7 @@
 import math
 import numpy as np
 from easyai.helper.dataType import Point2d
-from easyai.helper.dataType import DetectionObject
+from easyai.helper.dataType import DetectionKeyPoint
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 
 
@@ -34,7 +34,7 @@ class Pose2dResultProcess():
         return result
 
     def get_mobile_result(self, prediction):
-        result = DetectionObject()
+        result = DetectionKeyPoint()
         x = (prediction.reshape([-1, 2]) + np.array([1.0, 1.0])) / 2.0
         x = x * np.array(self.image_size)
         for value in x:
@@ -43,7 +43,7 @@ class Pose2dResultProcess():
         return result
 
     def get_heatmaps_result(self, prediction, conf_thresh):
-        result = DetectionObject()
+        result = DetectionKeyPoint()
         heatmap_height = prediction.shape[1]
         heatmap_width = prediction.shape[2]
         coords, maxvals = self.parse_heatmaps(prediction)
@@ -100,7 +100,7 @@ class Pose2dResultProcess():
 
     def resize_object_pose(self, src_size, image_size,
                            object_pose):
-        result = DetectionObject()
+        result = DetectionKeyPoint()
         ratio, pad = self.dataset_process.get_square_size(src_size,
                                                           image_size)
         for value in object_pose.get_key_points():
