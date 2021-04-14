@@ -51,6 +51,7 @@ class LayerType():
     PixelShuffle = "pixelShuffle"
 
     MyMaxPool2d = "maxpool"
+    MyAvgPool2d = "avgpool2d"
     GlobalAvgPool = "globalavgpool"
 
     FcLayer = "fcLayer"
@@ -126,4 +127,6 @@ class HeadType():
     MultiROIBoxHead = "multiROIBox"
     MultiROIKeypointHead = "multiROIKeypoint"
     MultiROIMaskHead = "multiROIMask"
+
+    LandmarkHead = "landmark"
 

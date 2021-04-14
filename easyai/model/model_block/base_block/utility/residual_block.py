@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.block_name import ActivationType, NormalizationType
 from easyai.base_name.block_name import BlockType
 from easyai.model.model_block.base_block.utility.base_block import *
 from easyai.model.model_block.base_block.utility.activation_function import ActivationFunction
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
+from easyai.model.model_block.base_block.utility.utility_block import BNActivationConvBlock
 
 
 class ResidualBlock(BaseBlock):

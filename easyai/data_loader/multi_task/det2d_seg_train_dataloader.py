@@ -87,7 +87,7 @@ class Det2dSegTrainDataloader(DataLoader):
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             image = self.det2d_dataset_process.resize_image(src_size, dst_size)
 
-            boxes = self.det2d_dataset_process.resize_labels(boxes, self.detect2d_class, src_size, dst_size)
+            boxes = self.det2d_dataset_process.resize_box(boxes, self.detect2d_class, src_size, dst_size)
             segment_label = self.seg_dataset_process.resize_lable(segment_label, src_size, dst_size)
             if self.is_augment:
                 image, boxes, segments = self.dataset_augment.augment(image, boxes, segment_label)

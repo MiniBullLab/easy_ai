@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-import math
-import numpy as np
-from easyai.helper.dataType import Rect2D
-from easyai.data_loader.utility.image_data_augment import ImageDataAugment
+from easyai.data_loader.augment.image_data_augment import ImageDataAugment
 
 
 class KeyPoint2dDataAugment():

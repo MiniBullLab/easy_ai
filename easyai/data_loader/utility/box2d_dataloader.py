@@ -4,7 +4,7 @@
 
 import numpy as np
 from easyai.data_loader.utility.data_loader import *
-from easyai.data_loader.pose2d.pose2d_dataset_process import Pose2dDataSetProcess
+from easyai.data_loader.utility.box2d_dataset_process import Box2dDataSetProcess
 
 
 class Box2dLoader(DataLoader):
@@ -17,8 +17,9 @@ class Box2dLoader(DataLoader):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
         self.resize_type = resize_type
-        self.dataset_process = Pose2dDataSetProcess(resize_type, normalize_type,
-                                                    mean, std, self.get_pad_color())
+        self.dataset_process = Box2dDataSetProcess(resize_type, normalize_type,
+                                                   mean, std,
+                                                   pad_color=self.get_pad_color())
         self.src_image = src_image
         self.box_list = box_list
         self.count = len(self.box_list)
@@ -34,7 +35,9 @@ class Box2dLoader(DataLoader):
         if self.index == self.count:
             raise StopIteration
         box = self.box_list[self.index]
-        image, box = self.dataset_process.expand_dataset(self.src_image, box, self.expand_ratio)
+        src_size = (self.src_image.shape[1], self.src_image.shape[0])  # [width, height]
+        expand_box = self.dataset_process.get_expand_box(src_size, box, self.expand_ratio)
+        image = self.dataset_process.get_roi_image(self.src_image, expand_box)
         image = self.dataset_process.resize_image(image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)

@@ -46,6 +46,7 @@ class ModelName():
 
     MobilePose = "MobilePose"
     ResnetPose = "ResnetPose"
+    PeleeLandmark = "PeleeLandmark"
 
     # sr
     MSRResNet = "MSRResNet"

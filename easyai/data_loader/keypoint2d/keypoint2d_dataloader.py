@@ -31,10 +31,10 @@ class KeyPoint2dDataLoader(TorchDataLoader):
     def __getitem__(self, index):
         img_path, label_path = self.detection_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
-        _, boxes = self.json_process.parse_key_points_data(label_path)
+        _, keypoints = self.json_process.parse_key_points_data(label_path)
         image, labels = self.dataset_process.resize_dataset(src_image,
                                                             self.image_size,
-                                                            boxes,
+                                                            keypoints,
                                                             self.class_name)
         torch_image = self.dataset_process.normalize_image(image)
 

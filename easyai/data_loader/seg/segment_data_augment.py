@@ -4,7 +4,7 @@
 
 import numpy as np
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
-from easyai.data_loader.utility.image_data_augment import ImageDataAugment
+from easyai.data_loader.augment.image_data_augment import ImageDataAugment
 
 
 class SegmentDataAugment():

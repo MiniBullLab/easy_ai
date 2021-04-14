@@ -5,6 +5,7 @@
 import os.path
 import numpy as np
 from easyai.helper import DirProcess
+from easyai.helper.json_process import JsonProcess
 
 
 class DetectionSample():
@@ -24,6 +25,7 @@ class DetectionSample():
 
         self.annotation_post = ".json"
         self.dirProcess = DirProcess()
+        self.json_process = JsonProcess()
 
     def read_sample(self):
         if self.is_blance:
@@ -32,6 +34,14 @@ class DetectionSample():
         else:
             self.image_and_label_list = self.get_image_and_label_list(self.train_path)
         self.sample_count = self.get_sample_count()
+
+    def get_sample_boxes(self, label_path):
+        result = []
+        _, boxes = self.json_process.parse_rect_data(label_path)
+        for box in boxes:
+            if box.name in self.class_name:
+                result.append(box)
+        return result
 
     def get_sample_path(self, index, class_index=None):
         if self.is_shuffled:

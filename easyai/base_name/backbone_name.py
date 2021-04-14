@@ -100,6 +100,8 @@ class BackboneName():
     PeleeNet12 = "peleenet12"
     PeleeNet24 = "peleenet24"
     PeleeNet16 = "peleenet16"
+    PeleeNetTransition24 = "peleenet_tran24"
+    SlimNet = "slimnet"
 
 
 class GanBaseModelName():

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
 from easyai.data_loader.utility.base_dataset_process import BaseDataSetProcess
@@ -37,4 +37,17 @@ class TaskDataSetProcess(BaseDataSetProcess):
         image = self.dataset_process.resize(src_image, image_size,
                                             self.resize_type,
                                             pad_color=self.pad_color)
+        return image
+
+    def get_roi_image(self, src_image, expand_box):
+        xmin = expand_box.min_corner.x
+        ymin = expand_box.min_corner.y
+        xmax = expand_box.max_corner.x
+        ymax = expand_box.max_corner.y
+        if len(src_image.shape) == 3:
+            image = src_image[ymin:ymax, xmin:xmax, :]
+        elif len(src_image.shape) == 2:
+            image = src_image[ymin:ymax, xmin:xmax]
+        else:
+            image = None
         return image

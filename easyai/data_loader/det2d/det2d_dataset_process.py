@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
 from easyai.helper.dataType import Rect2D
-from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
+from easyai.data_loader.utility.box2d_dataset_process import Box2dDataSetProcess
 
 
-class DetectionDataSetProcess(TaskDataSetProcess):
+class DetectionDataSetProcess(Box2dDataSetProcess):
 
     def __init__(self, resize_type, normalize_type,
                  mean=0, std=1, pad_color=0):
@@ -16,7 +16,7 @@ class DetectionDataSetProcess(TaskDataSetProcess):
     def resize_dataset(self, src_image, image_size, boxes, class_name):
         src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
         image = self.resize_image(src_image, image_size)
-        labels = self.resize_labels(boxes, class_name, src_size, image_size)
+        labels = self.resize_box(boxes, class_name, src_size, image_size)
         return image, labels
 
     def normalize_labels(self, labels, image_size):
@@ -30,33 +30,6 @@ class DetectionDataSetProcess(TaskDataSetProcess):
             height = rect.height() / image_size[1]
             result[index, :] = np.array([class_id, x, y, width, height])
         return result
-
-    def resize_labels(self, boxes, class_name, src_size, dst_size):
-        labels = []
-        if self.resize_type == 0:
-            ratio_w = float(dst_size[0]) / src_size[0]
-            ratio_h = float(dst_size[1]) / src_size[1]
-            for box in boxes:
-                if box.name in class_name:
-                    rect = Rect2D()
-                    rect.class_id = class_name.index(box.name)
-                    rect.min_corner.x = ratio_w * box.min_corner.x
-                    rect.min_corner.y = ratio_h * box.min_corner.y
-                    rect.max_corner.x = ratio_w * box.max_corner.x
-                    rect.max_corner.y = ratio_h * box.max_corner.y
-                    labels.append(rect)
-        elif self.resize_type == 1:
-            ratio, pad_size = self.dataset_process.get_square_size(src_size, dst_size)
-            for box in boxes:
-                if box.name in class_name:
-                    rect = Rect2D()
-                    rect.class_id = class_name.index(box.name)
-                    rect.min_corner.x = ratio * box.min_corner.x + pad_size[0] // 2
-                    rect.min_corner.y = ratio * box.min_corner.y + pad_size[1] // 2
-                    rect.max_corner.x = ratio * box.max_corner.x + pad_size[0] // 2
-                    rect.max_corner.y = ratio * box.max_corner.y + pad_size[1] // 2
-                    labels.append(rect)
-        return labels
 
     def change_outside_labels(self, labels):
         delete_index = []

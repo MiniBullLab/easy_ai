@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.base_name.block_name import LayerType, BlockType
 from easyai.model.model_block.base_block.utility.base_block import *
@@ -25,6 +25,18 @@ class MyMaxPool2d(BaseBlock):
 
     def forward(self, x):
         x = self.layer(x)
+        return x
+
+
+class MyAvgPool2d(BaseBlock):
+
+    def __init__(self, kernel_size, stride=None, ceil_mode=False):
+        super().__init__(LayerType.MyAvgPool2d)
+        self.avg_pool = nn.AvgPool2d(kernel_size, stride, ceil_mode)
+
+    def forward(self, x):
+        x = self.avg_pool(x)
+        x = x.view(x.size(0), -1)
         return x
 
 

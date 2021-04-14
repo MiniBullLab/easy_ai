@@ -35,7 +35,7 @@ class StemBlock(BaseBlock):
         self.stem3 = ConvBNActivationBlock(2*num_init_features, num_init_features,
                                            kernel_size=1, stride=1, padding=0,
                                            bnName=bn_name, activationName=activation_name)
-        self.pool = MyMaxPool2d(kernel_size=2, stride=2, ceil_mode=True)
+        self.pool = MyMaxPool2d(kernel_size=2, stride=2, ceil_mode=False)
 
     def forward(self, x):
         out = self.stem1(x)

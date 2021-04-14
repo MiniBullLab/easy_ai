@@ -20,6 +20,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.confidence_th = 0
         # test
         # train
+        self.use_box = False
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False
@@ -50,6 +51,8 @@ class KeyPoint2dConfig(CommonTrainConfig):
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
+        if config_dict.get('use_box', None) is not None:
+            self.use_box = bool(config_dict['use_box'])
         if config_dict.get('train_data_augment', None) is not None:
             self.train_data_augment = bool(config_dict['train_data_augment'])
         if config_dict.get('train_multi_scale', None) is not None:
@@ -59,6 +62,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
+        config_dict['use_box'] = self.use_box
         config_dict['train_data_augment'] = self.train_data_augment
         config_dict['train_multi_scale'] = self.train_multi_scale
         config_dict['balanced_sample'] = self.balanced_sample
@@ -84,6 +88,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
 
     def get_train_default_value(self):
         self.log_name = "keypoint2d"
+        self.use_box = False
         self.train_data_augment = True
         self.train_multi_scale = False
         self.balanced_sample = False

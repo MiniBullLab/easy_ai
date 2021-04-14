@@ -7,7 +7,6 @@ import math
 import random
 import numpy as np
 import torch
-from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.utility.data_loader import DataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
@@ -39,7 +38,6 @@ class DetectionTrainDataloader(DataLoader):
                                                 detect2d_class,
                                                 balanced_sample)
         self.detection_sample.read_sample()
-        self.json_process = JsonProcess()
 
         self.dataset_process = DetectionDataSetProcess(resize_type, normalize_type,
                                                        mean, std, self.get_pad_color())
@@ -70,8 +68,7 @@ class DetectionTrainDataloader(DataLoader):
         for temp_index in range(start_index, stop_index):
             img_path, label_path = self.detection_sample.get_sample_path(temp_index, class_index)
             _, src_image = self.read_src_image(img_path)
-            _, boxes = self.json_process.parse_rect_data(label_path)
-
+            boxes = self.detection_sample.get_sample_boxes(label_path)
             image, labels = self.dataset_process.resize_dataset(src_image,
                                                                 dst_size,
                                                                 boxes,

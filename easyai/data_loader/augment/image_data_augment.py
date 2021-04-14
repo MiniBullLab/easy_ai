@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import cv2
 import random
@@ -64,3 +64,11 @@ class ImageDataAugment():
         img_hsv[:, :, 2] = V.astype(np.uint8)
         result = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB)
         return result
+
+    def gaussian_blur(self, src_image):
+        # random gaussian blur
+        image_size = (src_image.shape[1], src_image.shape[0])
+        image = src_image[:]
+        if image_size[0] >= 90 and random.randint(0, 1) == 0:
+            image = cv2.GaussianBlur(image, (5, 5), 1)
+        return image

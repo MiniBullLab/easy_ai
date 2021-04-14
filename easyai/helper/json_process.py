@@ -52,7 +52,7 @@ class JsonProcess():
         image_name = data_dict['filename']
         objects_dict = data_dict['objects']
         rect_objects_list = objects_dict['rectObject']
-        boxes = []
+        result = []
         for rect_dict in rect_objects_list:
             class_name = rect_dict['class']
             xmin = rect_dict['minX']
@@ -63,18 +63,18 @@ class JsonProcess():
             if key_points_list is None:
                 continue
             point_count = rect_dict['pointCount']
-            box = Rect2D()
-            box.min_corner.x = xmin
-            box.min_corner.y = ymin
-            box.max_corner.x = xmax
-            box.max_corner.y = ymax
-            box.name = class_name
-            box.clear_key_points()
+            keypoint = KeyPoint2D()
+            keypoint.min_corner.x = xmin
+            keypoint.min_corner.y = ymin
+            keypoint.max_corner.x = xmax
+            keypoint.max_corner.y = ymax
+            keypoint.name = class_name
+            keypoint.clear_key_points()
             for index in range(0, point_count, 2):
                 point = Point2d(int(key_points_list[index]), int(key_points_list[index+1]))
-                box.add_key_points(point)
-            boxes.append(box)
-        return image_name, boxes
+                keypoint.add_key_points(point)
+            result.append(keypoint)
+        return image_name, result
 
     def parse_pose2d_data(self, json_path):
         if not os.path.exists(json_path):
@@ -85,7 +85,7 @@ class JsonProcess():
         image_name = data_dict['filename']
         objects_dict = data_dict['objects']
         rect_objects_list = objects_dict['rectObject']
-        boxes = []
+        result = []
         for rect_dict in rect_objects_list:
             pose_dict = rect_dict.get('pose', None)
             if pose_dict is None:
@@ -99,24 +99,36 @@ class JsonProcess():
 
             pose_index = pose_dict['index']
             skeleton = pose_dict.get('skeleton', ())
-            box = Rect2D()
-            box.min_corner.x = xmin
-            box.min_corner.y = ymin
-            box.max_corner.x = xmax
-            box.max_corner.y = ymax
-            box.name = class_name
-            box.clear_key_points()
+            direction_cls = pose_dict.get('direction_cls', ())
+            keypoint = KeyPoint2D()
+            keypoint.min_corner.x = xmin
+            keypoint.min_corner.y = ymin
+            keypoint.max_corner.x = xmax
+            keypoint.max_corner.y = ymax
+            keypoint.name = class_name
+            keypoint.clear_key_points()
             is_available = False
             for index_name in pose_index:
-                temp_data = pose_dict.get(index_name, (-1, 1))
-                flag = int(temp_data[2])
-                if flag > 0:
-                    is_available = True
-                    point = Point2d(int(temp_data[0]), int(temp_data[1]))
+                temp_data = pose_dict.get(index_name, (-1, 1, 0))
+                if isinstance(temp_data[0], (list, tuple)):
+                    for point_data in temp_data:
+                        flag = int(point_data[2])
+                        if flag > 0:
+                            is_available = True
+                            point = Point2d(int(temp_data[0]), int(temp_data[1]))
+                        else:
+                            point = Point2d(-1, -1)
+                        keypoint.add_key_points(point)
                 else:
-                    point = Point2d(-1, -1)
-                box.add_key_points(point)
-            box.set_key_points_skeleton(skeleton)
+                    flag = int(temp_data[2])
+                    if flag > 0:
+                        is_available = True
+                        point = Point2d(int(temp_data[0]), int(temp_data[1]))
+                    else:
+                        point = Point2d(-1, -1)
+                    keypoint.add_key_points(point)
+            keypoint.set_key_points_flag(direction_cls)
+            keypoint.set_key_points_skeleton(skeleton)
             if is_available:
-                boxes.append(box)
-        return image_name, boxes
+                result.append(keypoint)
+        return image_name, result
