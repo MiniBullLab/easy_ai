@@ -3,8 +3,8 @@
 # Author:lipeijie
 
 
-from easyai.helper.dataType import Point2d
-from easyai.helper.dataType import DetectionKeyPoint
+from easyai.helper.data_structure import Point2d
+from easyai.helper.data_structure import DetectionKeyPoint
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 
 
@@ -19,11 +19,11 @@ class LandmarkResultProcess():
     def postprocess(self, prediction, src_size, threshold=0.0):
         if prediction is None:
             return None
-        object_landmark = self.get_pose_result(prediction, threshold)
+        object_landmark = self.get_landmark_result(prediction, threshold)
         result = self.resize_object_pose(src_size, self.image_size, object_landmark)
         return result
 
-    def get_pose_result(self, prediction, conf_thresh):
+    def get_landmark_result(self, prediction, conf_thresh):
         result = None
         if self.post_prcoess_type == 0:
             result = self.get_face_landmark_result(prediction, conf_thresh)
@@ -32,6 +32,7 @@ class LandmarkResultProcess():
     def get_face_landmark_result(self, prediction, conf_thresh):
         result = DetectionKeyPoint()
         coords = prediction[0]
+        coords.view(self.points_count, 2)
         conf = prediction[1]
         valid_point = conf > conf_thresh
         for index, valid in enumerate(valid_point):

@@ -4,7 +4,7 @@
 
 import os.path
 import numpy as np
-from easyai.helper.dataType import DetectionObject
+from easyai.helper.data_structure import DetectionObject
 from easyai.helper.dirProcess import DirProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.det2d.det2d_sample import DetectionSample

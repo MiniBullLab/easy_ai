@@ -65,7 +65,9 @@ class LandmarkConfig(CommonTrainConfig):
 
     def get_data_default_value(self):
         self.image_size = (128, 128)
-        self.data_channel = 3
+        self.data_channel = 1
+        self.data_mean = (104.0, )
+        self.data_std = (0.017, )
         self.resize_type = 1
         self.normalize_type = 0
         self.save_result_name = "landmark_result.txt"
@@ -74,9 +76,18 @@ class LandmarkConfig(CommonTrainConfig):
         self.pose_class = ('face',)
         self.points_count = 68
         self.confidence_th = 0.1
-        self.skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12],
-                         [5, 11], [6, 12], [5, 6], [5, 7], [6, 8], [7, 9], [8, 10],
-                         [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
+        self.skeleton = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7],
+                         [7, 8], [8, 9], [9, 10], [10, 11], [11, 12],
+                         [12, 13], [13, 14], [14, 15], [15, 16], [17, 18], [18, 19],
+                         [19, 20], [20, 21], [22, 23], [23, 24],
+                         [24, 25], [25, 26], [27, 28], [28, 29], [29, 30], [30, 31],
+                         [31, 32], [32, 33], [33, 34], [34, 35], [35, 30],
+                         [36, 37], [37, 38], [38, 39], [39, 40], [40, 41], [41, 36],
+                         [42, 43], [43, 44], [44, 45], [45, 46], [46, 47],
+                         [47, 42], [48, 49], [49, 50], [50, 51], [51, 52], [52, 53],
+                         [53, 54], [54, 55], [55, 56], [56, 57], [57, 58],
+                         [58, 59], [59, 48], [60, 61], [61, 62], [62, 63], [63, 64],
+                         [64, 65], [65, 66], [66, 67], [67, 60]]
         self.post_prcoess_type = 0
 
     def get_test_default_value(self):
@@ -103,13 +114,14 @@ class LandmarkConfig(CommonTrainConfig):
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 1e-3
-        self.optimizer_config = {0: {'type': 'SGD',
-                                     'momentum': 0.9,
-                                     'weight_decay': 5e-4}
+        self.base_lr = 0.0005
+        self.optimizer_config = {0: {'type': 'Adam',
+                                     'betas': (0.9, 0.999),
+                                     'eps': 1e-08,
+                                     'weight_decay': 0.0005}
                                  }
         self.lr_scheduler_config = {'type': 'MultiStageLR',
-                                    'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
+                                    'lr_stages': [[10, 0.1], [40, 0.01], [80, 0.001]],
                                     'warmup_type': 2,
                                     'warmup_iters': 5}
         self.accumulated_batches = 1

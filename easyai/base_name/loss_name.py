@@ -40,7 +40,9 @@ class LossName():
     # pose2d
     DSNTLoss = "DSNTLoss"
     JointsMSELoss = "JointsMSELoss"
-    LandmarkLoss = "LandmarkLoss"
+    WingLoss = "WingLoss"
+    MouthEyeFrontDisLoss = "MouthEyeFrontDisLoss"
+    FaceLandmarkLoss = "FaceLandmarkLoss"
 
     # gen_image
     MNISTDiscriminatorLoss = "MNISTDiscriminatorLoss"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.helper.average_meter import AverageMeter
 from easyai.tasks.utility.base_train import BaseTrain

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import abc
 import sys
 import torch
 from easyai.tasks.utility.base_train import BaseTrain
+from easyai.helper.average_meter import AverageMeter
 try:
     from apex import amp
 except ImportError:
@@ -19,6 +20,7 @@ class CommonTrain(BaseTrain):
         self.optimizer = None
         self.total_batch_image = 0
         self.start_epoch = 0
+        self.loss_info_average = dict()
 
     def load_pretrain_model(self, weights_path):
         if isinstance(weights_path, (list, tuple)):
@@ -94,6 +96,31 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
         assert self.total_batch_image > 0
+
+        for key in self.loss_info_average:
+            self.loss_info_average[key].reset()
+
+    def update_logger(self, index, total, epoch, loss_info):
+        step = epoch * total + index
+        lr = self.optimizer.param_groups[0]['lr']
+        loss_value = loss_info['all_loss']
+        loss_info.pop('all_loss')
+
+        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
+        self.train_logger.lr_log(step, lr, self.train_task_config.display)
+
+        for key, value in loss_info.items():
+            if key not in self.loss_info_average.keys():
+                self.loss_info_average[key] = AverageMeter()
+            self.loss_info_average[key].update(value)
+            self.train_logger.add_scalar(key, self.loss_info_average[key].avg, step)
+
+        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
+                                                                                        index,
+                                                                                        total,
+                                                                                        loss_value,
+                                                                                        lr,
+                                                                                        self.timer.toc(True)))
 
     @abc.abstractmethod
     def compute_loss(self, output_list, targets):

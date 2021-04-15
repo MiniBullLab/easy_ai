@@ -38,10 +38,10 @@ class SegmentionTest(BaseTest):
             prediction, output_list = self.segment_inference.infer(images)
             result = self.output_process.get_segmentation_result(prediction,
                                                                  self.threshold)
-            loss = self.compute_loss(output_list, segment_targets)
+            loss_value = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()
             self.metric.numpy_eval(result, gt)
-            self.metirc_loss(i, loss)
+            self.metirc_loss(i, loss_value)
 
         score, class_score = self.metric.get_score()
         self.save_test_value(epoch, score, class_score)
@@ -65,14 +65,7 @@ class SegmentionTest(BaseTest):
                     loss += self.model.lossList[k](output, target)
             else:
                 print("compute loss error")
-        return loss
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.item()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                loss_value,
-                                                                self.timer.toc(True)))
+        return loss.item()
 
     def save_test_value(self, epoch, score, class_score):
         # write epoch results

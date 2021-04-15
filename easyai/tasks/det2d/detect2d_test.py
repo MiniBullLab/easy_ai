@@ -63,14 +63,7 @@ class Detection2dTest(BaseTest):
                     loss += self.model.lossList[k](output_list[k], targets)
             else:
                 print("compute loss error")
-        return loss
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.item()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                loss_value,
-                                                                self.timer.toc(True)))
+        return loss.item()
 
     def save_test_value(self, epoch, mAP, aps):
         # Write epoch results

@@ -44,20 +44,22 @@ class SegmentionTrain(CommonTrain):
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
-            for idx, (images, segments) in enumerate(dataloader):
-                current_idx = epoch * self.total_batch_image + idx
-                lr = lr_scheduler.get_lr(epoch, current_idx)
-                lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-                loss_value = self.compute_backward(images, segments, idx)
-                self.update_logger(idx, self.total_images, epoch, loss_value)
-
+            self.train_epoch(epoch, lr_scheduler, dataloader)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
+
+    def train_epoch(self, epoch, lr_scheduler, dataloader):
+        for temp_index, (images, segments) in enumerate(dataloader):
+            current_idx = epoch * self.total_batch_image + temp_index
+            lr = lr_scheduler.get_lr(epoch, current_idx)
+            lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+            loss_info = self.compute_backward(images, segments, temp_index)
+            self.update_logger(temp_index, self.total_batch_image, epoch, loss_info)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters
         output_list = self.model(input_datas.to(self.device))
-        loss = self.compute_loss(output_list, targets)
+        loss, loss_info = self.compute_loss(output_list, targets.to(self.device))
 
         self.loss_backward(loss)
 
@@ -67,38 +69,34 @@ class SegmentionTrain(CommonTrain):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()
-        return loss.item()
+        loss_info['all_loss'] = loss.item()
+        return loss_info
 
     def compute_loss(self, output_list, targets):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
-        targets = targets.to(self.device)
+        loss_info = {}
         if loss_count == 1 and output_count == 1:
             output, target = self.output_process.output_feature_map_resize(output_list[0], targets)
             loss = self.model.lossList[0](output, target)
+            loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count == 1 and output_count > 1:
             loss = self.model.lossList[0](output_list, targets)
+            loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
+            output, target = self.output_process.output_feature_map_resize(output_list[0], targets)
+            loss = self.model.lossList[0](output, targets)
+            loss_info = self.model.lossList[0].print_loss_info()
+            for k in range(1, loss_count):
                 output, target = self.output_process.output_feature_map_resize(output_list[k], targets)
                 loss += self.model.lossList[k](output, target)
+                temp_info = self.model.lossList[k].print_loss_info()
+                for key, value in temp_info.items():
+                    loss_info[key] += value
         else:
             print("compute loss error")
-        return loss
-
-    def update_logger(self, index, total, epoch, loss_value):
-        step = epoch * total + index
-        lr = self.optimizer.param_groups[0]['lr']
-        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
-        self.train_logger.lr_log(step, lr, self.train_task_config.display)
-
-        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
-                                                                                        index,
-                                                                                        total,
-                                                                                        loss_value,
-                                                                                        lr,
-                                                                                        self.timer.toc(True)))
+        return loss, loss_info
 
     def save_train_model(self, epoch):
         self.train_logger.epoch_train_loss_log(epoch)

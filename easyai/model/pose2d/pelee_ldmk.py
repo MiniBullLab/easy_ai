@@ -9,7 +9,7 @@ from easyai.base_name.block_name import BlockType, LayerType, HeadType
 from easyai.base_name.loss_name import LossName
 from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model.model_block.base_block.utility.pooling_layer import MyAvgPool2d
-from easyai.model.model_block.head.landmark_head import LandmarkHead
+from easyai.model.model_block.head.face_landmark_head import FaceLandmarkHead
 from easyai.model.utility.base_pose_model import *
 from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
 
@@ -25,7 +25,12 @@ class PeleeLandmark(BasePoseModel):
 
         self.model_args['type'] = BackboneName.PeleeNetTransition24
 
-        self.loss_config = {"type": LossName.EmptyLoss}
+        self.loss_config = {"type": LossName.FaceLandmarkLoss,
+                            "points_count": points_count,
+                            "wing_w": 15,
+                            "wing_e": 3,
+                            "gaussian_scale": 4,
+                            "ignore_value": -1}
 
         self.create_block_list()
 
@@ -61,7 +66,7 @@ class PeleeLandmark(BasePoseModel):
         output_channel4 = route4.get_output_channel(base_out_channels, self.block_out_channels)
         self.add_block_list(route4.get_name(), route4, output_channel4)
 
-        landmark = LandmarkHead(output_channel4, 3, self.points_count)
+        landmark = FaceLandmarkHead(output_channel4, 3, self.points_count)
         self.add_block_list(landmark.get_name(), landmark, self.points_count*2)
 
         self.create_loss_list()
@@ -85,7 +90,7 @@ class PeleeLandmark(BasePoseModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif HeadType.LandmarkHead in key:
+            elif HeadType.FaceLandmarkHead in key:
                 x = block(x)
                 multi_output.extend(x)
             elif self.loss_factory.has_loss(key):

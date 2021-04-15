@@ -95,25 +95,6 @@ class Detection2dTrain(CommonTrain):
             print("compute loss error")
         return loss, loss_info
 
-    def update_logger(self, index, total, epoch, loss_info):
-        step = epoch * total + index
-        lr = self.optimizer.param_groups[0]['lr']
-        loss_value = loss_info['all_loss']
-        loss_info.pop('all_loss')
-
-        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
-        self.train_logger.lr_log(step, lr, self.train_task_config.display)
-
-        for key, value in loss_info.items():
-            self.train_logger.add_scalar(key, value, step)
-
-        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
-                                                                                        index,
-                                                                                        total,
-                                                                                        loss_value,
-                                                                                        lr,
-                                                                                        self.timer.toc(True)))
-
     def save_train_model(self, epoch):
         self.train_logger.epoch_train_loss_log(epoch)
         if self.train_task_config.is_save_epoch_model:

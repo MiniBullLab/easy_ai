@@ -5,8 +5,8 @@
 
 import math
 import numpy as np
-from easyai.helper.dataType import Point2d
-from easyai.helper.dataType import DetectionKeyPoint
+from easyai.helper.data_structure import Point2d
+from easyai.helper.data_structure import DetectionKeyPoint
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 
 

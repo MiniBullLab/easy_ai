@@ -32,9 +32,9 @@ class ClassifyTest(BaseTest):
         self.start_test()
         for index, (images, labels) in enumerate(dataloader):
             prediction, output_list = self.inference.infer(images)
-            loss = self.compute_loss(output_list, labels)
+            loss_value = self.compute_loss(output_list, labels)
             self.evaluation.torch_eval(prediction.data, labels.to(prediction.device))
-            self.metirc_loss(index, loss)
+            self.metirc_loss(index, loss_value)
         top1 = self.evaluation.get_top1()
         self.save_test_value(epoch)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
@@ -55,14 +55,7 @@ class ClassifyTest(BaseTest):
                     loss += self.model.lossList[k](output_list[k], targets)
             else:
                 print("compute loss error")
-        return loss
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.item()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                loss_value,
-                                                                self.timer.toc(True)))
+        return loss.item()
 
     def save_test_value(self, epoch):
         # Write epoch results

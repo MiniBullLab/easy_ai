@@ -4,7 +4,6 @@
 
 import os
 from easyai.data_loader.pose2d.pose2d_dataloader import get_pose2d_train_dataloader
-from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.pose2d.pose2d_test import Pose2dTest
 from easyai.base_name.task_name import TaskName
@@ -21,7 +20,6 @@ class Pose2dTrain(CommonTrain):
         self.set_model(gpu_id=gpu_id)
         self.pose2d_test = Pose2dTest(model_name, gpu_id, self.train_task_config)
         self.best_value = 0
-        self.avg_loss = -1
 
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
@@ -93,25 +91,6 @@ class Pose2dTrain(CommonTrain):
         else:
             print("compute loss error")
         return loss, loss_info
-
-    def update_logger(self, index, total, epoch, loss_info):
-        step = epoch * total + index
-        lr = self.optimizer.param_groups[0]['lr']
-        loss_value = loss_info['all_loss']
-        loss_info.pop('all_loss')
-
-        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
-        self.train_logger.lr_log(step, lr, self.train_task_config.display)
-
-        for key, value in loss_info.items():
-            self.train_logger.add_scalar(key, value, step)
-
-        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
-                                                                                        index,
-                                                                                        total,
-                                                                                        loss_value,
-                                                                                        lr,
-                                                                                        self.timer.toc(True)))
 
     def save_train_model(self, epoch):
         self.train_logger.epoch_train_loss_log(epoch)

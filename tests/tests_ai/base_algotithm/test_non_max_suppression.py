@@ -10,7 +10,7 @@ sys.path.insert(0, os.getcwd() + "/..")
 import torch
 import time
 import random
-from easyai.helper.dataType import Rect2D
+from easyai.helper.data_structure import Rect2D
 from easyai.base_algorithm.non_max_suppression import NonMaxSuppression
 
 

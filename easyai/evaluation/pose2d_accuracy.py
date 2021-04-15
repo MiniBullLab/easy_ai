@@ -53,6 +53,11 @@ class Pose2dAccuracy():
         score = self.print_evaluation()
         return score
 
+    def get_bboxsize(self, coords):
+        mins = np.min(coords, 0)
+        maxs = np.max(coords, 0)
+        return np.sqrt(abs(maxs[0] - mins[0]) * abs(maxs[1] - mins[1]))
+
     def compute_dists(self, preds, target, normalize):
         preds = preds.astype(np.float32)
         target = target.astype(np.float32)

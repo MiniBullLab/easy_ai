@@ -52,13 +52,13 @@ class KeyPoints2dTrain(CommonTrain):
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             if sum([len(x) for x in targets]) < 1:  # if no targets continue
                 continue
-            loss = self.compute_backward(images, targets, i)
-            self.update_logger(i, self.total_images, epoch, loss)
+            loss_info = self.compute_backward(images, targets, i)
+            self.update_logger(i, self.total_images, epoch, loss_info)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters
         output_list = self.model(input_datas.to(self.device))
-        loss = self.compute_loss(output_list, targets)
+        loss, loss_info = self.compute_loss(output_list, targets)
 
         self.loss_backward(loss)
 
@@ -68,41 +68,31 @@ class KeyPoints2dTrain(CommonTrain):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()
-        return loss
+        loss_info['all_loss'] = loss.item()
+        return loss_info
 
     def compute_loss(self, output_list, targets):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
+        loss_info = {}
         if loss_count == 1 and output_count == 1:
             loss = self.model.lossList[0](output_list[0], targets)
+            loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count == 1 and output_count > 1:
             loss = self.model.lossList[0](output_list, targets)
+            loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
+            loss = self.model.lossList[0](output_list[0], targets)
+            loss_info = self.model.lossList[0].print_loss_info()
+            for k in range(1, loss_count):
                 loss += self.model.lossList[k](output_list[k], targets)
+                temp_info = self.model.lossList[k].print_loss_info()
+                for key, value in temp_info.items():
+                    loss_info[key] += value
         else:
             print("compute loss error")
-        return loss
-
-    def update_logger(self, index, total, epoch, loss):
-        step = epoch * total + index
-        lr = self.optimizer.param_groups[0]['lr']
-        loss_value = loss.data.cpu().squeeze()
-
-        if self.avg_loss < 0:
-            self.avg_loss = (loss.cpu().detach().numpy() / self.train_task_config.train_batch_size)
-        self.avg_loss = 0.9 * (loss.cpu().detach().numpy() / self.train_task_config.train_batch_size) \
-                        + 0.1 * self.avg_loss
-
-        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
-        self.train_logger.lr_log(step, lr, self.train_task_config.display)
-        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
-                                                                                        index,
-                                                                                        total,
-                                                                                        self.avg_loss,
-                                                                                        lr,
-                                                                                        self.timer.toc(True)))
+        return loss, loss_info
 
     def save_train_model(self, epoch):
         self.train_logger.epoch_train_loss_log(epoch)

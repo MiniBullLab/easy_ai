@@ -32,9 +32,8 @@ class SuperResolutionTest(BaseTest):
         self.start_test()
         for i, (images, sr_targets) in enumerate(dataloader):
             prediction, output_list = self.sr_inference.infer(images)
-            loss = self.compute_loss(output_list, sr_targets)
-            self.compute_metric(loss)
-            self.metirc_loss(i, loss)
+            loss_value = self.compute_loss(output_list, sr_targets)
+            self.metirc_loss(i, loss_value)
 
         score = self.evalution.get_score()
         self.save_test_value(epoch, score)
@@ -56,14 +55,7 @@ class SuperResolutionTest(BaseTest):
                     loss += self.model.lossList[k](output_list[k], targets)
             else:
                 print("compute loss error")
-        return loss
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.data.cpu().squeeze()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {} | Time: {.7f}".format(step,
-                                                           loss_value,
-                                                           self.timer.toc(True)))
+        return loss.item()
 
     def save_test_value(self, epoch, score):
         # write epoch results

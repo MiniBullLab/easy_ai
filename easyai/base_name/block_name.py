@@ -128,5 +128,5 @@ class HeadType():
     MultiROIKeypointHead = "multiROIKeypoint"
     MultiROIMaskHead = "multiROIMask"
 
-    LandmarkHead = "landmark"
+    FaceLandmarkHead = "faceLandmark"
 

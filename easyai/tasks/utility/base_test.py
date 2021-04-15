@@ -41,6 +41,12 @@ class BaseTest(BaseTask):
         self.timer.tic()
         assert self.total_batch_image > 0
 
+    def metirc_loss(self, step, loss_value):
+        self.epoch_loss_average.update(loss_value)
+        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
+                                                                loss_value,
+                                                                self.timer.toc(True)))
+
     @abc.abstractmethod
     def load_weights(self, weights_path):
         pass

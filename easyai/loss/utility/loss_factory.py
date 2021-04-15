@@ -235,6 +235,12 @@ class LossFactory():
             loss_config['input_size'] = tuple(int(x) for x in
                                               loss_config['input_size'].split(',') if x.strip())
             loss_config['points_count'] = int(loss_config['points_count'])
+        elif input_name == LossName.FaceLandmarkLoss:
+            loss_config['points_count'] = int(loss_config['points_count'])
+            loss_config['wing_w'] = float(loss_config['wing_w'])
+            loss_config['wing_e'] = float(loss_config['wing_e'])
+            loss_config['gaussian_scale'] = float(loss_config['gaussian_scale'])
+            loss_config['ignore_value'] = int(loss_config.get("ignore_value", -1000))
         loss = build_from_cfg(loss_config, REGISTERED_POSE2D_LOSS)
         return loss
 

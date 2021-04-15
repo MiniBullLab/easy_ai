@@ -31,9 +31,9 @@ class OneClassTest(BaseTest):
         self.start_test()
         for index, (images, labels) in enumerate(dataloader):
             prediction, output_list = self.inference.infer(images)
-            loss = self.compute_loss(output_list, labels)
+            loss_value = self.compute_loss(output_list, labels)
             self.evaluation.eval(prediction, labels.detach().numpy())
-            self.metirc_loss(index, loss)
+            self.metirc_loss(index, loss_value)
         roc_auc = self.evaluation.get_score()
         self.save_test_value(epoch, roc_auc)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
@@ -54,14 +54,7 @@ class OneClassTest(BaseTest):
                     loss += self.model.g_loss_list[k](output_list[k], targets)
             else:
                 print("compute loss error")
-        return loss
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.item()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                loss_value,
-                                                                self.timer.toc(True)))
+        return loss.item()
 
     def save_test_value(self, epoch, roc_auc):
         # write epoch results

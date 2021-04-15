@@ -19,7 +19,7 @@ class LandmarkDataLoader(TorchDataLoader):
         self.class_name = class_name
         self.image_size = image_size
         self.is_augment = is_augment
-        self.expand_ratio = 0.15
+        self.expand_ratio = 0.1
         self.pose2d_sample = Pose2dSample(data_path, class_name)
         self.pose2d_sample.read_sample()
 

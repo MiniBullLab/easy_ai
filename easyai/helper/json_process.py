@@ -5,7 +5,7 @@
 import os
 import codecs
 import json
-from easyai.helper.dataType import *
+from easyai.helper.data_structure import *
 
 
 class JsonProcess():
@@ -99,7 +99,10 @@ class JsonProcess():
 
             pose_index = pose_dict['index']
             skeleton = pose_dict.get('skeleton', ())
-            direction_cls = pose_dict.get('direction_cls', ())
+            attributes = pose_dict.get('attributes', None)
+            flags = ()
+            if attributes is None:
+                flags = attributes.get('direction_cls', ())
             keypoint = KeyPoint2D()
             keypoint.min_corner.x = xmin
             keypoint.min_corner.y = ymin
@@ -127,7 +130,7 @@ class JsonProcess():
                     else:
                         point = Point2d(-1, -1)
                     keypoint.add_key_points(point)
-            keypoint.set_key_points_flag(direction_cls)
+            keypoint.set_key_points_flag(flags)
             keypoint.set_key_points_skeleton(skeleton)
             if is_available:
                 result.append(keypoint)

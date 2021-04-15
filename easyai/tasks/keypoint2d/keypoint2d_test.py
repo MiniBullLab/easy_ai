@@ -34,7 +34,6 @@ class KeyPoint2dTest(BaseTest):
         self.start_test()
         for i, (images, labels) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
-
             prediction = self.inference.infer(images)
             result, _ = self.inference.postprocess(prediction, self.conf_threshold)
             labels = labels[0].data.cpu().numpy()

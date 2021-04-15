@@ -3,7 +3,7 @@
 # Author:
 
 import numpy as np
-from easyai.helper.dataType import KeyPoint2D
+from easyai.helper.data_structure import KeyPoint2D
 from easyai.data_loader.utility.box2d_dataset_process import Box2dDataSetProcess
 
 

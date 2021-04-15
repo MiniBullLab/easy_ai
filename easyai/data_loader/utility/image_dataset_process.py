@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import cv2
 import numpy as np
@@ -60,6 +60,7 @@ class ImageDataSetProcess(BaseDataSetProcess):
             result = None
         elif images.ndim == 2:
             result = images[np.newaxis, :, :]
+            result = np.ascontiguousarray(result, dtype=dtype)
         elif images.ndim == 3:
             image = images.transpose(2, 0, 1)
             result = np.ascontiguousarray(image, dtype=dtype)

@@ -117,7 +117,7 @@ class KeyPoint2D(Rect2D):
 
     def set_key_points_flag(self, flag):
         if isinstance(flag, (list, tuple)):
-            self.key_points_flag = flag
+            self.key_points_flag = tuple(flag)
         else:
             self.key_points_flag = (flag,)
 
@@ -125,7 +125,7 @@ class KeyPoint2D(Rect2D):
         return self.key_points_flag
 
     def set_key_points_skeleton(self, skeleton):
-        self.key_points_skeleton = skeleton
+        self.key_points_skeleton = tuple(skeleton)
 
 
 class Rect3D(MyObject):

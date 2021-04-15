@@ -5,7 +5,7 @@
 
 import torch
 import numpy as np
-from easyai.helper.dataType import Point2d, DetectionObject
+from easyai.helper.data_structure import Point2d, DetectionObject
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 
 

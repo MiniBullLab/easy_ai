@@ -63,7 +63,7 @@ class ClassifyTrain(CommonTrain):
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters
         output_list = self.model(input_datas.to(self.device))
-        loss = self.compute_loss(output_list, targets)
+        loss, loss_info = self.compute_loss(output_list, targets.to(self.device))
 
         self.loss_backward(loss)
 
@@ -73,33 +73,32 @@ class ClassifyTrain(CommonTrain):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()
-        return loss.item()
+
+        loss_info['all_loss'] = loss.item()
+        return loss_info
 
     def compute_loss(self, output_list, targets):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
-        targets = targets.to(self.device)
+        loss_info = dict()
         if loss_count == 1 and output_count == 1:
             loss = self.model.lossList[0](output_list[0], targets)
+            loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count == 1 and output_count > 1:
             loss = self.model.lossList[0](output_list, targets)
+            loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
+            loss = self.model.lossList[0](output_list[0], targets)
+            loss_info = self.model.lossList[0].print_loss_info()
+            for k in range(1, loss_count):
                 loss += self.model.lossList[k](output_list[k], targets)
+                temp_info = self.model.lossList[k].print_loss_info()
+                for key, value in temp_info.items():
+                    loss_info[key] += value
         else:
             print("compute loss error")
-        return loss
-
-    def update_logger(self, index, total, epoch, loss_value):
-        step = epoch * total + index
-        lr = self.optimizer.param_groups[0]['lr']
-        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
-        self.train_logger.lr_log(step, lr, self.train_task_config.display)
-
-        print('Epoch: {} \t Time: {:.5f}\t'.format(epoch, self.timer.toc(True)))
-        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Lr: {:.7f} \t'.format(epoch, index, total,
-                                                                       loss_value, lr))
+        return loss, loss_info
 
     def save_train_model(self, epoch):
         with DelayedKeyboardInterrupt():

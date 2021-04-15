@@ -40,21 +40,14 @@ class Pose2dTest(BaseTest):
             print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
             result = self.result_process.get_pose_result(prediction, self.point_threshold)
-            loss = self.compute_loss(output_list, targets)
+            loss_value = self.compute_loss(output_list, targets)
             self.evaluation.eval(result, targets.detach().numpy())
-            self.metirc_loss(index, loss)
+            self.metirc_loss(index, loss_value)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc(True)))
         average_socre = self.evaluation.get_score()
-        self.save_test_value(epoch)
+        self.save_test_value(epoch, average_socre)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return average_socre, self.epoch_loss_average.avg
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.item()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                loss_value,
-                                                                self.timer.toc(True)))
 
     def compute_loss(self, output_list, targets):
         loss = 0
@@ -71,11 +64,11 @@ class Pose2dTest(BaseTest):
                     loss += self.model.lossList[k](output_list[k], targets)
             else:
                 print("compute loss error")
-        return loss
+        return loss.item()
 
-    def save_test_value(self, epoch):
+    def save_test_value(self, epoch, score):
         # Write epoch results
         with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | prec: {:.3f}\n".format(epoch, self.evaluation.get_score()))
+            file.write("Epoch: {} | prec: {:.3f}\n".format(epoch, score))
 
 

@@ -33,16 +33,36 @@ def l2_loss(input, target, size_average=True):
 
 
 class GaussianNLLoss(nn.Module):
-    def __init__(self):
+    def __init__(self, scale=1., reduction='mean',
+                 ignore_value=-100):
         super().__init__()
+        self.scale = scale
+        self.reduction = reduction
+        self.ignore_value = ignore_value
 
-    def gaussian_dist_pdf(self, val, mean, sigma, sigma_const=0.3):
-        Z = torch.sqrt(2.0 * np.pi * (sigma + sigma_const) ** 2)
-        return torch.exp(-0.5 * (val - mean) ** 2.0 / (sigma + sigma_const) ** 2) / Z
+    def gaussian_dist_pdf(self, val, mean, sigma, scale, sigma_const=0.3):
+        pi = torch.tensor(np.pi)
+        Z = torch.sqrt(2.0 * pi) * (sigma + sigma_const)
+        return torch.exp(-0.5 * ((val - mean) / scale) ** 2.0 / ((sigma + sigma_const) ** 2)) / Z
 
-    def forward(self, output, target, sigma_xywh):
-        loss = -torch.log(self.gaussian_dist_pdf(output, target, sigma_xywh) + 1e-9)
-        return loss.sum()
+    def forward(self, outputs, target):
+        prediction = outputs[0]
+        out_gauss = outputs[1]
+        target = target.type(prediction.dtype)
+        loss_weight = torch.where(target.clone() == self.ignore_value,
+                                  torch.zeros_like(target.clone()),
+                                  torch.ones_like(target.clone())).detach()
+
+        loss = -torch.log(self.gaussian_dist_pdf(prediction, target,
+                                                 out_gauss, self.scale) + 1e-9)
+
+        loss = loss * loss_weight
+        if self.reduction == 'mean':
+            return torch.mean(loss)
+        elif self.reduction == 'sum':
+            return loss.sum()
+        else:
+            return loss
 
 
 @REGISTERED_COMMON_LOSS.register_module(LossName.EmptyLoss)

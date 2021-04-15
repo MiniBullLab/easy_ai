@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.helper.dataType import Rect2D
+from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 

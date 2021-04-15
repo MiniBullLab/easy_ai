@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.helper.dataType import *
+from easyai.helper.data_structure import *
 import xml.dom
 import xml.dom.minidom
 import xml.etree.ElementTree as ElementTree

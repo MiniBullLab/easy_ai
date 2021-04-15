@@ -23,4 +23,4 @@ class RefineMultiBoxLoss(BaseMultiLoss):
 
     def forward(self, output_list, targets=None):
         output_count = len(output_list) // 2
-        anchor_boxes = self.priorbox(self.input_size, feature_sizes)
+        # anchor_boxes = self.priorbox(self.input_size, feature_sizes)
