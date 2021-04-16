@@ -103,6 +103,8 @@ class BackboneName():
     PeleeNetTransition24 = "peleenet_tran24"
     SlimNet = "slimnet"
 
+    HourGlassNet = "hourglassnet"
+
 
 class GanBaseModelName():
 

@@ -97,6 +97,7 @@ class BlockType():
     MixConv2dBlock = "mixConv2dBlock"
 
     ResidualBlock = "residualBlock"
+    ResidualV2Block = "residualv2Block"
     InvertedResidual = "invertedResidual"
 
     FPNBlock = "FPNBlock"
@@ -112,6 +113,9 @@ class BlockType():
     DeConvBNActivationBlock = "deconvBNActivationBlock"
 
     # det2d
+
+    # keypoint2d
+    HourGlassBlock = "hourglassBlock"
 
     # gan
     DCEncoder = "DCEncoder"

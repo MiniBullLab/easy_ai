@@ -13,7 +13,8 @@ from easyai.model.model_block.backbone.utility.backbone_registry import REGISTER
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.SlimNet)
 class SlimNet(BaseBackbone):
 
-    def __init__(self, data_channel=3, bn_name=NormalizationType.BatchNormalize2d,
+    def __init__(self, data_channel=3,
+                 bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(data_channel)
         self.set_name(BackboneName.SlimNet)

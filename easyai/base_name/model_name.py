@@ -44,9 +44,11 @@ class ModelName():
 
     KeyPointRCNN = "KeyPointRCNN"
 
+    # pose
     MobilePose = "MobilePose"
     ResnetPose = "ResnetPose"
     PeleeLandmark = "PeleeLandmark"
+    HourglassRefineNet = "HourglassRefineNet"
 
     # sr
     MSRResNet = "MSRResNet"

@@ -30,13 +30,17 @@ class MyMaxPool2d(BaseBlock):
 
 class MyAvgPool2d(BaseBlock):
 
-    def __init__(self, kernel_size, stride=None, ceil_mode=False):
+    def __init__(self, kernel_size, stride=None,
+                 padding=0, ceil_mode=False,
+                 use_reshape=True):
         super().__init__(LayerType.MyAvgPool2d)
-        self.avg_pool = nn.AvgPool2d(kernel_size, stride, ceil_mode)
+        self.use_reshape = use_reshape
+        self.avg_pool = nn.AvgPool2d(kernel_size, stride, padding, ceil_mode)
 
     def forward(self, x):
         x = self.avg_pool(x)
-        x = x.view(x.size(0), -1)
+        if self.use_reshape:
+            x = x.view(x.size(0), -1)
         return x
 
 
