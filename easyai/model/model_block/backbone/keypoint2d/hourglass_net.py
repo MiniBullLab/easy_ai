@@ -9,7 +9,7 @@ from easyai.model.model_block.base_block.utility.utility_layer import AddLayer, 
 from easyai.model.model_block.base_block.utility.pooling_layer import MyAvgPool2d
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.model_block.base_block.utility.residual_block import ResidualV2Block
-from easyai.model.model_block.base_block.keypoint2d.hourglass_block import HourGlassBlock
+from easyai.model.model_block.base_block.keypoint2d.hourglass_block import HourglassBlock
 from easyai.model.model_block.backbone.utility.base_backbone import *
 from easyai.model.model_block.backbone.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
@@ -47,7 +47,7 @@ class HourGlassNet(BaseBackbone):
         self.add_block_list(layer1.get_name(), layer1, self.first_output)
 
         layer2 = MyAvgPool2d(kernel_size=2, stride=2,
-                             padding=0, ceil_mode=True,
+                             padding=0, ceil_mode=False,
                              use_reshape=False)
         self.add_block_list(layer2.get_name(), layer2, self.first_output)
 
@@ -70,7 +70,7 @@ class HourGlassNet(BaseBackbone):
         self.add_block_list(layer5.get_name(), layer5, self.feature_channel)
 
         for hg_module in range(self.stacks_count):
-            hourglass_block = HourGlassBlock(self.depth, self.feature_channel,
+            hourglass_block = HourglassBlock(self.depth, self.feature_channel,
                                              bn_name=self.bn_name,
                                              activation_name=self.activation_name)
             self.add_block_list(hourglass_block.get_name(), hourglass_block, self.feature_channel)
@@ -98,19 +98,13 @@ class HourGlassNet(BaseBackbone):
                 conv2 = nn.Conv2d(self.feature_channel, self.feature_channel,
                                   kernel_size=1, stride=1, padding=0)
                 self.add_block_list(LayerType.Convolutional, conv2, self.feature_channel)
-                route2 = RouteLayer("-2")
+                route2 = RouteLayer("-3")
                 self.add_block_list(route2.get_name(), route2, self.final_out_channel)
                 conv3 = nn.Conv2d(self.final_out_channel, self.feature_channel,
                                   kernel_size=1, stride=1, padding=0)
                 self.add_block_list(LayerType.Convolutional, conv3, self.feature_channel)
                 add_layer = AddLayer("-1,-3,-9")
                 self.add_block_list(add_layer.get_name(), add_layer, self.feature_channel)
-            elif hg_module == self.stacks_count - 1:
-                route3 = RouteLayer("-2")
-                self.add_block_list(route3.get_name(), route3, self.feature_channel)
-                conv4 = nn.Conv2d(self.feature_channel, self.feature_channel,
-                                  kernel_size=3, stride=2, padding=0)
-                self.add_block_list(LayerType.Convolutional, conv4, self.feature_channel)
 
     def forward(self, x):
         base_outputs = []
@@ -122,6 +116,6 @@ class HourGlassNet(BaseBackbone):
                 x = block(layer_outputs, base_outputs)
             else:
                 x = block(x)
-            print(key, x.shape)
+            # print(key, x.shape)
             layer_outputs.append(x)
         return layer_outputs

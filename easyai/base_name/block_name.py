@@ -134,3 +134,5 @@ class HeadType():
 
     FaceLandmarkHead = "faceLandmark"
 
+    MultiOutputHead = "multiOutput"
+

@@ -5,10 +5,11 @@
 from easyai.base_name.block_name import ActivationType, NormalizationType
 from easyai.base_name.block_name import BlockType
 from easyai.model.model_block.base_block.utility.base_block import *
+from easyai.model.model_block.base_block.utility.pooling_layer import MyMaxPool2d
 from easyai.model.model_block.base_block.utility.residual_block import ResidualV2Block
 
 
-class HourGlassBlock(BaseBlock):
+class HourglassBlock(BaseBlock):
 
     def __init__(self, depth=4, feature_channel=96,
                  bn_name=NormalizationType.BatchNormalize2d,
@@ -48,7 +49,8 @@ class HourGlassBlock(BaseBlock):
                                         bn_name=self.bn_name,
                                         activation_name=self.activation_name))
 
-        self.add_module('avg_pool_' + str(level), nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True))
+        self.add_module('avg_pool_' + str(level), nn.AvgPool2d(kernel_size=2, stride=2,
+                                                               padding=0, ceil_mode=False))
 
         self.add_module('up2_' + str(level), nn.ConvTranspose2d(in_channels=num_features, out_channels=num_features,
                                                                 kernel_size=2, stride=2, padding=0, groups=num_features))
@@ -71,11 +73,51 @@ class HourGlassBlock(BaseBlock):
 
         low3 = low2
         low3 = self._modules['b3_' + str(level)](low3)
-
         # up2 = F.interpolate(low3, scale_factor=2, mode='nearest')
         up2 = self._modules['up2_' + str(level)](low3)
-
         return up1 + up2
 
     def forward(self, x):
         return self._forward(self.depth, x)
+
+
+# class HourglassBlock(BaseBlock):
+#     def __init__(self, depth=4, feature_channel=96, increase=0,
+#                  bn_name=NormalizationType.BatchNormalize2d,
+#                  activation_name=ActivationType.ReLU):
+#         super().__init__(BlockType.HourGlassBlock)
+#         nf = feature_channel + increase
+#         self.up1 = ResidualV2Block(1, feature_channel,
+#                                    feature_channel // 2,
+#                                    stride=1, expansion=2,
+#                                    bn_name=bn_name,
+#                                    activation_name=activation_name)
+#         # Lower branch
+#         self.pool1 = MyMaxPool2d(2, 2)
+#         self.low1 = ResidualV2Block(1, feature_channel, nf // 2,
+#                                     stride=1, expansion=2,
+#                                     bn_name=bn_name,
+#                                     activation_name=activation_name)
+#         self.depth = depth
+#         # Recursive hourglass
+#         if self.depth > 1:
+#             self.low2 = HourglassBlock(depth-1, nf)
+#         else:
+#             self.low2 = ResidualV2Block(1, nf, nf // 2,
+#                                         stride=1, expansion=2,
+#                                         bn_name=bn_name,
+#                                         activation_name=activation_name)
+#         self.low3 = ResidualV2Block(1, nf, feature_channel // 2,
+#                                     stride=1, expansion=2,
+#                                     bn_name=bn_name,
+#                                     activation_name=activation_name)
+#         self.up2 = nn.Upsample(scale_factor=2, mode='nearest')
+#
+#     def forward(self, x):
+#         up1 = self.up1(x)
+#         pool1 = self.pool1(x)
+#         low1 = self.low1(pool1)
+#         low2 = self.low2(low1)
+#         low3 = self.low3(low2)
+#         up2 = self.up2(low3)
+#         return up1 + up2
