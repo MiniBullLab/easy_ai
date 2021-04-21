@@ -26,6 +26,7 @@ class PeleeLandmark(BasePoseModel):
         self.model_args['type'] = BackboneName.PeleeNetTransition24
 
         self.loss_config = {"type": LossName.FaceLandmarkLoss,
+                            "input_size": "128,128",
                             "points_count": points_count,
                             "wing_w": 15,
                             "wing_e": 3,
@@ -78,10 +79,11 @@ class PeleeLandmark(BasePoseModel):
         self.lossList.append(loss)
 
     def forward(self, x):
-        base_outputs = []
-        layer_outputs = []
-        multi_output = []
-        output = []
+        base_outputs = list()
+        layer_outputs = list()
+        multi_output = list()
+        output = list()
+        output.append(x.clone())
         for key, block in self._modules.items():
             if BlockType.BaseNet in key:
                 base_outputs = block(x)

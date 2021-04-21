@@ -30,7 +30,8 @@ class OneClassROC():
         # Scale score vector between [0, 1]
         min_socre = np.min(self.scores)
         max_score = np.max(self.scores)
-        self.scores = (self.scores - min_socre) / (max_score - min_socre)
+        if max_score - min_socre > 0:
+            self.scores = (self.scores - min_socre) / (max_score - min_socre)
         # True/False Positive Rates.
         fpr, tpr, _ = roc_curve(self.gt_labels, self.scores)
         roc_auc = auc(fpr, tpr)

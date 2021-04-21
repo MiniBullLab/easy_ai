@@ -101,8 +101,10 @@ class JsonProcess():
             skeleton = pose_dict.get('skeleton', ())
             attributes = pose_dict.get('attributes', None)
             flags = ()
-            if attributes is None:
+            if attributes is not None:
                 flags = attributes.get('direction_cls', ())
+            else:
+                print("attributes not exits")
             keypoint = KeyPoint2D()
             keypoint.min_corner.x = xmin
             keypoint.min_corner.y = ymin

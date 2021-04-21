@@ -2,8 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.base_name.model_name import ModelName
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
+from easyai.model.utility.model_factory import ModelFactory
 from easyai.loss.common.wing_loss import WingLoss
 from easyai.loss.common.common_loss import GaussianNLLoss
 from easyai.loss.pose2d.mouth_eye_dis_loss import MouthEyeFrontDisLoss
@@ -14,9 +16,11 @@ from easyai.loss.utility.registry import REGISTERED_POSE2D_LOSS
 @REGISTERED_POSE2D_LOSS.register_module(LossName.FaceLandmarkLoss)
 class FaceLandmarkLoss(BaseLoss):
 
-    def __init__(self, points_count, wing_w=15, wing_e=3,
-                 gaussian_scale=4, ignore_value=-1):
+    def __init__(self, input_size, points_count,
+                 wing_w=15, wing_e=3, gaussian_scale=4,
+                 ignore_value=-1):
         super().__init__(LossName.FaceLandmarkLoss)
+        self.input_size = input_size
         self.points_count = points_count
         self.coords_loss1 = WingLoss(wing_w, wing_e, ignore_value=ignore_value)
         self.mouth_eye_loss1 = MouthEyeFrontDisLoss(ignore_value=ignore_value)
@@ -32,6 +36,12 @@ class FaceLandmarkLoss(BaseLoss):
         self.conf_loss = nn.SmoothL1Loss(reduction='mean')
         self.gaussian_loss = GaussianNLLoss(gaussian_scale, reduction='mean',
                                             ignore_value=ignore_value)
+
+        model_factory = ModelFactory()
+        model_config = {"type": ModelName.HourglassPose,
+                        "data_channel": 1,
+                        "points_count": self.points_count}
+        self.hm_model = model_factory.get_model(model_config)
 
         self.convert_left = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5],
                              [6, 6], [7, 7], [8, 8],
@@ -76,6 +86,53 @@ class FaceLandmarkLoss(BaseLoss):
         return torch.stack(left_coords, dim=0).to(device), \
                torch.stack(right_coords, dim=0).to(device)
 
+    def get_preds(self, scores):
+        ''' get predictions from score maps in torch Tensor
+            return type: torch.LongTensor
+        '''
+        assert scores.dim() == 4, 'Score maps should be 4-dim'
+        # batch, chn, height, width ===> batch, chn, height*width
+        # chn = 68
+        # height*width = score_map
+        maxval, idx = torch.max(scores.view(scores.size(0), scores.size(1), -1), 2)
+
+        maxval = maxval.view(scores.size(0), scores.size(1), 1)
+        idx = idx.view(scores.size(0), scores.size(1), 1) + 1
+
+        preds = idx.repeat(1, 1, 2).float()
+
+        # batchsize * numPoints * 2
+        # 0 is x coord
+        # 1 is y coord
+        # shape = batchsize, numPoints, 2
+        preds[:, :, 0] = (preds[:, :, 0] - 1) % scores.size(3) + 1
+        preds[:, :, 1] = torch.floor((preds[:, :, 1] - 1) / scores.size(3)) + 1
+
+        pred_mask = maxval.gt(0).repeat(1, 1, 2).float()
+        preds *= pred_mask
+        return preds, maxval.view(scores.size(0), scores.size(1))
+
+    def conf_norm(self, conf, conf_sub_value):
+        conf = conf - conf_sub_value
+        temp_0 = torch.exp(conf * 5)
+        temp_1 = torch.exp(5 - conf * 5)
+        conf_norm_value = temp_0 / (temp_0 + temp_1)
+        # print('conf max: {} | min: {} | mean: {}'.format(conf_norm_value.max(),
+        #                                                  conf_norm_value.min(),
+        #                                                  conf_norm_value.mean()))
+        return conf_norm_value
+
+    def get_confidence_gt(self, input_image, device):
+        with torch.no_grad():
+            self.hm_model.to(device)
+            self.hm_model.eval()
+            output_list = self.hm_model(input_image)
+            score_map = output_list[-1].detach()
+            _, gt_conf = self.get_preds(score_map)
+            conf_sub_value = torch.ones_like(gt_conf, dtype=torch.float).to(gt_conf.device)
+            gt_conf = self.conf_norm(gt_conf, conf_sub_value)
+        return gt_conf.to(device)
+
     def forward(self, outputs, targets=None):
         """
         Arguments:
@@ -85,9 +142,9 @@ class FaceLandmarkLoss(BaseLoss):
         Returns:
             loss (Tensor)
         """
-        ldmk = outputs[0]
-        conf = outputs[3]
-        gauss = outputs[4]
+        ldmk = outputs[1]
+        conf = outputs[4]
+        gauss = outputs[5]
         device = ldmk.device
         batch_size = ldmk.size(0)
         if targets is None:
@@ -97,15 +154,18 @@ class FaceLandmarkLoss(BaseLoss):
             landmark_conf = conf * final_gauss
             return ldmk, landmark_conf
         else:
-            left_ldmk = outputs[1]
-            right_ldmk = outputs[2]
-            pre_direction_cls = outputs[5]
-            pre_box = outputs[6]
+            input_image = outputs[0]
+            left_ldmk = outputs[2]
+            right_ldmk = outputs[3]
+            pre_direction_cls = outputs[6]
+            pre_box = outputs[7]
             gt_coords = targets[0]
             gt_face_box = targets[1][:, :4]
             gt_direction_cls = targets[1][:, 4]
             gt_coords = gt_coords.reshape((batch_size, -1)).to(device)
             left_coords, right_coords = self.build_left_and_right_coords(gt_coords.detach(), device)
+            gt_conf = self.get_confidence_gt(input_image, device)
+
             loss1_1 = self.coords_loss1(ldmk, gt_coords)
             loss1_2 = self.mouth_eye_loss1(ldmk, gt_coords)
             loss1 = loss1_1 + loss1_2
@@ -120,7 +180,7 @@ class FaceLandmarkLoss(BaseLoss):
 
             loss4 = self.direction_loss(pre_direction_cls, gt_direction_cls)
             loss5 = self.box_loss(pre_box, gt_face_box)
-            loss6 = 0
+            loss6 = self.conf_loss(conf, gt_conf)
             loss7 = self.gaussian_loss([ldmk, gauss], gt_coords)
 
             self.loss_info['coord_loss'] = loss1.item()

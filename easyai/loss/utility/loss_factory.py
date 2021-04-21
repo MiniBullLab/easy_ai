@@ -236,6 +236,8 @@ class LossFactory():
                                               loss_config['input_size'].split(',') if x.strip())
             loss_config['points_count'] = int(loss_config['points_count'])
         elif input_name == LossName.FaceLandmarkLoss:
+            loss_config['input_size'] = tuple(int(x) for x in
+                                              loss_config['input_size'].split(',') if x.strip())
             loss_config['points_count'] = int(loss_config['points_count'])
             loss_config['wing_w'] = float(loss_config['wing_w'])
             loss_config['wing_e'] = float(loss_config['wing_e'])
