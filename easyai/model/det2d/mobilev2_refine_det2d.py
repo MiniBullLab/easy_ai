@@ -5,12 +5,12 @@
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType
+from easyai.base_name.block_name import LayerType, BlockType, HeadType
 from easyai.base_name.loss_name import LossName
 from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model.model_block.base_block.utility.fpn_block import FPNV2Block
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.model_block.head.ssd_box_head import SSDBoxHead, MultiSSDBoxHead
+from easyai.model.model_block.head.ssd_box_head import SSDBoxHead, MultiSSDBoxHead, ARMBoxHead
 from easyai.model.utility.base_det_model import *
 from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 
@@ -59,31 +59,6 @@ class MobileV2RefineDet2d(BaseDetectionModel):
                                        activationName=self.activation_name)
         self.add_block_list(layer1.get_name(), layer1, self.feature_out_channels)
 
-        route1 = RouteLayer("6")
-        output_channel1 = route1.get_output_channel(base_out_channels, self.block_out_channels)
-        self.add_block_list(route1.get_name(), route1, output_channel1)
-
-        arm_head1 = SSDBoxHead(output_channel1, 9, 2, is_gaussian=False)
-        self.add_block_list(arm_head1.get_name(), arm_head1, 2)
-
-        route2 = RouteLayer("13")
-        output_channel2 = route2.get_output_channel(base_out_channels, self.block_out_channels)
-        self.add_block_list(route2.get_name(), route2, output_channel2)
-
-        arm_head2 = SSDBoxHead(output_channel2, 3, 2, is_gaussian=False)
-        self.add_block_list(arm_head2.get_name(), arm_head2, 2)
-
-        route3 = RouteLayer("17")
-        output_channel3 = route3.get_output_channel(base_out_channels, self.block_out_channels)
-        self.add_block_list(route3.get_name(), route3, output_channel3)
-
-        arm_head3 = SSDBoxHead(output_channel3, 3, 2, is_gaussian=False)
-        self.add_block_list(arm_head3.get_name(), arm_head3, 2)
-
-        route4 = RouteLayer("-7")
-        output_channel4 = route4.get_output_channel(base_out_channels, self.block_out_channels)
-        self.add_block_list(route4.get_name(), route4, output_channel4)
-
         layer2 = ConvBNActivationBlock(in_channels=self.feature_out_channels,
                                        out_channels=self.feature_out_channels,
                                        kernel_size=3,
@@ -93,8 +68,12 @@ class MobileV2RefineDet2d(BaseDetectionModel):
                                        activationName=self.activation_name)
         self.add_block_list(layer2.get_name(), layer2, self.feature_out_channels)
 
-        arm_head4 = SSDBoxHead(self.feature_out_channels, 3, 2, is_gaussian=False)
-        self.add_block_list(arm_head4.get_name(), arm_head4, 2)
+        temp_layers = [6, 13, 17, -1]
+        temp_layer_outputs = [self.block_out_channels[i] if i < 0 else base_out_channels[i]
+                              for i in temp_layers]
+        temp_str = ",".join('%s' % index for index in temp_layers)
+        arm_head = ARMBoxHead(temp_str, temp_layer_outputs, [9, 3, 3, 3], 2)
+        self.add_block_list(arm_head.get_name(), arm_head, temp_layer_outputs[-1])
 
         down_layers = [6, 13, 17]
         down_layer_outputs = [self.block_out_channels[i] if i < 0 else base_out_channels[i]
@@ -130,9 +109,10 @@ class MobileV2RefineDet2d(BaseDetectionModel):
         self.lossList = []
 
     def forward(self, x):
-        base_outputs = []
-        layer_outputs = []
-        output = []
+        base_outputs = list()
+        layer_outputs = list()
+        multi_output = list()
+        output = list()
         for key, block in self._modules.items():
             if BlockType.BaseNet in key:
                 base_outputs = block(x)
@@ -141,8 +121,17 @@ class MobileV2RefineDet2d(BaseDetectionModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
+            elif HeadType.ARMBoxHead in key:
+                x = block(layer_outputs, base_outputs)
+                multi_output.extend(x)
+            elif HeadType.MultiSSDBoxHead in key:
+                x = block(x)
+                multi_output.extend(x)
+            elif HeadType.SSDBoxHead in key:
+                x = block(x)
+                multi_output.extend(x)
             elif self.loss_factory.has_loss(key):
-                output.append(x)
+                pass
             else:
                 x = block(x)
             # print(key, x.shape)

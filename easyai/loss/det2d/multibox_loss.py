@@ -86,11 +86,11 @@ class MultiBoxLoss(BaseMultiLoss):
         for index in range(len(gt_targets)):
             gt_data = gt_targets[index]
             gt_boxes = self.gt_process.scale_gt_box(gt_data, self.input_size[0], self.input_size[1])
-            gt_labels = gt_data[:, 0]
             if gt_data is None or len(gt_data) == 0:
                 loc = torch.zeros_like(prior_boxes)
                 cls_conf = torch.zeros((prior_boxes.size(0),)).long()
             else:
+                gt_labels = gt_data[:, 0]
                 temp_boxes = torch_box2d_rect_corner(prior_boxes)
                 iou = torch_corners_box2d_ious(gt_boxes, temp_boxes)
                 prior_box_iou, max_idx = iou.max(0, keepdim=False)  # [1,8732]

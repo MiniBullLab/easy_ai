@@ -126,6 +126,7 @@ class HeadType():
 
     SSDBoxHead = "ssdBox"
     MultiSSDBoxHead = "multiSSDBox"
+    ARMBoxHead = "ARMBox"
 
     MultiRPNHead = "multiRPN"
     MultiROIBoxHead = "multiROIBox"

@@ -21,6 +21,7 @@ class BaseMultiLoss(BaseLoss):
         self.min_sizes = min_sizes
         self.max_sizes = max_sizes
         self.loc_output = 4
+        self.is_gaussian = is_gaussian
         # Just for exp convenience
         if is_gaussian:
             self.loc_output += 4

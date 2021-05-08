@@ -70,3 +70,30 @@ class MultiSSDBoxHead(BaseBlock):
             loc_cls_result.append(y_loc)
             loc_cls_result.append(y_cls)
         return loc_cls_result
+
+
+# anchor refinement module
+class ARMBoxHead(BaseBlock):
+
+    def __init__(self, layers, layer_channels,
+                 anchor_list, class_number):
+        super().__init__(HeadType.ARMBoxHead)
+        self.layers = [int(x) for x in layers.split(',') if x.strip()]
+        self.block_list = nn.ModuleList()
+        for index in range(len(self.layers)):
+            ssd_head = SSDBoxHead(layer_channels[index], anchor_list[index],
+                                  class_number=class_number,
+                                  kernel_size=3, is_gaussian=False)
+            self.block_list.append(ssd_head)
+
+    def forward(self, layer_outputs, base_outputs):
+        # print(self.layers)
+        output = list()
+        temp_layer_outputs = [layer_outputs[i] if i < 0 else base_outputs[i]
+                              for i in self.layers]
+        for feature, layer_block in zip(temp_layer_outputs, self.block_list):
+            x = layer_block(feature)
+            output.extend(x)
+        return output
+
+
