@@ -5,10 +5,10 @@
 import numpy as np
 from easyai.base_name.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.utility.registry import REGISTERED_POSE2D_LOSS
+from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
 
 
-@REGISTERED_POSE2D_LOSS.register_module(LossName.JointsMSELoss)
+@REGISTERED_KEYPOINT2D_LOSS.register_module(LossName.JointsMSELoss)
 class JointsMSELoss(BaseLoss):
 
     def __init__(self, reduction, input_size, points_count):

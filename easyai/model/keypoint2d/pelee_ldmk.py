@@ -11,10 +11,10 @@ from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model.model_block.base_block.utility.pooling_layer import MyAvgPool2d
 from easyai.model.model_block.head.face_landmark_head import FaceLandmarkHead
 from easyai.model.utility.base_pose_model import *
-from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
+from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
 
 
-@REGISTERED_POSE2D_MODEL.register_module(ModelName.PeleeLandmark)
+@REGISTERED_KEYPOINT2D_MODEL.register_module(ModelName.PeleeLandmark)
 class PeleeLandmark(BasePoseModel):
 
     def __init__(self, data_channel=3, points_count=68):

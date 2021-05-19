@@ -11,10 +11,10 @@ from easyai.model.model_block.base_block.utility.utility_layer import MeanLayer
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model.model_block.base_block.utility.upsample_layer import DenseUpsamplingConvBlock
 from easyai.model.utility.base_pose_model import *
-from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
+from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
 
 
-@REGISTERED_POSE2D_MODEL.register_module(ModelName.MobilePose)
+@REGISTERED_KEYPOINT2D_MODEL.register_module(ModelName.MobilePose)
 class MobilePose(BasePoseModel):
 
     def __init__(self, data_channel=3, points_count=17):

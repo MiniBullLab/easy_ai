@@ -36,8 +36,6 @@ class LossName():
     # keypoint2d2d
     Keypoint2dRegionLoss = "Keypoint2dRegionLoss"
     Keypoint2dRCNNLoss = "Keypoint2dRCNNLoss"
-
-    # pose2d
     DSNTLoss = "DSNTLoss"
     JointsMSELoss = "JointsMSELoss"
     WingLoss = "WingLoss"

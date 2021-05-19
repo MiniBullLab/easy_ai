@@ -14,7 +14,7 @@ from easyai.model.model_block.head.roi_box_head import MultiROIBoxHead
 from easyai.model.model_block.head.roi_keypoint_head import MultiROIKeypointHead
 from easyai.loss.det2d.utility.rpn_postprocess import RPNPostProcessor
 from easyai.model.utility.base_pose_model import *
-from easyai.model.utility.registry import REGISTERED_POSE_MODEL
+from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
 
 
 class KeyPointRCNN(BasePoseModel):

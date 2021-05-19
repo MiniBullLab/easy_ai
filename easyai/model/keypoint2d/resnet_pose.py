@@ -5,26 +5,26 @@
 from easyai.base_name.model_name import ModelName
 from easyai.base_name.backbone_name import BackboneName
 from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import BlockType, LayerType, HeadType
+from easyai.base_name.block_name import BlockType, LayerType
 from easyai.base_name.loss_name import LossName
-from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
-from easyai.model.model_block.base_block.utility.pooling_layer import MyAvgPool2d
-from easyai.model.model_block.head.multi_output_head import MultiOutputHead
+from easyai.model.model_block.base_block.utility.upsample_layer import DeConvBNActivationBlock
 from easyai.model.utility.base_pose_model import *
-from easyai.model.utility.registry import REGISTERED_POSE2D_MODEL
+from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
 
 
-@REGISTERED_POSE2D_MODEL.register_module(ModelName.HourglassPose)
-class HourglassPose(BasePoseModel):
+@REGISTERED_KEYPOINT2D_MODEL.register_module(ModelName.ResnetPose)
+class ResnetPose(BasePoseModel):
 
-    def __init__(self, data_channel=3, points_count=68):
+    def __init__(self, data_channel=3, points_count=17):
         super().__init__(data_channel, points_count)
-        self.set_name(ModelName.HourglassPose)
+        self.set_name(ModelName.ResnetPose)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
 
+        self.model_args['type'] = BackboneName.ResNet50
+
         self.loss_config = {"type": LossName.JointsMSELoss,
-                            "input_size": "128,128",
+                            "input_size": "192,256",
                             "reduction": 4,
                             "points_count": points_count}
 
@@ -33,27 +33,28 @@ class HourglassPose(BasePoseModel):
     def create_block_list(self):
         self.clear_list()
 
-        self.model_args['type'] = BackboneName.HourGlassNet
-        self.model_args['final_out_channel'] = self.points_count
         backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
-        head = MultiOutputHead("8,17,26")
-        self.add_block_list(head.get_name(), head, self.points_count)
+        num_deconv_layers = 3
+        num_deconv_filters = (256, 256, 256)
+        input_channel = self.block_out_channels[-1]
+        for i in range(num_deconv_layers):
+            deconv = DeConvBNActivationBlock(in_channels=input_channel,
+                                             out_channels=num_deconv_filters[i],
+                                             kernel_size=4,
+                                             stride=2,
+                                             padding=1,
+                                             output_padding=0,
+                                             bn_name=self.bn_name,
+                                             activation_name=self.activation_name)
+            self.add_block_list(deconv.get_name(), deconv, num_deconv_filters[i])
+            input_channel = num_deconv_filters[i]
 
-        route = RouteLayer("25")
-        output_channel = route.get_output_channel(base_out_channels, self.block_out_channels)
-        self.add_block_list(route.get_name(), route, output_channel)
-        conv = nn.Conv2d(output_channel, output_channel,
-                         kernel_size=3, stride=2, padding=0)
-        self.add_block_list(LayerType.Convolutional, conv, output_channel)
-
-        avg_pool = MyAvgPool2d(15)
-        self.add_block_list(avg_pool.get_name(), avg_pool, output_channel)
-
-        fc = nn.Linear(output_channel, self.points_count*2)
-        self.add_block_list(LayerType.FcLinear, fc, self.points_count*2)
+        final_conv = nn.Conv2d(input_channel, self.points_count, 1,
+                               stride=1, padding=0)
+        self.add_block_list(LayerType.Convolutional, final_conv, self.points_count)
 
         self.create_loss_list()
 
@@ -66,7 +67,6 @@ class HourglassPose(BasePoseModel):
     def forward(self, x):
         base_outputs = []
         layer_outputs = []
-        multi_output = []
         output = []
         for key, block in self._modules.items():
             if BlockType.BaseNet in key:
@@ -76,15 +76,9 @@ class HourglassPose(BasePoseModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif HeadType.MultiOutputHead in key:
-                temp_outputs = block(layer_outputs, base_outputs)
-                multi_output.extend(temp_outputs)
-                x = temp_outputs[-1]
             elif self.loss_factory.has_loss(key):
                 output.append(x)
-                output.extend(multi_output)
             else:
                 x = block(x)
-            print(key, x.shape)
             layer_outputs.append(x)
         return output

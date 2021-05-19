@@ -42,9 +42,8 @@ class ModelName():
     MobileV2RefineDet2d = "mbv2Refine"
     DetNet = "denet"
 
+    # keypoint2d
     KeyPointRCNN = "KeyPointRCNN"
-
-    # pose
     MobilePose = "MobilePose"
     ResnetPose = "ResnetPose"
     PeleeLandmark = "PeleeLandmark"

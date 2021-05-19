@@ -6,7 +6,6 @@ from . import seg
 from . import sr
 from . import gan
 from . import keypoint2d
-from . import pose2d
 from . import multi_model
 
 

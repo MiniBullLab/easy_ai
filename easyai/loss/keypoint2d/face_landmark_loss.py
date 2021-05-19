@@ -8,12 +8,12 @@ from easyai.loss.utility.base_loss import *
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.loss.common.wing_loss import WingLoss
 from easyai.loss.common.common_loss import GaussianNLLoss
-from easyai.loss.pose2d.mouth_eye_dis_loss import MouthEyeFrontDisLoss
-from easyai.loss.pose2d.mouth_eye_dis_loss import MouthEyeProfierDisLoss
-from easyai.loss.utility.registry import REGISTERED_POSE2D_LOSS
+from easyai.loss.keypoint2d.mouth_eye_dis_loss import MouthEyeFrontDisLoss
+from easyai.loss.keypoint2d.mouth_eye_dis_loss import MouthEyeProfierDisLoss
+from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
 
 
-@REGISTERED_POSE2D_LOSS.register_module(LossName.FaceLandmarkLoss)
+@REGISTERED_KEYPOINT2D_LOSS.register_module(LossName.FaceLandmarkLoss)
 class FaceLandmarkLoss(BaseLoss):
 
     def __init__(self, input_size, points_count,
