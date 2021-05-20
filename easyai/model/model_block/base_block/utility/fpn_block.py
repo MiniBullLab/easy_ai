@@ -34,7 +34,7 @@ class FPNBlock(BaseBlock):
                                           padding=0,
                                           bnName=bnName,
                                           activationName=activationName)
-            temp2 = ConvBNActivationBlock(in_channels=in_channel,
+            temp2 = ConvBNActivationBlock(in_channels=out_channels,
                                           out_channels=out_channels,
                                           kernel_size=3,
                                           stride=1,
@@ -109,7 +109,7 @@ class FPNV2Block(BaseBlock):
                                               padding=0,
                                               bnName=bnName,
                                               activationName=activationName)
-            temp2 = ConvBNActivationBlock(in_channels=in_channel,
+            temp2 = ConvBNActivationBlock(in_channels=out_channels,
                                           out_channels=out_channels,
                                           kernel_size=3,
                                           stride=1,
