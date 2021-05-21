@@ -14,7 +14,7 @@ from easyai.model.model_block.base_block.utility.utility_layer import FcLayer
 from easyai.model.model_block.base_block.utility.pooling_layer import MyMaxPool2d, GlobalAvgPool2d
 from easyai.model.model_block.base_block.utility.pooling_layer import SpatialPyramidPooling
 from easyai.model.model_block.base_block.utility.upsample_layer import Upsample
-from easyai.model.model_block.head.ssd_box_head import SSDBoxHead
+from easyai.model.model_block.head.det2d.ssd_box_head import SSDBoxHead
 from easyai.model.model_block.base_block.cls.darknet_block import ReorgBlock, DarknetBlockName
 from easyai.loss.utility.loss_factory import LossFactory
 

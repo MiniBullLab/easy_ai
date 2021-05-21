@@ -122,6 +122,11 @@ class BlockType():
     DCDecoder = "DCDecoder"
 
 
+class NeckType():
+
+    DBFPNNeck = "DBFPN"
+
+
 class HeadType():
 
     SSDBoxHead = "ssdBox"
@@ -136,4 +141,6 @@ class HeadType():
     FaceLandmarkHead = "faceLandmark"
 
     MultiOutputHead = "multiOutput"
+
+    BinarizeHead = "binarize"
 

@@ -9,7 +9,7 @@ from easyai.base_name.block_name import BlockType, LayerType, HeadType
 from easyai.base_name.loss_name import LossName
 from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model.model_block.base_block.utility.pooling_layer import MyAvgPool2d
-from easyai.model.model_block.head.face_landmark_head import FaceLandmarkHead
+from easyai.model.model_block.head.keypoint2d.face_landmark_head import FaceLandmarkHead
 from easyai.model.utility.base_pose_model import *
 from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
 

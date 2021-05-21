@@ -10,9 +10,8 @@ from easyai.base_name.loss_name import LossName
 from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model.model_block.base_block.utility.fpn_block import FPNV2Block
 from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.model_block.head.ssd_box_head import SSDBoxHead, MultiSSDBoxHead, ARMBoxHead
+from easyai.model.model_block.head.det2d.ssd_box_head import SSDBoxHead, MultiSSDBoxHead, ARMBoxHead
 from easyai.model.utility.base_det_model import *
-from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 
 
 class MobileV2RefineDet2d(BaseDetectionModel):
