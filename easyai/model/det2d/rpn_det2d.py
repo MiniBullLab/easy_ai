@@ -3,13 +3,13 @@
 # Author:lipeijie
 
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import BlockType, HeadType
-from easyai.base_name.loss_name import LossName
-from easyai.model.model_block.base_block.utility.fpn_block import FPNBlock
-from easyai.model.model_block.head.det2d.rpn_head import MultiRPNHead
+from easyai.config.name_manager import ModelName
+from easyai.config.name_manager import BackboneName
+from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.config.name_manager import BlockType, HeadType
+from easyai.config.name_manager import LossName
+from easyai.model_block.base_block.utility.fpn_block import FPNBlock
+from easyai.model_block.head.det2d import MultiRPNHead
 from easyai.model.utility.base_det_model import *
 from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 

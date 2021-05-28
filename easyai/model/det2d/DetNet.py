@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.model_name import ModelName
+from easyai.config.name_manager import ModelName
 from easyai.model.det2d.yolov3_det2d import YoloV3Det2d
 from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
 

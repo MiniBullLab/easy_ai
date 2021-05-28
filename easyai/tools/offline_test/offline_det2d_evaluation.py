@@ -6,7 +6,7 @@ from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
 from easyai.config.utility.config_factory import ConfigFactory
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tools.utility.registry import REGISTERED_OFFLINE_EVALUATION
 
 

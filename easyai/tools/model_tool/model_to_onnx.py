@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import torch
-from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model_block.backbone.utility import BackboneFactory
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_onnx.torch_to_onnx import TorchConvertOnnx
 from easyai.config.utility.config_factory import ConfigFactory

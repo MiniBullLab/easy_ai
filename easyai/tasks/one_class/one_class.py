@@ -7,7 +7,7 @@ import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.one_class.one_class_result_process import OneClassResultProcess
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 

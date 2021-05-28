@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.base_name.loss_name import LossName
+from easyai.config.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.base_yolo_loss import BaseYoloLoss
 from easyai.loss.utility.box2d_process import torch_rect_box_ious

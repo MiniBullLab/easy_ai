@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import cv2
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.visualization.utility.base_show import BaseShow
 from easyai.visualization.utility.registry import REGISTERED_TASK_SHOW
 

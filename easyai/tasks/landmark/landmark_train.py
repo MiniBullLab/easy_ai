@@ -5,7 +5,7 @@
 import os
 from easyai.data_loader.landmark.landmark_dataloader import get_landmark_train_dataloader
 from easyai.tasks.utility.common_train import CommonTrain
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 

@@ -2,11 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.loss_name import LossName
+from easyai.config.name_manager import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.base_multi_loss import BaseMultiLoss
 from easyai.loss.utility.box2d_process import torch_rect_box_ious
-from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
 
 
 class RefineMultiBoxLoss(BaseMultiLoss):

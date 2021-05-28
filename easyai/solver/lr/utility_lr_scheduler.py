@@ -3,7 +3,7 @@
 # Author:
 
 import math
-from easyai.base_name.solver_name import LrSechedulerName
+from easyai.config.name_manager import LrSechedulerName
 from easyai.solver.utility.base_lr_secheduler import BaseLrSecheduler
 from easyai.solver.utility.registry import REGISTERED_LR_SCHEDULER
 

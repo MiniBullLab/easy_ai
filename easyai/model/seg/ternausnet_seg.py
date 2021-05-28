@@ -8,10 +8,10 @@
         ArXiv e-prints:1801.05746 (2018).
 """
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.model.model_block.base_block.utility.utility_block import ConvActivationBlock
-from easyai.model.model_block.base_block.seg.ternausnet_block import DecoderBlock, DecoderBlockLinkNet
+from easyai.config.name_manager import ModelName
+from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.model_block.base_block import ConvActivationBlock
+from easyai.model_block.base_block.seg.ternausnet_block import DecoderBlock, DecoderBlockLinkNet
 from easyai.model.utility.base_classify_model import *
 import torchvision
 

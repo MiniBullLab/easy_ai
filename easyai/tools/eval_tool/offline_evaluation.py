@@ -4,7 +4,7 @@
 
 from easyai.tools.utility.registry import REGISTERED_OFFLINE_EVALUATION
 from easyai.utility.registry import build_from_cfg
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.inference_task import InferenceTask
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.helper.arguments_parse import ToolArgumentsParse

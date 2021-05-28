@@ -8,7 +8,7 @@ from easyai.data_loader.seg.segment_dataloader import get_segment_val_dataloader
 from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.evaluation.segmen_metric import SegmentionMetric
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 

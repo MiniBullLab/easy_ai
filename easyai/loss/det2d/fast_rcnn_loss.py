@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.loss_name import LossName
+from easyai.config.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.matcher import Matcher
 from easyai.loss.det2d.utility.select_positive_negative_sampler import SelectPositiveNegativeSampler

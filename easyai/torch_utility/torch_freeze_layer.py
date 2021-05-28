@@ -3,7 +3,7 @@
 # Author:
 
 import re
-from easyai.base_name.block_name import BlockType
+from easyai.config.name_manager import BlockType
 
 
 class TorchFreezeLayer():

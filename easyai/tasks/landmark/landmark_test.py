@@ -8,7 +8,7 @@ from easyai.evaluation.landmark_accuracy import LandmarkAccuracy
 from easyai.data_loader.landmark.landmark_dataloader import get_landmark_val_dataloader
 from easyai.tasks.landmark.landmark_result_process import LandmarkResultProcess
 from easyai.tasks.landmark.landmark import Landmark
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 

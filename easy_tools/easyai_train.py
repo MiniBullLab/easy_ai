@@ -5,7 +5,7 @@
 import os
 from easyai.tools.utility.copy_image import CopyImage
 from easyai.train_task import TrainTask
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.config.utility.image_task_config import ImageTaskConfig
 from easyai.tools.sample_tool.create_classify_sample import CreateClassifySample
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample

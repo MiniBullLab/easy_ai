@@ -7,7 +7,7 @@ from easyai.data_loader.cls.classify_dataloader import get_classify_train_datalo
 from easyai.tasks.utility.base_task import DelayedKeyboardInterrupt
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.cls.classify_test import ClassifyTest
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 

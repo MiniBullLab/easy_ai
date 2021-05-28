@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import BlockType, LayerType
-from easyai.base_name.loss_name import LossName
-from easyai.model.model_block.base_block.utility.upsample_layer import DeConvBNActivationBlock
+from easyai.config.name_manager import ModelName
+from easyai.config.name_manager import BackboneName
+from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.config.name_manager import BlockType, LayerType
+from easyai.config.name_manager import LossName
+from easyai.model_block.base_block.utility.upsample_layer import DeConvBNActivationBlock
 from easyai.model.utility.base_pose_model import *
 from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
 

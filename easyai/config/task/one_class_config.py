@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import os
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager.task_name import TaskName
 from easyai.config.utility.gan_train_config import GanTrainConfig
 from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
 

@@ -7,7 +7,7 @@ from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.data_loader.utility.box2d_dataloader import Box2dLoader
 from easyai.visualization.task_show.det_pose2d_show import DetAndPose2dShow
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 

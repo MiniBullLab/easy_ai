@@ -2,15 +2,15 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType, HeadType
-from easyai.base_name.loss_name import LossName
-from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
-from easyai.model.model_block.base_block.utility.fpn_block import FPNV2Block
-from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.model_block.head.det2d.ssd_box_head import SSDBoxHead, MultiSSDBoxHead, ARMBoxHead
+from easyai.config.name_manager import ModelName
+from easyai.config.name_manager import BackboneName
+from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.config.name_manager import LayerType, BlockType, HeadType
+from easyai.config.name_manager import LossName
+from easyai.model_block.base_block.utility.utility_layer import RouteLayer
+from easyai.model_block.base_block.utility.fpn_block import FPNV2Block
+from easyai.model_block.base_block import ConvBNActivationBlock
+from easyai.model_block.head.det2d import SSDBoxHead, MultiSSDBoxHead, ARMBoxHead
 from easyai.model.utility.base_det_model import *
 
 

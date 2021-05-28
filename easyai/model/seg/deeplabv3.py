@@ -3,15 +3,15 @@
 # Author:
 
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossName
-from easyai.model.model_block.base_block.utility.upsample_layer import Upsample
-from easyai.model.model_block.base_block.utility.utility_layer import RouteLayer
-from easyai.model.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.model_block.base_block.cls.deeplab_block import ASPPBlock
+from easyai.config.name_manager import ModelName
+from easyai.config.name_manager import BackboneName
+from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.config.name_manager import LayerType, BlockType
+from easyai.config.name_manager import LossName
+from easyai.model_block.base_block.utility.upsample_layer import Upsample
+from easyai.model_block.base_block.utility.utility_layer import RouteLayer
+from easyai.model_block.base_block import ConvBNActivationBlock
+from easyai.model_block.base_block.cls.deeplab_block import ASPPBlock
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 

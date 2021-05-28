@@ -6,7 +6,7 @@ import os
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.det2d.detect2d_result_process import Detect2dResultProcess
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 

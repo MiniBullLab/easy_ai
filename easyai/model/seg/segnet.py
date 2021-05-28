@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 
-from easyai.base_name.model_name import ModelName
+from easyai.config.name_manager import ModelName
 from easyai.model.seg.fgsegnet import FgSegNet
 from easyai.model.utility.registry import REGISTERED_SEG_MODEL
 

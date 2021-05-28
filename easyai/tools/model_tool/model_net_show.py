@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.getcwd() + "/..")
 import torch
-from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model_block.backbone.utility import BackboneFactory
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_onnx.model_show import ModelShow
 from easyai.helper.arguments_parse import ToolArgumentsParse

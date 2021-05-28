@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import os
-from easyai.base_name.loss_name import LossName
+from easyai.config.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.common.common_loss import l2_loss
 from easyai.torch_utility.torch_vision.torchvision_visualizer import TorchVisionVisualizer

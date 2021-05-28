@@ -5,10 +5,10 @@
 Focal Loss for Dense Object Detection
 """
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.block_name import NormalizationType, ActivationType
+from easyai.config.name_manager import ModelName
+from easyai.config.name_manager import NormalizationType, ActivationType
 from easyai.model.utility.base_model import *
-from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model_block.backbone.utility import BackboneFactory
 
 
 class RetinaNet(BaseModel):

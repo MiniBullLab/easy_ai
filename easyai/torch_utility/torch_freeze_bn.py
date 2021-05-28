@@ -3,9 +3,7 @@
 # Author:
 
 import re
-import torch
-import torch.nn as nn
-from easyai.base_name.block_name import BlockType
+from easyai.config.name_manager import BlockType
 
 
 class TorchFreezeNormalization():

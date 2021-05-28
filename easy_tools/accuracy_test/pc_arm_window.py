@@ -6,7 +6,7 @@ import os
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easy_tools.accuracy_test.accuracy_test_thread import AccuracyTestThread
 import inspect
 

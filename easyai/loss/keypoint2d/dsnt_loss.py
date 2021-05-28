@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.loss_name import LossName
+from easyai.config.name_manager import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.keypoint2d import dsntnn
 from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS

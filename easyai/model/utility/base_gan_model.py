@@ -3,7 +3,7 @@
 # Author:
 
 from easyai.model.utility.abstract_model import *
-from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model_block.backbone.utility import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 
 

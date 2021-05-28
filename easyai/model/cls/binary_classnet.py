@@ -2,14 +2,14 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossName
-from easyai.model.model_block.base_block.utility.utility_layer import FcLayer
-from easyai.model.model_block.base_block.utility.pooling_layer import GlobalAvgPool2d
-from easyai.model.model_block.base_block.utility.utility_layer import ActivationLayer
+from easyai.config.name_manager.model_name import ModelName
+from easyai.config.name_manager.backbone_name import BackboneName
+from easyai.config.name_manager.block_name import NormalizationType, ActivationType
+from easyai.config.name_manager.block_name import LayerType, BlockType
+from easyai.config.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.utility_layer import FcLayer
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.base_block.common.pooling_layer import GlobalAvgPool2d
 from easyai.model.utility.base_classify_model import BaseClassifyModel
 from easyai.model.utility.registry import REGISTERED_CLS_MODEL
 

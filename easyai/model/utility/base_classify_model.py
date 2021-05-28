@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.model.utility.base_model import BaseModel
-from easyai.model.model_block.backbone.utility.backbone_factory import BackboneFactory
+from easyai.model_block.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 
 

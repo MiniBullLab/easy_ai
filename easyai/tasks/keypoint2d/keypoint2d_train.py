@@ -6,7 +6,7 @@ import os
 from easyai.data_loader.keypoint2d.keypoint2d_dataloader import get_key_points2d_train_dataloader
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.keypoint2d.keypoint2d_test import KeyPoint2dTest
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 

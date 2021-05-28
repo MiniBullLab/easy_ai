@@ -8,7 +8,7 @@ from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.data_loader.multi_task.det2d_seg_val_dataloader import get_det2d_seg_val_dataloader
 from easyai.tasks.multi_task.det2d_seg_task import Det2dSegTask
 from easyai.evaluation.segmen_metric import SegmentionMetric
-from easyai.base_name.task_name import TaskName
+from easyai.config.name_manager import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 
