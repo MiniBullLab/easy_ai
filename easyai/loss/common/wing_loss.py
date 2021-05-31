@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.config.name_manager import LossName
+from easyai.config.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 
 

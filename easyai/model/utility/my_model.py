@@ -4,9 +4,9 @@
 
 import os
 from easyai.config.name_manager.block_name import LayerType, BlockType, HeadType
+from easyai.model_block.utility.create_model_list import CreateModuleList
 from easyai.model_block.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
-from easyai.model_block.utility.create_model_list import CreateModuleList
 from easyai.model.utility.base_model import BaseModel
 
 

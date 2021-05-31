@@ -2,11 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import os
-import sys
-sys.path.insert(0, os.getcwd() + "/..")
+# import os
+# import sys
+# sys.path.insert(0, os.getcwd() + "/..")
 import torch
-from easyai.model_block.backbone.utility import BackboneFactory
+from easyai.model_block.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.helper.arguments_parse import ToolArgumentsParse
 
