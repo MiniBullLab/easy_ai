@@ -5,7 +5,7 @@
 from easyai.config.name_manager.model_name import ModelName
 from easyai.config.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.model.utility.model_factory import ModelFactory
+# from easyai.model.utility.model_factory import ModelFactory
 from easyai.loss.common.wing_loss import WingLoss
 from easyai.loss.common.common_loss import GaussianNLLoss
 from easyai.loss.keypoint2d.mouth_eye_dis_loss import MouthEyeFrontDisLoss
@@ -37,11 +37,12 @@ class FaceLandmarkLoss(BaseLoss):
         self.gaussian_loss = GaussianNLLoss(gaussian_scale, reduction='mean',
                                             ignore_value=ignore_value)
 
-        model_factory = ModelFactory()
-        model_config = {"type": ModelName.HourglassPose,
-                        "data_channel": 1,
-                        "points_count": self.points_count}
-        self.hm_model = model_factory.get_model(model_config)
+        # model_factory = ModelFactory()
+        # model_config = {"type": ModelName.HourglassPose,
+        #                 "data_channel": 1,
+        #                 "points_count": self.points_count}
+        # self.hm_model = model_factory.get_model(model_config)
+        self.hm_model = None
 
         self.convert_left = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5],
                              [6, 6], [7, 7], [8, 8],
