@@ -7,7 +7,7 @@ import os
 import sys
 sys.path.insert(0, os.getcwd() + "/..")
 
-from easyai.config.name_manager import BackboneName
+from easyai.name_manager import BackboneName
 from easyai.model_block import DarkNet
 from easyai.torch_utility.torch_onnx.model_show import ModelShow
 

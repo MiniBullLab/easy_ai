@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ActivationType
-from easyai.config.name_manager import HeadType
+from easyai.name_manager import ActivationType
+from easyai.name_manager import HeadType
 from easyai.model_block.base_block.utility.upsample_layer import Upsample
 from easyai.model_block.base_block.utility.utility_block import ConvActivationBlock
 from easyai.model_block.base_block.utility.pooling_layer import MultiROIPooling

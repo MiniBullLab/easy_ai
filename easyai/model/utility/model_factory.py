@@ -3,17 +3,17 @@
 # Author:lipeijie
 
 import os
-from easyai.model.utility.model_parse import ModelParse
-from easyai.model.utility.my_model import MyModel
-from easyai.model.utility.registry import REGISTERED_CLS_MODEL
-from easyai.model.utility.registry import REGISTERED_DET2D_MODEL
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
-from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
-from easyai.model.utility.registry import REGISTERED_SR_MODEL
-from easyai.model.utility.registry import REGISTERED_GAN_MODEL
-from easyai.model.utility.registry import REGISTERED_MULTI_MODEL
+from easyai.model.utility.model_registry import REGISTERED_CLS_MODEL
+from easyai.model.utility.model_registry import REGISTERED_DET2D_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_KEYPOINT2D_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SR_MODEL
+from easyai.model.utility.model_registry import REGISTERED_GAN_MODEL
+from easyai.model.utility.model_registry import REGISTERED_MULTI_MODEL
 from easyai.utility.registry import build_from_cfg
 
+from easyai.model_block.utility.model_parse import ModelParse
+from easyai.model.common.my_model import MyModel
 from easyai.model.utility.mode_weight_init import ModelWeightInit
 
 

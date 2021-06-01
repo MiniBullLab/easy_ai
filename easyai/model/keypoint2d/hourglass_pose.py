@@ -2,16 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import BackboneName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import BlockType, LayerType, HeadType
-from easyai.config.name_manager import LossName
+from easyai.name_manager import ModelName
+from easyai.name_manager import BackboneName
+from easyai.name_manager import NormalizationType, ActivationType
+from easyai.name_manager import BlockType, LayerType, HeadType
+from easyai.name_manager import LossName
 from easyai.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model_block.base_block.utility.pooling_layer import MyAvgPool2d
 from easyai.model_block.head.utility import MultiOutputHead
 from easyai.model.utility.base_pose_model import *
-from easyai.model.utility.registry import REGISTERED_KEYPOINT2D_MODEL
+from easyai.model.utility.model_registry import REGISTERED_KEYPOINT2D_MODEL
 
 
 @REGISTERED_KEYPOINT2D_MODEL.register_module(ModelName.HourglassPose)

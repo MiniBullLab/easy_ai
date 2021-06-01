@@ -4,7 +4,7 @@
 
 import torch.nn as nn
 from collections import OrderedDict
-from easyai.config.name_manager.block_name import LayerType, BlockType, HeadType
+from easyai.name_manager.block_name import LayerType, BlockType, HeadType
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock, ConvActivationBlock
 from easyai.model_block.base_block.common.utility_layer import NormalizeLayer, ActivationLayer
 from easyai.model_block.base_block.common.utility_layer import MultiplyLayer, AddLayer

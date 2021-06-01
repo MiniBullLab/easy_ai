@@ -7,7 +7,7 @@ from easyai.data_loader.seg.segment_dataloader import get_segment_train_dataload
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.tasks.seg.segment_test import SegmentionTest
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 

@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, os.getcwd() + "/..")
 
 from easyai.config.utility.config_factory import ConfigFactory
-from easyai.config.name_manager import TaskName
+from easyai.name_manager import TaskName
 from easyai.tools.sample_tool.create_super_resolution_images import CreateSuperResolutionImages
 
 

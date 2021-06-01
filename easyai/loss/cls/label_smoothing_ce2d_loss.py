@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager.loss_name import LossName
+from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.utility.label_smoothing import LabelSmoothing
 from easyai.loss.utility.registry import REGISTERED_CLS_LOSS

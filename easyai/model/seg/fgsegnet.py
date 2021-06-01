@@ -2,17 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import BackboneName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType, BlockType
-from easyai.config.name_manager import LossName
-from easyai.model_block.base_block.utility.utility_layer import RouteLayer, AddLayer, MultiplyLayer
-from easyai.model_block.base_block.utility.pooling_layer import GlobalAvgPool2d
-from easyai.model_block.base_block import ConvBNActivationBlock, ConvActivationBlock
-from easyai.model_block.base_block.utility.upsample_layer import Upsample
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.utility_layer import RouteLayer, AddLayer, MultiplyLayer
+from easyai.model_block.base_block.common.pooling_layer import GlobalAvgPool2d
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock, ConvActivationBlock
+from easyai.model_block.base_block.common.upsample_layer import Upsample
 from easyai.model.utility.base_classify_model import BaseClassifyModel
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 from torch import nn
 
 

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.model_block.base_block.cls.preact_resnet_block import PreActBottleNeck
+from easyai.model_block.utility.base_block import *
 
 
 class AttentionNetBlockName():

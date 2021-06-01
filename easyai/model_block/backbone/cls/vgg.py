@@ -2,13 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import BackboneName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType
-from easyai.model_block.base_block.utility.pooling_layer import MyMaxPool2d
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.utility_block import ConvActivationBlock
-from easyai.model_block.backbone.utility.base_backbone import *
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType
+from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.utility_block import ConvActivationBlock
+from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 

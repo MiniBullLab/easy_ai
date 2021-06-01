@@ -4,7 +4,7 @@
 
 import os.path
 from easyai.model_block.backbone.common.my_backbone import MyBackbone
-from easyai.model.utility.model_parse import ModelParse
+from easyai.model_block.utility.model_parse import ModelParse
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_D_BACKBONE
 from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_G_BACKBONE

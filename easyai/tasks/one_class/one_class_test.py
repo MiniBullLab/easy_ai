@@ -7,7 +7,7 @@ from easyai.tasks.utility.base_test import BaseTest
 from easyai.data_loader.one_class.one_class_dataloader import get_one_class_val_dataloader
 from easyai.tasks.one_class.one_class import OneClass
 from easyai.evaluation.one_class_roc import OneClassROC
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 

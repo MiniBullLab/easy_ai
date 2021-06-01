@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import os
-from easyai.config.name_manager.task_name import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.config.task.detect2d_config import Detect2dConfig
 from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
 

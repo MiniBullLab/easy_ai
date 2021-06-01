@@ -5,9 +5,9 @@
 Focal Loss for Dense Object Detection
 """
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.model.utility.base_model import *
+from easyai.name_manager import ModelName
+from easyai.name_manager import NormalizationType, ActivationType
+from easyai.model_block.utility.base_model import *
 from easyai.model_block.backbone.utility import BackboneFactory
 
 

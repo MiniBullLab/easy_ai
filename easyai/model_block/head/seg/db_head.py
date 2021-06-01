@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import HeadType
+from easyai.name_manager import NormalizationType, ActivationType
+from easyai.name_manager import HeadType
 from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.utility.upsample_layer import DeConvBNActivationBlock
 

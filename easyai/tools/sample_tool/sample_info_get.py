@@ -6,7 +6,7 @@ import os
 from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.config.utility.config_factory import ConfigFactory
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 
 
 class SampleInformation():

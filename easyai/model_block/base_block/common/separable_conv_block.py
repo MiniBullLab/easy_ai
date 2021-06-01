@@ -3,14 +3,14 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.config.name_manager import LayerType
-from easyai.config.name_manager import ActivationType, NormalizationType
-from easyai.config.name_manager import BlockType
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
-from easyai.model_block.base_block.utility.utility_layer import NormalizeLayer
-from easyai.model_block.base_block.utility.utility_block import ActivationConvBNBlock
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.name_manager.block_name import LayerType
+from easyai.name_manager.block_name import ActivationType, NormalizationType
+from easyai.name_manager.block_name import BlockType
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.base_block.common.utility_layer import NormalizeLayer
+from easyai.model_block.base_block.common.utility_block import ActivationConvBNBlock
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.utility.base_block import *
 
 
 class ShuffleBlock(BaseBlock):

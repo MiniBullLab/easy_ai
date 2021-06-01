@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import BlockType
-from easyai.config.name_manager import LossName
-from easyai.config.name_manager import GanBaseModelName
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.block_name import BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.name_manager.backbone_name import GanBaseModelName
 from easyai.model.utility.base_gan_model import *
-from easyai.model.utility.registry import REGISTERED_GAN_MODEL
+from easyai.model.utility.model_registry import REGISTERED_GAN_MODEL
 
 
 @REGISTERED_GAN_MODEL.register_module(ModelName.GANomaly)

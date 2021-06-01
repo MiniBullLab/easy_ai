@@ -5,15 +5,15 @@
 Attention U-Net: Learning Where to Look for the Pancreas
 """
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType
-from easyai.config.name_manager import LossName
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType
+from easyai.name_manager.loss_name import LossName
 from easyai.model_block.base_block.seg.unet_blcok import UNetBlockName
 from easyai.model_block.base_block.seg.unet_blcok import DoubleConv2d, DownBlock
 from easyai.model_block.base_block.seg.unet_blcok import AttentionUpBlock
 from easyai.model.utility.base_classify_model import *
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
 @REGISTERED_SEG_MODEL.register_module(ModelName.AttentionUnetSeg)

@@ -2,16 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType
-from easyai.config.name_manager import BackboneName
-from easyai.model_block.base_block.utility.utility_layer import RouteLayer, AddLayer
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.separable_conv_block import SeparableConv2dBNActivation
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.model_block.base_block.common.utility_layer import RouteLayer, AddLayer
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.separable_conv_block import SeparableConv2dBNActivation
 from easyai.model_block.base_block.cls.xception_block import DoubleSeparableConv2dBlock
 from easyai.model_block.base_block.cls.xception_block import XceptionSumBlock, XceptionConvBlock
 from easyai.model_block.base_block.cls.xception_block import BlockA, FCAttention
-from easyai.model_block.backbone.utility.base_backbone import *
+from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['Xception65', 'XceptionA']

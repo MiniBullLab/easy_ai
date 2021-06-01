@@ -3,9 +3,9 @@
 # Author:lipeijie
 
 from functools import reduce
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.utility.base_block import *
 
 
 class SKNetBlockName():

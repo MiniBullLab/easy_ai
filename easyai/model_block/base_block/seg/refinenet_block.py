@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ActivationType
-from easyai.model_block.base_block.utility.upsample_layer import Upsample
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.name_manager.block_name import ActivationType
+from easyai.model_block.base_block.common.upsample_layer import Upsample
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.utility.base_block import *
 
 
 class RefineNetBlockName():

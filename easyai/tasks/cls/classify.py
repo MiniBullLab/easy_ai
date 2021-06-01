@@ -6,7 +6,7 @@ import os
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.cls.classify_result_process import ClassifyResultProcess
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
 
 

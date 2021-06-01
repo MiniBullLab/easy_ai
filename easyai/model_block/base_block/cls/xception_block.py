@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer, NormalizeLayer
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.separable_conv_block import SeperableConv2dBlock
-from easyai.model_block.base_block.utility.separable_conv_block import SeparableConv2dBNActivation
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer, NormalizeLayer
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.separable_conv_block import SeperableConv2dBlock
+from easyai.model_block.base_block.common.separable_conv_block import SeparableConv2dBNActivation
+from easyai.model_block.utility.base_block import *
 
 
 class XceptionBlockName():

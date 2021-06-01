@@ -2,9 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.block_name import LayerType
+from easyai.name_manager.block_name import LayerType
 from easyai.model_block.utility.create_model_list import CreateModuleList
-from easyai.model_block.backbone.common.base_backbone import BaseBackbone
+from easyai.model_block.utility.base_backbone import BaseBackbone
 
 
 class MyBackbone(BaseBackbone):

@@ -3,7 +3,7 @@
 # Author:
 
 import re
-from easyai.config.name_manager import BlockType
+from easyai.name_manager import BlockType
 
 
 class TorchFreezeNormalization():

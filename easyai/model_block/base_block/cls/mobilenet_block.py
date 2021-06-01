@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import NormalizationType, ActivationType
+from easyai.name_manager import NormalizationType, ActivationType
 from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
 from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.utility.attention_block import SEBlock

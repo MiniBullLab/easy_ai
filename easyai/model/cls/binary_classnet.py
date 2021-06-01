@@ -2,16 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.model_name import ModelName
-from easyai.config.name_manager.backbone_name import BackboneName
-from easyai.config.name_manager.block_name import NormalizationType, ActivationType
-from easyai.config.name_manager.block_name import LayerType, BlockType
-from easyai.config.name_manager.loss_name import LossName
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
 from easyai.model_block.base_block.common.utility_layer import FcLayer
 from easyai.model_block.base_block.common.utility_layer import ActivationLayer
 from easyai.model_block.base_block.common.pooling_layer import GlobalAvgPool2d
 from easyai.model.utility.base_classify_model import BaseClassifyModel
-from easyai.model.utility.registry import REGISTERED_CLS_MODEL
+from easyai.model.utility.model_registry import REGISTERED_CLS_MODEL
 
 __all__ = ['BinaryClassNet']
 

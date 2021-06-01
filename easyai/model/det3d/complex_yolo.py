@@ -2,9 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType, BlockType
+from easyai.name_manager import ModelName
+from easyai.name_manager import NormalizationType, ActivationType
+from easyai.name_manager import LayerType, BlockType
 from easyai.model_block.base_block.utility.utility_layer import RouteLayer
 from easyai.model_block.base_block import ConvBNActivationBlock
 from easyai.model_block.base_block import ReorgBlock

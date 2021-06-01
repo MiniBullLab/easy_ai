@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.residual_block import InvertedResidual
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.residual_block import InvertedResidual
 from easyai.model_block.base_block.seg.pspnet_block import PyramidPooling
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.model_block.utility.base_block import *
 
 
 class FastSCNNBlockName():

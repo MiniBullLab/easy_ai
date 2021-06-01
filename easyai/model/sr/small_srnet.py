@@ -2,14 +2,14 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import ActivationType
-from easyai.config.name_manager import LayerType, BlockType
-from easyai.config.name_manager import LossName
-from easyai.model.utility.base_model import *
-from easyai.model_block.base_block import ConvActivationBlock
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.block_name import ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.utility.base_model import *
+from easyai.model_block.base_block.common.utility_block import ConvActivationBlock
 from easyai.loss.utility.loss_factory import LossFactory
-from easyai.model.utility.registry import REGISTERED_SR_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SR_MODEL
 
 
 @REGISTERED_SR_MODEL.register_module(ModelName.SmallSRNet)

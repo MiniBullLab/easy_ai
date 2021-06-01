@@ -2,8 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ActivationType, NormalizationType
-from easyai.model_block.base_block.utility.utility_block import BNActivationConvBlock
+from easyai.name_manager.block_name import ActivationType, NormalizationType
+from easyai.model_block.base_block.common.utility_block import BNActivationConvBlock
+from easyai.model_block.utility.base_block import *
 
 
 class DenseNetBlockName():

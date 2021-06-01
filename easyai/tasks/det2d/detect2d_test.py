@@ -8,7 +8,7 @@ from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.data_loader.det2d.det2d_val_dataloader import get_detection_val_dataloader
 from easyai.tasks.det2d.detect2d import Detection2d
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 

@@ -7,7 +7,7 @@ from easyai.tasks.utility.base_test import BaseTest
 from easyai.data_loader.cls.classify_dataloader import get_classify_val_dataloader
 from easyai.tasks.cls.classify import Classify
 from easyai.evaluation.classify_accuracy import ClassifyAccuracy
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 

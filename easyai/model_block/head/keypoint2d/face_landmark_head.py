@@ -3,8 +3,8 @@
 # Author:lipeijie
 
 
-from easyai.config.name_manager import HeadType
-from easyai.config.name_manager import ActivationType
+from easyai.name_manager import HeadType
+from easyai.name_manager import ActivationType
 from easyai.model_block.base_block.utility.utility_block import FcActivationBlock
 
 

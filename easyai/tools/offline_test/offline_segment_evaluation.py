@@ -10,7 +10,7 @@ from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tools.utility.registry import REGISTERED_OFFLINE_EVALUATION
 
 

@@ -7,7 +7,7 @@ from easyai.tasks.utility.base_test import BaseTest
 from easyai.data_loader.sr.super_resolution_dataloader import get_sr_val_dataloader
 from easyai.tasks.sr.super_resolution import SuperResolution
 from easyai.evaluation.super_resolution_psnr import SuperResolutionPSNR
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
 
 

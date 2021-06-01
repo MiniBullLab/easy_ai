@@ -3,17 +3,17 @@
 # Author:
 """Fast Segmentation Convolutional Neural Network"""
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType, BlockType
-from easyai.config.name_manager import LossName
-from easyai.model_block.base_block.utility.upsample_layer import Upsample
-from easyai.model_block.base_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.separable_conv_block import SeparableConv2dBNActivation
-from easyai.model_block.base_block.seg import FastSCNNBlockName
-from easyai.model_block.base_block.seg import GlobalFeatureExtractor, FeatureFusionBlock
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.upsample_layer import Upsample
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.separable_conv_block import SeparableConv2dBNActivation
+from easyai.model_block.base_block.seg.fast_scnn_block import FastSCNNBlockName
+from easyai.model_block.base_block.seg.fast_scnn_block import GlobalFeatureExtractor, FeatureFusionBlock
 from easyai.model.utility.base_classify_model import *
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
 @REGISTERED_SEG_MODEL.register_module(ModelName.FastSCNN)

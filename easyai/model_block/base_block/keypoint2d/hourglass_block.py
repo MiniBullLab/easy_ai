@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ActivationType, NormalizationType
-from easyai.config.name_manager import BlockType
-from easyai.model_block.base_block.utility.base_block import *
-from easyai.model_block.base_block.utility.residual_block import ResidualV2Block
+from easyai.name_manager.block_name import ActivationType, NormalizationType
+from easyai.name_manager.block_name import BlockType
+from easyai.model_block.utility.base_block import *
+from easyai.model_block.base_block.common.residual_block import ResidualV2Block
 
 
 class HourglassBlock(BaseBlock):

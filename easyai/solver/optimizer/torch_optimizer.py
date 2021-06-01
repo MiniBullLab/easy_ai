@@ -4,7 +4,7 @@
 
 
 import torch
-from easyai.config.name_manager import OptimizerName
+from easyai.name_manager.solver_name import OptimizerName
 from easyai.solver.utility.registry import REGISTERED_OPTIMIZER
 
 REGISTERED_OPTIMIZER.add_module(torch.optim.SGD, OptimizerName.SGD)

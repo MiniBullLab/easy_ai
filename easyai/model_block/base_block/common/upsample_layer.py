@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.block_name import LayerType, BlockType
-from easyai.config.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.model_block.base_block.common.activation_function import ActivationFunction
 from easyai.model_block.base_block.common.normalization_layer import NormalizationFunction
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.common.base_block import *
+from easyai.model_block.utility.base_block import *
 
 
 class Upsample(BaseBlock):

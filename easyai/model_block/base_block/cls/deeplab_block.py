@@ -2,10 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.separable_conv_block import SeparableConv2dBNActivation
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.separable_conv_block import SeparableConv2dBNActivation
 from easyai.model_block.base_block.seg.bisenet_block import GlobalAvgPooling
+from easyai.model_block.utility.base_block import *
 
 
 class DeepLabBlockName():

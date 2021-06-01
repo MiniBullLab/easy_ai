@@ -2,9 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.block_name import LayerType, BlockType
 from easyai.base_algorithm.roi_align import ROIAlign
-from easyai.model_block.base_block.common.base_block import *
+from easyai.model_block.utility.base_block import *
 
 
 class MyMaxPool2d(BaseBlock):

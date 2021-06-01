@@ -8,13 +8,13 @@
     https://arxiv.org/abs/1707.07012
 """
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import BackboneName
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.cls.nasnet_block import NasNetBlockName
 from easyai.model_block.base_block.cls.nasnet_block import NormalCell, ReductionCell
-from easyai.model_block.backbone.utility.base_backbone import *
+from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['NasNet']

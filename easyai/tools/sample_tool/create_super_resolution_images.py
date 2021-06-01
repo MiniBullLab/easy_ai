@@ -11,7 +11,7 @@ from easyai.helper import ImageProcess
 from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 
 
 class CreateSuperResolutionImages():

@@ -2,11 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.block_name import ActivationType, NormalizationType
-from easyai.config.name_manager.block_name import NeckType
+from easyai.name_manager import ActivationType, NormalizationType
+from easyai.name_manager import NeckType
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.common.upsample_layer import Upsample
-from easyai.model_block.base_block.common.base_block import *
+from easyai.model_block.utility.base_block import *
 
 
 class DBFPNNeck(BaseBlock):

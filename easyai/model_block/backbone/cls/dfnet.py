@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import BackboneName
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.cls.dfnet_block import BasicBlock
-from easyai.model_block.backbone.utility.base_backbone import *
+from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['DFNetV1', 'DFNetV2']

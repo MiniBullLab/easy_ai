@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ActivationType, NormalizationType
-from easyai.config.name_manager import BlockType
+from easyai.name_manager import ActivationType, NormalizationType
+from easyai.name_manager import BlockType
 from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
 from easyai.model_block.base_block.utility.pooling_layer import MyMaxPool2d

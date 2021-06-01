@@ -6,7 +6,7 @@ import os
 from easyai.data_loader.multi_task.det2d_seg_train_dataloader import get_det2d_seg_train_dataloader
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.multi_task.det2d_seg_task_test import Det2dSegTaskTest
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
 
 

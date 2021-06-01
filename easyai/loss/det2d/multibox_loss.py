@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.loss_name import LossName
+from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.base_multi_loss import BaseMultiLoss
 from easyai.loss.utility.box2d_process import torch_corners_box2d_ious, torch_box2d_rect_corner

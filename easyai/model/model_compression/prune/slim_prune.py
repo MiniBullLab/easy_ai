@@ -8,11 +8,11 @@ from collections import OrderedDict
 import numpy as np
 import torch
 import torch.nn.functional as F
-from easyai.config.name_manager import BlockType
-from easyai.config.name_manager import LayerType
+from easyai.name_manager import BlockType
+from easyai.name_manager import LayerType
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.model.utility.model_parse import ModelParse
+from easyai.model_block.utility.model_parse import ModelParse
 
 
 class SlimPrune():

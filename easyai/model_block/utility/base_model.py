@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.model.utility.abstract_model import *
+from easyai.model_block.utility.abstract_model import *
 
 
 class BaseModel(AbstractModel):

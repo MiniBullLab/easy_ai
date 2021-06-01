@@ -2,17 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import ModelName
-from easyai.config.name_manager import BackboneName
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import LayerType, BlockType
-from easyai.config.name_manager import LossName
-from easyai.model_block.base_block.utility.upsample_layer import Upsample
-from easyai.model_block.base_block.utility.utility_layer import RouteLayer
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.upsample_layer import Upsample
+from easyai.model_block.base_block.common.utility_layer import RouteLayer
 from easyai.model_block.base_block.seg.refinenet_block import RefineNetBlockName
 from easyai.model_block.base_block.seg.refinenet_block import CRPBlock, RefineNetBlock
 from easyai.model.utility.base_classify_model import *
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
 @REGISTERED_SEG_MODEL.register_module(ModelName.RefineNetSeg)

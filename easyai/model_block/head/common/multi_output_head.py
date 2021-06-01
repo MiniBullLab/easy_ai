@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import HeadType
+from easyai.name_manager import HeadType
 
 
 class MultiOutputHead(BaseBlock):

@@ -11,7 +11,7 @@ import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.tools.sample_tool.sample_info_get import SampleInformation
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.helper.arguments_parse import ToolArgumentsParse
 
 

@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.config.name_manager import LrSechedulerName
+from easyai.name_manager.solver_name import LrSechedulerName
 from easyai.utility.registry import build_from_cfg
 from easyai.solver.utility.registry import REGISTERED_LR_SCHEDULER
 

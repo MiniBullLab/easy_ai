@@ -12,7 +12,7 @@ from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProce
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.helper.json_process import JsonProcess
 from easyai.helper import ImageProcess
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.helper.arguments_parse import ToolArgumentsParse
 

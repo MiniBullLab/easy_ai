@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.model.utility.abstract_model import *
+from easyai.model_block.utility.abstract_model import *
 
 
 class BaseBackbone(AbstractModel):

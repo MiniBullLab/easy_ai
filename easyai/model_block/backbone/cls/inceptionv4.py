@@ -11,14 +11,14 @@
     https://arxiv.org/abs/1602.07261
 """
 
-from easyai.config.name_manager import NormalizationType, ActivationType
-from easyai.config.name_manager import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.backbone_name import BackboneName
 from easyai.model_block.base_block.cls.inception_block import InceptionStem
 from easyai.model_block.base_block.cls.inception_block import InceptionA, InceptionB, InceptionC
 from easyai.model_block.base_block.cls.inception_block import ReductionA, ReductionB
 from easyai.model_block.base_block.cls.inception_block import InceptionResNetA, InceptionResNetB, InceptionResNetC
 from easyai.model_block.base_block.cls.inception_block import InceptionResNetReductionA, InceptionResNetReductionB
-from easyai.model_block.backbone.utility.base_backbone import *
+from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['InceptionV4', 'InceptionResNetV2']

@@ -4,7 +4,7 @@
 
 from easyai.helper.arguments_parse import TaskArgumentsParse
 from easyai.tasks.seg.segment_test import SegmentionTest
-from easyai.config.name_manager import TaskName
+from easyai.name_manager import TaskName
 
 
 class TestTask():

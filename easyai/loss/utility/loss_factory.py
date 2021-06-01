@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager.loss_name import LossName
+from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.registry import REGISTERED_COMMON_LOSS
 from easyai.loss.utility.registry import REGISTERED_CLS_LOSS
 from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS

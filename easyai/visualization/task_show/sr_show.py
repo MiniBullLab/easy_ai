@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import TaskName
+from easyai.name_manager.task_name import TaskName
 from easyai.visualization.utility.base_show import BaseShow
 from easyai.visualization.utility.registry import REGISTERED_TASK_SHOW
 

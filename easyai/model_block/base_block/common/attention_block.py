@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.config.name_manager import ActivationType
-from easyai.config.name_manager import BlockType
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.name_manager.block_name import ActivationType
+from easyai.name_manager.block_name import BlockType
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.utility.base_block import *
 
 
 class SEBlock(BaseBlock):

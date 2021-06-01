@@ -2,11 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.config.name_manager import ActivationType
-from easyai.config.name_manager import GanBaseModelName
+from easyai.name_manager.block_name import ActivationType
+from easyai.name_manager.backbone_name import GanBaseModelName
 from easyai.model_block.base_block.gan.dc_encoder import DCEncoder
 from easyai.model_block.base_block.gan.dc_decoder import DCDecoder
-from easyai.model_block.backbone.utility.base_backbone import *
+from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_G_BACKBONE
 
 
