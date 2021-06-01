@@ -4,7 +4,7 @@
 
 import torch
 import numpy as np
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 
 
 class SegmentResultProcess():

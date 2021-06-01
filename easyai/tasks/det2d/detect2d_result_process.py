@@ -5,7 +5,7 @@
 
 import torch
 from easyai.helper.data_structure import DetectionObject
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
 from easyai.loss.utility.box2d_process import box2d_xywh2xyxy
 

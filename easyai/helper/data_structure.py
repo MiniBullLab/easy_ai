@@ -156,3 +156,49 @@ class DetectionKeyPoint(KeyPoint2D):
         self.keypoint_confidence = 0
         self.objectConfidence = 0
 
+
+class OCRObject(Rect2D):
+
+    def __init__(self):
+        super().__init__()
+        self.polygon = []
+        self.object_text = None
+        self.language = None
+        self.object_confidence = 0
+
+    def copy(self):
+        b = OCRObject()
+        b.name = self.name
+        b.class_id = self.class_id
+        b.difficult = self.difficult
+        b.min_corner = self.min_corner
+        b.max_corner = self.max_corner
+        b.polygon = self.polygon[:]
+        b.object_text = self.object_text
+        return b
+
+    def set_rect2d(self, rect2d):
+        self.min_corner = rect2d.min_corner
+        self.max_corner = rect2d.max_corner
+
+    def get_rect2d(self):
+        b = Rect2D()
+        b.min_corner = self.min_corner
+        b.max_corner = self.max_corner
+        return b
+
+    def clear_polygon(self):
+        self.polygon.clear()
+
+    def add_point(self, point):
+        self.polygon.append(point)
+
+    def get_polygon(self):
+        return self.polygon
+
+    def set_text(self, temp_str):
+        self.object_text = temp_str
+
+    def get_text(self):
+        return self.object_text
+

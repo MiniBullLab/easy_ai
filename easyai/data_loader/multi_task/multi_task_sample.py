@@ -4,12 +4,13 @@
 
 import os.path
 import numpy as np
-from easyai.helper import DirProcess
+from easyai.data_loader.utility.base_sample import BaseSample
 
 
-class MultiTaskSample():
+class MultiTaskSample(BaseSample):
 
     def __init__(self, train_path, class_name, is_balance=False):
+        super().__init__()
         self.train_path = train_path
         self.is_blance = is_balance
         self.class_name = class_name
@@ -24,7 +25,6 @@ class MultiTaskSample():
 
         self.annotation_post = ".xml"
         self.segmentation_post = ".png"
-        self.dirProcess = DirProcess()
 
     def read_sample(self):
         if self.is_blance:

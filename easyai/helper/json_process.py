@@ -137,3 +137,33 @@ class JsonProcess():
             if is_available:
                 result.append(keypoint)
         return image_name, result
+
+    def parse_ocr_data(self, json_path):
+        if not os.path.exists(json_path):
+            print("error:%s file not exists" % json_path)
+            return None, []
+        with codecs.open(json_path, 'r', encoding='utf-8') as f:
+            data_dict = json.load(f)
+        image_name = data_dict['filename']
+        objects_dict = data_dict['objects']
+        ocr_objects_list = objects_dict['ocrObject']
+        result = []
+        for ocr_dict in ocr_objects_list:
+            class_name = ocr_dict['class']
+            illegibility = int(ocr_dict.get('illegibility', 1))
+            transcription = ocr_dict['transcription']
+            language = ocr_dict['language']
+            points_list = ocr_dict.get('polygon', None)
+            if (points_list is None) or illegibility == 0:
+                continue
+            point_count = ocr_dict['pointCount']
+            ocr_object = OCRObject()
+            ocr_object.name = class_name
+            ocr_object.language = language
+            ocr_object.object_text = transcription
+            ocr_object.clear_polygon()
+            for index in range(0, point_count, 2):
+                point = Point2d(int(points_list[index]), int(points_list[index+1]))
+                ocr_object.add_point(point)
+            result.append(ocr_object)
+        return image_name, result

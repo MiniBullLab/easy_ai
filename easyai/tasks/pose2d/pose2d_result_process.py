@@ -7,7 +7,7 @@ import math
 import numpy as np
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import DetectionKeyPoint
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 
 
 class Pose2dResultProcess():

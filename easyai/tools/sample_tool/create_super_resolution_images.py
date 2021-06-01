@@ -8,7 +8,7 @@ sys.path.insert(0, os.getcwd() + "/..")
 import cv2
 from easyai.helper import DirProcess
 from easyai.helper import ImageProcess
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.name_manager.task_name import TaskName

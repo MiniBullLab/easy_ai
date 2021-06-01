@@ -8,8 +8,8 @@ from pathlib import Path
 import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.utility.images_loader import ImagesLoader
-from easyai.data_loader.utility.video_loader import VideoLoader
-from easyai.data_loader.utility.text_data_loader import TextDataLoader
+from easyai.data_loader.common.video_loader import VideoLoader
+from easyai.data_loader.common.text_data_loader import TextDataLoader
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig

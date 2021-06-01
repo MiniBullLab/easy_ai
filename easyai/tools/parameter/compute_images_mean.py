@@ -8,7 +8,7 @@ sys.path.insert(0, os.getcwd() + "/..")
 import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper.imageProcess import ImageProcess
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
 

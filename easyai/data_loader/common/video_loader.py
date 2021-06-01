@@ -5,7 +5,7 @@
 import numpy as np
 from easyai.helper import VideoProcess
 from easyai.data_loader.utility.data_loader import *
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 

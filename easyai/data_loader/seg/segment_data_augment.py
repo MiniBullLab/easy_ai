@@ -3,7 +3,7 @@
 # Author:
 
 import numpy as np
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.data_loader.augment.image_data_augment import ImageDataAugment
 
 
