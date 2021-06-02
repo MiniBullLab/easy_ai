@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.data_loader.utility.box2d_dataset_process import Box2dDataSetProcess
+from easyai.data_loader.common.box2d_dataset_process import Box2dDataSetProcess
 
 
 class DetectionDataSetProcess(Box2dDataSetProcess):

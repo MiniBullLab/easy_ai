@@ -25,6 +25,7 @@ class ModelName():
     MobileV2FCN = "MobileV2FCN"
     AttentionUnetSeg = "AttentionUnetSeg"
     FgSegNet = "fgsegnet"
+    DBNet = "dbnet"
     SegNet = "segnet"
 
     ComplexYOLO = "ComplexYOLO"

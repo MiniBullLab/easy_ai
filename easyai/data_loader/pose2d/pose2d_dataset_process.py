@@ -4,7 +4,7 @@
 
 import numpy as np
 from easyai.helper.data_structure import Rect2D
-from easyai.data_loader.utility.box2d_dataset_process import Box2dDataSetProcess
+from easyai.data_loader.common.box2d_dataset_process import Box2dDataSetProcess
 from easyai.data_loader.augment.box2d_augment import Box2dAugment
 
 

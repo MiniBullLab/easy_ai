@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from torch.utils.data import Dataset
 from easyai.helper.imageProcess import ImageProcess

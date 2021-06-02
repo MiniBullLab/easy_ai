@@ -5,6 +5,7 @@
 import cv2
 import random
 import numpy as np
+from skimage.util import random_noise
 from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 
 
@@ -25,6 +26,17 @@ class ImageDataAugment():
         image = self.dataset_process.image_affine(src_image, matrix,
                                                   border_value=self.border_value)
         return image, matrix, degree
+
+    def augment_rotate(self, src_image, degrees=(-10, 10)):
+        image_size = (src_image.shape[1], src_image.shape[0])
+        angle = np.random.uniform(degrees[0], degrees[1])
+        # 构造仿射矩阵
+        matrix = cv2.getRotationMatrix2D((image_size[0] * 0.5, image_size[1] * 0.5),
+                                         angle, 1)
+        # 仿射变换
+        image = cv2.warpAffine(src_image, matrix, image_size,
+                               flags=cv2.INTER_LANCZOS4)
+        return image, matrix
 
     def augment_lr_flip(self, src_image):
         image = src_image[:]
@@ -71,4 +83,11 @@ class ImageDataAugment():
         image = src_image[:]
         if image_size[0] >= 90 and random.randint(0, 1) == 0:
             image = cv2.GaussianBlur(image, (5, 5), 1)
+        return image
+
+    def random_noise(self, src_image):
+        image = src_image[:]
+        if random.random() > 0.5:
+            image = (random_noise(image, mode='gaussian',
+                                  clip=True) * 255).astype(image.dtype)
         return image

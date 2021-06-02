@@ -32,6 +32,7 @@ class LossName():
     EncNetLoss = "encNetLoss"
     MixCrossEntropy2dLoss = "MixCE2dLoss"
     MixBinaryCrossEntropy2dLoss = "MixBCELoss"
+    DBLoss = "dbLoss"
 
     # keypoint2d2d
     Keypoint2dRegionLoss = "Keypoint2dRegionLoss"

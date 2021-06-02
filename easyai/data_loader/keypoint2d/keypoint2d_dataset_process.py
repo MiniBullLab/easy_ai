@@ -4,7 +4,7 @@
 
 import numpy as np
 from easyai.helper.data_structure import KeyPoint2D
-from easyai.data_loader.utility.box2d_dataset_process import Box2dDataSetProcess
+from easyai.data_loader.common.box2d_dataset_process import Box2dDataSetProcess
 
 
 class KeyPoint2dDataSetProcess(Box2dDataSetProcess):

@@ -48,6 +48,8 @@ class LayerType():
     ShortcutLayer = "shortcut"
 
     Upsample = "upsample"
+    UpsampleAdd = "upsampleAdd"
+    UpsampleRoute = "upsampleRoute"
     PixelShuffle = "pixelShuffle"
 
     MyMaxPool2d = "maxpool"
@@ -143,4 +145,5 @@ class HeadType():
     MultiOutputHead = "multiOutput"
 
     BinarizeHead = "binarize"
+    DBHead = "dbHead"
 

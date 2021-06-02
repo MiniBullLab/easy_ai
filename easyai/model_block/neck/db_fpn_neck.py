@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.name_manager import ActivationType, NormalizationType
-from easyai.name_manager import NeckType
+from easyai.name_manager.block_name import ActivationType, NormalizationType
+from easyai.name_manager.block_name import NeckType
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.common.upsample_layer import Upsample
 from easyai.model_block.utility.base_block import *
@@ -23,6 +23,7 @@ class DBFPNNeck(BaseBlock):
         self.inner_blocks = nn.ModuleList()
         self.layer_blocks = nn.ModuleList()
         self.up_blocks = nn.ModuleList()
+        self.layer_count = len(self.down_channels)
         for index, in_channel in enumerate(self.down_channels):
             if in_channel == 0:
                 continue
@@ -42,7 +43,7 @@ class DBFPNNeck(BaseBlock):
                                           activationName=activation_name)
             self.inner_blocks.append(temp1)
             self.layer_blocks.append(temp2)
-        self.layer_count = len(self.inner_blocks)
+
         for index in range(self.layer_count - 1, 0, -1):
             temp_up = Upsample(2 ** index, up_mode)
             self.up_blocks.append(temp_up)

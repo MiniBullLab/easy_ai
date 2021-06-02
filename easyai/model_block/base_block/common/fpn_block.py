@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.name_manager import ActivationType, NormalizationType
-from easyai.name_manager import BlockType
-from easyai.model_block.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.utility.utility_layer import ActivationLayer
-from easyai.model_block.base_block.utility.pooling_layer import MyMaxPool2d
-from easyai.model_block.base_block.utility.base_block import *
+from easyai.name_manager.block_name import ActivationType, NormalizationType
+from easyai.name_manager.block_name import BlockType
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.utility_layer import ActivationLayer
+from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
+from easyai.model_block.utility.base_block import *
 
 
 class FPNBlock(BaseBlock):
