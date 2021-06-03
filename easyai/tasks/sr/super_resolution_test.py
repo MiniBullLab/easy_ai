@@ -8,7 +8,7 @@ from easyai.data_loader.sr.super_resolution_dataloader import get_sr_val_dataloa
 from easyai.tasks.sr.super_resolution import SuperResolution
 from easyai.evaluation.super_resolution_psnr import SuperResolutionPSNR
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.SuperResolution_Task)

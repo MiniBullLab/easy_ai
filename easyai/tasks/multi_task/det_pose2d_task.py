@@ -8,7 +8,7 @@ from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.data_loader.common.box2d_dataloader import Box2dLoader
 from easyai.visualization.task_show.det_pose2d_show import DetAndPose2dShow
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Det_Pose2d_Task)

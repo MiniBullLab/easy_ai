@@ -151,3 +151,27 @@ class ImageDataSetProcess(BaseDataSetProcess):
 
         M = S @ T @ R  # Combined rotation matrix. ORDER IS IMPORTANT HERE!
         return M, a
+
+    def get_random_size(self, dst_size, scale=(0.5, 2)):
+        # Multi-Scale
+        min_size = min(dst_size)
+        scale_range = [int(x * 10) for x in scale]
+        width = int(random.choice(scale_range) / 10 * min_size)
+        scale = float(dst_size[0]) / float(dst_size[1])
+        height = int(round(float(width / scale) / 32.0) * 32)
+        return width, height
+
+    def get_short_size(self, src_size, dst_size):
+        short_size = min(dst_size)
+        if min(src_size) < short_size:
+            if src_size[1] < src_size[0]:
+                ratio = float(short_size) / src_size[1]
+            else:
+                ratio = float(short_size) / src_size[0]
+        else:
+            ratio = 1.
+        resize_h = int(src_size[0] * ratio)
+        resize_w = int(src_size[1] * ratio)
+        resize_h = max(int(round(resize_h / 32) * 32), 32)
+        resize_w = max(int(round(resize_w / 32) * 32), 32)
+        return resize_w, resize_h

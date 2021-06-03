@@ -8,7 +8,7 @@ from easyai.tasks.utility.base_task import DelayedKeyboardInterrupt
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.cls.classify_test import ClassifyTest
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Classify_Task)

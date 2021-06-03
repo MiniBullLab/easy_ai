@@ -7,7 +7,7 @@ from easyai.data_loader.keypoint2d.keypoint2d_dataloader import get_key_points2d
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.keypoint2d.keypoint2d_test import KeyPoint2dTest
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.KeyPoint2d_Task)

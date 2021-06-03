@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 from easyai.utility.registry import build_from_cfg
 from easyai.helper.arguments_parse import TaskArgumentsParse
 

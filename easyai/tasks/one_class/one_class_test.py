@@ -8,7 +8,7 @@ from easyai.data_loader.one_class.one_class_dataloader import get_one_class_val_
 from easyai.tasks.one_class.one_class import OneClass
 from easyai.evaluation.one_class_roc import OneClassROC
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.OneClass)

@@ -139,24 +139,6 @@ class Rect3D(MyObject):
         self.size = Point3d(0, 0, 0)
 
 
-class DetectionObject(Rect2D):
-
-    def __init__(self):
-        super().__init__()
-        self.classIndex = -1
-        self.classConfidence = 0
-        self.objectConfidence = 0
-
-
-class DetectionKeyPoint(KeyPoint2D):
-
-    def __init__(self):
-        super().__init__()
-        self.classIndex = -1
-        self.keypoint_confidence = 0
-        self.objectConfidence = 0
-
-
 class OCRObject(Rect2D):
 
     def __init__(self):
@@ -201,4 +183,49 @@ class OCRObject(Rect2D):
 
     def get_text(self):
         return self.object_text
+
+
+class Polygon2dObject(MyObject):
+
+    def __init__(self):
+        super().__init__()
+        self.polygon = []
+        self.object_confidence = 0
+
+    def copy(self):
+        b = OCRObject()
+        b.name = self.name
+        b.class_id = self.class_id
+        b.difficult = self.difficult
+        b.polygon = self.polygon[:]
+        b.object_confidence = self.object_confidence
+        return b
+
+    def clear_polygon(self):
+        self.polygon.clear()
+
+    def add_point(self, point):
+        self.polygon.append(point)
+
+    def get_polygon(self):
+        return self.polygon
+
+
+class DetectionObject(Rect2D):
+
+    def __init__(self):
+        super().__init__()
+        self.classIndex = -1
+        self.classConfidence = 0
+        self.objectConfidence = 0
+
+
+class DetectionKeyPoint(KeyPoint2D):
+
+    def __init__(self):
+        super().__init__()
+        self.classIndex = -1
+        self.keypoint_confidence = 0
+        self.objectConfidence = 0
+
 

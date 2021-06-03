@@ -9,7 +9,7 @@ from easyai.data_loader.multi_task.det2d_seg_val_dataloader import get_det2d_seg
 from easyai.tasks.multi_task.det2d_seg_task import Det2dSegTask
 from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Det2d_Seg_Task)

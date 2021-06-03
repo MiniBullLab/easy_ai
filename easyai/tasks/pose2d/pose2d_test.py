@@ -9,7 +9,7 @@ from easyai.data_loader.pose2d.pose2d_dataloader import get_poes2d_val_dataloade
 from easyai.tasks.pose2d.pose2d_result_process import Pose2dResultProcess
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Pose2d_Task)

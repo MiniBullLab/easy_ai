@@ -7,7 +7,7 @@ from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
 from easyai.data_loader.keypoint2d.keypoint2d_dataloader import get_key_points2d_val_dataloader
 from easyai.tasks.keypoint2d.keypoint2d import KeyPoint2d
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.KeyPoint2d_Task)

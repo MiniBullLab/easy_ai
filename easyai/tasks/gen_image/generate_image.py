@@ -9,7 +9,7 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.gen_image.generate_image_result_process import GenerateImageResultProcess
 from easyai.helper.imageProcess import ImageProcess
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.GenerateImage)

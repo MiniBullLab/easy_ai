@@ -8,7 +8,7 @@ from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.tasks.seg.segment_test import SegmentionTest
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Segment_Task)

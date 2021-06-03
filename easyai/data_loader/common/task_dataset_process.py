@@ -52,15 +52,3 @@ class TaskDataSetProcess(BaseDataSetProcess):
         else:
             image = None
         return image
-
-    def get_image_size(self, image_size, multi_scale=False):
-        if multi_scale:
-            # Multi-Scale
-            width = random.choice(range(10, 20)) * 32  # 320 - 608 pixels
-            scale = float(image_size[0]) / float(image_size[1])
-            height = int(round(float(width / scale) / 32.0) * 32)
-        else:
-            width = image_size[0]
-            height = image_size[1]
-        result_size = (width, height)
-        return result_size

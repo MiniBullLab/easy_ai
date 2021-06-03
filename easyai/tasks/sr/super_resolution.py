@@ -6,7 +6,7 @@ import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.SuperResolution_Task)

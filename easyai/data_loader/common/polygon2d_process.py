@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-class OCRAugment():
+class Polygon2dProcess():
 
     def __init__(self):
         pass

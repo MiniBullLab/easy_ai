@@ -9,7 +9,7 @@ from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Segment_Task)

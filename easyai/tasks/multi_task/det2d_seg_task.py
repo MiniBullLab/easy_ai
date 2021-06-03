@@ -10,7 +10,7 @@ from easyai.tasks.det2d.detect2d_result_process import Detect2dResultProcess
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Det2d_Seg_Task)

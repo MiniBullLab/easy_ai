@@ -14,5 +14,6 @@ from . import r2_unet_seg
 from . import r2_attention_unet_seg
 from . import attention_unet_seg
 from . import fgsegnet
+from . import dbnet_seg
 from . import segnet
 

@@ -7,7 +7,7 @@ from easyai.data_loader.gen_image.gen_image_dataloader import get_gen_image_trai
 from easyai.tasks.utility.gan_train import GanTrain
 from easyai.tasks.gen_image.generate_image import GenerateImage
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.GenerateImage)

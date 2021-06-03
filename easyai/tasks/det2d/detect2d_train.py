@@ -7,7 +7,7 @@ from easyai.data_loader.det2d.det2d_train_dataloader import get_detect2d_train_d
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.det2d.detect2d_test import Detection2dTest
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Detect2d_Task)

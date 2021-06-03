@@ -9,7 +9,7 @@ from easyai.data_loader.landmark.landmark_dataloader import get_landmark_val_dat
 from easyai.tasks.landmark.landmark_result_process import LandmarkResultProcess
 from easyai.tasks.landmark.landmark import Landmark
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Pose2d_Task)

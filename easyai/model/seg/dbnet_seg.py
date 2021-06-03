@@ -19,6 +19,7 @@ from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
+@REGISTERED_SEG_MODEL.register_module(ModelName.DBNet)
 class DBNet(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=1):
@@ -53,8 +54,7 @@ class DBNet(BaseClassifyModel):
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss_config = {'type': LossName.CrossEntropy2dLoss,
-                       'weight_type': 0,
+        loss_config = {'type': LossName.DBLoss,
                        'reduction': 'mean',
                        'ignore_index': 250}
         loss = self.loss_factory.get_loss(loss_config)

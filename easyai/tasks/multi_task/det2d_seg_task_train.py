@@ -7,7 +7,7 @@ from easyai.data_loader.multi_task.det2d_seg_train_dataloader import get_det2d_s
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.multi_task.det2d_seg_task_test import Det2dSegTaskTest
 from easyai.name_manager.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TRAIN_TASK
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Det2d_Seg_Task)
