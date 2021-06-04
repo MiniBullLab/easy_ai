@@ -87,3 +87,11 @@ class ImageDrawing():
             for point in key_points:
                 cv2.circle(src_image, (int(point.x), int(point.y)), 5, (0, 255, 225), 2)
 
+    def draw_polygon2d_result(self, src_image, result):
+        for result_object in result:
+            polygon = result_object.get_polygon()
+            for point in polygon:
+                x = int(point.x)
+                y = int(point.y)
+                cv2.polylines(src_image, [x, y], True, (0, 255, 225), 2)
+

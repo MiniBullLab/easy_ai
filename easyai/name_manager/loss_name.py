@@ -49,3 +49,6 @@ class LossName():
 
     GANomalyGeneratorLoss = "GANomalyGeneratorLoss"
     GANomalyDiscriminatorLoss = "GANomalyDiscriminatorLoss"
+
+    # rnn
+    CTCLoss = "CTCLoss"

@@ -5,6 +5,7 @@ from . import seg
 from . import sr
 from . import gan
 from . import keypoint2d
+from . import rnn
 from . import multi_model
 
 

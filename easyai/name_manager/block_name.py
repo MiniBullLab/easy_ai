@@ -124,9 +124,16 @@ class BlockType():
     DCDecoder = "DCDecoder"
 
 
+class RNNType():
+
+    Im2SeqBlock = "Im2Seq"
+    EncoderRNNBlock = "LSTM"
+
+
 class NeckType():
 
     DBFPNNeck = "DBFPN"
+    SequenceEncoder = "SequenceEncoder"
 
 
 class HeadType():

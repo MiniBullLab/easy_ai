@@ -4,21 +4,22 @@
 
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.tasks.polygon2d.polygon2d_postprocess import Polygon2dPostProcess
+from easyai.tasks.pose2d.pose2d_result_process import Pose2dResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
 
-@REGISTERED_INFERENCE_TASK.register_module(TaskName.Polygon2d_Task)
-class Polygon2d(BaseInference):
+@REGISTERED_INFERENCE_TASK.register_module(TaskName.RecognizeText)
+class RecognizeText(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
-        super().__init__(model_name, config_path, TaskName.Polygon2d_Task)
+        super().__init__(model_name, config_path, TaskName.RecognizeText)
         self.set_model_param(data_channel=self.task_config.data_channel,
-                             class_number=len(self.task_config.detect2d_class))
+                             points_count=self.task_config.points_count)
         self.set_model(gpu_id=gpu_id)
-        self.result_process = Polygon2dPostProcess(self.task_config.image_size,
-                                                   self.task_config.post_process)
+        self.pose_result_process = Pose2dResultProcess(self.task_config.post_prcoess_type,
+                                                       self.task_config.points_count,
+                                                       self.task_config.image_size)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
@@ -27,18 +28,19 @@ class Polygon2d(BaseInference):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
             self.set_src_size(src_image)
-            objects_result = self.single_image_process(self.src_size, img)
+            objects_pose = self.single_image_process(self.src_size, img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image, objects_result):
+                if not self.result_show.show(src_image, [objects_pose], self.task_config.skeleton):
                     break
             else:
                 pass
 
     def single_image_process(self, src_size, input_image):
         prediction, _ = self.infer(input_image)
-        result = self.result_process.post_process(prediction, src_size)
-        return result
+        pose = self.pose_result_process.postprocess(prediction, src_size,
+                                                    self.task_config.confidence_th)
+        return pose
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

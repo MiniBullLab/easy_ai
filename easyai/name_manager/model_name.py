@@ -58,6 +58,9 @@ class ModelName():
     MNISTGan = "MNISTGan"
     GANomaly = "GANomaly"
 
+    # rnn
+    CRNN = "CRNN"
+
     # multi
     DetPoes2dModel = "DetPoes2d"
 

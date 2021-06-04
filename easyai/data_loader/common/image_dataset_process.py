@@ -24,6 +24,11 @@ class ImageDataSetProcess(BaseDataSetProcess):
             ratio, pad_size = self.get_square_size(src_size, dst_size)
             result = self.image_resize_square(src_image, ratio, pad_size,
                                               pad_color=pad_color)
+        elif resize_type == -1:
+            resize_ratio = dst_size[1] / src_image.shape[0]
+            resize_w = int(src_image.shape[1] * resize_ratio)
+            dst_size = (resize_w, dst_size[1])
+            result = self.cv_image_resize(src_image, dst_size, interpolation="bilinear")
         return result
 
     def inv_resize(self, src_size, dst_size, resize_type, image_data, **param):

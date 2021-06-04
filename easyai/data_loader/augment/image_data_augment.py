@@ -91,3 +91,28 @@ class ImageDataAugment():
             image = (random_noise(image, mode='gaussian',
                                   clip=True) * 255).astype(image.dtype)
         return image
+
+    def random_line(self, src_image):
+        """
+            在图像增加一条简单的随机线
+        """
+        image = src_image[:]
+        h = image.height
+        w = image.width
+        y0 = random.randint(h // 4, h * 3 // 4)
+        y1 = np.clip(random.randint(-3, 3) + y0, 0, h - 1)
+        color = random.randint(0, 30)
+        cv2.line(image, (0, y0), (w - 1, y1), (color, color, color), 2)
+        return image
+
+    def random_compress(self, src_image, lower=5, upper=85):
+        """
+            随机压缩率，利用jpeg的有损压缩来增广
+        """
+        assert upper >= lower, "upper must be >= lower."
+        assert lower >= 0, "lower must be non-negative."
+        image = src_image[:]
+        param = [int(cv2.IMWRITE_JPEG_QUALITY), random.randint(lower, upper)]
+        img_encode = cv2.imencode('.jpeg', image, param)
+        image = cv2.imdecode(img_encode[1], cv2.IMREAD_COLOR)
+        return image

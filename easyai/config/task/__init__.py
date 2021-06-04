@@ -9,6 +9,10 @@ from . import gen_image_config
 from . import det_pose2d_config
 from . import one_class_config
 from . import landmark_config
+from . import polygon2d_config
+from . import rec_text_config
+
+
 
 
 

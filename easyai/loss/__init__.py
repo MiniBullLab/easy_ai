@@ -6,5 +6,7 @@ from . import seg
 from . import gan
 from . import sr
 from . import keypoint2d
+from . import rnn
+
 
 

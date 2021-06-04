@@ -9,5 +9,7 @@ from . import det2d_seg_show
 from . import det_pose2d_show
 from . import one_class_show
 from . import landmark_show
+from . import polygon2d_show
+
 
 

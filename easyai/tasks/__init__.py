@@ -8,5 +8,7 @@ from . import sr
 from . import gen_image
 from . import one_class
 from . import landmark
+from . import polygon2d
+from . import rec_text
 from . import multi_task
 

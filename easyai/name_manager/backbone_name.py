@@ -26,6 +26,7 @@ class BackboneName():
     MobileNetv3_large = "mobilenetv3_large"
     MobileNetV3_large_0_5 = "mobilenetv3_large_0_5"
     MobileNetv3_small = "mobilenetv3_small"
+    MobileNetV3_small_0_5 = "mobilenetv3_small_0_5"
     mixnet_s = "mixnet_s"
     mixnet_m = "mixnet_m"
     mixnet_l = "mixnet_l"

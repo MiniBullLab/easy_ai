@@ -14,6 +14,8 @@ class TaskName():
     GenerateImage = "generate_image"
     OneClass = "one_class"
     Landmark = "landmark"
+    Polygon2d_Task = "polygon2d"
+    RecognizeText = "recognize_text"
 
     Det_Pose2d_Task = "det_pose2d"
     Det2d_Seg_Task = "det2d_seg"

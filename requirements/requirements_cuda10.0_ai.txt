@@ -17,3 +17,5 @@ pydot
 netron==4.9.0
 graphviz
 flashtorch
+pyclipper==1.1.0.post3
+shapely==1.7.0

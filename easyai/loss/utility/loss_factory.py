@@ -10,6 +10,7 @@ from easyai.loss.utility.registry import REGISTERED_SEG_LOSS
 from easyai.loss.utility.registry import REGISTERED_GAN_D_LOSS
 from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
 from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
+from easyai.loss.utility.registry import REGISTERED_RNN_LOSS
 from easyai.utility.registry import build_from_cfg
 
 
@@ -31,6 +32,8 @@ class LossFactory():
             result = self.get_seg_loss(loss_args)
         elif REGISTERED_KEYPOINT2D_LOSS.has_class(input_name):
             result = self.get_keypoint2d_loss(loss_args)
+        elif REGISTERED_RNN_LOSS.has_class(input_name):
+            result = self.get_rnn_loss(loss_args)
         else:
             result = self.get_gan_loss(loss_args)
         if result is None:
@@ -64,6 +67,10 @@ class LossFactory():
                 return True
 
         for loss_name in REGISTERED_GAN_G_LOSS.get_keys():
+            if loss_name in key:
+                return True
+
+        for loss_name in REGISTERED_RNN_LOSS.get_keys():
             if loss_name in key:
                 return True
 
@@ -244,5 +251,13 @@ class LossFactory():
             loss = build_from_cfg(loss_config, REGISTERED_GAN_D_LOSS)
         elif REGISTERED_GAN_G_LOSS.has_class(input_name):
             loss = build_from_cfg(loss_config, REGISTERED_GAN_G_LOSS)
+        return loss
+
+    def get_rnn_loss(self, loss_config):
+        input_name = loss_config['type'].strip()
+        if input_name == LossName.FaceLandmarkLoss:
+            loss_config['blank_index'] = int(loss_config['blank_index'])
+            loss_config['reduction'] = loss_config.get("reduction", 'mean')
+        loss = build_from_cfg(loss_config, REGISTERED_RNN_LOSS)
         return loss
 

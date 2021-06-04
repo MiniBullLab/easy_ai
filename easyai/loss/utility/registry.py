@@ -9,3 +9,5 @@ REGISTERED_KEYPOINT2D_LOSS = Registry("keypoint2d_loss")
 
 REGISTERED_GAN_D_LOSS = Registry("gan_d_loss")
 REGISTERED_GAN_G_LOSS = Registry("gan_g_loss")
+
+REGISTERED_RNN_LOSS = Registry("rnn_loss")

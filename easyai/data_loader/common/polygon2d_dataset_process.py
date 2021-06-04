@@ -6,7 +6,7 @@ import numpy as np
 from easyai.data_loader.common.task_dataset_process import TaskDataSetProcess
 
 
-class Box2dDataSetProcess(TaskDataSetProcess):
+class Polygon2dDataSetProcess(TaskDataSetProcess):
 
     def __init__(self, resize_type, normalize_type, mean, std, pad_color):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)

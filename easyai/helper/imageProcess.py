@@ -42,3 +42,28 @@ class ImageProcess():
 
     def opencv_save_image(self, image_path, image_data):
         cv2.imwrite(image_path, image_data)
+
+    def cv2pil(self, image):
+        """
+        将bgr格式的numpy的图像转换为pil
+        :param image:   图像数组
+        :return:    Image对象
+        """
+        assert isinstance(image, np.ndarray), 'input image type is not cv2'
+        if len(image.shape) == 2:
+            return Image.fromarray(image)
+        elif len(image.shape) == 3:
+            return Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+    def pil2cv(self, image):
+        """
+        将Image对象转换为ndarray格式图像
+        :param image:   图像对象
+        :return:    ndarray图像数组
+        """
+        if len(image.split()) == 1:
+            return np.asarray(image)
+        elif len(image.split()) == 3:
+            return cv2.cvtColor(np.asarray(image), cv2.COLOR_RGB2BGR)
+        elif len(image.split()) == 4:
+            return cv2.cvtColor(np.asarray(image), cv2.COLOR_RGBA2BGR)

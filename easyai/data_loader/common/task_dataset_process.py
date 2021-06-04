@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import random
 import numpy as np
 from easyai.data_loader.utility.base_dataset_process import BaseDataSetProcess
 from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
