@@ -13,3 +13,6 @@ class PostProcessName():
 
     # polygon2d
     DBPostProcess = "DBPostProcess"
+
+    # rec_text
+    CTCPostProcess = "CTCPostProcess"

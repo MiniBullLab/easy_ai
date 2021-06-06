@@ -33,7 +33,7 @@ class RecognizeTextConfig(CommonTrainConfig):
     def load_data_value(self, config_dict):
         self.load_image_data_value(config_dict)
         if config_dict.get('language', None) is not None:
-            self.language = config_dict['language']
+            self.language = tuple(config_dict['language'])
         if config_dict.get('character_set', None) is not None:
             self.character_set = config_dict['character_set']
         if config_dict.get('post_process', None) is not None:
@@ -55,15 +55,13 @@ class RecognizeTextConfig(CommonTrainConfig):
         config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (640, 640)  # W * H
+        self.image_size = (10000, 32)  # W * H
         self.data_channel = 3
-        self.language = "en"
+        self.language = ("english", )
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.dirname(current_path)
         self.character_set = os.path.join(dir_name, "/..", "character/en.txt")
-        self.post_process = {'type': 'DBPostProcess',
-                             'threshold': 0.3,
-                             'unclip_ratio': 1.5}
+        self.post_process = {'type': 'CTCPostProcess'}
 
         self.resize_type = -1
         self.normalize_type = 0
