@@ -11,6 +11,7 @@ from . import googlenet
 from . import hrnet
 from . import inceptionv4
 from . import mixnet
+from . import mobilenetv1
 from . import mobilenetv2
 from . import mobilenetv3
 from . import nasnet

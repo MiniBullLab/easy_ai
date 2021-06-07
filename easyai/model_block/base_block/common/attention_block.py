@@ -10,15 +10,17 @@ from easyai.model_block.utility.base_block import *
 
 class SEBlock(BaseBlock):
 
-    def __init__(self, in_channel, reduction=16, activate_name=ActivationType.ReLU):
+    def __init__(self, in_channel, reduction=16,
+                 activate_name1=ActivationType.ReLU,
+                 activate_name2=ActivationType.Sigmoid):
         super().__init__(BlockType.SEBlock)
         # self.avg_pool = GlobalAvgPool2d()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
             nn.Linear(in_channel, in_channel // reduction),
-            ActivationLayer(activate_name),
+            ActivationLayer(activate_name1),
             nn.Linear(in_channel // reduction, in_channel),
-            nn.Sigmoid())
+            ActivationLayer(activate_name2))
 
     def forward(self, x):
         b, c, _, _ = x.size()
@@ -33,17 +35,19 @@ class SEBlock(BaseBlock):
 class SEConvBlock(BaseBlock):
 
     def __init__(self, in_channel, squeeze_channels, reduction=16,
-                 activate_name=ActivationType.ReLU):
+                 activate_name1=ActivationType.ReLU,
+                 activate_name2=ActivationType.Sigmoid):
         super().__init__(BlockType.SEConvBlock)
         out_channel = squeeze_channels // reduction
-        # self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
             nn.Conv2d(in_channel, out_channel, 1, 1, 0, bias=True),
-            ActivationLayer(activate_name),
+            ActivationLayer(activate_name1),
             nn.Conv2d(out_channel, in_channel, 1, 1, 0, bias=True),
-            nn.Sigmoid())
+            ActivationLayer(activate_name2))
 
     def forward(self, x):
-        w = torch.mean(x, (2, 3), keepdim=True)
+        # w = torch.mean(x, (2, 3), keepdim=True)
+        w = self.avg_pool(x)
         w = self.fc(w)
         return x * w

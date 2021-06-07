@@ -30,8 +30,8 @@ class MobileNetV2(BaseBackbone):
         self.out_channels = out_channels
         self.strides = strides
         self.dilations = dilations
-        self.activationName = activation_name
-        self.bnName = bn_name
+        self.activation_name = activation_name
+        self.bn_name = bn_name
         self.expand_ratios = expand_ratios
         self.input_stride = input_stride
         self.width_mult = width_mult
@@ -48,8 +48,8 @@ class MobileNetV2(BaseBackbone):
                                        kernel_size=3,
                                        stride=self.input_stride,
                                        padding=1,
-                                       bnName=self.bnName,
-                                       activationName=self.activationName)
+                                       bnName=self.bn_name,
+                                       activationName=self.activation_name)
         self.add_block_list(layer1.get_name(), layer1, self.first_output)
 
         self.in_channels = self.first_output
@@ -57,22 +57,22 @@ class MobileNetV2(BaseBackbone):
             output_channel = self.make_divisible(self.out_channels[index] * self.width_mult, 4 if self.width_mult == 0.1 else 8)
             self.make_mobile_layer(output_channel, self.num_blocks[index],
                                    self.strides[index], self.dilations[index],
-                                   self.bnName, self.activationName,
+                                   self.bn_name, self.activation_name,
                                    self.expand_ratios[index])
             self.in_channels = self.block_out_channels[-1]
 
     def make_mobile_layer(self, out_channels, num_blocks, stride, dilation,
-                          bnName, activationName, expand_ratio):
+                          bn_name, activation_name, expand_ratio):
         if dilation > 1:
             stride = 1
         down_layers = InvertedResidual(self.in_channels, out_channels, stride=stride,
                                        expand_ratio=expand_ratio, dilation=dilation,
-                                       bnName=bnName, activationName=activationName)
+                                       bnName=bn_name, activationName=activation_name)
         name = "down_%s" % down_layers.get_name()
         self.add_block_list(name, down_layers, out_channels)
         for _ in range(num_blocks - 1):
             layer = InvertedResidual(out_channels, out_channels, stride=1, expand_ratio=expand_ratio,
-                                     dilation=dilation, bnName=bnName, activationName=activationName)
+                                     dilation=dilation, bnName=bn_name, activationName=activation_name)
             self.add_block_list(layer.get_name(), layer, out_channels)
 
     def make_divisible(self, v, divisor, min_value=None):

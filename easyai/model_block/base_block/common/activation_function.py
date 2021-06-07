@@ -50,7 +50,7 @@ class HardSwish(BaseBlock):
         self.relu6 = nn.ReLU6(inplace=inplace)
 
     def forward(self, x):
-        return x * (self.relu6(x+3)) / 6
+        return x * (self.relu6(x + 3)) / 6
 
 
 class ActivationFunction():

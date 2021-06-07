@@ -3,10 +3,12 @@
 # Author:lipeijie
 
 from easyai.name_manager.block_name import ActivationType, NormalizationType
-from easyai.name_manager.block_name import BlockType
+from easyai.name_manager.block_name import BlockType, LayerType
+from easyai.model_block.base_block.common.utility_layer import EmptyLayer
 from easyai.model_block.base_block.common.activation_function import ActivationFunction
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.common.utility_block import BNActivationConvBlock
+from easyai.model_block.base_block.common.attention_block import SEConvBlock, SEBlock
 from easyai.model_block.utility.base_block import *
 
 
@@ -151,13 +153,14 @@ class ResidualV2Block(BaseBlock):
 
 class InvertedResidual(BaseBlock):
     def __init__(self, in_channels, out_channels, stride=1, expand_ratio=1, dilation=1,
-                 bnName=NormalizationType.BatchNormalize2d, activationName=ActivationType.ReLU6):
+                 bnName=NormalizationType.BatchNormalize2d,
+                 activationName=ActivationType.ReLU6):
         super().__init__(BlockType.InvertedResidual)
         assert stride in [1, 2]
         self.use_res_connect = stride == 1 and in_channels == out_channels
 
-        layers = OrderedDict()
         inter_channels = int(round(in_channels * expand_ratio))
+        layers = OrderedDict()
         if expand_ratio != 1:
             # pw
             convBNReLU1 = ConvBNActivationBlock(in_channels=in_channels,
@@ -188,6 +191,95 @@ class InvertedResidual(BaseBlock):
         layers[layer_name] = convBNReLU2
         layer_name = "%s_3" % BlockType.ConvBNActivationBlock
         layers[layer_name] = convBNReLU3
+        self.block = nn.Sequential(layers)
+
+    def forward(self, x):
+        if self.use_res_connect:
+            return x + self.block(x)
+        else:
+            return self.block(x)
+
+
+class InvertedResidualV2(BaseBlock):
+    def __init__(self, in_channels, hidden_dim, out_channels,
+                 kernel_size, stride, se_type,
+                 bn_name=NormalizationType.BatchNormalize2d,
+                 activation_name=ActivationType.HardSwish):
+        super().__init__(BlockType.InvertedResidualV2)
+        assert stride in [1, 2]
+        self.use_res_connect = stride == 1 and in_channels == out_channels
+        layers = OrderedDict()
+        if in_channels == hidden_dim:
+            layer_name = "%s_1" % BlockType.ConvBNActivationBlock
+            layers[layer_name] = ConvBNActivationBlock(in_channels=hidden_dim,
+                                                       out_channels=hidden_dim,
+                                                       kernel_size=kernel_size,
+                                                       stride=stride,
+                                                       padding=(kernel_size - 1) // 2,
+                                                       groups=hidden_dim,
+                                                       bias=False,
+                                                       bnName=bn_name,
+                                                       activationName=activation_name)
+            if se_type == 0:
+                layer_name = "%s_2" % LayerType.EmptyLayer
+                layers[layer_name] = EmptyLayer()
+            elif se_type == 1:
+                layer_name = "%s_2" % BlockType.SEBlock
+                layers[layer_name] = SEBlock(hidden_dim, reduction=4,
+                                             activate_name2=ActivationType.HardSigmoid)
+            elif se_type == 2:
+                layer_name = "%s_2" % BlockType.SEConvBlock
+                layers[layer_name] = SEConvBlock(hidden_dim, hidden_dim, reduction=4,
+                                                 activate_name2=ActivationType.HardSigmoid)
+            layer_name = "%s_3" % BlockType.ConvBNActivationBlock
+            layers[layer_name] = ConvBNActivationBlock(in_channels=hidden_dim,
+                                                       out_channels=out_channels,
+                                                       kernel_size=1,
+                                                       stride=1,
+                                                       padding=0,
+                                                       bias=False,
+                                                       bnName=bn_name,
+                                                       activationName=ActivationType.Linear)
+        else:
+            expand_name = "%s_1" % BlockType.ConvBNActivationBlock
+            layers[expand_name] = ConvBNActivationBlock(in_channels=in_channels,
+                                                        out_channels=hidden_dim,
+                                                        kernel_size=1,
+                                                        stride=1,
+                                                        padding=0,
+                                                        bias=False,
+                                                        bnName=bn_name,
+                                                        activationName=activation_name)
+            bottleneck_name = "%s_2" % BlockType.ConvBNActivationBlock
+            layers[bottleneck_name] = ConvBNActivationBlock(in_channels=hidden_dim,
+                                                            out_channels=hidden_dim,
+                                                            kernel_size=kernel_size,
+                                                            stride=stride,
+                                                            padding=(kernel_size - 1) // 2,
+                                                            groups=hidden_dim,
+                                                            bias=False,
+                                                            bnName=bn_name,
+                                                            activationName=activation_name)
+            if se_type == 0:
+                layer_name = "%s_3" % LayerType.EmptyLayer
+                layers[layer_name] = EmptyLayer()
+            elif se_type == 1:
+                layer_name = "%s_3" % BlockType.SEBlock
+                layers[layer_name] = SEBlock(hidden_dim, reduction=4,
+                                             activate_name2=ActivationType.HardSigmoid)
+            elif se_type == 2:
+                layer_name = "%s_3" % BlockType.SEConvBlock
+                layers[layer_name] = SEConvBlock(hidden_dim, hidden_dim, reduction=4,
+                                                 activate_name2=ActivationType.HardSigmoid)
+            layer_name = "%s_4" % BlockType.ConvBNActivationBlock
+            layers[layer_name] = ConvBNActivationBlock(in_channels=hidden_dim,
+                                                       out_channels=out_channels,
+                                                       kernel_size=1,
+                                                       stride=1,
+                                                       padding=0,
+                                                       bias=False,
+                                                       bnName=bn_name,
+                                                       activationName=ActivationType.Linear)
         self.block = nn.Sequential(layers)
 
     def forward(self, x):

@@ -7,6 +7,7 @@ from easyai.name_manager.backbone_name import BackboneName
 from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.name_manager.block_name import LayerType, BlockType
 from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
 from easyai.model_block.neck.sequence_encoder import SequenceEncoder
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.model_registry import REGISTERED_RNN_MODEL
@@ -33,6 +34,9 @@ class CRNN(BaseClassifyModel):
         backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
+
+        pool = MyMaxPool2d(kernel_size=2, stride=2)
+        self.add_block_list(pool.get_name(), pool, base_out_channels[-1])
 
         neck = SequenceEncoder(self.block_out_channels[-1], 48)
         self.add_block_list(neck.get_name(), neck, neck.out_channels)
@@ -68,4 +72,5 @@ class CRNN(BaseClassifyModel):
             else:
                 x = block(x)
             layer_outputs.append(x)
+            print(key, x.shape)
         return output

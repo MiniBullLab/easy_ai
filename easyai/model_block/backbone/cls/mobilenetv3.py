@@ -11,8 +11,7 @@ arXiv preprint arXiv:1905.02244.
 from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.name_manager.backbone_name import BackboneName
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
-from easyai.model_block.base_block.common.attention_block import SEBlock
-from easyai.model_block.base_block.common.residual_block import InvertedResidual
+from easyai.model_block.base_block.common.residual_block import InvertedResidualV2
 from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
@@ -23,8 +22,8 @@ __all__ = ['MobileNetV3Large', 'MobileNetV3Small',
 class MobileNetV3(BaseBackbone):
 
     def __init__(self, cfgs, mode, data_channel=3, scale=1.0,
-                 bnName=NormalizationType.BatchNormalize2d,
-                 activationName=ActivationType.ReLU):
+                 bn_name=NormalizationType.BatchNormalize2d,
+                 activation_name=ActivationType.HardSwish):
         super().__init__(data_channel)
         self.set_name(BackboneName.MobileNetv3_small)
         supported_scale = [0.35, 0.5, 0.75, 1.0, 1.25]
@@ -34,8 +33,8 @@ class MobileNetV3(BaseBackbone):
         self.cfgs = cfgs
         self.mode = mode
         self.scale = scale
-        self.activation_name = activationName
-        self.bn_name = bnName
+        self.activation_name = activation_name
+        self.bn_name = bn_name
         self.create_block_list()
 
     def create_block_list(self):
@@ -50,11 +49,11 @@ class MobileNetV3(BaseBackbone):
                                        padding=1,
                                        bias=False,
                                        bnName=self.bn_name,
-                                       activationName=ActivationType.HardSwish)
+                                       activationName=self.activation_name)
         self.add_block_list(layer1.get_name(), layer1, output_channel)
 
         input_channel = output_channel
-        output_channel = self.make_layer(input_channel, InvertedResidual, self.cfgs)
+        output_channel = self.make_layer(input_channel, self.cfgs)
 
         # building last several layers
         input_channel = self.block_out_channels[-1]
@@ -65,25 +64,26 @@ class MobileNetV3(BaseBackbone):
                                        padding=0,
                                        bias=False,
                                        bnName=self.bn_name,
-                                       activationName=ActivationType.HardSwish)
+                                       activationName=self.activation_name)
         self.add_block_list(layer2.get_name(), layer2, output_channel)
 
-        if self.mode == 'small':
-            layer3 = SEBlock(in_channel=output_channel, reduction=4)
-            self.add_block_list(layer3.get_name(), layer3, output_channel)
-
-    def make_layer(self, input_channel, block, cfgs):
+    def make_layer(self, input_channel, cfgs):
         # building inverted residual blocks
         hidden_channel = 0
         for k, exp_size, c, use_se, use_hs, s in cfgs:
+            print(k, exp_size, c, use_se, use_hs, s)
             output_channel = self.make_divisible(c * self.scale, 8)
             hidden_channel = self.make_divisible(exp_size * self.scale, 8)
             if use_hs == 0:
-                temp_block = block(input_channel, exp_size, output_channel, k, s, use_se,
-                                   bn_name=self.bn_name, activation_name=ActivationType.ReLU)
+                temp_block = InvertedResidualV2(input_channel, hidden_channel, output_channel,
+                                                k, s, use_se,
+                                                bn_name=self.bn_name,
+                                                activation_name=ActivationType.ReLU)
             else:
-                temp_block = block(input_channel, exp_size, output_channel, k, s, use_se,
-                                   bn_name=self.bn_name, activation_name=ActivationType.HardSwish)
+                temp_block = InvertedResidualV2(input_channel, hidden_channel, output_channel,
+                                                k, s, use_se,
+                                                bn_name=self.bn_name,
+                                                activation_name=self.activation_name)
             self.add_block_list(temp_block.get_name(), temp_block, output_channel)
             input_channel = output_channel
         return hidden_channel
@@ -109,9 +109,10 @@ class MobileNetV3(BaseBackbone):
 
     def forward(self, x):
         output_list = []
-        for block in self._modules.values():
+        for key, block in self._modules.items():
             x = block(x)
             output_list.append(x)
+            print(key, x.shape)
         return output_list
 
 
@@ -149,7 +150,7 @@ class MobileNetV3Large(MobileNetV3):
 class MobileNetV3LargeV05(MobileNetV3):
     """
             Constructs a MobileNetV3-Large model
-        """
+    """
     cfgs = [
         # k, t, c, SE, NL, s
         [3, 16, 16, 0, 0, 1],
@@ -201,24 +202,50 @@ class MobileNetV3Small(MobileNetV3):
         self.set_name(BackboneName.MobileNetv3_small)
 
 
+# @REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV3_small_0_5)
+# class MobileNetV3SmallV05(MobileNetV3):
+#     """
+#         Constructs a MobileNetV3-Small model
+#     """
+#     cfgs = [
+#         # k, t, c, SE, NL, s
+#         [3, 16, 16, 1, 0, 2],
+#         [3, 72, 24, 0, 0, 2],
+#         [3, 88, 24, 0, 0, 1],
+#         [5, 96, 40, 1, 1, 2],
+#         [5, 240, 40, 1, 1, 1],
+#         [5, 240, 40, 1, 1, 1],
+#         [5, 120, 48, 1, 1, 1],
+#         [5, 144, 48, 1, 1, 1],
+#         [5, 288, 96, 1, 1, 2],
+#         [5, 576, 96, 1, 1, 1],
+#         [5, 576, 96, 1, 1, 1],
+#     ]
+#
+#     def __init__(self, data_channel):
+#         super().__init__(MobileNetV3Small.cfgs, mode='small',
+#                          scale=0.5, data_channel=data_channel)
+#         self.set_name(BackboneName.MobileNetV3_small_0_5)
+
+
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV3_small_0_5)
 class MobileNetV3SmallV05(MobileNetV3):
     """
         Constructs a MobileNetV3-Small model
     """
     cfgs = [
-        # k, t, c, SE, NL, s
-        [3, 16, 16, 1, 0, 2],
-        [3, 72, 24, 0, 0, 2],
+        # k, exp, c,  se, nl,  s,
+        [3, 16, 16, 2, 0, (1, 1)],
+        [3, 72, 24, 0, 0, (2, 1)],
         [3, 88, 24, 0, 0, 1],
-        [5, 96, 40, 1, 1, 2],
-        [5, 240, 40, 1, 1, 1],
-        [5, 240, 40, 1, 1, 1],
-        [5, 120, 48, 1, 1, 1],
-        [5, 144, 48, 1, 1, 1],
-        [5, 288, 96, 1, 1, 2],
-        [5, 576, 96, 1, 1, 1],
-        [5, 576, 96, 1, 1, 1],
+        [5, 96, 40, 2, 1, (2, 1)],
+        [5, 240, 40, 2, 1, 1],
+        [5, 240, 40, 2, 1, 1],
+        [5, 120, 48, 2, 1, 1],
+        [5, 144, 48, 2, 1, 1],
+        [5, 288, 96, 2, 1, (2, 1)],
+        [5, 576, 96, 2, 1, 1],
+        [5, 576, 96, 2, 1, 1],
     ]
 
     def __init__(self, data_channel):
