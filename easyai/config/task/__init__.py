@@ -11,6 +11,8 @@ from . import one_class_config
 from . import landmark_config
 from . import polygon2d_config
 from . import rec_text_config
+from . import ocr_config
+
 
 
 

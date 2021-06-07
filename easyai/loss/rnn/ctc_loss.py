@@ -13,8 +13,7 @@ class CTCLoss(BaseLoss):
     def __init__(self, blank_index, reduction='mean'):
         super().__init__(LossName.CTCLoss)
         self.loss_func = torch.nn.CTCLoss(blank=blank_index,
-                                          reduction=reduction,
-                                          zero_infinity=True)
+                                          reduction=reduction)
 
     def forward(self, input_data, target=None):
         if target is not None:

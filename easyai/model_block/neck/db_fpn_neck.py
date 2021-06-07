@@ -51,11 +51,12 @@ class DBFPNNeck(BaseBlock):
     def forward(self, layer_outputs, base_outputs):
         results = []
         input_features = [layer_outputs[i] if i < 0 else base_outputs[i]
-                          for i in self.layers]
+                          for i in self.down_layers]
         last_inner = self.inner_blocks[-1](input_features[-1])
         last_result = self.layer_blocks[-1](last_inner)
         results.append(self.up_blocks[0](last_result))
-        for index, feature, inner_block, layer_block in enumerate(zip(
+        # print(results[-1].shape)
+        for index, (feature, inner_block, layer_block) in enumerate(zip(
                 input_features[:-1][::-1],
                 self.inner_blocks[:-1][::-1],
                 self.layer_blocks[:-1][::-1]), 1):
@@ -69,5 +70,6 @@ class DBFPNNeck(BaseBlock):
                 results.append(temp_result)
             else:
                 results.append(self.up_blocks[index](temp_result))
-        return torch.cat(results, axis=1)
+            # print(results[-1].shape)
+        return torch.cat(results, dim=1)
 

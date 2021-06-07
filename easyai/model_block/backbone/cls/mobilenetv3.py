@@ -71,7 +71,7 @@ class MobileNetV3(BaseBackbone):
         # building inverted residual blocks
         hidden_channel = 0
         for k, exp_size, c, use_se, use_hs, s in cfgs:
-            print(k, exp_size, c, use_se, use_hs, s)
+            # print(k, exp_size, c, use_se, use_hs, s)
             output_channel = self.make_divisible(c * self.scale, 8)
             hidden_channel = self.make_divisible(exp_size * self.scale, 8)
             if use_hs == 0:
@@ -112,7 +112,7 @@ class MobileNetV3(BaseBackbone):
         for key, block in self._modules.items():
             x = block(x)
             output_list.append(x)
-            print(key, x.shape)
+            # print(key, x.shape)
         return output_list
 
 
@@ -171,7 +171,7 @@ class MobileNetV3LargeV05(MobileNetV3):
     ]
 
     def __init__(self, data_channel):
-        super().__init__(MobileNetV3Large.cfgs, mode='large',
+        super().__init__(MobileNetV3LargeV05.cfgs, mode='large',
                          scale=0.5, data_channel=data_channel)
         self.set_name(BackboneName.MobileNetV3_large_0_5)
 
@@ -202,34 +202,34 @@ class MobileNetV3Small(MobileNetV3):
         self.set_name(BackboneName.MobileNetv3_small)
 
 
-# @REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV3_small_0_5)
-# class MobileNetV3SmallV05(MobileNetV3):
-#     """
-#         Constructs a MobileNetV3-Small model
-#     """
-#     cfgs = [
-#         # k, t, c, SE, NL, s
-#         [3, 16, 16, 1, 0, 2],
-#         [3, 72, 24, 0, 0, 2],
-#         [3, 88, 24, 0, 0, 1],
-#         [5, 96, 40, 1, 1, 2],
-#         [5, 240, 40, 1, 1, 1],
-#         [5, 240, 40, 1, 1, 1],
-#         [5, 120, 48, 1, 1, 1],
-#         [5, 144, 48, 1, 1, 1],
-#         [5, 288, 96, 1, 1, 2],
-#         [5, 576, 96, 1, 1, 1],
-#         [5, 576, 96, 1, 1, 1],
-#     ]
-#
-#     def __init__(self, data_channel):
-#         super().__init__(MobileNetV3Small.cfgs, mode='small',
-#                          scale=0.5, data_channel=data_channel)
-#         self.set_name(BackboneName.MobileNetV3_small_0_5)
-
-
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV3_small_0_5)
 class MobileNetV3SmallV05(MobileNetV3):
+    """
+        Constructs a MobileNetV3-Small model
+    """
+    cfgs = [
+        # k, t, c, SE, NL, s
+        [3, 16, 16, 1, 0, 2],
+        [3, 72, 24, 0, 0, 2],
+        [3, 88, 24, 0, 0, 1],
+        [5, 96, 40, 1, 1, 2],
+        [5, 240, 40, 1, 1, 1],
+        [5, 240, 40, 1, 1, 1],
+        [5, 120, 48, 1, 1, 1],
+        [5, 144, 48, 1, 1, 1],
+        [5, 288, 96, 1, 1, 2],
+        [5, 576, 96, 1, 1, 1],
+        [5, 576, 96, 1, 1, 1],
+    ]
+
+    def __init__(self, data_channel):
+        super().__init__(MobileNetV3SmallV05.cfgs, mode='small',
+                         scale=0.5, data_channel=data_channel)
+        self.set_name(BackboneName.MobileNetV3_small_0_5)
+
+
+@REGISTERED_CLS_BACKBONE.register_module(BackboneName.MobileNetV3SmallDown16)
+class MobileNetV3SmallDown16(MobileNetV3):
     """
         Constructs a MobileNetV3-Small model
     """
@@ -249,7 +249,7 @@ class MobileNetV3SmallV05(MobileNetV3):
     ]
 
     def __init__(self, data_channel):
-        super().__init__(MobileNetV3Small.cfgs, mode='small',
+        super().__init__(MobileNetV3SmallDown16.cfgs, mode='small',
                          scale=0.5, data_channel=data_channel)
-        self.set_name(BackboneName.MobileNetV3_small_0_5)
+        self.set_name(BackboneName.MobileNetV3SmallDown16)
 

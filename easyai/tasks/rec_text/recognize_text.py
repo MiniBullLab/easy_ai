@@ -4,7 +4,7 @@
 
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.tasks.pose2d.pose2d_result_process import Pose2dResultProcess
+from easyai.tasks.rec_text.recongnize_text_postprocess import RecognizeTextPostProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
@@ -17,9 +17,8 @@ class RecognizeText(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              points_count=self.task_config.points_count)
         self.set_model(gpu_id=gpu_id)
-        self.pose_result_process = Pose2dResultProcess(self.task_config.post_prcoess_type,
-                                                       self.task_config.points_count,
-                                                       self.task_config.image_size)
+        self.result_process = RecognizeTextPostProcess(self.task_config.character_set,
+                                                       self.task_config.post_process)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
@@ -28,19 +27,14 @@ class RecognizeText(BaseInference):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
             self.set_src_size(src_image)
-            objects_pose = self.single_image_process(self.src_size, img)
+            text_objects = self.single_image_process(img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
-            if is_show:
-                if not self.result_show.show(src_image, [objects_pose], self.task_config.skeleton):
-                    break
-            else:
-                pass
+            print(text_objects)
 
-    def single_image_process(self, src_size, input_image):
+    def single_image_process(self, input_image):
         prediction, _ = self.infer(input_image)
-        pose = self.pose_result_process.postprocess(prediction, src_size,
-                                                    self.task_config.confidence_th)
-        return pose
+        result = self.result_process.post_process(prediction)
+        return result
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

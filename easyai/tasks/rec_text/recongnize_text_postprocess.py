@@ -7,7 +7,7 @@ from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 from easyai.utility.registry import build_from_cfg
 
 
-class Polygon2dPostProcess(BasePostProcess):
+class RecognizeTextPostProcess(BasePostProcess):
 
     def __init__(self, character_path, post_process_args):
         super().__init__()

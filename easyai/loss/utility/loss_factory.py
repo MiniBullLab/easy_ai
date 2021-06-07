@@ -255,7 +255,7 @@ class LossFactory():
 
     def get_rnn_loss(self, loss_config):
         input_name = loss_config['type'].strip()
-        if input_name == LossName.FaceLandmarkLoss:
+        if input_name == LossName.CTCLoss:
             loss_config['blank_index'] = int(loss_config['blank_index'])
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
         loss = build_from_cfg(loss_config, REGISTERED_RNN_LOSS)

@@ -6,7 +6,6 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.data_loader.common.box2d_dataloader import Box2dLoader
-from easyai.visualization.task_show.det_pose2d_show import DetAndPose2dShow
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
@@ -18,7 +17,6 @@ class DetPose2dTask(BaseInference):
         super().__init__(model_name, config_path, TaskName.Det_Pose2d_Task)
         self.det2d_inference = Detection2d(model_name[0], gpu_id, self.task_config.det_config)
         self.pose2d_inference = Pose2d(model_name[1], gpu_id, self.task_config.pose_config)
-        self.result_show = DetAndPose2dShow()
 
     def load_weights(self, weights_path):
         self.det2d_inference.load_weights(weights_path[0])

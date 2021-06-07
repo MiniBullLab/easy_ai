@@ -206,7 +206,6 @@ class InvertedResidualV2(BaseBlock):
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.HardSwish):
         super().__init__(BlockType.InvertedResidualV2)
-        assert stride in [1, 2]
         self.use_res_connect = stride == 1 and in_channels == out_channels
         layers = OrderedDict()
         if in_channels == hidden_dim:

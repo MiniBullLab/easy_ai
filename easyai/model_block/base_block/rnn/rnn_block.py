@@ -13,9 +13,9 @@ class Im2SeqBlock(BaseBlock):
 
     def forward(self, x):
         B, C, H, W = x.shape
-        assert H == 1
-        x = x.reshape(B, C, H * W)
-        x = x.permute((0, 2, 1))
+        # assert H == 1
+        x = x.view(B, C, H * W)
+        x = x.transpose(1, 2)
         return x
 
 
@@ -24,8 +24,7 @@ class EncoderRNNBlock(BaseBlock):
         super().__init__(RNNType.EncoderRNNBlock)
         self.out_channels = hidden_size * 2
         self.lstm = nn.LSTM(in_channels, hidden_size,
-                            bidirectional=True, num_layers=2,
-                            batch_first=True)
+                            bidirectional=True, num_layers=2)
 
     def forward(self, x):
         x, _ = self.lstm(x)

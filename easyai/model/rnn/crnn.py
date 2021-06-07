@@ -24,7 +24,7 @@ class CRNN(BaseClassifyModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
 
-        self.model_args['type'] = BackboneName.MobileNetV3_small_0_5
+        self.model_args['type'] = BackboneName.MobileNetV3SmallDown16
 
         self.create_block_list()
 
@@ -72,5 +72,5 @@ class CRNN(BaseClassifyModel):
             else:
                 x = block(x)
             layer_outputs.append(x)
-            print(key, x.shape)
+            # print(key, x.shape)
         return output
