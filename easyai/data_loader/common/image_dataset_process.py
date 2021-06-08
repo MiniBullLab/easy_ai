@@ -17,7 +17,23 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def resize(self, src_image, dst_size, resize_type, **param):
         result = None
         if resize_type == 0:
-            result = self.cv_image_resize(src_image, dst_size)
+            print("resize 0")
+            short_size = 736
+            h, w, _ = src_image.shape
+            if min(h, w) < short_size:
+                if h < w:
+                    ratio = float(short_size) / h
+                else:
+                    ratio = float(short_size) / w
+            else:
+                ratio = 1.
+            resize_h = int(h * ratio)
+            resize_w = int(w * ratio)
+            resize_h = max(int(round(resize_h / 32) * 32), 32)
+            resize_w = max(int(round(resize_w / 32) * 32), 32)
+            if int(resize_w) <= 0 or int(resize_h) <= 0:
+                return None, (None, None)
+            result = self.cv_image_resize(src_image, (int(resize_w), int(resize_h)))
         elif resize_type == 1:
             pad_color = param['pad_color']
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]

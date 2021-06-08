@@ -2,14 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 
 
 @REGISTERED_POST_PROCESS.register_module(PostProcessName.BinaryPostProcess)
-class BinaryPostProcess():
+class BinaryPostProcess(BasePostProcess):
 
     def __init__(self, threshold=0.5):
+        super().__init__()
         self.threshold = threshold  # binary class threshold
 
     def __call__(self, prediction):

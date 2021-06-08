@@ -3,15 +3,16 @@
 # Author:lipeijie
 
 import torch
+from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 
 
 @REGISTERED_POST_PROCESS.register_module(PostProcessName.MaxPostProcess)
-class MaxPostProcess():
+class MaxPostProcess(BasePostProcess):
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def __call__(self, prediction):
         output_count = prediction.size(1)

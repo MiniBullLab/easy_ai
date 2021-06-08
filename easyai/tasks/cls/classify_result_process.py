@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.tasks.utility.base_post_process import BasePostProcess
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 from easyai.utility.registry import build_from_cfg
 
 
-class ClassifyResultProcess(BasePostProcess):
+class ClassifyResultProcess(TaskPostProcess):
 
     def __init__(self, post_process_args):
         super().__init__()

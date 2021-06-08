@@ -3,15 +3,16 @@
 # Author:lipeijie
 
 import numpy as np
+from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 
 
 @REGISTERED_POST_PROCESS.register_module(PostProcessName.CTCPostProcess)
-class CTCPostProcess():
+class CTCPostProcess(BasePostProcess):
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def __call__(self, prediction, character):
         """ convert text-index into text-label. """

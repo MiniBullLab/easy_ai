@@ -5,12 +5,12 @@
 
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import Polygon2dObject
-from easyai.tasks.utility.base_post_process import BasePostProcess
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 from easyai.utility.registry import build_from_cfg
 
 
-class Polygon2dResultProcess(BasePostProcess):
+class Polygon2dResultProcess(TaskPostProcess):
 
     def __init__(self, image_size, post_process_args):
         super().__init__()
@@ -23,6 +23,7 @@ class Polygon2dResultProcess(BasePostProcess):
             return None
         detection_objects = self.process_func(prediction, src_size)
         # result = self.resize_polygon_object(src_size, self.image_size, detection_objects)
+        print("result count:", len(detection_objects))
         return detection_objects
 
     def resize_polygon_object(self, src_size, image_size,
@@ -47,7 +48,7 @@ class Polygon2dResultProcess(BasePostProcess):
         return result
 
     def build_post_process(self, post_process_args):
-        func_name = post_process_args.strip()
+        func_name = post_process_args['type'].strip()
         result_func = None
         if REGISTERED_POST_PROCESS.has_class(func_name):
             result_func = build_from_cfg(post_process_args, REGISTERED_POST_PROCESS)

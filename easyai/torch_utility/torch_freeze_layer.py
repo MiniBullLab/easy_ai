@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import re
-from easyai.name_manager import BlockType
+from easyai.name_manager.block_name import BlockType
 
 
 class TorchFreezeLayer():

@@ -9,14 +9,16 @@ from pyclipper import PyclipperOffset
 from shapely.geometry import Polygon
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import Polygon2dObject
+from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 
 
 @REGISTERED_POST_PROCESS.register_module(PostProcessName.DBPostProcess)
-class DBPostProcess():
+class DBPostProcess(BasePostProcess):
 
     def __init__(self, threshold=0.3, unclip_ratio=1.5):
+        super().__init__()
         self.threshold = threshold
         self.bbox_scale_ratio = unclip_ratio
         self.shortest_length = 5
@@ -28,10 +30,11 @@ class DBPostProcess():
         h, w = instance_score.shape[:2]
         width, height = src_size
         available_region = np.zeros_like(instance_score, dtype=np.float32)
-        np.putmask(available_region, instance_score > self.threshold, instance_score)
+        np.putmask(available_region, instance_score > 0.01, instance_score)
         mask_region = (available_region > 0).astype(np.uint8) * 255
         structure_element = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
         refined_mask_region = cv2.morphologyEx(mask_region, cv2.MORPH_CLOSE, structure_element)
+        # cv2.imwrite("test.png", refined_mask_region)
         if cv2.__version__.startswith('3'):
             _, contours, _ = cv2.findContours(refined_mask_region, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         elif cv2.__version__.startswith('4'):
