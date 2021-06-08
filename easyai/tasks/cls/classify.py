@@ -18,7 +18,7 @@ class Classify(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              class_number=len(self.task_config.class_name))
         self.set_model(gpu_id=gpu_id)
-        self.result_process = ClassifyResultProcess()
+        self.result_process = ClassifyResultProcess(self.task_config.post_process)
 
     def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
@@ -26,7 +26,7 @@ class Classify(BaseInference):
         for index, (file_path, src_image, image) in enumerate(dataloader):
             self.timer.tic()
             prediction, _ = self.infer(image)
-            class_index, class_confidence = self.result_process.postprocess(prediction)
+            class_index, class_confidence = self.result_process.post_process(prediction)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image,

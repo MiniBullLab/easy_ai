@@ -11,25 +11,28 @@ from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 
-__all__ = ['ResNet18', 'ResNet34', 'ResNet50', 'ResNet101', 'ResNet152']
+__all__ = ['ResNet18', 'ResNet18V2',
+           'ResNet34', 'ResNet50', 'ResNet101', 'ResNet152']
 
 
 class ResNet(BaseBackbone):
     def __init__(self, data_channel=3, num_blocks=(2, 2, 2, 2), out_channels=(64, 128, 256, 512),
-                 strides=(1, 2, 2, 2), dilations=(1, 1, 1, 1), bnName=NormalizationType.BatchNormalize2d,
-                 activationName=ActivationType.ReLU, block_flag=0):
+                 strides=(1, 2, 2, 2), dilations=(1, 1, 1, 1),
+                 bn_name=NormalizationType.BatchNormalize2d,
+                 activation_name=ActivationType.ReLU,
+                 block_flag=0, head_type=1):
         super().__init__(data_channel)
         self.set_name(BackboneName.ResNet18)
         self.num_blocks = num_blocks
         self.out_channels = out_channels
         self.strides = strides
         self.dilations = dilations
-        self.activationName = activationName
-        self.bnName = bnName
+        self.bn_name = bn_name
+        self.activation_name = activation_name
         self.block_flag = block_flag
         self.first_output = 64
         self.in_channels = self.first_output
-        self.head_type = 1
+        self.head_type = head_type
 
         self.create_block_list()
 
@@ -42,8 +45,8 @@ class ResNet(BaseBackbone):
                                            kernel_size=3,
                                            stride=1,
                                            padding=1,
-                                           bnName=self.bnName,
-                                           activationName=self.activationName)
+                                           bnName=self.bn_name,
+                                           activationName=self.activation_name)
             self.add_block_list(layer1.get_name(), layer1, self.first_output)
         elif self.head_type == 1:
             layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
@@ -51,45 +54,48 @@ class ResNet(BaseBackbone):
                                            kernel_size=7,
                                            stride=2,
                                            padding=3,
-                                           bnName=self.bnName,
-                                           activationName=self.activationName)
+                                           bnName=self.bn_name,
+                                           activationName=self.activation_name)
             self.add_block_list(layer1.get_name(), layer1, self.first_output)
 
             layer2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             self.add_block_list(LayerType.MyMaxPool2d, layer2, self.first_output)
         elif self.head_type == 2:
             layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
-                                           out_channels=self.first_output,
+                                           out_channels=32,
                                            kernel_size=3,
                                            stride=2,
                                            padding=1,
-                                           bnName=self.bnName,
-                                           activationName=self.activationName)
-            self.add_block_list(layer1.get_name(), layer1, self.first_output)
+                                           bnName=self.bn_name,
+                                           activationName=self.activation_name)
+            self.add_block_list(layer1.get_name(), layer1, 32)
 
-            layer11 = ConvBNActivationBlock(in_channels=self.first_output,
+            layer11 = ConvBNActivationBlock(in_channels=32,
+                                            out_channels=32,
+                                            kernel_size=3,
+                                            stride=1,
+                                            padding=1,
+                                            bnName=self.bn_name,
+                                            activationName=self.activation_name)
+            self.add_block_list(layer11.get_name(), layer11, 32)
+
+            layer12 = ConvBNActivationBlock(in_channels=32,
                                             out_channels=self.first_output,
                                             kernel_size=3,
                                             stride=1,
                                             padding=1,
-                                            bnName=self.bnName,
-                                            activationName=self.activationName)
-            self.add_block_list(layer11.get_name(), layer11, self.first_output)
-
-            layer12 = ConvBNActivationBlock(in_channels=self.first_output,
-                                            out_channels=self.first_output,
-                                            kernel_size=3,
-                                            stride=1,
-                                            padding=1,
-                                            bnName=self.bnName,
-                                            activationName=self.activationName)
+                                            bnName=self.bn_name,
+                                            activationName=self.activation_name)
             self.add_block_list(layer12.get_name(), layer12, self.first_output)
+
+            layer2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+            self.add_block_list(LayerType.MyMaxPool2d, layer2, self.first_output)
 
         self.in_channels = self.first_output
         for index, num_block in enumerate(self.num_blocks):
             self.make_resnet_block(self.out_channels[index], self.num_blocks[index],
                                    self.strides[index], self.dilations[index],
-                                   self.bnName, self.activationName,
+                                   self.bn_name, self.activation_name,
                                    self.block_flag)
             self.in_channels = self.block_out_channels[-1]
 
@@ -128,6 +134,17 @@ class ResNet18(ResNet):
                          num_blocks=[2, 2, 2, 2],
                          block_flag=0)
         self.set_name(BackboneName.ResNet18)
+
+
+@REGISTERED_CLS_BACKBONE.register_module(BackboneName.ResNet18V2)
+class ResNet18V2(ResNet):
+
+    def __init__(self, data_channel):
+        super().__init__(data_channel=data_channel,
+                         num_blocks=[2, 2, 2, 2],
+                         block_flag=0,
+                         head_type=2)
+        self.set_name(BackboneName.ResNet18V2)
 
 
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.ResNet34)

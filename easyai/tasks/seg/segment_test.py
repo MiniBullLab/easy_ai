@@ -21,10 +21,10 @@ class SegmentionTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.output_process = SegmentResultProcess(self.test_task_config.image_size,
-                                                   self.test_task_config.resize_type)
+                                                   self.test_task_config.resize_type,
+                                                   self.task_config.post_process)
 
         self.metric = SegmentionMetric(len(self.test_task_config.segment_class))
-        self.threshold = 0.5  # binary class threshold
 
     def load_weights(self, weights_path):
         self.segment_inference.load_weights(weights_path)
@@ -36,8 +36,7 @@ class SegmentionTest(BaseTest):
         self.start_test()
         for i, (images, segment_targets) in enumerate(dataloader):
             prediction, output_list = self.segment_inference.infer(images)
-            result = self.output_process.get_segmentation_result(prediction,
-                                                                 self.threshold)
+            result, _ = self.output_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()
             self.metric.numpy_eval(result, gt)

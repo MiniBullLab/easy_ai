@@ -4,7 +4,7 @@
 
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.tasks.polygon2d.polygon2d_postprocess import Polygon2dPostProcess
+from easyai.tasks.polygon2d.polygon2d_result_process import Polygon2dResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
@@ -17,8 +17,8 @@ class Polygon2d(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              class_number=len(self.task_config.detect2d_class))
         self.set_model(gpu_id=gpu_id)
-        self.result_process = Polygon2dPostProcess(self.task_config.image_size,
-                                                   self.task_config.post_process)
+        self.result_process = Polygon2dResultProcess(self.task_config.image_size,
+                                                     self.task_config.post_process)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)

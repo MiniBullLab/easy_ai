@@ -26,6 +26,7 @@ class BinarizeHead(BaseBlock):
                                              out_channels=in_channels // 4,
                                              kernel_size=2,
                                              stride=2,
+                                             bias=True,
                                              bn_name=bn_name,
                                              activation_name=activation_name)
         self.conv3 = nn.ConvTranspose2d(in_channels=in_channels // 4,

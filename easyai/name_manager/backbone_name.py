@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 
 class BackboneName():
 
     ResNet18 = "resnet18"
+    ResNet18V2 = "resnet18_v2"
     ResNet34 = "resnet34"
     ResNet50 = "resnet50"
     ResNet101 = "resnet101"

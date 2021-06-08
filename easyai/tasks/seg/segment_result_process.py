@@ -1,21 +1,24 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 import numpy as np
-from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
+from easyai.tasks.utility.base_post_process import BasePostProcess
+from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
+from easyai.utility.registry import build_from_cfg
 
 
-class SegmentResultProcess():
+class SegmentResultProcess(BasePostProcess):
 
-    def __init__(self, image_size, resize_type):
+    def __init__(self, image_size, resize_type, post_process_args):
+        super().__init__()
         self.image_size = image_size
         self.resize_type = resize_type
-        self.dataset_process = ImageDataSetProcess()
+        self.process_func = self.build_post_process(post_process_args)
 
-    def postprocess(self, prediction, src_size, threshold=None):
-        result = self.get_segmentation_result(prediction, threshold)
+    def post_process(self, prediction, src_size=(0, 0)):
+        result = self.process_func(prediction)
         if src_size[0] == 0 or src_size[1] == 0:
             seg_image = None
         else:
@@ -24,17 +27,6 @@ class SegmentResultProcess():
                                                       self.resize_type,
                                                       result)
         return result, seg_image
-
-    def get_segmentation_result(self, prediction, threshold=0):
-        result = None
-        if prediction.ndim == 2:
-            result = (prediction >= threshold).astype(int)
-            # print(set(list(result.flatten())))
-        elif prediction.ndim == 3:
-            result = np.argmax(prediction, axis=0)
-        elif prediction.ndim == 4:
-            result = np.argmax(prediction, axis=1)
-        return result
 
     def resize_segmention_result(self, src_size, image_size,
                                  resize_type, segmention_result):
@@ -61,3 +53,12 @@ class SegmentResultProcess():
                   % (h, w, ht, wt))
             raise Exception("segment_data_resize error")
         return input_data, target
+
+    def build_post_process(self, post_process_args):
+        func_name = post_process_args.strip()
+        result_func = None
+        if REGISTERED_POST_PROCESS.has_class(func_name):
+            result_func = build_from_cfg(post_process_args, REGISTERED_POST_PROCESS)
+        else:
+            print("%s post process not exits" % func_name)
+        return result_func

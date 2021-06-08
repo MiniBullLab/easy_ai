@@ -4,7 +4,7 @@
 
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.tasks.rec_text.recongnize_text_postprocess import RecognizeTextPostProcess
+from easyai.tasks.rec_text.text_result_process import TextResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
@@ -17,8 +17,8 @@ class RecognizeText(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              points_count=self.task_config.points_count)
         self.set_model(gpu_id=gpu_id)
-        self.result_process = RecognizeTextPostProcess(self.task_config.character_set,
-                                                       self.task_config.post_process)
+        self.result_process = TextResultProcess(self.task_config.character_set,
+                                                self.task_config.post_process)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)

@@ -2,24 +2,27 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch
+from easyai.tasks.utility.base_post_process import BasePostProcess
+from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
+from easyai.utility.registry import build_from_cfg
 
 
-class ClassifyResultProcess():
+class ClassifyResultProcess(BasePostProcess):
 
-    def __init__(self):
-        self.threshold = 0.5  # binary class threshold
+    def __init__(self, post_process_args):
+        super().__init__()
+        self.post_process_args = post_process_args
+        self.process_func = self.build_post_process(post_process_args)
 
-    def postprocess(self, prediction):
-        class_indices, class_confidence = self.get_classify_result(prediction)
+    def post_process(self, prediction):
+        class_indices, class_confidence = self.process_func(prediction)
         return class_indices, class_confidence
 
-    def get_classify_result(self, prediction):
-        output_count = prediction.size(1)
-        if output_count == 1:
-            class_indices = (prediction >= self.threshold).astype(int)
-            class_confidence = prediction
+    def build_post_process(self, post_process_args):
+        func_name = post_process_args.strip()
+        result_func = None
+        if REGISTERED_POST_PROCESS.has_class(func_name):
+            result_func = build_from_cfg(post_process_args, REGISTERED_POST_PROCESS)
         else:
-            class_indices = torch.argmax(prediction, dim=1)
-            class_confidence = prediction[:, class_indices]
-        return class_indices, class_confidence
+            print("%s post process not exits" % func_name)
+        return result_func

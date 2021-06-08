@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import torch
@@ -21,10 +21,9 @@ class Segmentation(BaseInference):
                              points_count=len(self.task_config.segment_class))
         self.set_model(gpu_id=gpu_id)
         self.result_process = SegmentResultProcess(self.task_config.image_size,
-                                                   self.task_config.resize_type)
+                                                   self.task_config.resize_type,
+                                                   self.task_config.post_process)
         self.image_process = ImageProcess()
-
-        self.threshold = 0.5  # binary class threshold
 
     def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
@@ -35,9 +34,8 @@ class Segmentation(BaseInference):
             self.timer.tic()
             self.set_src_size(src_image)
             prediction, _ = self.infer(image)
-            _, seg_image = self.result_process.postprocess(prediction,
-                                                           self.src_size,
-                                                           self.threshold)
+            _, seg_image = self.result_process.post_process(prediction,
+                                                            self.src_size)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image, seg_image,

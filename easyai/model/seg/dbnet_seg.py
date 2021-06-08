@@ -27,7 +27,7 @@ class DBNet(BaseClassifyModel):
         self.set_name(ModelName.DBNet)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
-        self.model_args['type'] = BackboneName.ResNet18
+        self.model_args['type'] = BackboneName.ResNet18V2
         self.feature_out_channels = 256
         self.create_block_list()
 

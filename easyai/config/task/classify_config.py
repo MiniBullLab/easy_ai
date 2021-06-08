@@ -15,6 +15,7 @@ class ClassifyConfig(CommonTrainConfig):
         super().__init__(TaskName.Classify_Task)
         # data
         self.class_name = None
+        self.post_process = None
         self.save_result_name = None
         # test
         # train
@@ -30,10 +31,13 @@ class ClassifyConfig(CommonTrainConfig):
         self.load_image_data_value(config_dict)
         if config_dict.get('class_name', None) is not None:
             self.class_name = tuple(config_dict['class_name'])
+        if config_dict.get('post_process', None) is not None:
+            self.post_process = config_dict['post_process']
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['class_name'] = self.class_name
+        config_dict['post_process'] = self.post_process
 
     def load_test_value(self, config_dict):
         if config_dict.get('test_batch_size', None) is not None:
@@ -71,6 +75,8 @@ class ClassifyConfig(CommonTrainConfig):
         self.normalize_type = -1
         self.save_result_name = "classify_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
+
+        self.post_process = {'type': 'MaxPostProcess'}
 
     def get_test_default_value(self):
         self.test_batch_size = 1

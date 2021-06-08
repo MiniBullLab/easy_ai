@@ -10,7 +10,7 @@ from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 from easyai.utility.registry import build_from_cfg
 
 
-class Polygon2dPostProcess(BasePostProcess):
+class Polygon2dResultProcess(BasePostProcess):
 
     def __init__(self, image_size, post_process_args):
         super().__init__()
