@@ -8,6 +8,8 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.common.upsample_layer import Upsample
 from easyai.model_block.utility.base_block import *
 
+import numpy as np
+
 
 class DBFPNNeck(BaseBlock):
 
@@ -50,8 +52,22 @@ class DBFPNNeck(BaseBlock):
 
     def forward(self, layer_outputs, base_outputs):
         results = []
-        input_features = [layer_outputs[i] if i < 0 else base_outputs[i]
-                          for i in self.down_layers]
+        # input_features = [layer_outputs[i] if i < 0 else base_outputs[i]
+        #                   for i in self.down_layers]
+        input_features = []
+        temp_image = np.load("/home/lpj/github/output1.npy")
+        x1 = torch.from_numpy(temp_image).to(layer_outputs[0].device)
+        input_features.append(x1)
+        temp_image = np.load("/home/lpj/github/output2.npy")
+        x2 = torch.from_numpy(temp_image).to(layer_outputs[0].device)
+        input_features.append(x2)
+        temp_image = np.load("/home/lpj/github/output3.npy")
+        x3 = torch.from_numpy(temp_image).to(layer_outputs[0].device)
+        input_features.append(x3)
+        temp_image = np.load("/home/lpj/github/output4.npy")
+        x4 = torch.from_numpy(temp_image).to(layer_outputs[0].device)
+        input_features.append(x4)
+
         last_inner = self.inner_blocks[-1](input_features[-1])
         last_result = self.layer_blocks[-1](last_inner)
         results.append(self.up_blocks[0](last_result))
@@ -67,9 +83,9 @@ class DBFPNNeck(BaseBlock):
             last_inner = inner_lateral + inner_top_down
             temp_result = layer_block(last_inner)
             if index == self.layer_count - 1:
-                results.append(temp_result)
+                results.insert(0, temp_result)
             else:
-                results.append(self.up_blocks[index](temp_result))
+                results.insert(0, self.up_blocks[index](temp_result))
             # print(results[-1].shape)
         return torch.cat(results, dim=1)
 
