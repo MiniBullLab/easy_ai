@@ -16,7 +16,7 @@ class ModelNetShow():
         self.show_process = ModelShow()
 
     def model_show(self, model_name):
-        input_x = torch.randn(1, 3, 128, 128)
+        input_x = torch.randn(1, 3, 736, 736)
         self.show_process.set_input(input_x)
         model_config = {"type": model_name}
         model = self.model_factory.get_model(model_config)
@@ -30,8 +30,6 @@ class ModelNetShow():
         self.show_process.show_from_model(model)
 
     def onnx_show(self, onnx_path):
-        input_x = torch.randn(1, 3, 256, 256)
-        self.show_process.set_input(input_x)
         self.show_process.show_from_onnx(onnx_path)
 
 

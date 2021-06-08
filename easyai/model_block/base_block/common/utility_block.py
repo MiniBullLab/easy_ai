@@ -6,6 +6,7 @@ from easyai.name_manager.block_name import ActivationType, NormalizationType
 from easyai.name_manager.block_name import LayerType, BlockType
 from easyai.model_block.base_block.common.activation_function import ActivationFunction
 from easyai.model_block.base_block.common.normalization_layer import NormalizationFunction
+from easyai.model_block.base_block.common.pooling_layer import MyAvgPool2d
 from easyai.model_block.utility.base_block import *
 
 
@@ -84,6 +85,32 @@ class ConvBNActivationBlock(BaseBlock):
 
     def forward(self, x):
         x = self.block(x)
+        return x
+
+
+class ConvBNACTWithPoolBlock(BaseBlock):
+
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
+                 dilation=1, groups=1, bias=False,
+                 bnName=NormalizationType.BatchNormalize2d,
+                 activationName=ActivationType.ReLU):
+        super().__init__(BlockType.ConvBNACTWithPoolBlock)
+        self.pool = MyAvgPool2d(kernel_size=2, stride=2, padding=0,
+                                use_reshape=False)
+        self.conv = ConvBNActivationBlock(in_channels=in_channels,
+                                          out_channels=out_channels,
+                                          kernel_size=kernel_size,
+                                          stride=stride,
+                                          padding=padding,
+                                          dilation=dilation,
+                                          groups=groups,
+                                          bias=bias,
+                                          bnName=bnName,
+                                          activationName=activationName)
+
+    def forward(self, x):
+        x = self.pool(x)
+        x = self.conv(x)
         return x
 
 

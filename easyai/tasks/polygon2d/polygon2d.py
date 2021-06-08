@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 import torch
+import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.polygon2d.polygon2d_result_process import Polygon2dResultProcess
 from easyai.name_manager.task_name import TaskName
@@ -36,6 +37,11 @@ class Polygon2d(BaseInference):
                 pass
 
     def single_image_process(self, src_size, input_image):
+        # print(input_image.shape)
+        # temp_image = np.load("/home/lpj/github/output.npy")
+        # input_image = torch.from_numpy(temp_image).to(self.device)
+        # np.savetxt('../output1.txt', temp_image.reshape(1, -1), fmt='%0.8f')
+        # np.save('../output.npy', input_image.cpu().numpy())
         prediction, _ = self.infer(input_image)
         result = self.result_process.post_process(prediction, src_size)
         return result

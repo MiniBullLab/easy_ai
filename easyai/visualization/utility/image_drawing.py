@@ -90,8 +90,11 @@ class ImageDrawing():
     def draw_polygon2d_result(self, src_image, result):
         for result_object in result:
             polygon = result_object.get_polygon()
+            point_list = []
             for point in polygon:
                 x = int(point.x)
                 y = int(point.y)
-                cv2.polylines(src_image, [x, y], True, (0, 255, 225), 2)
+                point_list.append([x, y])
+            cv2.polylines(src_image, np.array([point_list], np.int32),
+                          True, (0, 0, 225), 2)
 

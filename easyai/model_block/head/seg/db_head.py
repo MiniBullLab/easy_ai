@@ -20,7 +20,7 @@ class BinarizeHead(BaseBlock):
                                            kernel_size=3,
                                            padding=1,
                                            stride=1,
-                                           bnName=bn_name,
+                                           bnName=NormalizationType.EmptyNormalization,
                                            activationName=activation_name)
         self.conv2 = DeConvBNActivationBlock(in_channels=in_channels // 4,
                                              out_channels=in_channels // 4,

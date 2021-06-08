@@ -109,8 +109,9 @@ class ResNet(BaseBackbone):
             expansion = 4
         down_layers = ResidualBlock(self.block_flag, self.in_channels, out_channels, stride,
                                     dilation=dilation, expansion=expansion,
-                                    use_short=bool(use_short),
-                                    bn_name=bn_name, activation_name=activation)
+                                    use_short=use_short,
+                                    bn_name=bn_name,
+                                    activation_name=activation)
         name = "down_%s" % down_layers.get_name()
         temp_output_channel = out_channels * expansion
         self.add_block_list(name, down_layers, temp_output_channel)
@@ -144,7 +145,8 @@ class ResNet18V2(ResNet):
     def __init__(self, data_channel):
         super().__init__(data_channel=data_channel,
                          num_blocks=[2, 2, 2, 2],
-                         use_short=(1, 0, 0, 0),
+                         strides=(1, 2, 2, 2),
+                         use_short=(1, 2, 2, 2),
                          block_flag=0,
                          head_type=2)
         self.set_name(BackboneName.ResNet18V2)

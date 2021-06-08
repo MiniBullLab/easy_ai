@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import netron
 from easyai.torch_utility.torch_onnx.torch_to_onnx import TorchConvertOnnx

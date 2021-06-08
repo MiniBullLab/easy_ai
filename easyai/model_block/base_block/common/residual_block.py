@@ -7,6 +7,7 @@ from easyai.name_manager.block_name import BlockType, LayerType
 from easyai.model_block.base_block.common.utility_layer import EmptyLayer
 from easyai.model_block.base_block.common.activation_function import ActivationFunction
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.utility_block import ConvBNACTWithPoolBlock
 from easyai.model_block.base_block.common.utility_block import BNActivationConvBlock
 from easyai.model_block.base_block.common.attention_block import SEConvBlock, SEBlock
 from easyai.model_block.utility.base_block import *
@@ -65,13 +66,21 @@ class ResidualBlock(BaseBlock):
             )
 
         self.shortcut = nn.Sequential()
-        if use_short or stride != 1 or in_channels != expansion * out_channels:
-            self.shortcut = ConvBNActivationBlock(in_channels=in_channels,
-                                                  out_channels=out_channels * expansion,
-                                                  kernel_size=1,
-                                                  stride=stride,
-                                                  bnName=bn_name,
-                                                  activationName=ActivationType.Linear)
+        if use_short > 0 or stride != 1 or in_channels != expansion * out_channels:
+            if use_short == 2:
+                self.shortcut = ConvBNACTWithPoolBlock(in_channels=in_channels,
+                                                       out_channels=out_channels * expansion,
+                                                       kernel_size=1,
+                                                       stride=1,
+                                                       bnName=bn_name,
+                                                       activationName=ActivationType.Linear)
+            else:
+                self.shortcut = ConvBNActivationBlock(in_channels=in_channels,
+                                                      out_channels=out_channels * expansion,
+                                                      kernel_size=1,
+                                                      stride=stride,
+                                                      bnName=bn_name,
+                                                      activationName=ActivationType.Linear)
         self.activation = ActivationFunction.get_function(activation_name)
 
     def forward(self, x):

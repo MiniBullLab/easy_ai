@@ -81,6 +81,7 @@ class BlockType():
     ConvBNActivationBlock1d = "convBNActivationBlock1d"
 
     ConvBNActivationBlock = "convBNActivationBlock"
+    ConvBNACTWithPoolBlock = "convBNACTWithPoolBlock"
     BNActivationConvBlock = "bnActivationConvBlock"
     ActivationConvBNBlock = "activationConvBNBlock"
 

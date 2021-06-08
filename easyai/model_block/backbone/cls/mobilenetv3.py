@@ -42,6 +42,7 @@ class MobileNetV3(BaseBackbone):
 
         # building first layer
         output_channel = self.make_divisible(16 * self.scale, 8)
+
         layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
                                        out_channels=output_channel,
                                        kernel_size=3,
