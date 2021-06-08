@@ -70,17 +70,18 @@ class MobileNetV3(BaseBackbone):
     def make_layer(self, input_channel, cfgs):
         # building inverted residual blocks
         hidden_channel = 0
-        for k, exp_size, c, use_se, use_hs, s in cfgs:
-            # print(k, exp_size, c, use_se, use_hs, s)
+        for flag, k, exp_size, c, use_se, use_hs, s in cfgs:
+            # print(flag, k, exp_size, c, use_se, use_hs, s)
             output_channel = self.make_divisible(c * self.scale, 8)
             hidden_channel = self.make_divisible(exp_size * self.scale, 8)
+            # print(input_channel, hidden_channel, hidden_channel)
             if use_hs == 0:
-                temp_block = InvertedResidualV2(input_channel, hidden_channel, output_channel,
+                temp_block = InvertedResidualV2(flag, input_channel, hidden_channel, output_channel,
                                                 k, s, use_se,
                                                 bn_name=self.bn_name,
                                                 activation_name=ActivationType.ReLU)
             else:
-                temp_block = InvertedResidualV2(input_channel, hidden_channel, output_channel,
+                temp_block = InvertedResidualV2(flag, input_channel, hidden_channel, output_channel,
                                                 k, s, use_se,
                                                 bn_name=self.bn_name,
                                                 activation_name=self.activation_name)
@@ -122,22 +123,22 @@ class MobileNetV3Large(MobileNetV3):
             Constructs a MobileNetV3-Large model
         """
     cfgs = [
-        # k, t, c, SE, NL, s
-        [3, 16, 16, 0, 0, 1],
-        [3, 64, 24, 0, 0, 2],
-        [3, 72, 24, 0, 0, 1],
-        [5, 72, 40, 1, 0, 2],
-        [5, 120, 40, 1, 0, 1],
-        [5, 120, 40, 1, 0, 1],
-        [3, 240, 80, 0, 1, 2],
-        [3, 200, 80, 0, 1, 1],
-        [3, 184, 80, 0, 1, 1],
-        [3, 184, 80, 0, 1, 1],
-        [3, 480, 112, 1, 1, 1],
-        [3, 672, 112, 1, 1, 1],
-        [5, 672, 160, 1, 1, 1],
-        [5, 672, 160, 1, 1, 2],
-        [5, 960, 160, 1, 1, 1]
+        # f, k, t, c, SE, NL, s
+        [1, 3, 16, 16, 0, 0, 1],
+        [1, 3, 64, 24, 0, 0, 2],
+        [1, 3, 72, 24, 0, 0, 1],
+        [1, 5, 72, 40, 1, 0, 2],
+        [1, 5, 120, 40, 1, 0, 1],
+        [1, 5, 120, 40, 1, 0, 1],
+        [1, 3, 240, 80, 0, 1, 2],
+        [1, 3, 200, 80, 0, 1, 1],
+        [1, 3, 184, 80, 0, 1, 1],
+        [1, 3, 184, 80, 0, 1, 1],
+        [1, 3, 480, 112, 1, 1, 1],
+        [1, 3, 672, 112, 1, 1, 1],
+        [1, 5, 672, 160, 1, 1, 1],
+        [1, 5, 672, 160, 1, 1, 2],
+        [1, 5, 960, 160, 1, 1, 1]
     ]
 
     def __init__(self, data_channel):
@@ -152,22 +153,22 @@ class MobileNetV3LargeV05(MobileNetV3):
             Constructs a MobileNetV3-Large model
     """
     cfgs = [
-        # k, t, c, SE, NL, s
-        [3, 16, 16, 0, 0, 1],
-        [3, 64, 24, 0, 0, 2],
-        [3, 72, 24, 0, 0, 1],
-        [5, 72, 40, 1, 0, 2],
-        [5, 120, 40, 1, 0, 1],
-        [5, 120, 40, 1, 0, 1],
-        [3, 240, 80, 0, 1, 2],
-        [3, 200, 80, 0, 1, 1],
-        [3, 184, 80, 0, 1, 1],
-        [3, 184, 80, 0, 1, 1],
-        [3, 480, 112, 1, 1, 1],
-        [3, 672, 112, 1, 1, 1],
-        [5, 672, 160, 1, 1, 1],
-        [5, 672, 160, 1, 1, 2],
-        [5, 960, 160, 1, 1, 1]
+        # f, k, t, c, SE, NL, s
+        [1, 3, 16, 16, 0, 0, 1],
+        [1, 3, 64, 24, 0, 0, 2],
+        [1, 3, 72, 24, 0, 0, 1],
+        [1, 5, 72, 40, 1, 0, 2],
+        [1, 5, 120, 40, 1, 0, 1],
+        [1, 5, 120, 40, 1, 0, 1],
+        [1, 3, 240, 80, 0, 1, 2],
+        [1, 3, 200, 80, 0, 1, 1],
+        [1, 3, 184, 80, 0, 1, 1],
+        [1, 3, 184, 80, 0, 1, 1],
+        [1, 3, 480, 112, 1, 1, 1],
+        [1, 3, 672, 112, 1, 1, 1],
+        [1, 5, 672, 160, 1, 1, 1],
+        [1, 5, 672, 160, 1, 1, 2],
+        [1, 5, 960, 160, 1, 1, 1]
     ]
 
     def __init__(self, data_channel):
@@ -182,18 +183,18 @@ class MobileNetV3Small(MobileNetV3):
         Constructs a MobileNetV3-Small model
     """
     cfgs = [
-        # k, t, c, SE, NL, s
-        [3, 16, 16, 1, 0, 2],
-        [3, 72, 24, 0, 0, 2],
-        [3, 88, 24, 0, 0, 1],
-        [5, 96, 40, 1, 1, 2],
-        [5, 240, 40, 1, 1, 1],
-        [5, 240, 40, 1, 1, 1],
-        [5, 120, 48, 1, 1, 1],
-        [5, 144, 48, 1, 1, 1],
-        [5, 288, 96, 1, 1, 2],
-        [5, 576, 96, 1, 1, 1],
-        [5, 576, 96, 1, 1, 1],
+        # f, k, t, c, SE, NL, s
+        [1, 3, 16, 16, 1, 0, 2],
+        [1, 3, 72, 24, 0, 0, 2],
+        [1, 3, 88, 24, 0, 0, 1],
+        [1, 5, 96, 40, 1, 1, 2],
+        [1, 5, 240, 40, 1, 1, 1],
+        [1, 5, 240, 40, 1, 1, 1],
+        [1, 5, 120, 48, 1, 1, 1],
+        [1, 5, 144, 48, 1, 1, 1],
+        [1, 5, 288, 96, 1, 1, 2],
+        [1, 5, 576, 96, 1, 1, 1],
+        [1, 5, 576, 96, 1, 1, 1],
     ]
 
     def __init__(self, data_channel):
@@ -208,18 +209,18 @@ class MobileNetV3SmallV05(MobileNetV3):
         Constructs a MobileNetV3-Small model
     """
     cfgs = [
-        # k, t, c, SE, NL, s
-        [3, 16, 16, 1, 0, 2],
-        [3, 72, 24, 0, 0, 2],
-        [3, 88, 24, 0, 0, 1],
-        [5, 96, 40, 1, 1, 2],
-        [5, 240, 40, 1, 1, 1],
-        [5, 240, 40, 1, 1, 1],
-        [5, 120, 48, 1, 1, 1],
-        [5, 144, 48, 1, 1, 1],
-        [5, 288, 96, 1, 1, 2],
-        [5, 576, 96, 1, 1, 1],
-        [5, 576, 96, 1, 1, 1],
+        # f, k, t, c, SE, NL, s
+        [1, 3, 16, 16, 1, 0, 2],
+        [1, 3, 72, 24, 0, 0, 2],
+        [1, 3, 88, 24, 0, 0, 1],
+        [1, 5, 96, 40, 1, 1, 2],
+        [1, 5, 240, 40, 1, 1, 1],
+        [1, 5, 240, 40, 1, 1, 1],
+        [1, 5, 120, 48, 1, 1, 1],
+        [1, 5, 144, 48, 1, 1, 1],
+        [1, 5, 288, 96, 1, 1, 2],
+        [1, 5, 576, 96, 1, 1, 1],
+        [1, 5, 576, 96, 1, 1, 1],
     ]
 
     def __init__(self, data_channel):
@@ -234,18 +235,18 @@ class MobileNetV3SmallDown16(MobileNetV3):
         Constructs a MobileNetV3-Small model
     """
     cfgs = [
-        # k, exp, c,  se, nl,  s,
-        [3, 16, 16, 2, 0, (1, 1)],
-        [3, 72, 24, 0, 0, (2, 1)],
-        [3, 88, 24, 0, 0, 1],
-        [5, 96, 40, 2, 1, (2, 1)],
-        [5, 240, 40, 2, 1, 1],
-        [5, 240, 40, 2, 1, 1],
-        [5, 120, 48, 2, 1, 1],
-        [5, 144, 48, 2, 1, 1],
-        [5, 288, 96, 2, 1, (2, 1)],
-        [5, 576, 96, 2, 1, 1],
-        [5, 576, 96, 2, 1, 1],
+        # f, k, t, c, SE, NL, s
+        [1, 3, 16, 16, 2, 0, (1, 1)],
+        [1, 3, 72, 24, 0, 0, (2, 1)],
+        [1, 3, 88, 24, 0, 0, 1],
+        [1, 5, 96, 40, 2, 1, (2, 1)],
+        [1, 5, 240, 40, 2, 1, 1],
+        [1, 5, 240, 40, 2, 1, 1],
+        [1, 5, 120, 48, 2, 1, 1],
+        [1, 5, 144, 48, 2, 1, 1],
+        [1, 5, 288, 96, 2, 1, (2, 1)],
+        [1, 5, 576, 96, 2, 1, 1],
+        [1, 5, 576, 96, 2, 1, 1],
     ]
 
     def __init__(self, data_channel):

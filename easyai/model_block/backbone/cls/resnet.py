@@ -17,7 +17,7 @@ __all__ = ['ResNet18', 'ResNet18V2',
 
 class ResNet(BaseBackbone):
     def __init__(self, data_channel=3, num_blocks=(2, 2, 2, 2), out_channels=(64, 128, 256, 512),
-                 strides=(1, 2, 2, 2), dilations=(1, 1, 1, 1),
+                 strides=(1, 2, 2, 2), dilations=(1, 1, 1, 1), use_short=(0, 0, 0, 0),
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU,
                  block_flag=0, head_type=1):
@@ -27,6 +27,7 @@ class ResNet(BaseBackbone):
         self.out_channels = out_channels
         self.strides = strides
         self.dilations = dilations
+        self.use_short = use_short
         self.bn_name = bn_name
         self.activation_name = activation_name
         self.block_flag = block_flag
@@ -95,20 +96,21 @@ class ResNet(BaseBackbone):
         for index, num_block in enumerate(self.num_blocks):
             self.make_resnet_block(self.out_channels[index], self.num_blocks[index],
                                    self.strides[index], self.dilations[index],
-                                   self.bn_name, self.activation_name,
+                                   self.use_short[index], self.bn_name, self.activation_name,
                                    self.block_flag)
             self.in_channels = self.block_out_channels[-1]
 
     def make_resnet_block(self, out_channels, num_block, stride, dilation,
-                         bn_name, activation, block_flag):
+                         use_short, bn_name, activation, block_flag):
         expansion = 0
         if block_flag == 0:
             expansion = 1
         elif block_flag == 1:
             expansion = 4
         down_layers = ResidualBlock(self.block_flag, self.in_channels, out_channels, stride,
-                                    dilation=dilation, expansion=expansion, bn_name=bn_name,
-                                    activation_name=activation)
+                                    dilation=dilation, expansion=expansion,
+                                    use_short=bool(use_short),
+                                    bn_name=bn_name, activation_name=activation)
         name = "down_%s" % down_layers.get_name()
         temp_output_channel = out_channels * expansion
         self.add_block_list(name, down_layers, temp_output_channel)
@@ -142,6 +144,7 @@ class ResNet18V2(ResNet):
     def __init__(self, data_channel):
         super().__init__(data_channel=data_channel,
                          num_blocks=[2, 2, 2, 2],
+                         use_short=(1, 0, 0, 0),
                          block_flag=0,
                          head_type=2)
         self.set_name(BackboneName.ResNet18V2)

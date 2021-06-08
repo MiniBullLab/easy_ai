@@ -14,7 +14,8 @@ from easyai.model_block.utility.base_block import *
 
 class ResidualBlock(BaseBlock):
 
-    def __init__(self, flag, in_channels, out_channels, stride=1, dilation=1, expansion=1,
+    def __init__(self, flag, in_channels, out_channels,
+                 stride=1, dilation=1, expansion=1, use_short=False,
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(BlockType.ResidualBlock)
@@ -64,7 +65,7 @@ class ResidualBlock(BaseBlock):
             )
 
         self.shortcut = nn.Sequential()
-        if stride != 1 or in_channels != expansion * out_channels:
+        if use_short or stride != 1 or in_channels != expansion * out_channels:
             self.shortcut = ConvBNActivationBlock(in_channels=in_channels,
                                                   out_channels=out_channels * expansion,
                                                   kernel_size=1,
@@ -201,14 +202,14 @@ class InvertedResidual(BaseBlock):
 
 
 class InvertedResidualV2(BaseBlock):
-    def __init__(self, in_channels, hidden_dim, out_channels,
+    def __init__(self, flag, in_channels, hidden_dim, out_channels,
                  kernel_size, stride, se_type,
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.HardSwish):
         super().__init__(BlockType.InvertedResidualV2)
         self.use_res_connect = stride == 1 and in_channels == out_channels
         layers = OrderedDict()
-        if in_channels == hidden_dim:
+        if flag == 0:
             layer_name = "%s_1" % BlockType.ConvBNActivationBlock
             layers[layer_name] = ConvBNActivationBlock(in_channels=hidden_dim,
                                                        out_channels=hidden_dim,
