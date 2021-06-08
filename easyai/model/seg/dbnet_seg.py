@@ -38,7 +38,7 @@ class DBNet(BaseClassifyModel):
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
-        down_layers = [3, 5, 7, 9]
+        down_layers = [5, 7, 9, 11]
         down_layer_outputs = [self.block_out_channels[i] if i < 0 else base_out_channels[i]
                               for i in down_layers]
         temp_str = ",".join('%s' % index for index in down_layers)
