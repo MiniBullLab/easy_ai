@@ -17,6 +17,7 @@ class ActivationType():
     Mish = "mish"
 
     HardSigmoid = "hard_sigmoid"
+    PaddleHardSigmoid = "paddle_hard_sigmoid"
     HardSwish = "hard_swish"
 
 

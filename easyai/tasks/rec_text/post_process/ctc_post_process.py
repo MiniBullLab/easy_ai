@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 import numpy as np
+from easyai.helper.data_structure import OCRObject
 from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
@@ -17,15 +18,19 @@ class CTCPostProcess(BasePostProcess):
     def __call__(self, prediction, character):
         """ convert text-index into text-label. """
         prediction = np.expand_dims(prediction, 0)
+        # print(prediction.shape)
         preds_idx = prediction.argmax(axis=2)
         preds_prob = prediction.max(axis=2)
         result_list = []
         for word, prob in zip(preds_idx, preds_prob):
             result = []
             conf = []
+            temp_object = OCRObject()
             for i, index in enumerate(word):
                 if word[i] != 0 and (not (i > 0 and word[i - 1] == word[i])):
-                    result.append(self.character[int(index)])
+                    result.append(character[int(index)])
                     conf.append(prob[i])
-            result_list.append((''.join(result), conf))
+            temp_object.set_text(''.join(result))
+            temp_object.text_confidence = conf
+            result_list.append(temp_object)
         return result_list

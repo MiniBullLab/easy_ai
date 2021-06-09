@@ -25,8 +25,11 @@ class ImageDataSetProcess(BaseDataSetProcess):
             result = self.image_resize_square(src_image, ratio, pad_size,
                                               pad_color=pad_color)
         elif resize_type == -1:
+            src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
+            if (src_size[1] * 1.0) / src_size[0] >= 1.5:
+                src_image = np.rot90(src_image)
             resize_ratio = dst_size[1] / src_image.shape[0]
-            resize_w = int(src_image.shape[1] * resize_ratio)
+            resize_w = int(src_size[0] * resize_ratio)
             dst_size = (resize_w, dst_size[1])
             result = self.cv_image_resize(src_image, dst_size, interpolation="bilinear")
         elif resize_type == -2:

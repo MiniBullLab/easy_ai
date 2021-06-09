@@ -27,5 +27,7 @@ class EncoderRNNBlock(BaseBlock):
                             bidirectional=True, num_layers=2)
 
     def forward(self, x):
-        x, _ = self.lstm(x)
+        data_tensor = x.transpose(0, 1)
+        x, _ = self.lstm(data_tensor)
+        x = x.transpose(0, 1)
         return x

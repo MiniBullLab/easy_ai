@@ -5,7 +5,7 @@
 from easyai.name_manager.model_name import ModelName
 from easyai.name_manager.backbone_name import BackboneName
 from easyai.name_manager.block_name import NormalizationType, ActivationType
-from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.block_name import LayerType, BlockType, NeckType
 from easyai.name_manager.loss_name import LossName
 from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
 from easyai.model_block.neck.sequence_encoder import SequenceEncoder
@@ -67,6 +67,8 @@ class CRNN(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
+            elif NeckType.SequenceEncoder in key:
+                x = block(x)
             elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:

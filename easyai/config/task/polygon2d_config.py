@@ -57,10 +57,10 @@ class Polygon2dConfig(CommonTrainConfig):
                              'threshold': 0.3,
                              'unclip_ratio': 1.5}
 
-        self.data_mean = (0.485, 0.456, 0.406)
-        self.data_std = (0.229, 0.224, 0.225)
         self.resize_type = -2
         self.normalize_type = -1
+        self.data_mean = (0.485, 0.456, 0.406)
+        self.data_std = (0.229, 0.224, 0.225)
 
         self.save_result_name = "polygon2d_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)

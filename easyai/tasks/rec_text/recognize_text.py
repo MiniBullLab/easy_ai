@@ -29,7 +29,7 @@ class RecognizeText(BaseInference):
             self.set_src_size(src_image)
             text_objects = self.single_image_process(img)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
-            print(text_objects)
+            print(file_path, text_objects[0].get_text())
 
     def single_image_process(self, input_image):
         prediction, _ = self.infer(input_image)

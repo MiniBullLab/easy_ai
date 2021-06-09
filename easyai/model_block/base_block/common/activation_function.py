@@ -44,6 +44,15 @@ class HardSigmoid(BaseBlock):
         return (self.relu6(x + 3)) / 6
 
 
+class PaddleHardSigmoid(BaseBlock):
+    def __init__(self, inplace=True):
+        super().__init__(ActivationType.PaddleHardSigmoid)
+
+    def forward(self, x):
+        x = (1.2 * x).add_(3.).clamp_(0., 6.).div_(6.)
+        return x
+
+
 class HardSwish(BaseBlock):
     def __init__(self, inplace=True):
         super(HardSwish, self).__init__(ActivationType.HardSigmoid)
@@ -79,6 +88,8 @@ class ActivationFunction():
             return SwishActivation()
         elif name == ActivationType.HardSigmoid:
             return HardSigmoid(inplace=inplace)
+        elif name == ActivationType.PaddleHardSigmoid:
+            return PaddleHardSigmoid(inplace=inplace)
         elif name == ActivationType.HardSwish:
             return HardSwish(inplace=inplace)
         elif name == ActivationType.Mish:

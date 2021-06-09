@@ -69,7 +69,9 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.post_process = {'type': 'CTCPostProcess'}
 
         self.resize_type = -1
-        self.normalize_type = 0
+        self.normalize_type = 1
+        self.data_mean = (0.5, 0.5, 0.5)
+        self.data_std = (0.5, 0.5, 0.5)
 
         self.save_result_name = "rec_text_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
