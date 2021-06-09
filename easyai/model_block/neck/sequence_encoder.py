@@ -9,10 +9,11 @@ from easyai.model_block.utility.base_block import *
 
 
 class SequenceEncoder(BaseBlock):
-    def __init__(self, in_channels, hidden_size=48):
+    def __init__(self, in_channels, hidden_size=48, rnn_reshape=False):
         super().__init__(NeckType.SequenceEncoder)
         self.encoder_reshape = Im2SeqBlock(in_channels)
-        self.encoder = EncoderRNNBlock(in_channels, hidden_size)
+        self.encoder = EncoderRNNBlock(in_channels, hidden_size,
+                                       use_reshape=rnn_reshape)
         self.out_channels = self.encoder.out_channels
 
     def forward(self, x):

@@ -15,7 +15,7 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
     def resize_polygon(self):
         pass
 
-    def get_rotate_crop_image(self, img, points):
+    def get_rotate_crop_image(self, img, polygon):
         '''
         img_height, img_width = img.shape[0:2]
         left = int(np.min(points[:, 0]))
@@ -26,7 +26,7 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
         points[:, 0] = points[:, 0] - left
         points[:, 1] = points[:, 1] - top
         '''
-        points = points.astype(np.float32)
+        points = np.array([(p.x, p.y) for p in polygon], dtype=np.float32)
         img_crop_width = int(
             max(
                 np.linalg.norm(points[0] - points[1]),

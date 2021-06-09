@@ -23,7 +23,7 @@ class Polygon2dResultProcess(TaskPostProcess):
             return None
         detection_objects = self.process_func(prediction, src_size)
         # result = self.resize_polygon_object(src_size, self.image_size, detection_objects)
-        print("result count:", len(detection_objects))
+        # print("result count:", len(detection_objects))
         return detection_objects
 
     def resize_polygon_object(self, src_size, image_size,

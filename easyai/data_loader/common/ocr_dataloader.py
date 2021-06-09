@@ -9,7 +9,7 @@ from easyai.data_loader.common.polygon2d_dataset_process import Polygon2dDataSet
 
 class OCRLoader(DataLoader):
 
-    def __init__(self, polygon_list, src_image, image_size=(416, 416), data_channel=3,
+    def __init__(self, object_list, src_image, image_size=(416, 416), data_channel=3,
                  resize_type=0, normalize_type=0, mean=0, std=1):
         super().__init__(data_channel)
         self.image_size = image_size
@@ -21,8 +21,8 @@ class OCRLoader(DataLoader):
                                                        mean, std,
                                                        pad_color=self.get_pad_color())
         self.src_image = src_image
-        self.polygon_list = polygon_list
-        self.count = len(self.polygon_list)
+        self.object_list = object_list
+        self.count = len(self.object_list)
 
     def __iter__(self):
         self.index = -1
@@ -32,8 +32,9 @@ class OCRLoader(DataLoader):
         self.index += 1
         if self.index == self.count:
             raise StopIteration
-        polygon = self.polygon_list[self.index]
-        image = self.dataset_process.get_rotate_crop_image(self.src_image, polygon.get_polygon())
+        temp_object = self.object_list[self.index]
+        image = self.dataset_process.get_rotate_crop_image(self.src_image,
+                                                           temp_object.get_polygon()[:])
         image = self.dataset_process.resize_image(image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)

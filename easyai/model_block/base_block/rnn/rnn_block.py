@@ -20,14 +20,18 @@ class Im2SeqBlock(BaseBlock):
 
 
 class EncoderRNNBlock(BaseBlock):
-    def __init__(self, in_channels, hidden_size):
+    def __init__(self, in_channels, hidden_size, use_reshape=False):
         super().__init__(RNNType.EncoderRNNBlock)
+        self.use_reshape = use_reshape
         self.out_channels = hidden_size * 2
         self.lstm = nn.LSTM(in_channels, hidden_size,
                             bidirectional=True, num_layers=2)
 
     def forward(self, x):
-        data_tensor = x.transpose(0, 1)
-        x, _ = self.lstm(data_tensor)
-        x = x.transpose(0, 1)
+        if self.use_reshape:
+            data_tensor = x.transpose(0, 1)
+            x, _ = self.lstm(data_tensor)
+            x = x.transpose(0, 1)
+        else:
+            x, _ = self.lstm(x)
         return x

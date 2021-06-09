@@ -161,6 +161,12 @@ class OCRObject(Rect2D):
         b.text_confidence = self.text_confidence[:]
         return b
 
+    def copy_polygon(self, polygon_object):
+        self.polygon = polygon_object.polygon[:]
+        self.object_confidence = polygon_object.object_confidence
+        self.class_id = polygon_object.class_id
+        self.name = polygon_object.name
+
     def set_rect2d(self, rect2d):
         self.min_corner = rect2d.min_corner
         self.max_corner = rect2d.max_corner

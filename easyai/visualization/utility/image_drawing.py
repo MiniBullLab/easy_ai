@@ -2,8 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os
+import inspect
+import random
 import cv2
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 from easyai.visualization.utility.color_define import ColorDefine
 
 
@@ -97,4 +101,33 @@ class ImageDrawing():
                 point_list.append([x, y])
             cv2.polylines(src_image, np.array([point_list], np.int32),
                           True, (0, 0, 225), 2)
+
+    def draw_ocr_result(self, src_image, result):
+        random.seed(0)
+        current_path = inspect.getfile(inspect.currentframe())
+        dir_name = os.path.join(os.path.dirname(current_path), "../utility")
+        font_file = os.path.join(dir_name, "chinese_cht.ttf")
+        if isinstance(src_image, np.ndarray):
+            src_image = Image.fromarray(src_image)
+        h, w = src_image.height, src_image.width
+        img_left = src_image.copy()
+        img_right = Image.new('RGB', (w, h), (255, 255, 255))
+        draw_left = ImageDraw.Draw(img_left)
+        draw_right = ImageDraw.Draw(img_right)
+        for temp_object in result:
+            color = (random.randint(0, 255), random.randint(0, 255),
+                     random.randint(0, 255))
+            polygon = temp_object.get_polygon()
+            draw_points = [(p.x, p.y) for p in polygon]
+            draw_left.polygon(draw_points, fill=color)
+            txt = temp_object.get_text()
+            if temp_object.get_text() is not None:
+                font = ImageFont.truetype(font_file, 12, encoding="utf-8")
+                draw_right.text([draw_points[0][0], draw_points[0][1]],
+                                txt, fill=(0, 0, 0), font=font)
+        img_left = Image.blend(src_image, img_left, 0.5)
+        img_show = Image.new('RGB', (w * 2, h), (255, 255, 255))
+        img_show.paste(img_left, (0, 0, w, h))
+        img_show.paste(img_right, (w, 0, w * 2, h))
+        return np.array(img_show)
 
