@@ -17,7 +17,6 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def resize(self, src_image, dst_size, resize_type, **param):
         result = None
         if resize_type == 0:
-            print("resize 0")
             short_size = 736
             h, w, _ = src_image.shape
             if min(h, w) < short_size:
