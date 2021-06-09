@@ -101,7 +101,7 @@ class ResNet(BaseBackbone):
             self.in_channels = self.block_out_channels[-1]
 
     def make_resnet_block(self, out_channels, num_block, stride, dilation,
-                         use_short, bn_name, activation, block_flag):
+                          use_short, bn_name, activation, block_flag):
         expansion = 0
         if block_flag == 0:
             expansion = 1

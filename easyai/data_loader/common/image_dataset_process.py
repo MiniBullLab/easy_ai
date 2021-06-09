@@ -32,7 +32,7 @@ class ImageDataSetProcess(BaseDataSetProcess):
         elif resize_type == -2:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             resize_w, resize_h = self.get_short_size(src_size, dst_size)
-            print(resize_w, resize_h)
+            # print(resize_w, resize_h)
             if int(resize_w) <= 0 or int(resize_h) <= 0:
                 return None, (None, None)
             result = self.cv_image_resize(src_image, (int(resize_w), int(resize_h)))

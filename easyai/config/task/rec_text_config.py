@@ -17,6 +17,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         # data
         self.language = None
         self.character_set = None
+        self.character_count = 0
         self.post_process = None
         self.save_result_name = None
         # test
@@ -36,6 +37,8 @@ class RecognizeTextConfig(CommonTrainConfig):
             self.language = tuple(config_dict['language'])
         if config_dict.get('character_set', None) is not None:
             self.character_set = config_dict['character_set']
+        if config_dict.get('character_count', 0) is not None:
+            self.character_count = int(config_dict['character_count'])
         if config_dict.get('post_process', None) is not None:
             self.post_process = config_dict['post_process']
 
@@ -43,6 +46,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.save_image_data_value(config_dict)
         config_dict['language'] = self.language
         config_dict['character_set'] = self.character_set
+        config_dict['character_count'] = self.character_count
         config_dict['post_process'] = self.post_process
 
     def load_train_value(self, config_dict):
@@ -59,8 +63,9 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.data_channel = 3
         self.language = ("english", )
         current_path = inspect.getfile(inspect.currentframe())
-        dir_name = os.path.dirname(current_path)
-        self.character_set = os.path.join(dir_name, "/..", "character/en.txt")
+        dir_name = os.path.join(os.path.dirname(current_path), "../character")
+        self.character_set = os.path.join(dir_name, "zh_en.txt")
+        self.character_count = 6625
         self.post_process = {'type': 'CTCPostProcess'}
 
         self.resize_type = -1
