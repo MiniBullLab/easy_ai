@@ -17,22 +17,7 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def resize(self, src_image, dst_size, resize_type, **param):
         result = None
         if resize_type == 0:
-            short_size = 736
-            h, w, _ = src_image.shape
-            if min(h, w) < short_size:
-                if h < w:
-                    ratio = float(short_size) / h
-                else:
-                    ratio = float(short_size) / w
-            else:
-                ratio = 1.
-            resize_h = int(h * ratio)
-            resize_w = int(w * ratio)
-            resize_h = max(int(round(resize_h / 32) * 32), 32)
-            resize_w = max(int(round(resize_w / 32) * 32), 32)
-            if int(resize_w) <= 0 or int(resize_h) <= 0:
-                return None, (None, None)
-            result = self.cv_image_resize(src_image, (int(resize_w), int(resize_h)))
+            result = self.cv_image_resize(src_image, dst_size)
         elif resize_type == 1:
             pad_color = param['pad_color']
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
@@ -44,6 +29,13 @@ class ImageDataSetProcess(BaseDataSetProcess):
             resize_w = int(src_image.shape[1] * resize_ratio)
             dst_size = (resize_w, dst_size[1])
             result = self.cv_image_resize(src_image, dst_size, interpolation="bilinear")
+        elif resize_type == -2:
+            src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
+            resize_w, resize_h = self.get_short_size(src_size, dst_size)
+            print(resize_w, resize_h)
+            if int(resize_w) <= 0 or int(resize_h) <= 0:
+                return None, (None, None)
+            result = self.cv_image_resize(src_image, (int(resize_w), int(resize_h)))
         return result
 
     def inv_resize(self, src_size, dst_size, resize_type, image_data, **param):

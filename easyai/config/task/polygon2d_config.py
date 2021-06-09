@@ -50,7 +50,7 @@ class Polygon2dConfig(CommonTrainConfig):
         config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (640, 640)  # W * H
+        self.image_size = (736, 736)  # W * H
         self.data_channel = 3
         self.detect2d_class = ("others", )
         self.post_process = {'type': 'DBPostProcess',
@@ -59,7 +59,7 @@ class Polygon2dConfig(CommonTrainConfig):
 
         self.data_mean = (0.485, 0.456, 0.406)
         self.data_std = (0.229, 0.224, 0.225)
-        self.resize_type = 0
+        self.resize_type = -2
         self.normalize_type = -1
 
         self.save_result_name = "polygon2d_result.txt"
