@@ -2,20 +2,18 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 
-class OneClassResultProcess():
 
-    def __init__(self, post_prcoess_type):
-        self.post_prcoess_type = post_prcoess_type
+class OneClassResultProcess(TaskPostProcess):
 
-    def postprocess(self, prediction, threshold=0.0):
-        class_indices, class_confidence = self.get_one_class_result(prediction, threshold)
-        return class_indices, class_confidence
+    def __init__(self, post_process_args):
+        super().__init__()
+        self.post_process_args = post_process_args
+        self.process_func = self.build_post_process(post_process_args)
 
-    def get_one_class_result(self, prediction, conf_thresh):
-        class_indices = -1
-        class_confidence = 0
-        if self.post_prcoess_type == 0:
-            class_indices = (prediction >= conf_thresh).astype(int)
-            class_confidence = prediction
+    def post_process(self, prediction, threshold=0.0):
+        if prediction is None:
+            return None
+        class_indices, class_confidence = self.process_func(prediction)
         return int(class_indices), float(class_confidence)

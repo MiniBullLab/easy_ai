@@ -20,8 +20,8 @@ class Detection2dTest(BaseTest):
         self.inference = Detection2d(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
+        self.inference.result_process.set_threshold(5e-3)
         self.evaluator = DetectionMeanAp(self.test_task_config.detect2d_class)
-        self.threshold_det = 5e-3
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
@@ -37,9 +37,8 @@ class Detection2dTest(BaseTest):
             print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
 
             prediction, output_list = self.inference.infer(input_image)
-            detection_objects = self.inference.result_process.postprocess(prediction,
-                                                                          src_size.numpy()[0],
-                                                                          self.threshold_det)
+            detection_objects = self.inference.result_process.post_process(prediction,
+                                                                           src_size.numpy()[0])
 
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
             self.inference.save_result(image_path[0], detection_objects, 1)

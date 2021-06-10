@@ -26,8 +26,6 @@ class ImageDataSetProcess(BaseDataSetProcess):
                                               pad_color=pad_color)
         elif resize_type == -1:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
-            if (src_size[1] * 1.0) / src_size[0] >= 1.5:
-                src_image = np.rot90(src_image)
             resize_ratio = dst_size[1] / src_image.shape[0]
             resize_w = int(src_size[0] * resize_ratio)
             dst_size = (resize_w, dst_size[1])
@@ -175,6 +173,12 @@ class ImageDataSetProcess(BaseDataSetProcess):
         scale = float(dst_size[0]) / float(dst_size[1])
         height = int(round(float(width / scale) / 32.0) * 32)
         return width, height
+
+    # def get_random_size(self, dst_size, max_rate=0.95, min_rate=0.5):
+    #     rate = np.random.random() * (max_rate - min_rate) + min_rate
+    #     width = int(dst_size[0] * rate)
+    #     height = int(dst_size[1] * rate)
+    #     return width, height
 
     def get_short_size(self, src_size, dst_size):
         short_size = min(dst_size)

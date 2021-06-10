@@ -20,12 +20,8 @@ class Pose2dTest(BaseTest):
         self.inference = Landmark(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-
-        self.result_process = LandmarkResultProcess(self.test_task_config.post_prcoess_type,
-                                                    self.test_task_config.points_count,
-                                                    self.test_task_config.image_size)
+        self.inference.result_process.set_threshold(1e-5)
         self.evaluation = LandmarkAccuracy(self.test_task_config.points_count)
-        self.point_threshold = 1e-5
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
@@ -38,7 +34,7 @@ class Pose2dTest(BaseTest):
         for index, (images, targets) in enumerate(dataloader):
             print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
-            result = self.result_process.get_landmark_result(prediction, self.point_threshold)
+            result = self.inference.result_process.post_process(prediction, (0, 0))
             loss_value = self.compute_loss(output_list, targets)
             self.evaluation.eval(result, targets.detach().numpy())
             self.metirc_loss(index, loss_value)

@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.data_loader.utility.data_loader import *
+from easyai.data_loader.utility.base_data_loader import *
 from easyai.data_loader.common.polygon2d_dataset_process import Polygon2dDataSetProcess
 
 

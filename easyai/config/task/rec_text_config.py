@@ -18,7 +18,6 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.language = None
         self.character_set = None
         self.character_count = 0
-        self.post_process = None
         self.save_result_name = None
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'rec_text_results')
@@ -39,15 +38,12 @@ class RecognizeTextConfig(CommonTrainConfig):
             self.character_set = config_dict['character_set']
         if config_dict.get('character_count', 0) is not None:
             self.character_count = int(config_dict['character_count'])
-        if config_dict.get('post_process', None) is not None:
-            self.post_process = config_dict['post_process']
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['language'] = self.language
         config_dict['character_set'] = self.character_set
         config_dict['character_count'] = self.character_count
-        config_dict['post_process'] = self.post_process
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
@@ -59,7 +55,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (10000, 32)  # W * H
+        self.image_size = (320, 32)  # W * H
         self.data_channel = 3
         self.language = ("english", )
         current_path = inspect.getfile(inspect.currentframe())

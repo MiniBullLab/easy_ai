@@ -18,10 +18,9 @@ class Detection2d(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              class_number=len(self.task_config.detect2d_class))
         self.set_model(gpu_id=gpu_id)
-        self.result_process = Detect2dResultProcess(self.task_config.post_prcoess_type,
-                                                    self.task_config.nms_th,
-                                                    self.task_config.image_size,
-                                                    self.task_config.detect2d_class)
+        self.result_process = Detect2dResultProcess(self.task_config.image_size,
+                                                    self.task_config.detect2d_class,
+                                                    self.task_config.post_prcoess)
 
     def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
@@ -40,9 +39,8 @@ class Detection2d(BaseInference):
 
     def single_image_process(self, src_size, input_image):
         prediction, _ = self.infer(input_image)
-        detection_objects = self.result_process.postprocess(prediction,
-                                                            src_size,
-                                                            self.task_config.confidence_th)
+        detection_objects = self.result_process.post_process(prediction,
+                                                             src_size)
         return detection_objects
 
     def save_result(self, file_path, detection_objects, flag=0):

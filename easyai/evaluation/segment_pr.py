@@ -6,7 +6,7 @@
 import os
 import numpy as np
 from sklearn.metrics import confusion_matrix
-from easyai.helper.imageProcess import ImageProcess
+from easyai.helper.image_process import ImageProcess
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 from easyai.data_loader.seg.segment_sample import SegmentSample
 

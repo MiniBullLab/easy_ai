@@ -4,8 +4,8 @@
 
 import numpy as np
 from easyai.helper import DirProcess
-from easyai.data_loader.utility.data_loader import *
-from easyai.data_loader.common.task_dataset_process import TaskDataSetProcess
+from easyai.data_loader.utility.base_data_loader import *
+from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 
 class ImagesLoader(DataLoader):

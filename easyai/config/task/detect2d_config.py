@@ -15,8 +15,6 @@ class Detect2dConfig(CommonTrainConfig):
         super().__init__(TaskName.Detect2d_Task)
         # data
         self.detect2d_class = None
-        self.confidence_th = 0
-        self.nms_th = 0
         self.save_result_name = None
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_results')
@@ -35,16 +33,10 @@ class Detect2dConfig(CommonTrainConfig):
         self.load_image_data_value(config_dict)
         if config_dict.get('detect2d_class', None) is not None:
             self.detect2d_class = tuple(config_dict['detect2d_class'])
-        if config_dict.get('confidence_th', None) is not None:
-            self.confidence_th = float(config_dict['confidence_th'])
-        if config_dict.get('nms_th', None) is not None:
-            self.nms_th = float(config_dict['nms_th'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['detect2d_class'] = self.detect2d_class
-        config_dict['confidence_th'] = self.confidence_th
-        config_dict['nms_th'] = self.nms_th
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
@@ -68,9 +60,10 @@ class Detect2dConfig(CommonTrainConfig):
                                "apple",
                                "pear",
                                "potato")
-        self.confidence_th = 0.24
-        self.nms_th = 0.45
-        self.post_prcoess_type = 0
+
+        self.post_process = {'type': 'YoloPostProcess',
+                             'threshold': 0.24,
+                             'nms_threshold': 0.45}
 
         self.resize_type = 1
         self.normalize_type = 0

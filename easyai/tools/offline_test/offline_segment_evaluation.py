@@ -3,7 +3,7 @@
 # Author:
 
 import os
-from easyai.helper.imageProcess import ImageProcess
+from easyai.helper.image_process import ImageProcess
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 from easyai.data_loader.seg.segment_sample import SegmentSample
 from easyai.evaluation.segmen_metric import SegmentionMetric

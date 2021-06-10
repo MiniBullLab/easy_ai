@@ -16,10 +16,10 @@ class KeyPoint2d(BaseInference):
         super().__init__(model_name, config_path, TaskName.KeyPoint2d_Task)
         self.set_model_param(data_channel=self.task_config.data_channel)
         self.set_model(gpu_id=gpu_id)
-        self.result_process = KeyPoint2dResultProcess(self.task_config.post_prcoess_type,
-                                                      self.task_config.image_size,
+        self.result_process = KeyPoint2dResultProcess(self.task_config.image_size,
                                                       self.task_config.points_count,
-                                                      self.task_config.points_class)
+                                                      self.task_config.points_class,
+                                                      self.task_config.post_prcoess)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
@@ -29,9 +29,8 @@ class KeyPoint2d(BaseInference):
 
             self.timer.tic()
             prediction = self.infer(img)
-            _, result_objects = self.result_process.postprocess(prediction,
-                                                                self.src_size,
-                                                                self.task_config.confidence_th)
+            _, result_objects = self.result_process.post_process(prediction,
+                                                                 self.src_size)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
 
             if not self.result_show.show(src_image, result_objects, self.task_config.skeleton):

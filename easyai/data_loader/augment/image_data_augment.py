@@ -6,6 +6,7 @@ import cv2
 import random
 import numpy as np
 from skimage.util import random_noise
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps, ImageDraw
 from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 
 
@@ -116,3 +117,125 @@ class ImageDataAugment():
         img_encode = cv2.imencode('.jpeg', image, param)
         image = cv2.imdecode(img_encode[1], cv2.IMREAD_COLOR)
         return image
+
+    def random_salt(self, src_image, rate=0.02):
+        """
+            随机椒盐噪音
+        """
+        image = Image.fromarray(src_image)
+        num_noise = int(image.size[1] * image.size[0] * rate)
+        # assert len(image.split()) == 1
+        for k in range(num_noise):
+            i = int(np.random.random() * image.size[1])
+            j = int(np.random.random() * image.size[0])
+            image.putpixel((j, i), int(np.random.random() * 255))
+        return image
+
+    def motion_blur(self, src_image, degree=5, angle=180):
+        """
+            随机运动模糊
+        """
+        image = Image.fromarray(src_image)
+        angle = random.randint(0, angle)
+        M = cv2.getRotationMatrix2D((degree / 2, degree / 2), angle, 1)
+        motion_blur_kernel = np.diag(np.ones(degree))
+        motion_blur_kernel = cv2.warpAffine(motion_blur_kernel, M, (degree, degree))
+        motion_blur_kernel = motion_blur_kernel / degree
+        image = image.filter(ImageFilter.Kernel(size=(degree, degree),
+                                                kernel=motion_blur_kernel.reshape(-1)))
+        return np.asarray(image)
+
+    def random_contrast(self, src_image, lower=0.5, upper=1.5):
+        """
+            随机对比度
+        """
+        assert upper >= lower, "upper must be >= lower."
+        assert lower >= 0, "lower must be non-negative."
+        image = Image.fromarray(src_image)
+        contrast_enhance = ImageEnhance.Contrast(image)
+        image = contrast_enhance.enhance(random.uniform(lower, upper))
+        # bri = ImageEnhance.Brightness(image)
+        # image = bri.enhance(random.uniform(lower, upper))
+        return np.asarray(image)
+
+    def random_color(self, src_image, lower=0.5, upper=1.5):
+        """
+            随机色彩平衡
+       """
+        assert upper >= lower, "upper must be >= lower."
+        assert lower >= 0, "lower must be non-negative."
+        image = Image.fromarray(src_image)
+        col = ImageEnhance.Color(image)
+        image = col.enhance(random.uniform(lower, upper))
+        return np.asarray(image)
+
+    def random_sharpness(self, src_image, lower=0.5, upper=1.5):
+        """
+            随机锐度
+       """
+        assert upper >= lower, "upper must be >= lower."
+        assert lower >= 0, "lower must be non-negative."
+        image = Image.fromarray(src_image)
+        sha = ImageEnhance.Sharpness(image)
+        image = sha.enhance(random.uniform(lower, upper))
+        return np.asarray(image)
+
+    def random_exposure(self, src_image, lower=5, upper=10):
+        """
+            随机区域曝光
+        """
+        assert upper >= lower, "upper must be >= lower."
+        assert lower >= 0, "lower must be non-negative."
+        image = src_image[:]
+        h, w = image.shape[:2]
+        x0 = random.randint(0, w)
+        y0 = random.randint(0, h)
+        x1 = random.randint(x0, w)
+        y1 = random.randint(y0, h)
+        transparent_area = (x0, y0, x1, y1)
+        mask = Image.new('L', (w, h), color=255)
+        draw = ImageDraw.Draw(mask)
+        mask = np.array(mask)
+        if len(image.shape) == 3:
+            mask = mask[:, :, np.newaxis]
+            mask = np.concatenate([mask, mask, mask], axis=2)
+        draw.rectangle(transparent_area, fill=random.randint(150, 255))
+        reflection_result = image + (255 - mask)
+        reflection_result = np.clip(reflection_result, 0, 255)
+        return reflection_result
+
+    def random_crop(self, src_image, maxv=2):
+        """
+            随机抠图，并且抠图区域透视变换为原图大小
+        """
+        image = src_image[:]
+        h, w = image.shape[:2]
+        org = np.array([[0, np.random.randint(0, maxv)],
+                        [w, np.random.randint(0, maxv)],
+                        [0, h - np.random.randint(0, maxv)],
+                        [w, h - np.random.randint(0, maxv)]], np.float32)
+        dst = np.array([[0, 0], [w, 0], [0, h], [w, h]], np.float32)
+        M = cv2.getPerspectiveTransform(org, dst)
+        result = cv2.warpPerspective(image, M, (w, h))
+        return result
+
+    def inverse_color(self, src_image):
+        image = Image.fromarray(src_image)
+        if np.random.random() < 0.4:
+            image = ImageOps.invert(image)
+        return np.asarray(image)
+
+    def random_stretch(self, src_image, max_rate=1.2, min_rate=0.8):
+        """
+            随机图像横向拉伸
+        """
+        image = src_image[:]
+        w, h = image.size
+        rate = np.random.random() * (max_rate - min_rate) + min_rate
+        w2 = int(w * rate)
+        result = cv2.resize(image, (w2, h))
+        return result
+
+
+
+

@@ -17,7 +17,8 @@ class CTCPostProcess(BasePostProcess):
 
     def __call__(self, prediction, character):
         """ convert text-index into text-label. """
-        prediction = np.expand_dims(prediction, 0)
+        if prediction.ndim == 2:
+            prediction = np.expand_dims(prediction, 0)
         # print(prediction.shape)
         preds_idx = prediction.argmax(axis=2)
         preds_prob = prediction.max(axis=2)

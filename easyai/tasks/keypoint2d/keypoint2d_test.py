@@ -18,10 +18,9 @@ class KeyPoint2dTest(BaseTest):
         self.inference = KeyPoint2d(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
+        self.inference.result_process.set_threshold(5e-3)
         self.evaluator = KeyPointAccuracy(self.test_task_config.points_count,
                                           self.test_task_config.points_class)
-
-        self.conf_threshold = 5e-3
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
@@ -35,7 +34,7 @@ class KeyPoint2dTest(BaseTest):
         for i, (images, labels) in enumerate(dataloader):
             print('%g/%g' % (i + 1, len(dataloader)), end=' ')
             prediction = self.inference.infer(images)
-            result, _ = self.inference.postprocess(prediction, self.conf_threshold)
+            result, _ = self.inference.result_process.post_process(prediction, self.conf_threshold)
             labels = labels[0].data.cpu().numpy()
             self.evaluator.eval(result, labels)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))

@@ -17,9 +17,9 @@ class Pose2d(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              points_count=self.task_config.points_count)
         self.set_model(gpu_id=gpu_id)
-        self.pose_result_process = Pose2dResultProcess(self.task_config.post_prcoess_type,
-                                                       self.task_config.points_count,
-                                                       self.task_config.image_size)
+        self.result_process = Pose2dResultProcess(self.task_config.points_count,
+                                                  self.task_config.image_size,
+                                                  self.task_config.post_prcoess)
 
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
@@ -38,8 +38,7 @@ class Pose2d(BaseInference):
 
     def single_image_process(self, src_size, input_image):
         prediction, _ = self.infer(input_image)
-        pose = self.pose_result_process.postprocess(prediction, src_size,
-                                                    self.task_config.confidence_th)
+        _, pose = self.pose_result_process.post_process(prediction, src_size)
         return pose
 
     def infer(self, input_data, net_type=0):

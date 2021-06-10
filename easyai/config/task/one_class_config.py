@@ -15,7 +15,6 @@ class OneClassConfig(GanTrainConfig):
         super().__init__(TaskName.OneClass)
 
         # data
-        self.confidence_th = 0
         self.save_result_name = None
         # train
 
@@ -27,12 +26,9 @@ class OneClassConfig(GanTrainConfig):
 
     def load_data_value(self, config_dict):
         self.load_image_data_value(config_dict)
-        if config_dict.get('confidence_th', None) is not None:
-            self.confidence_th = float(config_dict['confidence_th'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
-        config_dict['confidence_th'] = self.confidence_th
 
     def load_test_value(self, config_dict):
         if config_dict.get('test_batch_size', None) is not None:
@@ -54,9 +50,9 @@ class OneClassConfig(GanTrainConfig):
         self.normalize_type = -1
         self.data_mean = (0.5, 0.5, 0.5)
         self.data_std = (0.5, 0.5, 0.5)
-        self.post_prcoess_type = 0
 
-        self.confidence_th = 0
+        self.post_process = {'type': 'BinaryPostProcess',
+                             'threshold': 0.001}
 
         self.save_result_name = "one_class_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)

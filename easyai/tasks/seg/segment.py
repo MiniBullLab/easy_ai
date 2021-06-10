@@ -7,7 +7,7 @@ import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
-from easyai.helper.imageProcess import ImageProcess
+from easyai.helper.image_process import ImageProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 

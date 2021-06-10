@@ -17,7 +17,6 @@ class LandmarkConfig(CommonTrainConfig):
         # data
         self.pose_class = None
         self.points_count = 0
-        self.confidence_th = 0
         self.skeleton = ()
         self.save_result_name = None
 
@@ -35,8 +34,6 @@ class LandmarkConfig(CommonTrainConfig):
             self.pose_class = tuple(config_dict['points_class'])
         if config_dict.get('points_count', 0) is not None:
             self.points_count = int(config_dict['points_count'])
-        if config_dict.get('confidence_th', 0) is not None:
-            self.confidence_th = int(config_dict['confidence_th'])
         if config_dict.get('skeleton', ()) is not None:
             self.skeleton = tuple(config_dict['skeleton'])
 
@@ -44,7 +41,6 @@ class LandmarkConfig(CommonTrainConfig):
         self.save_image_data_value(config_dict)
         config_dict['pose_class'] = self.pose_class
         config_dict['points_count'] = self.points_count
-        config_dict['confidence_th'] = self.confidence_th
         config_dict['skeleton'] = self.skeleton
 
     def load_test_value(self, config_dict):
@@ -75,7 +71,6 @@ class LandmarkConfig(CommonTrainConfig):
 
         self.pose_class = ('face',)
         self.points_count = 68
-        self.confidence_th = 0.1
         self.skeleton = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7],
                          [7, 8], [8, 9], [9, 10], [10, 11], [11, 12],
                          [12, 13], [13, 14], [14, 15], [15, 16], [17, 18], [18, 19],
@@ -88,7 +83,9 @@ class LandmarkConfig(CommonTrainConfig):
                          [53, 54], [54, 55], [55, 56], [56, 57], [57, 58],
                          [58, 59], [59, 48], [60, 61], [61, 62], [62, 63], [63, 64],
                          [64, 65], [65, 66], [66, 67], [67, 60]]
-        self.post_prcoess_type = 0
+        self.post_process = {'type': 'LandmarkPostProcess',
+                             'points_count': self.points_count,
+                             'threshold': 0.1}
 
     def get_test_default_value(self):
         self.test_batch_size = 1

@@ -3,7 +3,7 @@
 # Author:
 
 import os
-from easyai.helper.dirProcess import DirProcess
+from easyai.helper.dir_process import DirProcess
 from easyai.data_loader.cls.classify_sample import ClassifySample
 
 

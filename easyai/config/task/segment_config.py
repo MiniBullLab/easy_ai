@@ -16,7 +16,6 @@ class SegmentionConfig(CommonTrainConfig):
         # data
         self.seg_label_type = None
         self.segment_class = None
-        self.post_process = None
         self.save_result_dir_name = "segment_results"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
         # test
@@ -34,14 +33,11 @@ class SegmentionConfig(CommonTrainConfig):
             self.seg_label_type = int(config_dict['seg_label_type'])
         if config_dict.get('segment_class', None) is not None:
             self.segment_class = list(config_dict['segment_class'])
-        if config_dict.get('post_process', None) is not None:
-            self.post_process = config_dict['post_process']
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['seg_label_type'] = self.seg_label_type
         config_dict['segment_class'] = self.segment_class
-        config_dict['post_process'] = self.post_process
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)

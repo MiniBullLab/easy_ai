@@ -42,7 +42,8 @@ class GenerateImageConfig(GanTrainConfig):
         self.normalize_type = -1
         self.data_mean = (0.5, )
         self.data_std = (0.5, )
-        self.post_prcoess_type = 0
+        self.post_process = {'type': 'MNISTPostProcess',
+                             'input_size': self.image_size}
 
     def get_train_default_value(self):
         self.train_batch_size = 128

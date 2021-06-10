@@ -19,7 +19,7 @@ class ImageTaskConfig(BaseConfig):
         self.normalize_type = 0
         self.data_mean = (0, 0, 0)
         self.data_std = (1, 1, 1)
-        self.post_prcoess_type = 0
+        self.post_process = None
 
         self.save_result_path = None
 
@@ -67,8 +67,8 @@ class ImageTaskConfig(BaseConfig):
         if config_dict.get('data_std', None) is not None:
             self.data_std = tuple(config_dict['data_std'])
 
-        if config_dict.get('post_prcoess_type', None) is not None:
-            self.post_prcoess_type = int(config_dict['post_prcoess_type'])
+        if config_dict.get('post_process', None) is not None:
+            self.post_process = config_dict['post_process']
 
     def save_image_data_value(self, config_dict):
         config_dict['image_size'] = self.image_size
@@ -78,7 +78,7 @@ class ImageTaskConfig(BaseConfig):
         config_dict['data_mean'] = self.data_mean
         config_dict['data_std'] = self.data_std
 
-        config_dict['post_prcoess_type'] = self.post_prcoess_type
+        config_dict['post_process'] = self.post_process
 
     def load_data_value(self, config_dict):
         pass

@@ -5,43 +5,25 @@
 
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import DetectionKeyPoint
-from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 
 
-class LandmarkResultProcess():
+class LandmarkResultProcess(TaskPostProcess):
 
-    def __init__(self, post_prcoess_type, points_count, image_size):
-        self.post_prcoess_type = post_prcoess_type
+    def __init__(self, points_count, image_size,
+                 post_process_args):
+        super().__init__()
         self.points_count = points_count
         self.image_size = image_size
-        self.dataset_process = ImageDataSetProcess()
+        self.post_process_args = post_process_args
+        self.process_func = self.build_post_process(post_process_args)
 
-    def postprocess(self, prediction, src_size, threshold=0.0):
+    def post_process(self, prediction, src_size):
         if prediction is None:
             return None
-        object_landmark = self.get_landmark_result(prediction, threshold)
+        object_landmark = self.process_func(prediction)
         result = self.resize_object_pose(src_size, self.image_size, object_landmark)
-        return result
-
-    def get_landmark_result(self, prediction, conf_thresh):
-        result = None
-        if self.post_prcoess_type == 0:
-            result = self.get_face_landmark_result(prediction, conf_thresh)
-        return result
-
-    def get_face_landmark_result(self, prediction, conf_thresh):
-        result = DetectionKeyPoint()
-        coords = prediction[0]
-        coords.view(self.points_count, 2)
-        conf = prediction[1]
-        valid_point = conf > conf_thresh
-        for index, valid in enumerate(valid_point):
-            point = Point2d(-1, -1)
-            if valid:
-                point.x = int(coords[index][0])
-                point.y = int(coords[index][1])
-            result.add_key_points(point)
-        return result
+        return object_landmark, result
 
     def resize_object_pose(self, src_size, image_size,
                            object_pose):

@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 from torch.utils.data import Dataset
-from easyai.helper.imageProcess import ImageProcess
+from easyai.helper.image_process import ImageProcess
 
 
 class TorchDataLoader(Dataset):

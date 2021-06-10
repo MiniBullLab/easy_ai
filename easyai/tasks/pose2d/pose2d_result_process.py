@@ -3,100 +3,26 @@
 # Author:lipeijie
 
 
-import math
-import numpy as np
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import DetectionKeyPoint
-from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 
 
-class Pose2dResultProcess():
+class Pose2dResultProcess(TaskPostProcess):
 
-    def __init__(self, post_prcoess_type, points_count, image_size):
-        self.post_prcoess_type = post_prcoess_type
+    def __init__(self, points_count, image_size,
+                 post_process_args):
+        super().__init__()
         self.points_count = points_count
         self.image_size = image_size
-        self.dataset_process = ImageDataSetProcess()
+        self.process_func = self.build_post_process(post_process_args)
 
-    def postprocess(self, prediction, src_size, threshold=0.0):
+    def post_process(self, prediction, src_size):
         if prediction is None:
             return None
-        object_pose = self.get_pose_result(prediction, threshold)
+        object_pose = self.process_func(prediction)
         result = self.resize_object_pose(src_size, self.image_size, object_pose)
-        return result
-
-    def get_pose_result(self, prediction, conf_thresh):
-        result = None
-        if self.post_prcoess_type == 0:
-            result = self.get_heatmaps_result(prediction, conf_thresh)
-        elif self.post_prcoess_type == 1:
-            result = self.get_mobile_result(prediction)
-        return result
-
-    def get_mobile_result(self, prediction):
-        result = DetectionKeyPoint()
-        x = (prediction.reshape([-1, 2]) + np.array([1.0, 1.0])) / 2.0
-        x = x * np.array(self.image_size)
-        for value in x:
-            point = Point2d(int(value[0]), int(value[1]))
-            result.add_key_points(point)
-        return result
-
-    def get_heatmaps_result(self, prediction, conf_thresh):
-        result = DetectionKeyPoint()
-        heatmap_height = prediction.shape[1]
-        heatmap_width = prediction.shape[2]
-        coords, maxvals = self.parse_heatmaps(prediction)
-        coords = np.squeeze(coords)
-        maxvals = np.squeeze(maxvals)
-        heatmaps = np.squeeze(prediction)
-        for p in range(coords.shape[0]):
-            hm = heatmaps[p]
-            px = int(math.floor(coords[p][0] + 0.5))
-            py = int(math.floor(coords[p][1] + 0.5))
-            if 1 < px < heatmap_width-1 and 1 < py < heatmap_height-1:
-                diff = np.array([hm[py][px+1] - hm[py][px-1], hm[py+1][px]-hm[py-1][px]])
-                coords[p] += np.sign(diff) * .25
-        valid_point = maxvals > conf_thresh
-        w_ratio = self.image_size[0] / heatmap_width
-        h_ratio = self.image_size[1] / heatmap_height
-        for index, valid in enumerate(valid_point):
-            point = Point2d(-1, -1)
-            if valid:
-                point.x = int(coords[index][0] * w_ratio)
-                point.y = int(coords[index][1] * h_ratio)
-            result.add_key_points(point)
-        return result
-
-    def parse_heatmaps(self, heatmaps):
-        batch_size = 1
-        num_points = 0
-        width = 0
-        if heatmaps.ndim == 4:
-            batch_size = heatmaps.shape[0]
-            num_points = heatmaps.shape[1]
-            width = heatmaps.shape[3]
-        elif heatmaps.ndim == 3:
-            num_points = heatmaps.shape[0]
-            width = heatmaps.shape[2]
-        # print(batch_size, num_points, width)
-        heatmaps_reshaped = heatmaps.reshape((batch_size, num_points, -1))
-        idx = np.argmax(heatmaps_reshaped, 2)
-        maxvals = np.amax(heatmaps_reshaped, 2)
-
-        maxvals = maxvals.reshape((batch_size, num_points, 1))
-        idx = idx.reshape((batch_size, num_points, 1))
-
-        preds = np.tile(idx, (1, 1, 2)).astype(np.float32)
-
-        preds[:, :, 0] = (preds[:, :, 0]) % width
-        preds[:, :, 1] = np.floor((preds[:, :, 1]) / width)
-
-        pred_mask = np.tile(np.greater(maxvals, 0.0), (1, 1, 2))
-        pred_mask = pred_mask.astype(np.float32)
-        preds *= pred_mask
-
-        return preds, maxvals
+        return object_pose, result
 
     def resize_object_pose(self, src_size, image_size,
                            object_pose):

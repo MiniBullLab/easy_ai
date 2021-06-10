@@ -2,32 +2,19 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import numpy as np
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 
 
-class GenerateImageResultProcess():
+class GenerateImageResultProcess(TaskPostProcess):
 
-    def __init__(self, post_prcoess_type, input_size):
-        self.post_prcoess_type = post_prcoess_type
+    def __init__(self, input_size, post_process_args):
+        super().__init__()
+        self.post_process_args = post_process_args
         self.input_size = input_size
+        self.process_func = self.build_post_process(post_process_args)
 
-    def postprocess(self, result):
+    def post_process(self, prediction):
         result_image = None
-        if result is not None:
-            result_image = self.get_result_image(result, self.post_prcoess_type)
+        if prediction is not None:
+            result_image = self.process_func(prediction)
         return result_image
-
-    def get_result_image(self, prediction, result_type=0):
-        result = None
-        if result_type == 0:
-            result = self.gray_resize_image(prediction)
-        return result
-
-    def gray_resize_image(self, x):
-        # 将x的范围由(-1,1)伸缩到(0,1)
-        out = 0.5 * (x + 1)
-        out = out.reshape(self.input_size[0], self.input_size[1])
-        out *= 255.0
-        out = out.clip(0, 255)
-        return np.uint8(out)
-

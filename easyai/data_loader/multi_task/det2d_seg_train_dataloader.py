@@ -8,7 +8,7 @@ import random
 import numpy as np
 import torch
 from easyai.helper.json_process import JsonProcess
-from easyai.data_loader.utility.data_loader import DataLoader
+from easyai.data_loader.utility.base_data_loader import DataLoader
 from easyai.data_loader.multi_task.multi_task_sample import MultiTaskSample
 from easyai.data_loader.multi_task.det2d_seg_data_augment import Det2dSegDataAugment
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess

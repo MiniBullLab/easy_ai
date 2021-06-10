@@ -4,12 +4,10 @@
 
 import torch
 import numpy as np
-from easyai.tasks.utility.base_post_process import BasePostProcess
-from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
-from easyai.utility.registry import build_from_cfg
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 
 
-class SegmentResultProcess(BasePostProcess):
+class SegmentResultProcess(TaskPostProcess):
 
     def __init__(self, image_size, resize_type, post_process_args):
         super().__init__()
@@ -18,6 +16,8 @@ class SegmentResultProcess(BasePostProcess):
         self.process_func = self.build_post_process(post_process_args)
 
     def post_process(self, prediction, src_size=(0, 0)):
+        if prediction is None:
+            return None, None
         result = self.process_func(prediction)
         if src_size[0] == 0 or src_size[1] == 0:
             seg_image = None
@@ -53,12 +53,3 @@ class SegmentResultProcess(BasePostProcess):
                   % (h, w, ht, wt))
             raise Exception("segment_data_resize error")
         return input_data, target
-
-    def build_post_process(self, post_process_args):
-        func_name = post_process_args.strip()
-        result_func = None
-        if REGISTERED_POST_PROCESS.has_class(func_name):
-            result_func = build_from_cfg(post_process_args, REGISTERED_POST_PROCESS)
-        else:
-            print("%s post process not exits" % func_name)
-        return result_func

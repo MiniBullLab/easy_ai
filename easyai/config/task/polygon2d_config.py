@@ -15,7 +15,6 @@ class Polygon2dConfig(CommonTrainConfig):
         super().__init__(TaskName.Polygon2d_Task)
         # data
         self.detect2d_class = None
-        self.post_process = None
         self.save_result_name = None
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'polygon2d_results')
@@ -32,13 +31,10 @@ class Polygon2dConfig(CommonTrainConfig):
         self.load_image_data_value(config_dict)
         if config_dict.get('detect2d_class', None) is not None:
             self.detect2d_class = tuple(config_dict['detect2d_class'])
-        if config_dict.get('post_process', None) is not None:
-            self.post_process = config_dict['post_process']
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['detect2d_class'] = self.detect2d_class
-        config_dict['post_process'] = self.post_process
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)

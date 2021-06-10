@@ -17,7 +17,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.points_class = None
         self.points_count = 0
         self.skeleton = ()
-        self.confidence_th = 0
         # test
         # train
         self.use_box = False
@@ -39,15 +38,12 @@ class KeyPoint2dConfig(CommonTrainConfig):
             self.points_count = int(config_dict['points_count'])
         if config_dict.get('skeleton', ()) is not None:
             self.skeleton = tuple(config_dict['skeleton'])
-        if config_dict.get('confidence_th', None) is not None:
-            self.confidence_th = float(config_dict['confidence_th'])
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
         config_dict['points_class'] = self.points_class
         config_dict['points_count'] = self.points_count
         config_dict['skeleton'] = self.skeleton
-        config_dict['confidence_th'] = self.confidence_th
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
@@ -70,16 +66,18 @@ class KeyPoint2dConfig(CommonTrainConfig):
     def get_data_default_value(self):
         self.image_size = (640, 352)  # W * H
         self.data_channel = 3
-        self.post_prcoess_type = 0
 
         self.resize_type = 1
         self.normalize_type = 0
 
         self.points_class = ('bike',)
         self.points_count = 9
-        self.confidence_th = 0.5
         self.skeleton = [[1, 2], [2, 4], [4, 3], [3, 1], [1, 5], [5, 6],
                          [6, 8], [8, 7], [7, 5], [7, 3], [8, 4], [6, 2]]
+
+        self.post_process = {'type': 'YoloPostProcess',
+                             'points_count': self.points_count,
+                             'threshold': 0.5}
 
     def get_test_default_value(self):
         self.test_batch_size = 1

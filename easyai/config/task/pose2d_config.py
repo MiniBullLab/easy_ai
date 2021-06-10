@@ -17,7 +17,6 @@ class Pose2dConfig(CommonTrainConfig):
         # data
         self.pose_class = None
         self.points_count = 0
-        self.confidence_th = 0
         self.skeleton = ()
         self.save_result_name = None
 
@@ -35,8 +34,6 @@ class Pose2dConfig(CommonTrainConfig):
             self.pose_class = tuple(config_dict['points_class'])
         if config_dict.get('points_count', 0) is not None:
             self.points_count = int(config_dict['points_count'])
-        if config_dict.get('confidence_th', 0) is not None:
-            self.confidence_th = int(config_dict['confidence_th'])
         if config_dict.get('skeleton', ()) is not None:
             self.skeleton = tuple(config_dict['skeleton'])
 
@@ -44,7 +41,6 @@ class Pose2dConfig(CommonTrainConfig):
         self.save_image_data_value(config_dict)
         config_dict['pose_class'] = self.pose_class
         config_dict['points_count'] = self.points_count
-        config_dict['confidence_th'] = self.confidence_th
         config_dict['skeleton'] = self.skeleton
 
     def load_test_value(self, config_dict):
@@ -73,11 +69,12 @@ class Pose2dConfig(CommonTrainConfig):
 
         self.pose_class = ('person',)
         self.points_count = 17
-        self.confidence_th = 0.4
         self.skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12],
                          [5, 11], [6, 12], [5, 6], [5, 7], [6, 8], [7, 9], [8, 10],
                          [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
-        self.post_prcoess_type = 0
+        self.post_process = {'type': 'HeatmapPostProcess',
+                             'input_size': self.image_size,
+                             'threshold': 0.4}
 
     def get_test_default_value(self):
         self.test_batch_size = 1

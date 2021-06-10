@@ -11,7 +11,7 @@ import json
 import random
 import numpy as np
 import cv2
-from easyai.helper.dirProcess import DirProcess
+from easyai.helper.dir_process import DirProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 
 

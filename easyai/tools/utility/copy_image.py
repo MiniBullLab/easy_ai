@@ -4,7 +4,7 @@
 
 import os
 import shutil
-from easyai.helper.dirProcess import DirProcess
+from easyai.helper.dir_process import DirProcess
 
 
 class CopyImage():

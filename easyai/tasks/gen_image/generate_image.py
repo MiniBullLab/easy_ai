@@ -7,7 +7,7 @@ import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.gen_image.generate_image_result_process import GenerateImageResultProcess
-from easyai.helper.imageProcess import ImageProcess
+from easyai.helper.image_process import ImageProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
@@ -20,7 +20,7 @@ class GenerateImage(BaseInference):
         self.set_model_param(data_channel=self.task_config.data_channel,
                              image_size=self.task_config.image_size)
         self.set_model(gpu_id=gpu_id)
-        self.result_process = GenerateImageResultProcess(self.task_config.post_prcoess_type,
+        self.result_process = GenerateImageResultProcess(self.task_config.post_prcoess,
                                                          self.task_config.image_size)
         self.image_process = ImageProcess()
         self.save_index = 0
@@ -30,7 +30,7 @@ class GenerateImage(BaseInference):
             batch_data = torch.randn((1, 1))
             self.timer.tic()
             prediction, _ = self.infer(batch_data)
-            result = self.result_process.postprocess(prediction)
+            result = self.result_process.post_process(prediction)
             print('Done. (%.3fs)' % (self.timer.toc()))
             if is_show:
                 if not self.result_show.show(result):
@@ -45,7 +45,7 @@ class GenerateImage(BaseInference):
             for index, (file_path, src_image, image) in enumerate(dataloader):
                 self.timer.tic()
                 prediction, _ = self.infer(image)
-                result = self.result_process.postprocess(prediction)
+                result = self.result_process.post_process(prediction)
                 print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
                 if is_show:
                     if not self.result_show.show(result):

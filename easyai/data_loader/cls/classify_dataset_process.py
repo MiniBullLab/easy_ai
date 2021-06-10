@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.data_loader.common.task_dataset_process import TaskDataSetProcess
+from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 
 class ClassifyDatasetProcess(TaskDataSetProcess):

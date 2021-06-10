@@ -15,10 +15,10 @@ class CTCLoss(BaseLoss):
         self.loss_func = torch.nn.CTCLoss(blank=blank_index,
                                           reduction=reduction)
 
-    def forward(self, input_data, target=None):
-        if target is not None:
+    def forward(self, input_data, target_dict=None):
+        if target_dict is not None:
             batch_size = input_data.size(0)
-            label, label_length = target['targets'], target['targets_lengths']
+            label, label_length = target_dict['targets'], target_dict['targets_lengths']
             pred = input_data.log_softmax(2)
             pred = pred.permute(1, 0, 2)
             preds_lengths = torch.tensor([pred.size(0)] * batch_size, dtype=torch.long)
