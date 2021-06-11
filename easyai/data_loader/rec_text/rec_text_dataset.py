@@ -6,8 +6,11 @@ from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.rec_text.rec_text_sample import RecTextSample
 from easyai.data_loader.rec_text.rec_text_dataset_process import RecTextDataSetProcess
 from easyai.data_loader.rec_text.rec_text_augment import RecTextDataAugment
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
+@REGISTERED_DATASET.register_module(DatasetName.RecTextDataSet)
 class RecTextDataSet(TorchDataLoader):
 
     def __init__(self, data_path, char_path, language,

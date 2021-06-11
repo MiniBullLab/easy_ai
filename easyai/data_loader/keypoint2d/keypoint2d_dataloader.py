@@ -7,7 +7,7 @@ from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.keypoint2d.keypoint2d_dataset_process import KeyPoint2dDataSetProcess
-from easyai.data_loader.utility.batch_dataset_merge import detection_data_merge
+from easyai.data_loader.keypoint2d.batch_dataset_merge import detection_data_merge
 
 
 class KeyPoint2dDataLoader(TorchDataLoader):

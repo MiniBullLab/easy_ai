@@ -25,7 +25,7 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
     def normalize_label(self, ocr_object):
         text = ocr_object.get_text()
         text_code = self.text_process.text_encode(text)
-        result = {'label': text,
+        result = {'text': text,
                   'targets': text_code}
         return result
 

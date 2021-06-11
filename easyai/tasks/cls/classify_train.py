@@ -58,7 +58,7 @@ class ClassifyTrain(CommonTrain):
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             loss_value = self.compute_backward(images, targets, index)
-            self.update_logger(index, self.total_images, epoch, loss_value)
+            self.update_logger(index, self.total_batch_image, epoch, loss_value)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters

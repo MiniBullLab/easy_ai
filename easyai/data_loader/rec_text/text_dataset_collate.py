@@ -2,10 +2,14 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import torch
 import numpy as np
 from easyai.data_loader.utility.base_dataset_collate import BaseDatasetCollate
+from easyai.name_manager.dataloader_name import DatasetCollateName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_COLLATE
 
 
+@REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.TextDataSetCollate)
 class TextDataSetCollate(BaseDatasetCollate):
 
     def __init__(self):
@@ -15,8 +19,25 @@ class TextDataSetCollate(BaseDatasetCollate):
     def __call__(self, batch_list):
         max_img_w = max({data[0].shape[-1] for data in batch_list})
         max_img_w = int(np.ceil(max_img_w / 8) * 8)
+        length = [len(s) for s in batch_list[1]['text']]
+        resize_images = []
+        text_list = []
+        targets = []
+        batch_max_length = max(length)
         for image, label in batch_list:
-            pass
+            img = self.width_pad_img(image, max_img_w)
+            resize_images.append(torch.tensor(img, dtype=torch.float))
+            text_list.append(label['text'])
+            text_code = label['targets']
+            text_code.extend([0] * (batch_max_length - len(label['text'])))
+            targets.append(text_code)
+        targets = torch.tensor(targets, dtype=torch.long)
+        targets_lengths = torch.tensor(length, dtype=torch.long)
+        resize_images = torch.stack(resize_images)
+        labels = {'text': text_list,
+                  'targets': targets,
+                  'targets_lengths': targets_lengths}
+        return resize_images, labels
 
     def width_pad_img(self, img, target_width):
         """
