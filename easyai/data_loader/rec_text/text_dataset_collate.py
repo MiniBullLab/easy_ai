@@ -26,6 +26,7 @@ class TextDataSetCollate(BaseDatasetCollate):
         :return:    pad完成后的图像
         """
         _channels, _height, _width = img.shape
-        to_return_img = np.ones([_channels, _height, target_width], dtype=_img.dtype) * _pad_value
-        to_return_img[:_height, :_width, :] = _img
+        to_return_img = np.ones([_channels, _height, target_width],
+                                dtype=img.dtype) * self.pad_value
+        to_return_img[:, :_height, :_width] = img
         return to_return_img

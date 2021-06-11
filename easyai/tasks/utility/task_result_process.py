@@ -23,7 +23,7 @@ class TaskPostProcess():
         pass
 
     def build_post_process(self, post_process_args):
-        func_name = post_process_args.strip()
+        func_name = post_process_args['type'].strip()
         result_func = None
         if REGISTERED_POST_PROCESS.has_class(func_name):
             result_func = build_from_cfg(post_process_args, REGISTERED_POST_PROCESS)
