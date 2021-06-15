@@ -20,7 +20,7 @@ class Detection2d(BaseInference):
         self.set_model(gpu_id=gpu_id)
         self.result_process = Detect2dResultProcess(self.task_config.image_size,
                                                     self.task_config.detect2d_class,
-                                                    self.task_config.post_prcoess)
+                                                    self.task_config.post_process)
 
     def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)

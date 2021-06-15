@@ -79,7 +79,7 @@ class ClassifyAccuracy():
         if max(self.param_top) > 1:
             print('prec{}: {:.3f} \t prec{}: {:.3f}\t'.format(self.param_top[0],
                                                               self.param_top[1],
-                                                              self.get_top1(),
-                                                              self.get_topK()))
+                                                              self.top1.avg,
+                                                              self.topK.avg))
         else:
-            print('prec1: {:.3f} \t'.format(self.get_top1()))
+            print('prec1: {:.3f} \t'.format(self.top1.avg))
