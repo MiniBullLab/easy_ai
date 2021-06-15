@@ -8,8 +8,9 @@ from easyai.helper.image_process import ImageProcess
 
 class TorchDataLoader(Dataset):
 
-    def __init__(self, data_channel):
+    def __init__(self, data_path, data_channel):
         super().__init__()
+        self.data_path = data_path
         self.data_channel = data_channel
         self.image_process = ImageProcess()
 

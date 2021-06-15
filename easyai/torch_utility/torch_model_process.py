@@ -55,13 +55,17 @@ class TorchModelProcess():
         count = self.torchDeviceProcess.getCUDACount()
         checkpoint = None
         if os.path.exists(weight_path):
-            if count > 1:
-                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                state = self.convert_state_dict(checkpoint[dict_name])
-                model.load_state_dict(state)
-            else:
-                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                model.load_state_dict(checkpoint[dict_name])
+            try:
+                if count > 1:
+                    checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
+                    state = self.convert_state_dict(checkpoint[dict_name])
+                    model.load_state_dict(state)
+                else:
+                    checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
+                    model.load_state_dict(checkpoint[dict_name])
+            except Exception as err:
+                checkpoint = None
+                print(err)
         else:
             print("Loading model %s fail" % weight_path)
         result = self.get_latest_model_value(checkpoint)

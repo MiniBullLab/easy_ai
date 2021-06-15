@@ -14,7 +14,7 @@ class DataloaderFactory():
     def __init__(self):
         pass
 
-    def get_train_dataloader(self, dataloader_config, dataset_config):
+    def get_train_dataloader(self, train_path, dataloader_config, dataset_config):
         result = None
         if dataset_config is not None:
             type_name = dataset_config['type'].strip()
@@ -32,13 +32,14 @@ class DataloaderFactory():
                 print("%s dataset not exits" % type_name)
         else:
             type_name = dataloader_config['type'].strip()
+            config_args = dataloader_config.copy()
             if REGISTERED_TRAIN_DATALOADER.has_class(type_name):
                 result = build_from_cfg(dataloader_config, REGISTERED_TRAIN_DATALOADER)
             else:
                 print("%s dataloader not exits" % type_name)
         return result
 
-    def get_val_dataloader(self, dataloader_config, dataset_config):
+    def get_val_dataloader(self, val_path, dataloader_config, dataset_config):
         result = None
         if dataset_config is not None:
             type_name = dataset_config['type'].strip()
@@ -56,6 +57,7 @@ class DataloaderFactory():
                 print("%s dataset not exits" % type_name)
         else:
             type_name = dataloader_config['type'].strip()
+            config_args = dataloader_config.copy()
             if REGISTERED_VAL_DATALOADER.has_class(type_name):
                 result = build_from_cfg(dataloader_config, REGISTERED_VAL_DATALOADER)
             else:

@@ -10,11 +10,11 @@ from easyai.data_loader.gen_image.gen_image_dataset_process import GenImageDatas
 
 class OneClassDataloader(TorchDataLoader):
 
-    def __init__(self, train_path, resize_type, normalize_type,
+    def __init__(self, data_path, resize_type, normalize_type,
                  mean=0, std=1, image_size=(768, 320), data_channel=3):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.image_size = image_size
-        self.gan_sample = GenImageSample(train_path)
+        self.gan_sample = GenImageSample(data_path)
         self.gan_sample.read_sample()
         self.dataset_process = GenImageDatasetProcess(resize_type, normalize_type,
                                                       mean, std,

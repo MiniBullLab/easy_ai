@@ -13,7 +13,7 @@ class VideoLoader(DataLoader):
 
     def __init__(self, video_path, image_size=(416, 416), data_channel=3,
                  resize_type=0, normalize_type=0, mean=0, std=1):
-        super().__init__(data_channel)
+        super().__init__(video_path, data_channel)
         self.video_process = VideoProcess()
         self.image_process = ImageDataSetProcess()
         self.dataset_process = TaskDataSetProcess(resize_type, normalize_type,
@@ -22,7 +22,6 @@ class VideoLoader(DataLoader):
         if not self.video_process.isVideoFile(video_path) or \
                 not self.video_process.openVideo(video_path):
             raise Exception("Invalid path!", video_path)
-        self.video_path = video_path
         self.image_size = image_size
         self.normalize_type = normalize_type
         self.mean = np.array(mean, dtype=np.float32)
@@ -46,7 +45,7 @@ class VideoLoader(DataLoader):
         image = self.dataset_process.resize_image(src_image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)
-        video_name = self.video_path + "_%d" % self.index
+        video_name = self.data_path + "_%d" % self.index
         return video_name, cv_image, torch_image
 
     def __len__(self):

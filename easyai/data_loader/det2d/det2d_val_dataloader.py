@@ -11,12 +11,12 @@ from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProce
 
 class DetectionValDataLoader(TorchDataLoader):
 
-    def __init__(self, val_path, detect2d_class,
+    def __init__(self, data_path, detect2d_class,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.image_size = image_size
-        self.detection_sample = DetectionSample(val_path,
+        self.detection_sample = DetectionSample(data_path,
                                                 detect2d_class,
                                                 False)
         self.detection_sample.read_sample()

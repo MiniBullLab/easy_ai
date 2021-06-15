@@ -16,7 +16,7 @@ class KeyPoint2dDataLoader(TorchDataLoader):
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
                  points_count=9):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.class_name = class_name
         self.image_size = image_size
         self.detection_sample = DetectionSample(data_path,

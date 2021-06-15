@@ -7,16 +7,16 @@ from easyai.data_loader.utility.base_detection_sample import BaseDetectionSample
 
 class Pose2dSample(BaseDetectionSample):
 
-    def __init__(self, train_path, class_name):
+    def __init__(self, data_path, class_name):
         super().__init__()
-        self.train_path = train_path
+        self.data_path = data_path
         self.class_name = class_name
 
         self.image_and_box_list = []
         self.sample_count = 0
 
     def read_sample(self):
-        image_and_label_list = self.get_image_and_label_list(self.train_path)
+        image_and_label_list = self.get_image_and_label_list(self.data_path)
         self.image_and_box_list = self.get_image_and_box_list(image_and_label_list)
         self.sample_count = self.get_sample_count()
 

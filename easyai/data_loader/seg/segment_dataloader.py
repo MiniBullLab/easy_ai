@@ -12,16 +12,16 @@ from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLabl
 
 class SegmentDataLoader(TorchDataLoader):
 
-    def __init__(self, train_path, class_names, label_type,
+    def __init__(self, data_path, class_names, label_type,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(768, 320), data_channel=3, is_augment=False):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.class_names = class_names
         self.label_type = label_type
         self.number_class = len(class_names)
         self.is_augment = is_augment
         self.image_size = image_size
-        self.segment_sample = SegmentSample(train_path)
+        self.segment_sample = SegmentSample(data_path)
         self.segment_sample.read_sample()
         self.dataset_process = SegmentDatasetProcess(resize_type, normalize_type,
                                                      mean, std, self.get_pad_color())

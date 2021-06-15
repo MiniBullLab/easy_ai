@@ -12,16 +12,16 @@ from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLabl
 
 class Det2dSegValDataloader(TorchDataLoader):
 
-    def __init__(self, val_path, detect2d_class, seg_class_name,
+    def __init__(self, data_path, detect2d_class, seg_class_name,
                  seg_label_type, resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.detect2d_class = detect2d_class
         self.seg_number_class = len(seg_class_name)
         self.seg_label_type = seg_label_type
         self.image_size = image_size
 
-        self.multi_task_sample = MultiTaskSample(val_path,
+        self.multi_task_sample = MultiTaskSample(data_path,
                                                  detect2d_class,
                                                  False)
         self.multi_task_sample.read_sample()

@@ -13,6 +13,7 @@ class ImageTaskConfig(BaseConfig):
     def __init__(self, task_name):
         super().__init__(task_name)
         # data
+        self.data = dict()
         self.image_size = None  # W * H
         self.data_channel = 3
         self.resize_type = 0
@@ -67,6 +68,9 @@ class ImageTaskConfig(BaseConfig):
         if config_dict.get('data_std', None) is not None:
             self.data_std = tuple(config_dict['data_std'])
 
+        if config_dict.get('data', None) is not None:
+            self.data = config_dict['data']
+
         if config_dict.get('post_process', None) is not None:
             self.post_process = config_dict['post_process']
 
@@ -78,7 +82,10 @@ class ImageTaskConfig(BaseConfig):
         config_dict['data_mean'] = self.data_mean
         config_dict['data_std'] = self.data_std
 
-        config_dict['post_process'] = self.post_process
+        if self.data is not None and len(self.data) > 0:
+            config_dict['data'] = self.data
+        if self.post_process is not None:
+            config_dict['post_process'] = self.post_process
 
     def load_data_value(self, config_dict):
         pass

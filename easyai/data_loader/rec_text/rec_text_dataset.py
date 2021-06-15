@@ -17,7 +17,7 @@ class RecTextDataSet(TorchDataLoader):
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
                  is_augment=False):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.char_path = char_path
         self.language = language
         self.image_size = image_size

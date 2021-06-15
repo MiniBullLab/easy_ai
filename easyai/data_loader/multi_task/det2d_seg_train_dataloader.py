@@ -19,11 +19,11 @@ from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLabl
 
 class Det2dSegTrainDataloader(DataLoader):
 
-    def __init__(self, train_path, detect2d_class, seg_class_name,
+    def __init__(self, data_path, detect2d_class, seg_class_name,
                  seg_label_type, resize_type, normalize_type, mean=0, std=1,
                  batch_size=1, image_size=(768, 320), data_channel=3,
                  multi_scale=False, is_augment=False, balanced_sample=False):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.detect2d_class = detect2d_class
         self.seg_number_class = len(seg_class_name)
         self.seg_label_type = seg_label_type
@@ -37,11 +37,11 @@ class Det2dSegTrainDataloader(DataLoader):
 
         if balanced_sample:
             create_sample = CreateDetectionSample()
-            save_sample_dir, _ = os.path.split(train_path)
-            create_sample.createBalanceSample(train_path,
+            save_sample_dir, _ = os.path.split(data_path)
+            create_sample.createBalanceSample(data_path,
                                               save_sample_dir,
                                               detect2d_class)
-        self.multi_task_sample = MultiTaskSample(train_path,
+        self.multi_task_sample = MultiTaskSample(data_path,
                                                  detect2d_class,
                                                  balanced_sample)
         self.multi_task_sample.read_sample()

@@ -11,7 +11,7 @@ class Box2dLoader(DataLoader):
 
     def __init__(self, box_list, src_image, image_size=(416, 416), data_channel=3,
                  resize_type=0, normalize_type=0, mean=0, std=1):
-        super().__init__(data_channel)
+        super().__init__(None, data_channel)
         self.image_size = image_size
         self.normalize_type = normalize_type
         self.mean = np.array(mean, dtype=np.float32)

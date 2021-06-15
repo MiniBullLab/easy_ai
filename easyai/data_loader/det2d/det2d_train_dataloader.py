@@ -16,11 +16,11 @@ from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSamp
 
 class DetectionTrainDataloader(DataLoader):
 
-    def __init__(self, train_path, detect2d_class,
+    def __init__(self, data_path, detect2d_class,
                  resize_type, normalize_type, mean=0, std=1,
                  batch_size=1, image_size=(768, 320),
                  data_channel=3, multi_scale=False, is_augment=False, balanced_sample=False):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.detect2d_class = detect2d_class
         self.multi_scale = multi_scale
         self.is_augment = is_augment
@@ -30,11 +30,11 @@ class DetectionTrainDataloader(DataLoader):
 
         if balanced_sample:
             create_sample = CreateDetectionSample()
-            save_sample_dir, _ = os.path.split(train_path)
-            create_sample.createBalanceSample(train_path,
+            save_sample_dir, _ = os.path.split(data_path)
+            create_sample.createBalanceSample(data_path,
                                               save_sample_dir,
                                               detect2d_class)
-        self.detection_sample = DetectionSample(train_path,
+        self.detection_sample = DetectionSample(data_path,
                                                 detect2d_class,
                                                 balanced_sample)
         self.detection_sample.read_sample()

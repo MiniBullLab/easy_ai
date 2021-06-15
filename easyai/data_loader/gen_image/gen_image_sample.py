@@ -7,14 +7,14 @@ from easyai.data_loader.utility.base_classify_sample import BaseClassifySample
 
 class GenImageSample(BaseClassifySample):
 
-    def __init__(self, train_path):
+    def __init__(self, data_path):
         super().__init__()
-        self.train_path = train_path
+        self.data_path = data_path
         self.data_and_label_list = []
         self.sample_count = 0
 
     def read_sample(self):
-        self.data_and_label_list = self.get_image_and_label_list(self.train_path)
+        self.data_and_label_list = self.get_image_and_label_list(self.data_path)
         self.sample_count = self.get_sample_count()
 
     def get_sample_path(self, index):

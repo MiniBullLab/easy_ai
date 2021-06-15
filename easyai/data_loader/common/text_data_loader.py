@@ -14,7 +14,7 @@ class TextDataLoader(DataLoader):
 
     def __init__(self, input_path, image_size=(416, 416), data_channel=3,
                  resize_type=0, normalize_type=0, mean=0, std=1):
-        super().__init__(data_channel)
+        super().__init__(input_path, data_channel)
         if Path(input_path).suffix not in ['.txt', '.text']:
             raise Exception("Invalid path!", input_path)
         self.image_size = image_size

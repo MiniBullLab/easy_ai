@@ -10,6 +10,7 @@ class CommonTrainConfig(ImageTaskConfig):
 
     def __init__(self, task_name):
         super().__init__(task_name)
+        self.train_data = None
         # train
         self.log_name = task_name
         self.train_batch_size = 1
@@ -36,10 +37,15 @@ class CommonTrainConfig(ImageTaskConfig):
         self.freeze_bn_type = 0
         self.freeze_bn_layer_name = None
 
+        # test
+        self.val_data = None
+
         if self.snapshot_dir is not None and not os.path.exists(self.snapshot_dir):
             os.makedirs(self.snapshot_dir, exist_ok=True)
 
     def load_image_train_value(self, config_dict):
+        if config_dict.get('train_data', None) is not None:
+            self.train_data = config_dict['train_data']
         if config_dict.get('train_batch_size', None) is not None:
             self.train_batch_size = int(config_dict['train_batch_size'])
         if config_dict.get('is_save_epoch_model', None) is not None:
@@ -81,6 +87,8 @@ class CommonTrainConfig(ImageTaskConfig):
             self.freeze_bn_layer_name = config_dict['freeze_bn_layer_name']
 
     def save_image_train_value(self, config_dict):
+        if self.train_data is not None:
+            config_dict['train_data'] = self.train_data
         config_dict['train_batch_size'] = self.train_batch_size
         config_dict['is_save_epoch_model'] = self.is_save_epoch_model
         config_dict['latest_weights_name'] = self.latest_weights_name
@@ -106,8 +114,12 @@ class CommonTrainConfig(ImageTaskConfig):
         config_dict['freeze_bn_layer_name'] = self.freeze_bn_layer_name
 
     def load_test_value(self, config_dict):
+        if config_dict.get('val_data', None) is not None:
+            self.val_data = int(config_dict['val_data'])
         if config_dict.get('test_batch_size', None) is not None:
             self.test_batch_size = int(config_dict['test_batch_size'])
 
     def save_test_value(self, config_dict):
+        if self.val_data is not None:
+            config_dict['val_data'] = self.val_data
         config_dict['test_batch_size'] = self.test_batch_size

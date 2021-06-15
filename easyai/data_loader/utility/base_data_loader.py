@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 import abc
@@ -9,7 +9,8 @@ from easyai.helper.image_process import ImageProcess
 
 class DataLoader():
 
-    def __init__(self, data_channel):
+    def __init__(self, data_path, data_channel):
+        self.data_path = data_path
         self.data_channel = data_channel
         self.image_process = ImageProcess()
 

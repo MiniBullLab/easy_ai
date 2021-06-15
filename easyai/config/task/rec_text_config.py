@@ -55,37 +55,58 @@ class RecognizeTextConfig(CommonTrainConfig):
         config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (320, 32)  # W * H
-        self.data_channel = 3
-        self.language = ("english", )
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "zh_en.txt")
         self.character_count = 6625
-        self.post_process = {'type': 'CTCPostProcess'}
+        self.data = {'image_size': (320, 32),   # W * H
+                     'data_channel': 3,
+                     'resize_type': -1,
+                     'normalize_type': 1,
+                     'mean': (0.5, 0.5, 0.5),
+                     'std': (0.5, 0.5, 0.5)}
+        self.language = ("english", )
 
-        self.resize_type = -1
-        self.normalize_type = 1
-        self.data_mean = (0.5, 0.5, 0.5)
-        self.data_std = (0.5, 0.5, 0.5)
+        self.post_process = {'type': 'CTCPostProcess'}
 
         self.save_result_name = "rec_text_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['char_path'] = self.character_set
+        self.val_data['dataset']['language'] = ("english", )
+        self.val_data['dataset']['is_augment'] = False
+
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'rec_text_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
+
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['char_path'] = self.character_set
+        self.train_data['dataset']['language'] = ("english",)
+        self.train_data['dataset']['is_augment'] = False
+
+        self.train_data['dataloader']['batch_size'] = 1
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.log_name = "rec_text"
-        self.train_data_augment = True
-        self.train_batch_size = 4
         self.is_save_epoch_model = False
         self.latest_weights_name = 'rec_text_latest.pt'
         self.best_weights_name = 'rec_text_best.pt'
         self.latest_optimizer_name = "rec_text_optimizer.pt"
-
         self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)

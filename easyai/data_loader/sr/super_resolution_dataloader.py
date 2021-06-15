@@ -10,15 +10,15 @@ from easyai.data_loader.sr.super_resolution_dataset_process import SuperResoluti
 
 class SuperResolutionDataloader(TorchDataLoader):
 
-    def __init__(self, train_path, resize_type, normalize_type,
+    def __init__(self, data_path, resize_type, normalize_type,
                  mean=0, std=1, image_size=(768, 320),
                  data_channel=3, upscale_factor=3):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.image_size = image_size
         self.upscale_factor = upscale_factor
         self.target_size = (image_size[0] * self.upscale_factor,
                             image_size[1] * self.upscale_factor)
-        self.sr_sample = SuperResolutionSample(train_path)
+        self.sr_sample = SuperResolutionSample(data_path)
         self.sr_sample.read_sample()
         self.dataset_process = SuperResolutionDatasetProcess(resize_type, normalize_type,
                                                              mean, std,

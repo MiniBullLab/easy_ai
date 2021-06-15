@@ -11,13 +11,13 @@ from easyai.data_loader.cls.classify_data_augment import ClassifyDataAugment
 
 class ClassifyDataloader(TorchDataLoader):
 
-    def __init__(self, train_path, resize_type, normalize_type,
+    def __init__(self, data_path, resize_type, normalize_type,
                  mean=0, std=1, image_size=(416, 416),
                  data_channel=3, is_augment=False):
-        super().__init__(data_channel)
+        super().__init__(data_path, data_channel)
         self.image_size = image_size
         self.is_augment = is_augment
-        self.classify_sample = ClassifySample(train_path)
+        self.classify_sample = ClassifySample(data_path)
         self.classify_sample.read_sample(flag=0)
         self.dataset_process = ClassifyDatasetProcess(resize_type, normalize_type,
                                                       mean, std,

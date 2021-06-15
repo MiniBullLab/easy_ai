@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import abc
 import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.helper.average_meter import AverageMeter
+from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
 
@@ -17,6 +18,7 @@ class BaseTest(BaseTask):
         self.set_task_name(task_name)
         self.timer = TimerProcess()
         self.epoch_loss_average = AverageMeter()
+        self.dataloader_factory = DataloaderFactory()
         self.total_batch_image = 0
         self.test_task_config = None
         self.inference = None
