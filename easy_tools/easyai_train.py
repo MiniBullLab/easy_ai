@@ -35,7 +35,7 @@ class EasyAiModelTrain():
             train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
             train_task.set_convert_param(True, ['ng_input'], ['ng_output'])
             train_task.train('binarynet', self.gpu_id, self.config_path, pretrain_model_path)
-            save_image_dir = os.path.join(self.config.root_save_dir, "binary_cls_img")
+            save_image_dir = os.path.join(self.config.ROOT_DIR, "binary_cls_img")
             self.copy_process.copy(self.train_path, save_image_dir)
         else:
             print("binary classify class name error!")
@@ -49,7 +49,7 @@ class EasyAiModelTrain():
             train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
             train_task.set_convert_param(True, ['cls_input'], ['cls_output'])
             train_task.train('classnet', self.gpu_id, self.config_path, pretrain_model_path)
-            save_image_dir = os.path.join(self.config.root_save_dir, "cls_img")
+            save_image_dir = os.path.join(self.config.ROOT_DIR, "cls_img")
             self.copy_process.copy(self.train_path, save_image_dir)
         else:
             print("classify class name empty!")
@@ -65,7 +65,7 @@ class EasyAiModelTrain():
                                          ['det_output0', 'det_output1', 'det_output2'])
             train_task.train("denet", self.gpu_id, self.config_path, pretrain_model_path)
             # easy_model_convert(options.task_name, train_task.save_onnx_path)
-            save_image_dir = os.path.join(self.config.root_save_dir, "det_img")
+            save_image_dir = os.path.join(self.config.ROOT_DIR, "det_img")
             self.copy_process.copy(self.train_path, save_image_dir)
         else:
             print("det2d class name empty!")
@@ -77,5 +77,5 @@ class EasyAiModelTrain():
         train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
         train_task.set_convert_param(True, ['seg_input'], ['seg_output'])
         train_task.train("segnet", self.gpu_id, self.config_path, pretrain_model_path)
-        save_image_dir = os.path.join(self.config.root_save_dir, "seg_img")
+        save_image_dir = os.path.join(self.config.ROOT_DIR, "seg_img")
         self.copy_process.copy(self.train_path, save_image_dir)

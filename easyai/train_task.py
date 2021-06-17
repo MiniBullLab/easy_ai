@@ -41,7 +41,7 @@ class TrainTask():
     def image_model_convert(self, train_task, model_args):
         if self.is_convert:
             from easyai.tools.model_tool.model_to_onnx import ModelConverter
-            converter = ModelConverter(train_task.train_task_config.image_size)
+            converter = ModelConverter(train_task.train_task_config.data['image_size'])
             self.save_onnx_path = converter.convert_process(model_args,
                                                             train_task.train_task_config.best_weights_path,
                                                             train_task.train_task_config.snapshot_dir,
