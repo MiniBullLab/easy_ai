@@ -16,7 +16,7 @@ class GenerateImageConfig(GanTrainConfig):
 
         # data
         self.save_result_dir_name = "generate_results"
-        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
+        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_dir_name)
 
         self.config_path = os.path.join(self.config_save_dir, "generate_image_config.json")
 

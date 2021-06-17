@@ -17,7 +17,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.detect2d_class = None
         self.save_result_name = None
 
-        self.save_result_dir = os.path.join(self.root_save_dir, 'polygon2d_results')
+        self.save_result_dir = os.path.join(self.ROOT_DIR, 'polygon2d_results')
 
         self.config_path = os.path.join(self.config_save_dir, "polygon2d_config.json")
 
@@ -54,13 +54,13 @@ class Polygon2dConfig(CommonTrainConfig):
                              'unclip_ratio': 1.5}
 
         self.save_result_name = "polygon2d_result.txt"
-        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
+        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_name)
 
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}
         self.evaluation_result_name = 'polygon2d_evaluation.txt'
-        self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
+        self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
 
     def get_train_default_value(self):
         self.train_data = {'dataset': {},

@@ -46,7 +46,7 @@ class BaseTrain(BaseTask):
         self.lr_factory = LrSchedulerFactory(self.train_task_config.base_lr,
                                              self.train_task_config.max_epochs)
         self.train_logger = TrainLogger(self.train_task_config.log_name,
-                                        self.train_task_config.root_save_dir)
+                                        self.train_task_config.ROOT_DIR)
 
     def set_train_config(self, config=None):
         if config is None:

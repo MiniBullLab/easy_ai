@@ -86,7 +86,7 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
 
         self.evaluation_result_name = 'key_points2d_evaluation.txt'
-        self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
+        self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
 
     def get_train_default_value(self):
         self.train_data = {'dataset': {},
