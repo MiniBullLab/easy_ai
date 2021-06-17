@@ -20,7 +20,7 @@ class RecTextDataSet(TorchDataLoader):
         super().__init__(data_path, data_channel)
         self.char_path = char_path
         self.language = language
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.is_augment = is_augment
         self.text_sample = RecTextSample(data_path, language)
         self.text_sample.read_sample()

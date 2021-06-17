@@ -20,8 +20,6 @@ class GenerateImageTrain(GanTrain):
 
         self.gen_test = GenerateImage(model_name, gpu_id, self.train_task_config)
 
-        self.best_score = 0
-
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
             self.start_epoch, self.best_score \
@@ -167,23 +165,6 @@ class GenerateImageTrain(GanTrain):
         self.g_loss_average.update(all_g_loss_value)
         print('Epoch: {}[{}/{}]\t  G Loss: {:.7f}\t'.format(epoch, index, total,
                                                             self.g_loss_average.avg))
-
-    def save_train_model(self, epoch):
-        self.train_logger.add_scalar("train epoch d loss",
-                                     self.d_loss_average.avg, epoch)
-        self.train_logger.add_scalar("train epoch g loss",
-                                     self.g_loss_average.avg, epoch)
-        self.d_loss_average.reset()
-        self.g_loss_average.reset()
-
-        if self.train_task_config.is_save_epoch_model:
-            save_model_path = os.path.join(self.train_task_config.snapshot_path,
-                                           "generate_image_epoch_%d.pt" % epoch)
-        else:
-            save_model_path = self.train_task_config.latest_weights_path
-        self.torchModelProcess.save_latest_model(epoch, 0, self.model, save_model_path)
-
-        return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
         if epoch % 5 == 0:

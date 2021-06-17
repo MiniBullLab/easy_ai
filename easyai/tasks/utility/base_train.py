@@ -28,6 +28,7 @@ class BaseTrain(BaseTask):
         self.model = None
         self.train_task_config = None
         self.total_batch_image = 0
+        self.best_score = 0
         self.is_sparse = False
         self.sparse_ratio = 0.0
 

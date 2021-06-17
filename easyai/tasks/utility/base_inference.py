@@ -79,7 +79,7 @@ class BaseInference(BaseTask):
     def get_image_data_lodaer(self, input_path):
         if not os.path.exists(input_path):
             return None
-        image_size = self.task_config.data['image_size']
+        image_size = tuple(self.task_config.data['image_size'])
         data_channel = self.task_config.data['data_channel']
         mean = self.task_config.data['mean']
         std = self.task_config.data['std']

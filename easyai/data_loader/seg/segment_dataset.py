@@ -22,7 +22,7 @@ class SegmentDataset(TorchDataLoader):
         self.label_type = label_type
         self.number_class = len(class_names)
         self.is_augment = is_augment
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.segment_sample = SegmentSample(data_path)
         self.segment_sample.read_sample()
         self.dataset_process = SegmentDatasetProcess(resize_type, normalize_type,

@@ -19,7 +19,7 @@ class LandmarkDataset(TorchDataLoader):
                  points_count=68, is_augment=False):
         super().__init__(data_path, data_channel)
         self.class_name = class_name
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.is_augment = is_augment
         self.expand_ratio = 0.1
         self.pose2d_sample = Pose2dSample(data_path, class_name)

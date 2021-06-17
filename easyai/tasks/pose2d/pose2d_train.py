@@ -18,11 +18,10 @@ class Pose2dTrain(CommonTrain):
                              points_count=self.train_task_config.points_count)
         self.set_model(gpu_id=gpu_id)
         self.pose2d_test = Pose2dTest(model_name, gpu_id, self.train_task_config)
-        self.best_value = 0
 
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
-            self.start_epoch, self.best_value = \
+            self.start_epoch, self.best_score = \
                 self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
 
         self.model = self.torchModelProcess.model_train_init(self.model)
@@ -36,6 +35,7 @@ class Pose2dTrain(CommonTrain):
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
             self.train_epoch(epoch, self.lr_scheduler, self.dataloader)
+            self.train_logger.epoch_train_loss_log(epoch)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
 
@@ -86,18 +86,6 @@ class Pose2dTrain(CommonTrain):
             print("compute loss error")
         return loss, loss_info
 
-    def save_train_model(self, epoch):
-        self.train_logger.epoch_train_loss_log(epoch)
-        if self.train_task_config.is_save_epoch_model:
-            save_model_path = os.path.join(self.train_task_config.snapshot_path,
-                                           "pose2d_model_epoch_%d.pt" % epoch)
-        else:
-            save_model_path = self.train_task_config.latest_weights_path
-        self.torchModelProcess.save_latest_model(epoch, self.best_value,
-                                                 self.model, save_model_path)
-        self.save_optimizer(epoch)
-        return save_model_path
-
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             self.pose2d_test.load_weights(save_model_path)
@@ -105,7 +93,7 @@ class Pose2dTrain(CommonTrain):
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
             # save best model
-            self.best_value = self.torchModelProcess.save_best_model(precision,
+            self.best_score = self.torchModelProcess.save_best_model(precision,
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:

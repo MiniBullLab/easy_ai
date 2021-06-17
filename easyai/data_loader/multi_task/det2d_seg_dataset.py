@@ -22,7 +22,7 @@ class Det2dSegDataset(TorchDataLoader):
         self.detect2d_class = detect2d_class
         self.seg_number_class = len(seg_class_name)
         self.seg_label_type = seg_label_type
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
 
         self.multi_task_sample = MultiTaskSample(data_path,
                                                  detect2d_class,

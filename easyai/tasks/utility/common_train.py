@@ -4,9 +4,11 @@
 
 import abc
 import sys
+import os
 import torch
 from easyai.tasks.utility.base_train import BaseTrain
 from easyai.helper.average_meter import AverageMeter
+from easyai.tasks.utility.base_task import DelayedKeyboardInterrupt
 try:
     from apex import amp
 except ImportError:
@@ -125,6 +127,19 @@ class CommonTrain(BaseTrain):
                                                                                         loss_value,
                                                                                         lr,
                                                                                         self.timer.toc(True)))
+
+    def save_train_model(self, epoch):
+        with DelayedKeyboardInterrupt():
+            if self.train_task_config.is_save_epoch_model:
+                save_model_path = os.path.join(self.train_task_config.snapshot_path,
+                                               "%s_model_%d.pt" % (self.task_name, epoch))
+            else:
+                save_model_path = self.train_task_config.latest_weights_path
+            self.torchModelProcess.save_latest_model(epoch, self.best_score,
+                                                     self.model, save_model_path)
+
+            self.save_optimizer(epoch)
+        return save_model_path
 
     @abc.abstractmethod
     def compute_loss(self, output_list, targets):

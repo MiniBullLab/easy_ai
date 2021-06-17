@@ -29,7 +29,7 @@ class Det2dTrainDataloader(DataLoader):
         self.is_augment = is_augment
         self.balanced_sample = balanced_sample
         self.batch_size = batch_size
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
 
         if balanced_sample:
             create_sample = CreateDetectionSample()

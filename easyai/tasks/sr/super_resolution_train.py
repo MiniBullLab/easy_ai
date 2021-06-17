@@ -18,7 +18,6 @@ class SuperResolutionTrain(CommonTrain):
                              upscale_factor=self.train_task_config.upscale_factor)
         self.set_model(gpu_id=gpu_id)
         self.sr_test = SuperResolutionTest(model_name, gpu_id, self.train_task_config)
-        self.best_score = 0
 
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path and os.path.exists(latest_weights_path):
@@ -36,6 +35,7 @@ class SuperResolutionTrain(CommonTrain):
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
             self.train_epoch(epoch, self.lr_scheduler, self.dataloader)
+            self.train_logger.epoch_train_loss_log(epoch)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
 
@@ -85,18 +85,6 @@ class SuperResolutionTrain(CommonTrain):
         else:
             print("compute loss error")
         return loss, loss_info
-
-    def save_train_model(self, epoch):
-        self.train_logger.epoch_train_loss_log(epoch)
-        if self.train_task_config.is_save_epoch_model:
-            save_model_path = os.path.join(self.train_task_config.snapshot_path,
-                                           "sr_model_epoch_%d.pt" % epoch)
-        else:
-            save_model_path = self.train_task_config.latest_weights_path
-        self.torchModelProcess.save_latest_model(epoch, self.best_score,
-                                                 self.model, save_model_path)
-        self.save_optimizer(epoch)
-        return save_model_path
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):

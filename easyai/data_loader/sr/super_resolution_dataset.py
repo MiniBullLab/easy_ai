@@ -16,7 +16,7 @@ class SuperResolutionDataset(TorchDataLoader):
                  mean=0, std=1, image_size=(768, 320),
                  data_channel=3, upscale_factor=3):
         super().__init__(data_path, data_channel)
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.upscale_factor = upscale_factor
         self.target_size = (image_size[0] * self.upscale_factor,
                             image_size[1] * self.upscale_factor)

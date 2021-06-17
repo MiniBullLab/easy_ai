@@ -17,7 +17,7 @@ class ClassifyDataSet(TorchDataLoader):
                  mean=0, std=1, image_size=(416, 416),
                  data_channel=3, is_augment=False):
         super().__init__(data_path, data_channel)
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.is_augment = is_augment
         self.classify_sample = ClassifySample(data_path)
         self.classify_sample.read_sample(flag=0)

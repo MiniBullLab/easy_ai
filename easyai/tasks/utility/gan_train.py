@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os
 from easyai.helper.average_meter import AverageMeter
 from easyai.tasks.utility.base_train import BaseTrain
 
@@ -54,3 +55,20 @@ class GanTrain(BaseTrain):
         self.model.train()
         self.timer.tic()
         assert self.total_batch_image > 0
+
+    def save_train_model(self, epoch):
+        self.train_logger.add_scalar("train epoch d loss",
+                                     self.d_loss_average.avg, epoch)
+        self.train_logger.add_scalar("train epoch g loss",
+                                     self.g_loss_average.avg, epoch)
+        self.d_loss_average.reset()
+        self.g_loss_average.reset()
+
+        if self.train_task_config.is_save_epoch_model:
+            save_model_path = os.path.join(self.train_task_config.snapshot_path,
+                                           "%s_model_%d.pt" % (self.task_name, epoch))
+        else:
+            save_model_path = self.train_task_config.latest_weights_path
+        self.torchModelProcess.save_latest_model(epoch, 0, self.model, save_model_path)
+
+        return save_model_path

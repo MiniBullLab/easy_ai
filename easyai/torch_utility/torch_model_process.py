@@ -64,6 +64,7 @@ class TorchModelProcess():
                     checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
                     model.load_state_dict(checkpoint[dict_name])
             except Exception as err:
+                os.remove(weight_path)
                 checkpoint = None
                 print(err)
         else:
@@ -101,10 +102,14 @@ class TorchModelProcess():
 
     def load_latest_optimizer(self, optimizer_path, optimizer, amp_opt=None):
         if os.path.exists(optimizer_path):
-            checkpoint = torch.load(optimizer_path)
-            optimizer.load_state_dict(checkpoint['optimizer'])
-            if amp_opt is not None:
-                amp_opt.load_state_dict(checkpoint['amp'])
+            try:
+                checkpoint = torch.load(optimizer_path)
+                optimizer.load_state_dict(checkpoint['optimizer'])
+                if amp_opt is not None:
+                    amp_opt.load_state_dict(checkpoint['amp'])
+            except Exception as err:
+                os.remove(optimizer_path)
+                print(err)
         else:
             print("Loading optimizer %s fail" % optimizer_path)
 

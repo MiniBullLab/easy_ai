@@ -17,7 +17,7 @@ class Det2dDataset(TorchDataLoader):
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3):
         super().__init__(data_path, data_channel)
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.detection_sample = DetectionSample(data_path,
                                                 detect2d_class,
                                                 False)

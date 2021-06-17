@@ -20,7 +20,7 @@ class KeyPoint2dDataset(TorchDataLoader):
                  points_count=9):
         super().__init__(data_path, data_channel)
         self.class_name = class_name
-        self.image_size = image_size
+        self.image_size = tuple(image_size)
         self.detection_sample = DetectionSample(data_path,
                                                 class_name,
                                                 False)
