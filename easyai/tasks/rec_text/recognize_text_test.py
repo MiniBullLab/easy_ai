@@ -4,8 +4,8 @@
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.pose2d_accuracy import Pose2dAccuracy
-from easyai.tasks.pose2d.pose2d import Pose2d
+from easyai.evaluation.rec_tect_metric import RecognizeTextMetric
+from easyai.tasks.rec_text.recognize_text import RecognizeText
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
@@ -15,13 +15,10 @@ class RecognizeTextTest(BaseTest):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(TaskName.RecognizeText)
-        self.inference = Pose2d(model_name, gpu_id, config_path)
+        self.inference = RecognizeText(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.inference.result_process.set_threshold(1e-5)
-        self.evaluation = Pose2dAccuracy(self.test_task_config.points_count,
-                                         self.test_task_config.image_size)
-        self.point_threshold = 1e-5
+        self.evaluation = RecognizeTextMetric()
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
@@ -33,15 +30,15 @@ class RecognizeTextTest(BaseTest):
         for index, (images, targets) in enumerate(self.dataloader):
             print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
-            result, _ = self.inference.result_process.post_process(prediction, (0, 0))
+            result = self.inference.result_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, targets)
-            self.evaluation.eval(result, targets.detach().numpy())
+            self.evaluation.eval(result, targets['text'])
             self.metirc_loss(index, loss_value)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc(True)))
         average_socre = self.evaluation.get_score()
         self.save_test_value(epoch, average_socre)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
-        return average_socre, self.epoch_loss_average.avg
+        return average_socre['accuracy'], self.epoch_loss_average.avg
 
     def compute_loss(self, output_list, targets):
         loss = 0
@@ -63,7 +60,9 @@ class RecognizeTextTest(BaseTest):
     def save_test_value(self, epoch, score):
         # Write epoch results
         with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | prec: {:.3f}\n".format(epoch, score))
+            file.write("Epoch: {} | acc: {:.3f} edit_distance: {:.3f}\n".format(epoch,
+                                                                                score['accuracy'],
+                                                                                score['edit_distance']))
 
 
 

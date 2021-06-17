@@ -15,7 +15,6 @@ class RecognizeTextConfig(CommonTrainConfig):
     def __init__(self):
         super().__init__(TaskName.RecognizeText)
         # data
-        self.language = None
         self.character_set = None
         self.character_count = 0
         self.save_result_name = None
@@ -30,8 +29,6 @@ class RecognizeTextConfig(CommonTrainConfig):
 
     def load_data_value(self, config_dict):
         self.load_image_data_value(config_dict)
-        if config_dict.get('language', None) is not None:
-            self.language = tuple(config_dict['language'])
         if config_dict.get('character_set', None) is not None:
             self.character_set = config_dict['character_set']
         if config_dict.get('character_count', 0) is not None:
@@ -61,7 +58,7 @@ class RecognizeTextConfig(CommonTrainConfig):
                      'normalize_type': 1,
                      'mean': (0.5, 0.5, 0.5),
                      'std': (0.5, 0.5, 0.5)}
-        self.language = ("english", )
+
         self.post_process = {'type': 'CTCPostProcess'}
 
         self.save_result_name = "rec_text_result.txt"
@@ -81,6 +78,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = "TextDataSetCollate"
 
         self.evaluation_result_name = 'rec_text_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
@@ -99,6 +97,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['collate_fn'] = "TextDataSetCollate"
 
         self.log_name = "rec_text"
         self.is_save_epoch_model = False
