@@ -49,7 +49,7 @@ class Detection2dTrain(CommonTrain):
             if sum([len(x) for x in targets]) < 1:  # if no targets continue
                 continue
             loss_info = self.compute_backward(images, targets, i)
-            self.update_logger(i, self.total_images, epoch, loss_info)
+            self.update_logger(i, self.total_batch_image, epoch, loss_info)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters
