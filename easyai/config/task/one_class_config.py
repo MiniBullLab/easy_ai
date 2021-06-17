@@ -16,7 +16,6 @@ class OneClassConfig(GanTrainConfig):
 
         # data
         self.save_result_name = None
-        # train
 
         self.config_path = os.path.join(self.config_save_dir, "one_class_config.json")
 
@@ -30,13 +29,6 @@ class OneClassConfig(GanTrainConfig):
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
 
-    def load_test_value(self, config_dict):
-        if config_dict.get('test_batch_size', None) is not None:
-            self.test_batch_size = int(config_dict['test_batch_size'])
-
-    def save_test_value(self, config_dict):
-        config_dict['test_batch_size'] = self.test_batch_size
-
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
 
@@ -44,12 +36,12 @@ class OneClassConfig(GanTrainConfig):
         self.save_image_train_value(config_dict)
 
     def get_data_default_value(self):
-        self.image_size = (32, 32)  # w * H
-        self.data_channel = 3
-        self.resize_type = 0
-        self.normalize_type = -1
-        self.data_mean = (0.5, 0.5, 0.5)
-        self.data_std = (0.5, 0.5, 0.5)
+        self.data = {'image_size': (32, 32),  # W * H
+                     'data_channel': 3,
+                     'resize_type': 0,
+                     'normalize_type': -1,
+                     'mean': (0.5, 0.5, 0.5),
+                     'std': (0.5, 0.5, 0.5)}
 
         self.post_process = {'type': 'BinaryPostProcess',
                              'threshold': 0.001}
@@ -58,12 +50,32 @@ class OneClassConfig(GanTrainConfig):
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "OneClassDataset"
+        self.val_data['dataset'].update(self.data)
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'one_class_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.train_batch_size = 64
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "OneClassDataset"
+        self.train_data['dataset'].update(self.data)
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 64
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'generate_latest.pt'

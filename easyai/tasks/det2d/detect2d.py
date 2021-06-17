@@ -15,10 +15,10 @@ class Detection2d(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Detect2d_Task)
-        self.set_model_param(data_channel=self.task_config.data_channel,
+        self.set_model_param(data_channel=self.task_config['data']['data_channel'],
                              class_number=len(self.task_config.detect2d_class))
         self.set_model(gpu_id=gpu_id)
-        self.result_process = Detect2dResultProcess(self.task_config.image_size,
+        self.result_process = Detect2dResultProcess(self.task_config['data']['image_size'],
                                                     self.task_config.detect2d_class,
                                                     self.task_config.post_process)
 

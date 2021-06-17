@@ -2,15 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.seg.segment_sample import SegmentSample
 from easyai.data_loader.seg.segment_dataset_process import SegmentDatasetProcess
 from easyai.data_loader.seg.segment_data_augment import SegmentDataAugment
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-class SegmentDataLoader(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.SegmentDataset)
+class SegmentDataset(TorchDataLoader):
 
     def __init__(self, data_path, class_names, label_type,
                  resize_type, normalize_type, mean=0, std=1,
@@ -53,40 +55,3 @@ class SegmentDataLoader(TorchDataLoader):
                                                               self.label_type,
                                                               self.class_names)
         return mask
-
-
-def get_segment_train_dataloader(train_path, data_config, num_workers=8):
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    class_names = data_config.segment_class
-    label_type = data_config.seg_label_type
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    batch_size = data_config.train_batch_size
-    is_augment = data_config.train_data_augment
-    dataloader = SegmentDataLoader(train_path, class_names, label_type,
-                                   resize_type, normalize_type, mean, std,
-                                   image_size, data_channel, is_augment)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=True)
-    return result
-
-
-def get_segment_val_dataloader(val_path, data_config, num_workers=8):
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    class_names = data_config.segment_class
-    label_type = data_config.seg_label_type
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    batch_size = data_config.test_batch_size
-    dataloader = SegmentDataLoader(val_path, class_names, label_type,
-                                   resize_type, normalize_type, mean, std,
-                                   image_size, data_channel, False)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False)
-    return result

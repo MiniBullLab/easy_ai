@@ -5,8 +5,6 @@
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.landmark_accuracy import LandmarkAccuracy
-from easyai.data_loader.landmark.landmark_dataloader import get_landmark_val_dataloader
-from easyai.tasks.landmark.landmark_result_process import LandmarkResultProcess
 from easyai.tasks.landmark.landmark import Landmark
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
@@ -27,11 +25,10 @@ class Pose2dTest(BaseTest):
         self.inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_landmark_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.evaluation.reset()
         self.start_test()
-        for index, (images, targets) in enumerate(dataloader):
+        for index, (images, targets) in enumerate(self.dataloader):
             print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
             result = self.inference.result_process.post_process(prediction, (0, 0))

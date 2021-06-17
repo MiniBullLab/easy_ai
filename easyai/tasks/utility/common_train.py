@@ -18,7 +18,7 @@ class CommonTrain(BaseTrain):
     def __init__(self, model_name, config_path, task_name):
         super().__init__(model_name, config_path, task_name)
         self.optimizer = None
-        self.total_batch_image = 0
+        self.lr_scheduler = None
         self.start_epoch = 0
         self.loss_info_average = dict()
 
@@ -54,6 +54,10 @@ class CommonTrain(BaseTrain):
                                                              self.optimizer)
         else:
             print("model is not create!")
+
+    def build_lr_scheduler(self):
+        self.lr_factory.set_epoch_iteration(self.total_batch_image)
+        self.lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.lr_scheduler_config)
 
     def adjust_epoch_optimizer(self, epoch):
         if len(self.train_task_config.optimizer_config) <= 1:

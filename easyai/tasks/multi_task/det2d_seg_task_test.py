@@ -5,7 +5,6 @@
 import os
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.detection_mAP import DetectionMeanAp
-from easyai.data_loader.multi_task.det2d_seg_val_dataloader import get_det2d_seg_val_dataloader
 from easyai.tasks.multi_task.det2d_seg_task import Det2dSegTask
 from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.name_manager.task_name import TaskName
@@ -31,14 +30,11 @@ class Det2dSegTaskTest(BaseTest):
     def test(self, val_path, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
-
-        dataloader = get_det2d_seg_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
-
+        self.create_dataloader(val_path)
         self.seg_metric.reset()
         self.start_test()
-        for i, (image_path, src_image, input_image, segment_targets) in enumerate(dataloader):
-            print('%g/%g' % (i + 1, len(dataloader)), end=' ')
+        for i, (image_path, src_image, input_image, segment_targets) in enumerate(self.dataloader):
+            print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
 
             self.multi_task_inference.set_src_size(src_image.numpy()[0])
 

@@ -8,8 +8,8 @@ import sys
 sys.path.insert(0, os.getcwd() + "/..")
 
 import numpy as np
-from easyai.data_loader.sr.super_resolution_dataloader import get_sr_train_dataloader
-from easyai.data_loader.sr.super_resolution_dataloader import get_sr_val_dataloader
+from easyai.data_loader.sr.super_resolution_dataset import get_sr_train_dataloader
+from easyai.data_loader.sr.super_resolution_dataset import get_sr_val_dataloader
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.visualization.sr_show import SuperResolutionShow
 

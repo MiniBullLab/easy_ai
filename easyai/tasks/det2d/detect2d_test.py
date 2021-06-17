@@ -6,7 +6,6 @@ import os
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.detection_mAP import DetectionMeanAp
-from easyai.data_loader.det2d.det2d_val_dataloader import get_detection_val_dataloader
 from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
@@ -29,11 +28,9 @@ class Detection2dTest(BaseTest):
     def test(self, val_path, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
-
-        dataloader = get_detection_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.start_test()
-        for i, (image_path, src_size, input_image) in enumerate(dataloader):
+        for i, (image_path, src_size, input_image) in enumerate(self.dataloader):
             print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
 
             prediction, output_list = self.inference.infer(input_image)

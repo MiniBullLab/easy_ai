@@ -20,8 +20,6 @@ class LandmarkConfig(CommonTrainConfig):
         self.skeleton = ()
         self.save_result_name = None
 
-        # train
-        self.train_data_augment = True
         self.config_path = os.path.join(self.config_save_dir, "landmark_config.json")
 
         self.get_data_default_value()
@@ -43,29 +41,20 @@ class LandmarkConfig(CommonTrainConfig):
         config_dict['points_count'] = self.points_count
         config_dict['skeleton'] = self.skeleton
 
-    def load_test_value(self, config_dict):
-        if config_dict.get('test_batch_size', None) is not None:
-            self.test_batch_size = int(config_dict['test_batch_size'])
-
-    def save_test_value(self, config_dict):
-        config_dict['test_batch_size'] = self.test_batch_size
-
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
-        config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (128, 128)
-        self.data_channel = 1
-        self.data_mean = (104.0, )
-        self.data_std = (0.017, )
-        self.resize_type = 1
-        self.normalize_type = 0
+        self.data = {'image_size': (128, 128),  # W * H
+                     'data_channel': 1,
+                     'resize_type': 1,
+                     'normalize_type': 0,
+                     'mean': (104.0, ),
+                     'std': (0.017, )}
+
         self.save_result_name = "landmark_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
@@ -83,18 +72,44 @@ class LandmarkConfig(CommonTrainConfig):
                          [53, 54], [54, 55], [55, 56], [56, 57], [57, 58],
                          [58, 59], [59, 48], [60, 61], [61, 62], [62, 63], [63, 64],
                          [64, 65], [65, 66], [66, 67], [67, 60]]
+
         self.post_process = {'type': 'LandmarkPostProcess',
                              'points_count': self.points_count,
                              'threshold': 0.1}
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "LandmarkDataset"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['class_name'] = self.pose_class
+        self.val_data['dataset']['points_count'] = self.points_count
+        self.val_data['dataset']['is_augment'] = False
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'landmark_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.train_data_augment = True
-        self.train_batch_size = 32
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "LandmarkDataset"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['class_name'] = self.pose_class
+        self.train_data['dataset']['points_count'] = self.points_count
+        self.train_data['dataset']['is_augment'] = True
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 32
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.is_save_epoch_model = False
         self.latest_weights_name = 'landmark_latest.pt'
         self.best_weights_name = 'landmark_best.pt'

@@ -2,15 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.keypoint2d.keypoint2d_dataset_process import KeyPoint2dDataSetProcess
 from easyai.data_loader.keypoint2d.batch_dataset_merge import detection_data_merge
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-class KeyPoint2dDataLoader(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.KeyPoint2dDataset)
+class KeyPoint2dDataset(TorchDataLoader):
 
     def __init__(self, data_path, class_name,
                  resize_type, normalize_type, mean=0, std=1,
@@ -46,46 +48,3 @@ class KeyPoint2dDataLoader(TorchDataLoader):
 
     def __len__(self):
         return self.detection_sample.get_sample_count()
-
-
-def get_key_points2d_train_dataloader(train_path, data_config, num_workers=8):
-    class_name = data_config.points_class
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    points_count = data_config.points_count
-    batch_size = data_config.train_batch_size
-    dataloader = KeyPoint2dDataLoader(train_path, class_name,
-                                      resize_type, normalize_type, mean, std,
-                                      image_size, data_channel,
-                                      points_count)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=True,
-                             collate_fn=detection_data_merge)
-    return result
-
-
-def get_key_points2d_val_dataloader(val_path, data_config, num_workers=8):
-    class_name = data_config.points_class
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    points_count = data_config.points_count
-    batch_size = 1
-    dataloader = KeyPoint2dDataLoader(val_path, class_name,
-                                      resize_type, normalize_type, mean, std,
-                                      image_size, data_channel,
-                                      points_count)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False,
-                             collate_fn=detection_data_merge)
-    return result
-
-
-

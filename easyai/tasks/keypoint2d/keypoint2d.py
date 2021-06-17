@@ -14,9 +14,9 @@ class KeyPoint2d(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.KeyPoint2d_Task)
-        self.set_model_param(data_channel=self.task_config.data_channel)
+        self.set_model_param(data_channel=self.task_config['data']['data_channel'])
         self.set_model(gpu_id=gpu_id)
-        self.result_process = KeyPoint2dResultProcess(self.task_config.image_size,
+        self.result_process = KeyPoint2dResultProcess(self.task_config['data']['image_size'],
                                                       self.task_config.points_count,
                                                       self.task_config.points_class,
                                                       self.task_config.post_prcoess)

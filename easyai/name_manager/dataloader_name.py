@@ -5,7 +5,17 @@
 
 class DatasetName():
 
+    ClassifyDataSet = "ClassifyDataSet"
+    Det2dDataset = "Det2dDataset"
+    Det2dSegDataset = "Det2dSegDataset"
+    GenImageDataset = "GenImageDataset"
+    KeyPoint2dDataset = "KeyPoint2dDataset"
+    LandmarkDataset = "LandmarkDataset"
+    OneClassDataset = "OneClassDataset"
+    Pose2dDataset = "Pose2dDataset"
+    SegmentDataset = "SegmentDataset"
     RecTextDataSet = "RecTextDataSet"
+    SuperResolutionDataset = "SuperResolutionDataset"
 
 
 class DatasetCollateName():
@@ -15,4 +25,6 @@ class DatasetCollateName():
 
 class DataloaderName():
 
+    Det2dTrainDataloader = "Det2dTrainDataloader"
+    Det2dSegTrainDataloader = "Det2dSegTrainDataloader"
     DataLoader = "DataLoader"

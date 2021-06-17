@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import math
@@ -15,8 +15,11 @@ from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProce
 from easyai.data_loader.seg.segment_dataset_process import SegmentDatasetProcess
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
+from easyai.name_manager.dataloader_name import DataloaderName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_TRAIN_DATALOADER
 
 
+@REGISTERED_TRAIN_DATALOADER.register_module(DataloaderName.Det2dSegTrainDataloader)
 class Det2dSegTrainDataloader(DataLoader):
 
     def __init__(self, data_path, detect2d_class, seg_class_name,
@@ -142,24 +145,3 @@ class Det2dSegTrainDataloader(DataLoader):
                                                                   self.seg_label_type,
                                                                   self.seg_number_class)
         return mask
-
-
-def get_det2d_seg_train_dataloader(train_path, data_config):
-    detect2d_class = data_config.detect2d_class
-    seg_class_name = data_config.segment_class
-    seg_label_type = data_config.seg_label_type
-    image_size = data_config.image_size
-    data_channel = data_config.image_channel
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    batch_size = data_config.train_batch_size
-    dataloader = Det2dSegTrainDataloader(train_path, detect2d_class, seg_class_name,
-                                         seg_label_type, resize_type, normalize_type, mean, std,
-                                         batch_size, image_size, data_channel,
-                                         multi_scale=data_config.train_multi_scale,
-                                         is_augment=data_config.train_data_augment,
-                                         balanced_sample=data_config.balanced_sample)
-
-    return dataloader

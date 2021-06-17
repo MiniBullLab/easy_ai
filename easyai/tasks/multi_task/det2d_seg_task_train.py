@@ -3,7 +3,6 @@
 # Author:lipeijie
 
 import os
-from easyai.data_loader.multi_task.det2d_seg_train_dataloader import get_det2d_seg_train_dataloader
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.multi_task.det2d_seg_task_test import Det2dSegTaskTest
 from easyai.name_manager.task_name import TaskName
@@ -15,7 +14,7 @@ class Det2dSegTaskTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Det2d_Seg_Task)
-        self.set_model_param(data_channel=self.train_task_config.data_channel)
+        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'])
         self.set_model(gpu_id=gpu_id)
         self.multi_task_test = Det2dSegTaskTest(model_name, gpu_id, self.train_task_config)
 
@@ -32,20 +31,16 @@ class Det2dSegTaskTrain(CommonTrain):
         self.build_optimizer()
 
     def train(self, train_path, val_path):
-        dataloader = get_det2d_seg_train_dataloader(train_path, self.train_task_config)
-        self.total_batch_image = len(dataloader)
-        self.lr_factory.set_epoch_iteration(self.total_batch_image)
-        lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.lr_scheduler_config)
-
+        self.create_dataloader(train_path)
+        self.build_lr_scheduler()
         self.load_latest_param(self.train_task_config.latest_weights_path)
-
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
-            for i, (images, detects, segments) in enumerate(dataloader):
+            for i, (images, detects, segments) in enumerate(self.dataloader):
                 current_iter = epoch * self.total_batch_image + i
-                lr = lr_scheduler.get_lr(epoch, current_iter)
-                lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+                lr = self.lr_scheduler.get_lr(epoch, current_iter)
+                self.lr_scheduler.adjust_learning_rate(self.optimizer, lr)
                 if sum([len(x) for x in detects]) < 1:  # if no targets continue
                     continue
                 # the order if output in my cfg is segment, detct1, detect2, detect3

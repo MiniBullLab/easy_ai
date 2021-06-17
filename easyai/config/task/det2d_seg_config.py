@@ -17,7 +17,8 @@ class Det2dSegConfig(Detect2dConfig):
         # data
         self.seg_label_type = None
         self.segment_class = None
-        # test
+
+        self.seg_post_process = None
 
         # train
         self.log_name = TaskName.Det2d_Seg_Task
@@ -40,32 +41,55 @@ class Det2dSegConfig(Detect2dConfig):
         config_dict['segment_class'] = self.segment_class
 
     def get_data_default_value(self):
-        self.image_size = (640, 352)  # W * H
-        self.data_channel = 3
+        self.data = {'image_size': (640, 352),  # W * H
+                     'data_channel': 3,
+                     'resize_type': 1,
+                     'normalize_type': 0,
+                     'mean': (0, 0, 0),
+                     'std': (1, 1, 1)}
+
         self.detect2d_class = ("car", )
         self.segment_class = [('background', '255'),
                               ('lane', '0')]
         self.seg_label_type = 1
-        self.confidence_th = 0.5
-        self.nms_th = 0.45
 
-        self.resize_type = 1
-        self.normalize_type = 0
+        self.post_process = {'type': 'YoloPostProcess',
+                             'threshold': 0.5,
+                             'nms_threshold': 0.45}
 
-        self.post_prcoess_type = 0
+        self.seg_post_process = {'type': 'MaskPostProcess',
+                                 'threshold': 0.5}
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "Det2dSegDataset"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['detect2d_class'] = self.detect2d_class
+        self.val_data['dataset']['seg_class_name'] = self.segment_class
+        self.val_data['dataset']['seg_label_type'] = self.seg_label_type
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'det2d_seg_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
         self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_seg_results')
 
     def get_train_default_value(self):
-        self.log_name = "det2d_seg"
-        self.train_data_augment = True
-        self.train_multi_scale = False
-        self.balanced_sample = False
-        self.train_batch_size = 16
+        self.train_data = {'dataloader': {}}
+        self.train_data['dataloader']['type'] = "Det2dSegTrainDataloader"
+        self.train_data['dataloader']['detect2d_class'] = self.detect2d_class
+        self.train_data['dataloader']['seg_class_name'] = self.segment_class
+        self.train_data['dataloader']['seg_label_type'] = self.seg_label_type
+        self.train_data['dataloader'].update(self.data)
+        self.train_data['dataloader']['batch_size'] = 16
+        self.train_data['dataloader']['balanced_sample'] = False
+        self.train_data['dataloader']['is_augment'] = True
+
         self.is_save_epoch_model = False
         self.latest_weights_name = 'det2d_seg_latest.pt'
         self.best_weights_name = 'det2d_seg_best.pt'

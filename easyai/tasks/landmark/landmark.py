@@ -14,11 +14,11 @@ class Landmark(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Landmark)
-        self.set_model_param(data_channel=self.task_config.data_channel,
+        self.set_model_param(data_channel=self.task_config['data']['data_channel'],
                              points_count=self.task_config.points_count)
         self.set_model(gpu_id=gpu_id)
         self.result_process = LandmarkResultProcess(self.task_config.points_count,
-                                                    self.task_config.image_size,
+                                                    self.task_config['data']['image_size'],
                                                     self.task_config.post_prcoess)
 
     def process(self, input_path, data_type=1, is_show=False):

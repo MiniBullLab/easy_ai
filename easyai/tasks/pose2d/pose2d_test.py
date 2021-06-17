@@ -5,7 +5,6 @@
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.pose2d_accuracy import Pose2dAccuracy
-from easyai.data_loader.pose2d.pose2d_dataloader import get_poes2d_val_dataloader
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
@@ -28,11 +27,10 @@ class Pose2dTest(BaseTest):
         self.inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_poes2d_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.evaluation.reset()
         self.start_test()
-        for index, (images, targets) in enumerate(dataloader):
+        for index, (images, targets) in enumerate(self.dataloader):
             print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
             result, _ = self.inference.result_process.post_process(prediction, (0, 0))

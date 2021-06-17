@@ -4,7 +4,6 @@
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.data_loader.seg.segment_dataloader import get_segment_val_dataloader
 from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.evaluation.segmen_metric import SegmentionMetric
@@ -30,11 +29,10 @@ class SegmentionTest(BaseTest):
         self.segment_inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_segment_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.metric.reset()
         self.start_test()
-        for i, (images, segment_targets) in enumerate(dataloader):
+        for i, (images, segment_targets) in enumerate(self.dataloader):
             prediction, output_list = self.segment_inference.infer(images)
             result, _ = self.output_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, segment_targets)

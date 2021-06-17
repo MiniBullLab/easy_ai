@@ -8,8 +8,8 @@ import sys
 sys.path.insert(0, os.getcwd() + "/..")
 
 import numpy as np
-from easyai.data_loader.seg.segment_dataloader import get_segment_train_dataloader
-from easyai.data_loader.seg.segment_dataloader import get_segment_val_dataloader
+from easyai.data_loader.seg.segment_dataset import get_segment_train_dataloader
+from easyai.data_loader.seg.segment_dataset import get_segment_val_dataloader
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.visualization.task_show.segment_show import SegmentionShow
 

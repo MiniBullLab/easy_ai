@@ -17,7 +17,7 @@ class GenerateImageConfig(GanTrainConfig):
         # data
         self.save_result_dir_name = "generate_results"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
-        # train
+
         self.config_path = os.path.join(self.config_save_dir, "generate_image_config.json")
 
         self.get_data_default_value()
@@ -36,17 +36,28 @@ class GenerateImageConfig(GanTrainConfig):
         self.save_image_train_value(config_dict)
 
     def get_data_default_value(self):
-        self.image_size = (28, 28)  # w * H
-        self.data_channel = 1
-        self.resize_type = 0
-        self.normalize_type = -1
-        self.data_mean = (0.5, )
-        self.data_std = (0.5, )
+        self.data = {'image_size': (28, 28),  # W * H
+                     'data_channel': 1,
+                     'resize_type': 0,
+                     'normalize_type': -1,
+                     'mean': (0.5, ),
+                     'std': (0.5, )}
+
         self.post_process = {'type': 'MNISTPostProcess',
                              'input_size': self.image_size}
 
     def get_train_default_value(self):
-        self.train_batch_size = 128
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "GenImageDataset"
+        self.train_data['dataset'].update(self.data)
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 128
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.enable_mixed_precision = False
         self.is_save_epoch_model = False
         self.latest_weights_name = 'generate_latest.pt'

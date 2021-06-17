@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.det2d.det2d_train_dataloader import DetectionTrainDataloader
-from easyai.data_loader.det2d.det2d_val_dataloader import get_detection_val_dataloader
+from easyai.data_loader.det2d.det2d_dataset import get_detection_val_dataloader
 from easyai.visualization.task_show.detect2d_show import DetectionShow
 from easyai.config.utility.config_factory import ConfigFactory
 

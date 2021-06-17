@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import abc
 import torch
 from easyai.helper.timer_process import TimerProcess
+from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
@@ -20,10 +21,13 @@ class BaseTrain(BaseTask):
         super().__init__(config_path)
         self.set_task_name(task_name)
         self.timer = TimerProcess()
+        self.dataloader_factory = DataloaderFactory()
         self.torchModelProcess = TorchModelProcess()
         self.freeze_process = FreezePorcess()
+        self.dataloader = None
         self.model = None
         self.train_task_config = None
+        self.total_batch_image = 0
         self.is_sparse = False
         self.sparse_ratio = 0.0
 
@@ -94,4 +98,18 @@ class BaseTrain(BaseTask):
     @property
     def device(self):
         return self.torchModelProcess.get_device()
+
+    def create_dataloader(self, data_path):
+        assert self.train_task_config is not None
+        dataloader_config = self.train_task_config['dataloader']
+        dataset_config = self.train_task_config['dataset']
+        self.dataloader = self.dataloader_factory.get_train_dataloader(data_path,
+                                                                       dataloader_config,
+                                                                       dataset_config)
+        if self.dataloader is not None:
+            self.total_batch_image = len(self.dataloader)
+        else:
+            self.total_batch_image = 0
+
+
 

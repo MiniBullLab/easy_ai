@@ -14,7 +14,7 @@ class RecognizeText(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.RecognizeText)
-        self.set_model_param(data_channel=self.task_config.data_channel,
+        self.set_model_param(data_channel=self.task_config['data']['data_channel'],
                              class_number=self.task_config.character_count)
         self.set_model(gpu_id=gpu_id)
         self.result_process = TextResultProcess(self.task_config.character_set,

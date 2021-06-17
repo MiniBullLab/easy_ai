@@ -16,10 +16,8 @@ class Polygon2dConfig(CommonTrainConfig):
         # data
         self.detect2d_class = None
         self.save_result_name = None
-        # test
+
         self.save_result_dir = os.path.join(self.root_save_dir, 'polygon2d_results')
-        # train
-        self.train_data_augment = True
 
         self.config_path = os.path.join(self.config_save_dir, "polygon2d_config.json")
 
@@ -38,38 +36,36 @@ class Polygon2dConfig(CommonTrainConfig):
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
-        config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (736, 736)  # W * H
-        self.data_channel = 3
+        self.data = {'image_size': (736, 736),  # W * H
+                     'data_channel': 3,
+                     'resize_type': -2,
+                     'normalize_type': -1,
+                     'mean': (0.485, 0.456, 0.406),
+                     'std': (0.229, 0.224, 0.225)}
+
         self.detect2d_class = ("others", )
         self.post_process = {'type': 'DBPostProcess',
                              'threshold': 0.3,
                              'unclip_ratio': 1.5}
 
-        self.resize_type = -2
-        self.normalize_type = -1
-        self.data_mean = (0.485, 0.456, 0.406)
-        self.data_std = (0.229, 0.224, 0.225)
-
         self.save_result_name = "polygon2d_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
         self.evaluation_result_name = 'polygon2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.log_name = "detect2d"
-        self.train_data_augment = True
-        self.train_batch_size = 4
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+
         self.is_save_epoch_model = False
         self.latest_weights_name = 'polygon2d_latest.pt'
         self.best_weights_name = 'polygon2d_best.pt'

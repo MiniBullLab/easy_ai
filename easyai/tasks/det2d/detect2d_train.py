@@ -3,7 +3,6 @@
 # Author:lipeijie
 
 import os
-from easyai.data_loader.det2d.det2d_train_dataloader import get_detect2d_train_dataloader
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.det2d.detect2d_test import Detection2dTest
 from easyai.name_manager.task_name import TaskName
@@ -15,7 +14,7 @@ class Detection2dTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Detect2d_Task)
-        self.set_model_param(data_channel=self.train_task_config.data_channel,
+        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
                              class_number=len(self.train_task_config.detect2d_class))
         self.set_model(gpu_id=gpu_id)
         self.detect_test = Detection2dTest(model_name, gpu_id, self.train_task_config)
@@ -32,17 +31,13 @@ class Detection2dTrain(CommonTrain):
         self.build_optimizer()
 
     def train(self, train_path, val_path):
-        dataloader = get_detect2d_train_dataloader(train_path, self.train_task_config)
-        self.total_batch_image = len(dataloader)
-        self.lr_factory.set_epoch_iteration(self.total_batch_image)
-        lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.lr_scheduler_config)
-
+        self.create_dataloader(train_path)
+        self.build_lr_scheduler()
         self.load_latest_param(self.train_task_config.latest_weights_path)
-
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
-            self.train_epoch(epoch, lr_scheduler, dataloader)
+            self.train_epoch(epoch, self.lr_scheduler, self.dataloader)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
 

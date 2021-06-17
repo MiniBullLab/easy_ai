@@ -13,7 +13,6 @@ class CommonTrainConfig(ImageTaskConfig):
         self.train_data = None
         # train
         self.log_name = task_name
-        self.train_batch_size = 1
         self.max_epochs = 0
         self.base_lr = 0.0
         self.amp_config = None
@@ -46,8 +45,6 @@ class CommonTrainConfig(ImageTaskConfig):
     def load_image_train_value(self, config_dict):
         if config_dict.get('train_data', None) is not None:
             self.train_data = config_dict['train_data']
-        if config_dict.get('train_batch_size', None) is not None:
-            self.train_batch_size = int(config_dict['train_batch_size'])
         if config_dict.get('is_save_epoch_model', None) is not None:
             self.is_save_epoch_model = bool(config_dict['is_save_epoch_model'])
         if config_dict.get('latest_weights_name', None) is not None:
@@ -89,7 +86,6 @@ class CommonTrainConfig(ImageTaskConfig):
     def save_image_train_value(self, config_dict):
         if self.train_data is not None:
             config_dict['train_data'] = self.train_data
-        config_dict['train_batch_size'] = self.train_batch_size
         config_dict['is_save_epoch_model'] = self.is_save_epoch_model
         config_dict['latest_weights_name'] = self.latest_weights_name
         config_dict['latest_optimizer_name'] = self.latest_optimizer_name
@@ -116,10 +112,7 @@ class CommonTrainConfig(ImageTaskConfig):
     def load_test_value(self, config_dict):
         if config_dict.get('val_data', None) is not None:
             self.val_data = int(config_dict['val_data'])
-        if config_dict.get('test_batch_size', None) is not None:
-            self.test_batch_size = int(config_dict['test_batch_size'])
 
     def save_test_value(self, config_dict):
         if self.val_data is not None:
             config_dict['val_data'] = self.val_data
-        config_dict['test_batch_size'] = self.test_batch_size

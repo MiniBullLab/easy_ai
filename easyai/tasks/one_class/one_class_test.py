@@ -4,7 +4,6 @@
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.data_loader.one_class.one_class_dataloader import get_one_class_val_dataloader
 from easyai.tasks.one_class.one_class import OneClass
 from easyai.evaluation.one_class_roc import OneClassROC
 from easyai.name_manager.task_name import TaskName
@@ -25,11 +24,10 @@ class OneClassTest(BaseTest):
         self.inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_one_class_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.evaluation.reset()
         self.start_test()
-        for index, (images, labels) in enumerate(dataloader):
+        for index, (images, labels) in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(images)
             loss_value = self.compute_loss(output_list, labels)
             self.evaluation.eval(prediction, labels.detach().numpy())

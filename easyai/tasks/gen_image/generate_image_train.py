@@ -3,7 +3,6 @@
 # Author:lipeijie
 
 import os
-from easyai.data_loader.gen_image.gen_image_dataloader import get_gen_image_train_dataloader
 from easyai.tasks.utility.gan_train import GanTrain
 from easyai.tasks.gen_image.generate_image import GenerateImage
 from easyai.name_manager.task_name import TaskName
@@ -15,8 +14,8 @@ class GenerateImageTrain(GanTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.GenerateImage)
-        self.set_model_param(data_channel=self.train_task_config.data_channel,
-                             image_size=self.train_task_config.image_size)
+        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
+                             image_size=self.train_task_config['data']['image_size'])
         self.set_model(gpu_id=gpu_id)
 
         self.gen_test = GenerateImage(model_name, gpu_id, self.train_task_config)
@@ -32,8 +31,7 @@ class GenerateImageTrain(GanTrain):
         self.build_optimizer()
 
     def train(self, train_path, val_path):
-        dataloader = get_gen_image_train_dataloader(train_path, self.train_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(train_path)
         self.lr_factory.set_epoch_iteration(self.total_batch_image)
         d_lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.d_lr_scheduler_config)
         g_lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.g_lr_scheduler_config)
@@ -42,7 +40,7 @@ class GenerateImageTrain(GanTrain):
 
         self.start_train()
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
-            self.trian_epoch(epoch, d_lr_scheduler, g_lr_scheduler, dataloader)
+            self.trian_epoch(epoch, d_lr_scheduler, g_lr_scheduler, self.dataloader)
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
 

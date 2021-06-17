@@ -19,8 +19,9 @@ class BaseTest(BaseTask):
         self.timer = TimerProcess()
         self.epoch_loss_average = AverageMeter()
         self.dataloader_factory = DataloaderFactory()
-        self.total_batch_image = 0
         self.test_task_config = None
+        self.dataloader = None
+        self.total_batch_image = 0
         self.inference = None
         self.model = None
         self.device = None
@@ -56,3 +57,15 @@ class BaseTest(BaseTask):
     @abc.abstractmethod
     def test(self, val_path, epoch=0):
         pass
+
+    def create_dataloader(self, data_path):
+        assert self.test_task_config is not None
+        dataloader_config = self.test_task_config['dataloader']
+        dataset_config = self.test_task_config['dataset']
+        self.dataloader = self.dataloader_factory.get_val_dataloader(data_path,
+                                                                     dataloader_config,
+                                                                     dataset_config)
+        if self.dataloader is not None:
+            self.total_batch_image = len(self.dataloader)
+        else:
+            self.total_batch_image = 0

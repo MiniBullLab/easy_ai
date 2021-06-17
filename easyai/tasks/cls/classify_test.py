@@ -4,7 +4,6 @@
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.data_loader.cls.classify_dataloader import get_classify_val_dataloader
 from easyai.tasks.cls.classify import Classify
 from easyai.evaluation.classify_accuracy import ClassifyAccuracy
 from easyai.name_manager.task_name import TaskName
@@ -26,11 +25,10 @@ class ClassifyTest(BaseTest):
         self.inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_classify_val_dataloader(val_path, self.test_task_config)
+        self.create_dataloader(val_path)
         self.evaluation.clean_data()
-        self.total_batch_image = len(dataloader)
         self.start_test()
-        for index, (images, labels) in enumerate(dataloader):
+        for index, (images, labels) in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(images)
             loss_value = self.compute_loss(output_list, labels)
             self.evaluation.torch_eval(prediction.data, labels.to(prediction.device))

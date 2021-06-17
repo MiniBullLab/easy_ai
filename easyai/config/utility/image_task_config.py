@@ -14,18 +14,11 @@ class ImageTaskConfig(BaseConfig):
         super().__init__(task_name)
         # data
         self.data = dict()
-        self.image_size = None  # W * H
-        self.data_channel = 3
-        self.resize_type = 0
-        self.normalize_type = 0
-        self.data_mean = (0, 0, 0)
-        self.data_std = (1, 1, 1)
         self.post_process = None
 
         self.save_result_path = None
 
         # test
-        self.test_batch_size = 1
         self.evaluation_result_name = None
         self.evaluation_result_path = None
 
@@ -55,19 +48,6 @@ class ImageTaskConfig(BaseConfig):
             json.dump(config_dict, f, sort_keys=True, indent=4, ensure_ascii=False)
 
     def load_image_data_value(self, config_dict):
-        if config_dict.get('image_size', None) is not None:
-            self.image_size = tuple(config_dict['image_size'])
-        if config_dict.get('data_channel', None) is not None:
-            self.data_channel = int(config_dict['data_channel'])
-        if config_dict.get('resize_type', None) is not None:
-            self.resize_type = int(config_dict['resize_type'])
-        if config_dict.get('normalize_type', None) is not None:
-            self.normalize_type = int(config_dict['normalize_type'])
-        if config_dict.get('data_mean', None) is not None:
-            self.data_mean = tuple(config_dict['data_mean'])
-        if config_dict.get('data_std', None) is not None:
-            self.data_std = tuple(config_dict['data_std'])
-
         if config_dict.get('data', None) is not None:
             self.data = config_dict['data']
 
@@ -75,13 +55,6 @@ class ImageTaskConfig(BaseConfig):
             self.post_process = config_dict['post_process']
 
     def save_image_data_value(self, config_dict):
-        config_dict['image_size'] = self.image_size
-        config_dict['data_channel'] = self.data_channel
-        config_dict['resize_type'] = self.resize_type
-        config_dict['normalize_type'] = self.normalize_type
-        config_dict['data_mean'] = self.data_mean
-        config_dict['data_std'] = self.data_std
-
         if self.data is not None and len(self.data) > 0:
             config_dict['data'] = self.data
         if self.post_process is not None:

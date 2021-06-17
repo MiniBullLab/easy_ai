@@ -4,7 +4,6 @@
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.data_loader.sr.super_resolution_dataloader import get_sr_val_dataloader
 from easyai.tasks.sr.super_resolution import SuperResolution
 from easyai.evaluation.super_resolution_psnr import SuperResolutionPSNR
 from easyai.name_manager.task_name import TaskName
@@ -26,11 +25,10 @@ class SuperResolutionTest(BaseTest):
         self.sr_inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_sr_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.evalution.reset()
         self.start_test()
-        for i, (images, sr_targets) in enumerate(dataloader):
+        for i, (images, sr_targets) in enumerate(self.dataloader):
             prediction, output_list = self.sr_inference.infer(images)
             loss_value = self.compute_loss(output_list, sr_targets)
             self.metirc_loss(i, loss_value)

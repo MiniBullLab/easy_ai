@@ -2,13 +2,15 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.sr.super_resolution_sample import SuperResolutionSample
 from easyai.data_loader.sr.super_resolution_dataset_process import SuperResolutionDatasetProcess
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-class SuperResolutionDataloader(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.SuperResolutionDataset)
+class SuperResolutionDataset(TorchDataLoader):
 
     def __init__(self, data_path, resize_type, normalize_type,
                  mean=0, std=1, image_size=(768, 320),
@@ -37,35 +39,3 @@ class SuperResolutionDataloader(TorchDataLoader):
 
     def __len__(self):
         return self.sr_sample.get_sample_count()
-
-
-def get_sr_train_dataloader(train_path, data_config, num_workers=8):
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    batch_size = data_config.train_batch_size
-    upscale_factor = data_config.upscale_factor
-    dataloader = SuperResolutionDataloader(train_path, resize_type, normalize_type, mean, std,
-                                           image_size, data_channel, upscale_factor)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=True)
-    return result
-
-
-def get_sr_val_dataloader(val_path, data_config, num_workers=8):
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    upscale_factor = data_config.upscale_factor
-    batch_size = data_config.test_batch_size
-    dataloader = SuperResolutionDataloader(val_path, resize_type, normalize_type, mean, std,
-                                           image_size, data_channel, upscale_factor)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False)
-    return result

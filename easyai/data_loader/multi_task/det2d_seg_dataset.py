@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
@@ -8,9 +8,12 @@ from easyai.data_loader.multi_task.multi_task_sample import MultiTaskSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.data_loader.seg.segment_dataset_process import SegmentDatasetProcess
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-class Det2dSegValDataloader(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.Det2dSegDataset)
+class Det2dSegDataset(TorchDataLoader):
 
     def __init__(self, data_path, detect2d_class, seg_class_name,
                  seg_label_type, resize_type, normalize_type, mean=0, std=1,
@@ -59,22 +62,3 @@ class Det2dSegValDataloader(TorchDataLoader):
                                                                   self.seg_label_type,
                                                                   self.seg_number_class)
         return mask
-
-
-def get_det2d_seg_val_dataloader(val_path, data_config, num_workers=8):
-    detect2d_class = data_config.detect2d_class
-    seg_class_name = data_config.segment_class
-    seg_label_type = data_config.seg_label_type
-    image_size = data_config.image_size
-    data_channel = data_config.image_channel
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    batch_size = 1
-    dataloader = Det2dSegValDataloader(val_path, detect2d_class, seg_class_name,
-                                       seg_label_type, resize_type, normalize_type, mean, std,
-                                       image_size, data_channel)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False)
-    return result

@@ -10,11 +10,11 @@ from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
 
-@REGISTERED_TEST_TASK.register_module(TaskName.Pose2d_Task)
-class Pose2dTest(BaseTest):
+@REGISTERED_TEST_TASK.register_module(TaskName.RecognizeText)
+class RecognizeTextTest(BaseTest):
 
     def __init__(self, model_name, gpu_id, config_path=None):
-        super().__init__(TaskName.Pose2d_Task)
+        super().__init__(TaskName.RecognizeText)
         self.inference = Pose2d(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
@@ -27,11 +27,10 @@ class Pose2dTest(BaseTest):
         self.inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_poes2d_val_dataloader(val_path, self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.evaluation.reset()
         self.start_test()
-        for index, (images, targets) in enumerate(dataloader):
+        for index, (images, targets) in enumerate(self.dataloader):
             print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
             result, _ = self.inference.result_process.post_process(prediction, (0, 0))

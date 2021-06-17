@@ -2,14 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 import numpy as np
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-class DetectionValDataLoader(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.Det2dDataset)
+class Det2dDataset(TorchDataLoader):
 
     def __init__(self, data_path, detect2d_class,
                  resize_type, normalize_type, mean=0, std=1,
@@ -35,20 +37,3 @@ class DetectionValDataLoader(TorchDataLoader):
 
     def __len__(self):
         return self.detection_sample.get_sample_count()
-
-
-def get_detection_val_dataloader(val_path, data_config, num_workers=8):
-    detect2d_class = data_config.detect2d_class
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    batch_size = 1
-    dataloader = DetectionValDataLoader(val_path, detect2d_class,
-                                        resize_type, normalize_type, mean, std,
-                                        image_size, data_channel)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False)
-    return result

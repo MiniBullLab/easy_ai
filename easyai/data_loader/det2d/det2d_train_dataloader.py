@@ -12,9 +12,12 @@ from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.data_loader.det2d.det2d_data_augment import DetectionDataAugment
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
+from easyai.name_manager.dataloader_name import DataloaderName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_TRAIN_DATALOADER
 
 
-class DetectionTrainDataloader(DataLoader):
+@REGISTERED_TRAIN_DATALOADER.register_module(DataloaderName.Det2dTrainDataloader)
+class Det2dTrainDataloader(DataLoader):
 
     def __init__(self, data_path, detect2d_class,
                  resize_type, normalize_type, mean=0, std=1,
@@ -110,20 +113,3 @@ class DetectionTrainDataloader(DataLoader):
             height = self.image_size[1]
         result_size = (width, height)
         return result_size
-
-
-def get_detect2d_train_dataloader(train_path, data_config):
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    batch_size = data_config.train_batch_size
-    dataloader = DetectionTrainDataloader(train_path, data_config.detect2d_class,
-                                          resize_type, normalize_type, mean, std,
-                                          batch_size, image_size, data_channel,
-                                          multi_scale=data_config.train_multi_scale,
-                                          is_augment=data_config.train_data_augment,
-                                          balanced_sample=data_config.balanced_sample)
-    return dataloader

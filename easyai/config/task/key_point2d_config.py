@@ -20,9 +20,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
         # test
         # train
         self.use_box = False
-        self.train_data_augment = True
-        self.train_multi_scale = False
-        self.balanced_sample = False
 
         self.config_path = os.path.join(self.config_save_dir, "key_point2d_config.json")
 
@@ -49,12 +46,6 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.load_image_train_value(config_dict)
         if config_dict.get('use_box', None) is not None:
             self.use_box = bool(config_dict['use_box'])
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
-        if config_dict.get('train_multi_scale', None) is not None:
-            self.train_multi_scale = bool(config_dict['train_multi_scale'])
-        if config_dict.get('balanced_sample', None) is not None:
-            self.balanced_sample = bool(config_dict['balanced_sample'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
@@ -64,11 +55,12 @@ class KeyPoint2dConfig(CommonTrainConfig):
         config_dict['balanced_sample'] = self.balanced_sample
 
     def get_data_default_value(self):
-        self.image_size = (640, 352)  # W * H
-        self.data_channel = 3
-
-        self.resize_type = 1
-        self.normalize_type = 0
+        self.data = {'image_size': (640, 352),  # W * H
+                     'data_channel': 3,
+                     'resize_type': 1,
+                     'normalize_type': 0,
+                     'mean': (0, 0, 0),
+                     'std': (1, 1, 1)}
 
         self.points_class = ('bike',)
         self.points_count = 9
@@ -80,17 +72,37 @@ class KeyPoint2dConfig(CommonTrainConfig):
                              'threshold': 0.5}
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "KeyPoint2dDataset"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['class_name'] = self.points_class
+        self.val_data['dataset']['points_count'] = self.points_count
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'key_points2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.log_name = "keypoint2d"
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "KeyPoint2dDataset"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['class_name'] = self.points_class
+        self.train_data['dataset']['points_count'] = self.points_count
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 16
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.use_box = False
-        self.train_data_augment = True
-        self.train_multi_scale = False
-        self.balanced_sample = False
-        self.train_batch_size = 16
         self.is_save_epoch_model = False
         self.latest_weights_name = 'key_point2d_latest.pt'
         self.best_weights_name = 'key_point2d_best.pt'

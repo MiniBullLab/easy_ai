@@ -16,9 +16,6 @@ class ClassifyConfig(CommonTrainConfig):
         # data
         self.class_name = None
         self.save_result_name = None
-        # test
-        # train
-        self.train_data_augment = True
 
         self.config_path = os.path.join(self.config_save_dir, "classify_config.json")
 
@@ -35,25 +32,20 @@ class ClassifyConfig(CommonTrainConfig):
         self.save_image_data_value(config_dict)
         config_dict['class_name'] = self.class_name
 
-    def load_test_value(self, config_dict):
-        if config_dict.get('test_batch_size', None) is not None:
-            self.test_batch_size = int(config_dict['test_batch_size'])
-
-    def save_test_value(self, config_dict):
-        config_dict['test_batch_size'] = self.test_batch_size
-
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
         config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (224, 224)
-        self.data_channel = 3
+        self.data = {'image_size': (224, 224),  # W * H
+                     'data_channel': 3,
+                     'resize_type': 0,
+                     'normalize_type': -1,
+                     'mean': (0.5070751592371323, 0.48654887331495095, 0.4409178433670343),
+                     'std': (0.2666410733740041, 0.2666410733740041, 0.2666410733740041)}
         self.class_name = ('cls1', 'cls2', 'cls3', 'cls4', 'cls5', 'cls6', 'cls7', 'cls8', 'cls9', 'cls10',
                            'cls11', 'cls12', 'cls13', 'cls14', 'cls15', 'cls16', 'cls17', 'cls18', 'cls19', 'cls20',
                            'cls21', 'cls22', 'cls23', 'cls24', 'cls25', 'cls26', 'cls27', 'cls28', 'cls29', 'cls30',
@@ -65,23 +57,40 @@ class ClassifyConfig(CommonTrainConfig):
                            'cls81', 'cls82', 'cls83', 'cls84', 'cls85', 'cls86', 'cls87', 'cls88', 'cls89', 'cls90',
                            'cls91', 'cls92', 'cls93', 'cls94', 'cls95', 'cls96', 'cls97', 'cls98', 'cls99', 'cls100',
                            )
-        self.data_mean = (0.5070751592371323, 0.48654887331495095, 0.4409178433670343)
-        self.data_std = (0.2666410733740041, 0.2666410733740041, 0.2666410733740041)
-        self.resize_type = 0
-        self.normalize_type = -1
         self.save_result_name = "classify_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
         self.post_process = {'type': 'MaxPostProcess'}
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "ClassifyDataSet"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['is_augment'] = False
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'cls_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.train_data_augment = True
-        self.train_batch_size = 16
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "ClassifyDataSet"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['is_augment'] = True
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 16
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.is_save_epoch_model = False
         self.latest_weights_name = 'cls_latest.pt'
         self.best_weights_name = 'cls_best.pt'

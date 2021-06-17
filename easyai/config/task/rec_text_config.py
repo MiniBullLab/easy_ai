@@ -21,8 +21,6 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.save_result_name = None
         # test
         self.save_result_dir = os.path.join(self.root_save_dir, 'rec_text_results')
-        # train
-        self.train_data_augment = True
 
         self.config_path = os.path.join(self.config_save_dir, "rec_text_config.json")
 
@@ -47,18 +45,16 @@ class RecognizeTextConfig(CommonTrainConfig):
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
-        config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "zh_en.txt")
         self.character_count = 6625
+
         self.data = {'image_size': (320, 32),   # W * H
                      'data_channel': 3,
                      'resize_type': -1,
@@ -66,7 +62,6 @@ class RecognizeTextConfig(CommonTrainConfig):
                      'mean': (0.5, 0.5, 0.5),
                      'std': (0.5, 0.5, 0.5)}
         self.language = ("english", )
-
         self.post_process = {'type': 'CTCPostProcess'}
 
         self.save_result_name = "rec_text_result.txt"
@@ -75,11 +70,13 @@ class RecognizeTextConfig(CommonTrainConfig):
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}
+        self.val_data['dataset']['type'] = "RecTextDataSet"
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['char_path'] = self.character_set
         self.val_data['dataset']['language'] = ("english", )
         self.val_data['dataset']['is_augment'] = False
 
+        self.val_data['dataloader']['type'] = "DataLoader"
         self.val_data['dataloader']['batch_size'] = 1
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
@@ -89,14 +86,15 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-
         self.train_data = {'dataset': {},
                            'dataloader': {}}
+        self.train_data['dataset']['type'] = "RecTextDataSet"
         self.train_data['dataset'].update(self.data)
         self.train_data['dataset']['char_path'] = self.character_set
         self.train_data['dataset']['language'] = ("english",)
         self.train_data['dataset']['is_augment'] = False
 
+        self.train_data['dataloader']['type'] = "DataLoader"
         self.train_data['dataloader']['batch_size'] = 1
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8

@@ -4,7 +4,6 @@
 
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
-from easyai.data_loader.keypoint2d.keypoint2d_dataloader import get_key_points2d_val_dataloader
 from easyai.tasks.keypoint2d.keypoint2d import KeyPoint2d
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
@@ -26,13 +25,11 @@ class KeyPoint2dTest(BaseTest):
         self.inference.load_weights(weights_path)
 
     def test(self, val_path, epoch=0):
-        dataloader = get_key_points2d_val_dataloader(val_path,
-                                                     self.test_task_config)
-        self.total_batch_image = len(dataloader)
+        self.create_dataloader(val_path)
         self.evaluator.reset()
         self.start_test()
-        for i, (images, labels) in enumerate(dataloader):
-            print('%g/%g' % (i + 1, len(dataloader)), end=' ')
+        for i, (images, labels) in enumerate(self.dataloader):
+            print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
             prediction = self.inference.infer(images)
             result, _ = self.inference.result_process.post_process(prediction, self.conf_threshold)
             labels = labels[0].data.cpu().numpy()

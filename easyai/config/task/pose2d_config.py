@@ -20,8 +20,6 @@ class Pose2dConfig(CommonTrainConfig):
         self.skeleton = ()
         self.save_result_name = None
 
-        # train
-        self.train_data_augment = True
         self.config_path = os.path.join(self.config_save_dir, "pose2d_config.json")
 
         self.get_data_default_value()
@@ -43,27 +41,20 @@ class Pose2dConfig(CommonTrainConfig):
         config_dict['points_count'] = self.points_count
         config_dict['skeleton'] = self.skeleton
 
-    def load_test_value(self, config_dict):
-        if config_dict.get('test_batch_size', None) is not None:
-            self.test_batch_size = int(config_dict['test_batch_size'])
-
-    def save_test_value(self, config_dict):
-        config_dict['test_batch_size'] = self.test_batch_size
-
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
-        config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (192, 256)
-        self.data_channel = 3
-        self.resize_type = 1
-        self.normalize_type = 0
+        self.data = {'image_size': (192, 256),  # W * H
+                     'data_channel': 3,
+                     'resize_type': 1,
+                     'normalize_type': 0,
+                     'mean': (0, 0, 0),
+                     'std': (1, 1, 1)}
+
         self.save_result_name = "pose2d_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
@@ -72,18 +63,44 @@ class Pose2dConfig(CommonTrainConfig):
         self.skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12],
                          [5, 11], [6, 12], [5, 6], [5, 7], [6, 8], [7, 9], [8, 10],
                          [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
+
         self.post_process = {'type': 'HeatmapPostProcess',
                              'input_size': self.image_size,
                              'threshold': 0.4}
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "Pose2dDataset"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['class_name'] = self.pose_class
+        self.val_data['dataset']['points_count'] = self.points_count
+        self.val_data['dataset']['is_augment'] = False
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'pose2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.train_data_augment = True
-        self.train_batch_size = 32
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "Pose2dDataset"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['class_name'] = self.pose_class
+        self.train_data['dataset']['points_count'] = self.points_count
+        self.train_data['dataset']['is_augment'] = True
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 32
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.is_save_epoch_model = False
         self.latest_weights_name = 'pose2d_latest.pt'
         self.best_weights_name = 'pose2d_best.pt'

@@ -2,14 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.pose2d.pose2d_sample import Pose2dSample
 from easyai.data_loader.landmark.landmark_dataset_process import LandmarkDataSetProcess
 from easyai.data_loader.landmark.landmark_augment import LandmarkDataAugment
+from easyai.name_manager.dataloader_name import DatasetName
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-class LandmarkDataLoader(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.LandmarkDataset)
+class LandmarkDataset(TorchDataLoader):
 
     def __init__(self, data_path, class_name,
                  resize_type, normalize_type, mean=0, std=1,
@@ -51,41 +53,3 @@ class LandmarkDataLoader(TorchDataLoader):
 
     def __len__(self):
         return self.pose2d_sample.get_sample_count()
-
-
-def get_landmark_train_dataloader(train_path, data_config, num_workers=8):
-    class_name = data_config.pose_class
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    points_count = data_config.points_count
-    batch_size = data_config.train_batch_size
-    dataloader = LandmarkDataLoader(train_path, class_name,
-                                    resize_type, normalize_type, mean, std,
-                                    image_size, data_channel,
-                                    points_count, is_augment=True)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=True)
-    return result
-
-
-def get_landmark_val_dataloader(val_path, data_config, num_workers=8):
-    class_name = data_config.pose_class
-    resize_type = data_config.resize_type
-    normalize_type = data_config.normalize_type
-    mean = data_config.data_mean
-    std = data_config.data_std
-    image_size = data_config.image_size
-    data_channel = data_config.data_channel
-    points_count = data_config.points_count
-    batch_size = 1
-    dataloader = LandmarkDataLoader(val_path, class_name,
-                                    resize_type, normalize_type, mean, std,
-                                    image_size, data_channel,
-                                    points_count, is_augment=False)
-    result = data.DataLoader(dataset=dataloader, num_workers=num_workers,
-                             batch_size=batch_size, shuffle=False)
-    return result

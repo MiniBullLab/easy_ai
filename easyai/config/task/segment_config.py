@@ -18,9 +18,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.segment_class = None
         self.save_result_dir_name = "segment_results"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
-        # test
-        # train
-        self.train_data_augment = True
+
         self.config_path = os.path.join(self.config_save_dir, "segmention_config.json")
 
         self.get_data_default_value()
@@ -41,35 +39,58 @@ class SegmentionConfig(CommonTrainConfig):
 
     def load_train_value(self, config_dict):
         self.load_image_train_value(config_dict)
-        if config_dict.get('train_data_augment', None) is not None:
-            self.train_data_augment = bool(config_dict['train_data_augment'])
 
     def save_train_value(self, config_dict):
         self.save_image_train_value(config_dict)
-        config_dict['train_data_augment'] = self.train_data_augment
 
     def get_data_default_value(self):
-        self.image_size = (512, 448)  # w * H
-        self.data_channel = 3
+        self.data = {'image_size': (512, 448),  # W * H
+                     'data_channel': 3,
+                     'resize_type': 1,
+                     'normalize_type': 0,
+                     'mean': (0, 0, 0),
+                     'std': (1, 1, 1)}
+
         self.seg_label_type = 1
         self.segment_class = [('background', '255'),
                               ('lane', '0')]
-
-        self.resize_type = 1
-        self.normalize_type = 0
 
         self.post_process = {'type': 'MaskPostProcess',
                              'threshold': 0.5}
 
     def get_test_default_value(self):
-        self.test_batch_size = 1
+        self.val_data = {'dataset': {},
+                         'dataloader': {}}
+        self.val_data['dataset']['type'] = "SegmentDataset"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['class_names'] = self.segment_class
+        self.val_data['dataset']['label_type'] = self.seg_label_type
+        self.val_data['dataset']['is_augment'] = False
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['drop_last'] = False
+
         self.evaluation_result_name = 'seg_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.log_name = "segment"
-        self.train_data_augment = False
-        self.train_batch_size = 1
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "SegmentDataset"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['class_names'] = self.segment_class
+        self.train_data['dataset']['label_type'] = self.seg_label_type
+        self.train_data['dataset']['is_augment'] = True
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 1
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['drop_last'] = True
+
         self.is_save_epoch_model = False
         self.latest_weights_name = 'seg_latest.pt'
         self.best_weights_name = 'seg_best.pt'
