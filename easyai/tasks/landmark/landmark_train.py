@@ -13,7 +13,7 @@ class LandmarkTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Landmark)
-        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
                              points_count=self.train_task_config.points_count)
         self.set_model(gpu_id=gpu_id)
         self.landmark_test = None

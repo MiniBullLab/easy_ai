@@ -18,7 +18,7 @@ class Det2dSegTask(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Det2d_Seg_Task)
-        self.set_model_param(data_channel=self.task_config['data']['data_channel'])
+        self.set_model_param(data_channel=self.task_config.data['data_channel'])
         self.set_model(gpu_id=gpu_id)
         self.det2d_result_process = Detect2dResultProcess()
         self.seg_result_process = SegmentResultProcess()

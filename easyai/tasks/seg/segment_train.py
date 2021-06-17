@@ -15,11 +15,11 @@ class SegmentionTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Segment_Task)
-        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
                              class_number=len(self.train_task_config.segment_class))
         self.set_model(gpu_id=gpu_id)
-        self.output_process = SegmentResultProcess(self.train_task_config.image_size,
-                                                   self.train_task_config.resize_type,
+        self.output_process = SegmentResultProcess(self.train_task_config.data['image_size'],
+                                                   self.train_task_config.data['resize_type'],
                                                    self.train_task_config.post_prcoess)
 
         self.segment_test = SegmentionTest(model_name, gpu_id, self.train_task_config)

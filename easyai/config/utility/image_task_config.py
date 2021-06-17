@@ -48,7 +48,7 @@ class ImageTaskConfig(BaseConfig):
             json.dump(config_dict, f, sort_keys=True, indent=4, ensure_ascii=False)
 
     def load_image_data_value(self, config_dict):
-        if config_dict.get('data', None) is not None:
+        if config_dict.get('data', dict()) is not None:
             self.data = config_dict['data']
 
         if config_dict.get('post_process', None) is not None:

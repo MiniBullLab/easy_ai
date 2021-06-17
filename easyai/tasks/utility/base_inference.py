@@ -79,12 +79,12 @@ class BaseInference(BaseTask):
     def get_image_data_lodaer(self, input_path):
         if not os.path.exists(input_path):
             return None
-        image_size = self.task_config['data']['image_size']
-        data_channel = self.task_config['data']['data_channel']
-        mean = self.task_config['data']['mean']
-        std = self.task_config['data']['std']
-        normalize_type = self.task_config['data']['normalize_type']
-        resize_type = self.task_config['data']['resize_type']
+        image_size = self.task_config.data['image_size']
+        data_channel = self.task_config.data['data_channel']
+        mean = self.task_config.data['mean']
+        std = self.task_config.data['std']
+        normalize_type = self.task_config.data['normalize_type']
+        resize_type = self.task_config.data['resize_type']
         if Path(input_path).is_dir():
             dataloader = ImagesLoader(input_path, image_size, data_channel,
                                       resize_type, normalize_type, mean, std)

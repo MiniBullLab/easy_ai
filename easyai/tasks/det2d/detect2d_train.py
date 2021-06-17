@@ -14,7 +14,7 @@ class Detection2dTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Detect2d_Task)
-        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
                              class_number=len(self.train_task_config.detect2d_class))
         self.set_model(gpu_id=gpu_id)
         self.detect_test = Detection2dTest(model_name, gpu_id, self.train_task_config)

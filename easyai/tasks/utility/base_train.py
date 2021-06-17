@@ -101,8 +101,8 @@ class BaseTrain(BaseTask):
 
     def create_dataloader(self, data_path):
         assert self.train_task_config is not None
-        dataloader_config = self.train_task_config['dataloader']
-        dataset_config = self.train_task_config['dataset']
+        dataloader_config = self.train_task_config.train_data.get('dataloader', None)
+        dataset_config = self.train_task_config.train_data.get('dataset', None)
         self.dataloader = self.dataloader_factory.get_train_dataloader(data_path,
                                                                        dataloader_config,
                                                                        dataset_config)

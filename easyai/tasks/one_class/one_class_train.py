@@ -14,8 +14,8 @@ class OneClassTrain(GanTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.OneClass)
-        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
-                             image_size=self.train_task_config['data']['image_size'])
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
+                             image_size=self.train_task_config.data['image_size'])
         self.set_model(gpu_id=gpu_id, init_type="normal")
         self.one_class_test = OneClassTest(model_name, gpu_id, self.train_task_config)
         self.best_score = 0

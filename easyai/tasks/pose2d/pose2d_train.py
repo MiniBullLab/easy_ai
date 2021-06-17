@@ -14,7 +14,7 @@ class Pose2dTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Pose2d_Task)
-        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'],
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
                              points_count=self.train_task_config.points_count)
         self.set_model(gpu_id=gpu_id)
         self.pose2d_test = Pose2dTest(model_name, gpu_id, self.train_task_config)

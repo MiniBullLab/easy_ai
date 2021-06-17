@@ -14,7 +14,7 @@ class Det2dSegTaskTrain(CommonTrain):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Det2d_Seg_Task)
-        self.set_model_param(data_channel=self.train_task_config['data']['data_channel'])
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'])
         self.set_model(gpu_id=gpu_id)
         self.multi_task_test = Det2dSegTaskTest(model_name, gpu_id, self.train_task_config)
 

@@ -60,8 +60,8 @@ class BaseTest(BaseTask):
 
     def create_dataloader(self, data_path):
         assert self.test_task_config is not None
-        dataloader_config = self.test_task_config['dataloader']
-        dataset_config = self.test_task_config['dataset']
+        dataloader_config = self.test_task_config.val_data.get('dataloader', None)
+        dataset_config = self.test_task_config.val_data.get('dataset', None)
         self.dataloader = self.dataloader_factory.get_val_dataloader(data_path,
                                                                      dataloader_config,
                                                                      dataset_config)
