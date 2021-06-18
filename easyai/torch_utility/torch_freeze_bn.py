@@ -4,6 +4,7 @@
 
 import re
 from easyai.name_manager.block_name import BlockType
+from easyai.utility.logger import EasyLogger
 
 
 class TorchFreezeNormalization():
@@ -42,7 +43,7 @@ class TorchFreezeNormalization():
                     self.freeze_layer_from_name(block, layer_name)
                     break
         else:
-            print("freeze normalization error")
+            EasyLogger.error("freeze normalization error")
 
     def freeze_layers(self, model, layer_names):
         for key, block in model._modules.items():

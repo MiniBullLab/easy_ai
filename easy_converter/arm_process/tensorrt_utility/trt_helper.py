@@ -1,10 +1,7 @@
 import os
-import pycuda.autoinit
-import numpy as np
 import pycuda.driver as cuda
 import tensorrt as trt
-import torch
-from easy_converter.converter.tensorrt_utility.trt_int8_calibration_helper import PythonEntropyCalibrator
+from easy_converter.arm_process.tensorrt_utility.trt_int8_calibration_helper import PythonEntropyCalibrator
 TRT_LOGGER = trt.Logger() # This logger is required to build an engine
 
 

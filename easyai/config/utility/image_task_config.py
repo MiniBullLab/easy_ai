@@ -6,6 +6,7 @@ import os
 import codecs
 import json
 from easyai.config.utility.base_config import BaseConfig
+from easyai.utility.logger import EasyLogger
 
 
 class ImageTaskConfig(BaseConfig):
@@ -31,11 +32,12 @@ class ImageTaskConfig(BaseConfig):
         if os.path.exists(self.config_path):
             with codecs.open(self.config_path, 'r', encoding='utf-8') as f:
                 config_dict = json.load(f)
+            EasyLogger.info(config_dict)
             self.load_data_value(config_dict)
             self.load_test_value(config_dict)
             self.load_train_value(config_dict)
         else:
-            print("{} not exits".format(self.config_path))
+            EasyLogger.info("{} not exits".format(self.config_path))
 
     def save_config(self):
         if not os.path.exists(self.config_save_dir):

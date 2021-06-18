@@ -10,6 +10,7 @@ from easyai.tasks.gen_image.generate_image_result_process import GenerateImageRe
 from easyai.helper.image_process import ImageProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.GenerateImage)
@@ -76,6 +77,8 @@ class GenerateImage(BaseInference):
             output = self.model.g_loss_list[0](output_list[0])
         elif loss_count == 1 and output_count > 1:
             output = self.model.g_loss_list[0](output_list)
+        else:
+            EasyLogger.error("compute output error!")
         if output is not None:
             prediction = np.squeeze(output.data.cpu().numpy())
         return prediction

@@ -8,6 +8,7 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.cls.classify_result_process import ClassifyResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Classify_Task)
@@ -27,7 +28,7 @@ class Classify(BaseInference):
             self.timer.tic()
             prediction, _ = self.infer(image)
             class_index, class_confidence = self.result_process.post_process(prediction)
-            print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
+            EasyLogger.info('Batch %d Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image,
                                              class_index[0].cpu().numpy(),

@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 from easyai.data_loader.utility.base_classify_sample import BaseClassifySample
+from easyai.utility.logger import EasyLogger
 
 
 class ClassifySample(BaseClassifySample):
@@ -14,11 +15,19 @@ class ClassifySample(BaseClassifySample):
         self.sample_count = 0
 
     def read_sample(self, flag):
-        if flag == 0:
-            self.data_and_label_list = self.get_image_and_label_list(self.train_path)
-        elif flag == 1:
-            self.data_and_label_list = self.get_pointcloud_and_label_list(self.train_path)
-        self.sample_count = self.get_sample_count()
+        try:
+            if flag == 0:
+                self.data_and_label_list = self.get_image_and_label_list(self.train_path)
+            elif flag == 1:
+                self.data_and_label_list = self.get_pointcloud_and_label_list(self.train_path)
+            self.sample_count = self.get_sample_count()
+            EasyLogger.warn("%s sample count: %d" % (self.train_path,
+                                                     self.sample_count))
+            assert self.sample_count > 0
+        except ValueError as err:
+            EasyLogger.error(err)
+        except TypeError as err:
+            EasyLogger.error(err)
 
     def get_sample_path(self, index):
         temp_index = index % self.sample_count

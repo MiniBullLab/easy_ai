@@ -9,6 +9,7 @@ from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
+from easyai.utility.logger import EasyLogger
 
 
 class BaseTest(BaseTask):
@@ -42,13 +43,16 @@ class BaseTest(BaseTask):
         self.epoch_loss_average.reset()
         self.model.eval()
         self.timer.tic()
+        EasyLogger.warn("image count is : %d" % self.total_batch_image)
         assert self.total_batch_image > 0
 
     def metirc_loss(self, step, loss_value):
         self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                loss_value,
-                                                                self.timer.toc(True)))
+        info_str = "Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
+                                                                     loss_value,
+                                                                     self.timer.toc(True))
+        EasyLogger.info(info_str)
+        print(info_str)
 
     @abc.abstractmethod
     def load_weights(self, weights_path):

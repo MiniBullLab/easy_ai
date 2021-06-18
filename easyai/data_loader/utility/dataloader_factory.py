@@ -7,6 +7,7 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_CO
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_TRAIN_DATALOADER
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_VAL_DATALOADER
 from easyai.utility.registry import build_from_cfg
+from easyai.utility.logger import EasyLogger
 
 
 class DataloaderFactory():
@@ -16,6 +17,9 @@ class DataloaderFactory():
 
     def get_train_dataloader(self, train_path, dataloader_config, dataset_config):
         result = None
+        EasyLogger.debug(train_path)
+        EasyLogger.debug(dataloader_config)
+        EasyLogger.debug(dataset_config)
         try:
             if dataset_config is not None:
                 type_name = dataset_config['type'].strip()
@@ -29,10 +33,9 @@ class DataloaderFactory():
                         config_args['dataset'] = dataset
                         result = build_from_cfg(config_args, REGISTERED_TRAIN_DATALOADER)
                     else:
-                        print("%s dataloader not exits" % type_name)
-
+                        EasyLogger.error("%s dataloader not exits" % type_name)
                 else:
-                    print("%s dataset not exits" % type_name)
+                    EasyLogger.error("%s dataset not exits" % type_name)
             else:
                 type_name = dataloader_config['type'].strip()
                 config_args = dataloader_config.copy()
@@ -40,15 +43,18 @@ class DataloaderFactory():
                 if REGISTERED_TRAIN_DATALOADER.has_class(type_name):
                     result = build_from_cfg(config_args, REGISTERED_TRAIN_DATALOADER)
                 else:
-                    print("%s dataloader not exits" % type_name)
+                    EasyLogger.error("%s dataloader not exits" % type_name)
         except ValueError as err:
-            print("Error:", err)
+            EasyLogger.error(err)
         except TypeError as err:
-            print("Error:", err)
+            EasyLogger.error(err)
         return result
 
     def get_val_dataloader(self, val_path, dataloader_config, dataset_config):
         result = None
+        EasyLogger.debug(val_path)
+        EasyLogger.debug(dataloader_config)
+        EasyLogger.debug(dataset_config)
         try:
             if dataset_config is not None and len(dataset_config) > 0:
                 type_name = dataset_config['type'].strip()
@@ -62,10 +68,9 @@ class DataloaderFactory():
                         config_args['dataset'] = dataset
                         result = build_from_cfg(config_args, REGISTERED_VAL_DATALOADER)
                     else:
-                        print("%s dataloader not exits" % type_name)
-
+                        EasyLogger.error("%s dataloader not exits" % type_name)
                 else:
-                    print("%s dataset not exits" % type_name)
+                    EasyLogger.error("%s dataset not exits" % type_name)
             else:
                 type_name = dataloader_config['type'].strip()
                 config_args = dataloader_config.copy()
@@ -73,11 +78,11 @@ class DataloaderFactory():
                 if REGISTERED_VAL_DATALOADER.has_class(type_name):
                     result = build_from_cfg(config_args, REGISTERED_VAL_DATALOADER)
                 else:
-                    print("%s dataloader not exits" % type_name)
+                    EasyLogger.error("%s dataloader not exits" % type_name)
         except ValueError as err:
-            print("Error:", err)
+            EasyLogger.error(err)
         except TypeError as err:
-            print("Error:", err)
+            EasyLogger.error(err)
         return result
 
     def get_collate_fn(self, dataloader_config):
@@ -91,10 +96,10 @@ class DataloaderFactory():
                                                 REGISTERED_DATASET_COLLATE)
                     config_args['collate_fn'] = collate_fn
                 else:
-                    print("%s collate_fn not exits" % type_name)
+                    EasyLogger.error("%s collate_fn not exits" % type_name)
                     config_args.pop('collate_fn')
         except ValueError as err:
-            print("Error:", err)
+            EasyLogger.error(err)
         except TypeError as err:
-            print("Error:", err)
+            EasyLogger.error(err)
         return config_args

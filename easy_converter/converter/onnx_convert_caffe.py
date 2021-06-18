@@ -1,40 +1,17 @@
-import os
-from optparse import OptionParser
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
 import pathlib
 import caffe
 import onnx
 from caffe.proto import caffe_pb2
-from easy_converter.converter.onnx2caffe.transformers import ConvAddFuser,ConstantsToInitializers
-from easy_converter.converter.onnx2caffe.graph import Graph
-import easy_converter.converter.onnx2caffe.operators as cvt
-import easy_converter.converter.onnx2caffe.weightloader as wlr
-from easy_converter.converter.onnx2caffe.error_utils import ErrorHandling
+from easy_converter.caffe_process.onnx2caffe import ConvAddFuser,ConstantsToInitializers
+from easy_converter.caffe_process.onnx2caffe import Graph
+import easy_converter.caffe_process.onnx2caffe.operators as cvt
+import easy_converter.caffe_process.onnx2caffe.weightloader as wlr
+from easy_converter.caffe_process.onnx2caffe.error_utils import ErrorHandling
 from onnx import shape_inference
-
-
-def parse_arguments():
-    parser = OptionParser()
-    parser.description = "This program is onnx convert to caffe"
-
-    parser.add_option("-i", "--input", dest="input_path",
-                      metavar="PATH", type="string", default=None,
-                      help="onnx path")
-
-    parser.add_option("-p", "--proto", dest="proto_path",
-                      metavar="PATH", type="string", default=None,
-                      help="prototxt path")
-
-    (options, args) = parser.parse_args()
-
-    if options.input_path:
-        if not os.path.exists(options.input_path):
-            parser.error("Could not find the input file")
-        else:
-            options.input_path = os.path.normpath(options.input_path)
-    else:
-        parser.error("'input' option is required to run this program")
-
-    return options
 
 
 class OnnxConvertCaffe():
@@ -162,20 +139,3 @@ class OnnxConvertCaffe():
             for out in outs:
                 exist_edges.append(out)
         return layers
-
-
-def main():
-    print("process start...")
-    options = parse_arguments()
-    converter = OnnxConvertCaffe(options.input_path)
-    if options.proto_path is None:
-        converter.convert_caffe()
-    elif os.path.exists(options.proto_path):
-        converter.convert_weights(options.proto_path)
-    else:
-        print("input error")
-    print("process end!")
-
-
-if __name__ == "__main__":
-    main()

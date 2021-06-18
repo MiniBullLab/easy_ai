@@ -5,7 +5,8 @@
 import os
 import inspect
 from optparse import OptionParser
-from easy_tools.easyai_train import EasyAiModelTrain
+from easy_tools.model_train.ai_train import EasyAiModelTrain
+from easyai.utility.logger import EasyLogger
 
 
 def parse_arguments():
@@ -28,11 +29,9 @@ def parse_arguments():
                       metavar="PATH", type="string", default="./val.txt",
                       help="path to data config file")
 
-    parser.add_option("-c", "--config", dest="config_path",
-                      metavar="PATH", type="string", default=None,
-                      help="config path")
-
     (options, args) = parser.parse_args()
+
+    EasyLogger.debug(options)
 
     # if options.trainPath:
     #     if not os.path.exists(options.trainPath):
@@ -46,11 +45,11 @@ def parse_arguments():
 
 
 def train_main():
-    print("process start...")
+    EasyLogger.info("process start...")
     options = parse_arguments()
     current_path = inspect.getfile(inspect.currentframe())
     dir_name = os.path.dirname(current_path)
-    train_process = EasyAiModelTrain(options.trainPath, options.valPath, options.gpu_id, options.config_path)
+    train_process = EasyAiModelTrain(options.trainPath, options.valPath, options.gpu_id)
 
     if options.task_name.strip() == "NG_OK":
         train_process.binary_classidy_model_train(dir_name)
@@ -61,9 +60,11 @@ def train_main():
     elif options.task_name.strip() == "SegNET":
         train_process.segment_model_train(dir_name)
     else:
-        print("input task error!")
-    print("process end!")
+        EasyLogger.info("input task error!")
+    EasyLogger.info("process end!")
 
 
 if __name__ == "__main__":
+    log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path)
     train_main()

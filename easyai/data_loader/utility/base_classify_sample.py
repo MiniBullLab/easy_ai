@@ -4,6 +4,7 @@
 
 import os.path
 from easyai.data_loader.utility.base_sample import BaseSample
+from easyai.utility.logger import EasyLogger
 
 
 class BaseClassifySample(BaseSample):
@@ -23,9 +24,9 @@ class BaseClassifySample(BaseSample):
                 if os.path.exists(image_path):
                     result.append((image_path, int(data_list[1])))
                 else:
-                    print("%s not exist" % image_path)
+                    EasyLogger.error("%s not exist" % image_path)
             else:
-                print("% error" % line_data)
+                EasyLogger.error("% error" % line_data)
         return result
 
     def get_pointcloud_and_label_list(self, train_path):
@@ -40,7 +41,7 @@ class BaseClassifySample(BaseSample):
                 if os.path.exists(pcd_path):
                     result.append((pcd_path, int(data_list[1])))
                 else:
-                    print("%s not exist" % pcd_path)
+                    EasyLogger.error("%s not exist" % pcd_path)
             else:
-                print("% error" % line_data)
+                EasyLogger.error("% error" % line_data)
         return result

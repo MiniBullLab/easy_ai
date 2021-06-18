@@ -4,7 +4,7 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from easy_tools.accuracy_test.pc_arm_window import PCAndArmTestWindow
+from easy_tools.model_test.pc_arm_window import PCAndArmTestWindow
 
 
 def main():

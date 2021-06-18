@@ -7,6 +7,7 @@ from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.cls.classify_test import ClassifyTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Classify_Task)
@@ -39,9 +40,8 @@ class ClassifyTrain(CommonTrain):
                 self.train_logger.epoch_train_loss_log(epoch)
                 save_model_path = self.save_train_model(epoch)
                 self.test(val_path, epoch, save_model_path)
-        except Exception as e:
-            print(e)
-            raise e
+        except RuntimeError as e:
+            EasyLogger.error(e)
         finally:
             self.train_logger.close()
 
@@ -90,7 +90,7 @@ class ClassifyTrain(CommonTrain):
                 for key, value in temp_info.items():
                     loss_info[key] += value
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         return loss, loss_info
 
     def test(self, val_path, epoch, save_model_path):
@@ -104,4 +104,4 @@ class ClassifyTrain(CommonTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.info("no test!")

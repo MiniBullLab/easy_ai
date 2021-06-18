@@ -5,7 +5,7 @@
 import cv2
 from easyai.name_manager.task_name import TaskName
 from easyai.visualization.utility.base_show import BaseShow
-from easyai.visualization.utility.registry import REGISTERED_TASK_SHOW
+from easyai.visualization.utility.show_registry import REGISTERED_TASK_SHOW
 
 
 @REGISTERED_TASK_SHOW.register_module(TaskName.Det2d_Seg_Task)

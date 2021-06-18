@@ -19,7 +19,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.character_count = 0
         self.save_result_name = None
         # test
-        self.save_result_dir = os.path.join(self.ROOT_DIR, 'rec_text_results')
+        self.save_result_dir = os.path.join(self.root_save_dir, 'rec_text_results')
 
         self.config_path = os.path.join(self.config_save_dir, "rec_text_config.json")
 
@@ -62,7 +62,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.post_process = {'type': 'CTCPostProcess'}
 
         self.save_result_name = "rec_text_result.txt"
-        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_name)
+        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
     def get_test_default_value(self):
         self.val_data = {'dataset': {},

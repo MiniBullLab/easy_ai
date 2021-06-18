@@ -1,27 +1,11 @@
-import os
-from optparse import OptionParser
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
 import pathlib
 import onnx
-import onnxmltools
 from keras2onnx import convert_keras
 from keras import models
-
-
-def parse_arguments():
-    parser = OptionParser()
-    parser.description = "This program is keras convert to onnx"
-
-    parser.add_option("-i", "--h5", dest="h5_path",
-                      metavar="PATH", type="string", default=None,
-                      help="keras h5 model path")
-
-    parser.add_option("-m", "--model", dest="model_name",
-                      type="string", default=None,
-                      help="keras model name")
-
-    (options, args) = parser.parse_args()
-
-    return options
 
 
 class KerasConvertOnnx():
@@ -40,15 +24,4 @@ class KerasConvertOnnx():
                                    channel_first_inputs=['net_input'])
         onnx.save_model(onnx_model, str(self.onnx_save_path))
 
-
-def main():
-    print("process start...")
-    options = parse_arguments()
-    converter = KerasConvertOnnx(options.h5_path)
-    converter.convert_onnx_from_h5(options.model_name)
-    print("process end!")
-
-
-if __name__ == "__main__":
-    main()
 

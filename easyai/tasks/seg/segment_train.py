@@ -8,6 +8,7 @@ from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.tasks.seg.segment_test import SegmentionTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Segment_Task)
@@ -20,7 +21,7 @@ class SegmentionTrain(CommonTrain):
         self.set_model(gpu_id=gpu_id)
         self.output_process = SegmentResultProcess(self.train_task_config.data['image_size'],
                                                    self.train_task_config.data['resize_type'],
-                                                   self.train_task_config.post_prcoess)
+                                                   self.train_task_config.post_process)
 
         self.segment_test = SegmentionTest(model_name, gpu_id, self.train_task_config)
 
@@ -91,7 +92,7 @@ class SegmentionTrain(CommonTrain):
                 for key, value in temp_info.items():
                     loss_info[key] += value
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         return loss, loss_info
 
     def test(self, val_path, epoch, save_model_path):
@@ -105,5 +106,6 @@ class SegmentionTrain(CommonTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.info("no test!")
+
 

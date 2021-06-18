@@ -4,7 +4,7 @@
 
 from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_GAN_G_LOSS
 
 
 @REGISTERED_GAN_G_LOSS.register_module(LossName.MNISTGeneratorLoss)

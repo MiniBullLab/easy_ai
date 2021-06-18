@@ -5,6 +5,7 @@
 import os.path
 import numpy as np
 from easyai.data_loader.utility.base_detection_sample import BaseDetectionSample
+from easyai.utility.logger import EasyLogger
 
 
 class DetectionSample(BaseDetectionSample):
@@ -24,12 +25,20 @@ class DetectionSample(BaseDetectionSample):
         self.balanced_file_index = np.zeros(len(self.class_name))
 
     def read_sample(self):
-        if self.is_blance:
-            self.balanced_files, self.balance_file_count = \
-                self.get_blance_file_list(self.train_path, self.class_name)
-        else:
-            self.image_and_label_list = self.get_image_and_label_list(self.train_path)
-        self.sample_count = self.get_sample_count()
+        try:
+            if self.is_blance:
+                self.balanced_files, self.balance_file_count = \
+                    self.get_blance_file_list(self.train_path, self.class_name)
+            else:
+                self.image_and_label_list = self.get_image_and_label_list(self.train_path)
+            self.sample_count = self.get_sample_count()
+            EasyLogger.warn("%s sample count: %d" % (self.train_path,
+                                                     self.sample_count))
+            assert self.sample_count > 0
+        except ValueError as err:
+            EasyLogger.error(err)
+        except TypeError as err:
+            EasyLogger.error(err)
 
     def get_sample_boxes(self, label_path):
         result = []

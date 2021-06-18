@@ -3,15 +3,16 @@
 # Author:lipeijie
 
 from easyai.name_manager.loss_name import LossName
-from easyai.loss.utility.registry import REGISTERED_COMMON_LOSS
-from easyai.loss.utility.registry import REGISTERED_CLS_LOSS
-from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
-from easyai.loss.utility.registry import REGISTERED_SEG_LOSS
-from easyai.loss.utility.registry import REGISTERED_GAN_D_LOSS
-from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
-from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
-from easyai.loss.utility.registry import REGISTERED_RNN_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_COMMON_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_CLS_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_DET2D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_SEG_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_GAN_D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_GAN_G_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_KEYPOINT2D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_RNN_LOSS
 from easyai.utility.registry import build_from_cfg
+from easyai.utility.logger import EasyLogger
 
 
 class LossFactory():
@@ -22,6 +23,7 @@ class LossFactory():
     def get_loss(self, loss_config):
         input_name = loss_config['type'].strip()
         loss_args = loss_config.copy()
+        EasyLogger.debug(loss_args)
         if REGISTERED_COMMON_LOSS.has_class(input_name):
             result = self.get_common_loss(loss_args)
         elif REGISTERED_CLS_LOSS.has_class(input_name):

@@ -56,7 +56,8 @@ class LandmarkConfig(CommonTrainConfig):
                      'std': (0.017, )}
 
         self.save_result_name = "landmark_result.txt"
-        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_name)
+        self.save_result_path = os.path.join(self.root_save_dir,
+                                             self.save_result_name)
 
         self.pose_class = ('face',)
         self.points_count = 68

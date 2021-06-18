@@ -17,7 +17,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.seg_label_type = None
         self.segment_class = None
         self.save_result_dir_name = "segment_results"
-        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_dir_name)
+        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_dir_name)
 
         self.config_path = os.path.join(self.config_save_dir, "segmention_config.json")
 

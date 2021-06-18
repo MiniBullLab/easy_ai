@@ -4,6 +4,7 @@
 
 import os.path
 from easyai.data_loader.utility.base_sample import BaseSample
+from easyai.utility.logger import EasyLogger
 
 
 class BaseDetectionSample(BaseSample):
@@ -27,5 +28,5 @@ class BaseDetectionSample(BaseSample):
                     os.path.exists(image_path):
                 result.append((image_path, annotation_path))
             else:
-                print("%s or %s not exist" % (annotation_path, image_path))
+                EasyLogger.error("%s or %s not exist" % (annotation_path, image_path))
         return result

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easy_converter.converter.tensorrt_utility import trt_helper
-from easy_converter.converter.tensorrt_utility import trt_int8_calibration_helper as int8_helper
+from easy_converter.arm_process.tensorrt_utility import trt_helper, trt_int8_calibration_helper as int8_helper
 import time
 import numpy as np
 

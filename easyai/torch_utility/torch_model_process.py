@@ -8,6 +8,7 @@ import torch
 from collections import OrderedDict
 from easyai.torch_utility.torch_device_process import TorchDeviceProcess
 from easyai.model.utility.model_factory import ModelFactory, ModelWeightInit
+from easyai.utility.logger import EasyLogger
 
 
 class TorchModelProcess():
@@ -34,7 +35,7 @@ class TorchModelProcess():
     def load_pretain_model(self, weight_path, model):
         if weight_path is not None:
             if os.path.exists(weight_path):
-                print("Loading pretainModel from {}".format(weight_path))
+                EasyLogger.debug("Loading pretainModel from {}".format(weight_path))
                 model_dict = model.state_dict()
                 checkpoint = torch.load(weight_path)
                 pretrained_dict = checkpoint['model']
@@ -49,7 +50,7 @@ class TorchModelProcess():
                 model_dict.update(new_pretrained_dict)
                 model.load_state_dict(model_dict)
             else:
-                print("pretain model %s not exist" % weight_path)
+                EasyLogger.error("pretain model %s not exist" % weight_path)
 
     def load_latest_model(self, weight_path, model, dict_name="model"):
         count = self.torchDeviceProcess.getCUDACount()
@@ -66,9 +67,9 @@ class TorchModelProcess():
             except Exception as err:
                 os.remove(weight_path)
                 checkpoint = None
-                print(err)
+                EasyLogger.error(err)
         else:
-            print("Loading model %s fail" % weight_path)
+            EasyLogger.error("Loading model %s fail" % weight_path)
         result = self.get_latest_model_value(checkpoint)
         return result
 
@@ -111,7 +112,7 @@ class TorchModelProcess():
                 os.remove(optimizer_path)
                 print(err)
         else:
-            print("Loading optimizer %s fail" % optimizer_path)
+            EasyLogger.error("Loading optimizer %s fail" % optimizer_path)
 
     def save_optimizer_state(self, optimizer_save_path,
                              epoch, optimizer, amp_opt=None):
@@ -131,7 +132,7 @@ class TorchModelProcess():
                     index = int(str_list[1])
                     optimizer_list[index].load_state_dict(checkpoint[optimizer_name])
         else:
-            print("Loading optimizer %s fail" % optimizer_path)
+            EasyLogger.error("Loading optimizer %s fail" % optimizer_path)
 
     def save_list_optimizer_state(self, optimizer_save_path,
                                   epoch, optimizer_list):
@@ -146,7 +147,7 @@ class TorchModelProcess():
     def model_train_init(self, model):
         count = self.torchDeviceProcess.getCUDACount()
         if count > 1 and self.is_multi_gpu:
-            print('Using ', count, ' GPUs')
+            EasyLogger.debug('Using %d GPUs' % count)
             model = torch.nn.DataParallel(model)
         model = model.to(self.torchDeviceProcess.device)
         return model

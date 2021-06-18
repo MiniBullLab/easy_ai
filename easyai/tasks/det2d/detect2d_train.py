@@ -7,6 +7,7 @@ from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.det2d.detect2d_test import Detection2dTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Detect2d_Task)
@@ -87,7 +88,7 @@ class Detection2dTrain(CommonTrain):
                 for key, value in temp_info.items():
                     loss_info[key] += value
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         return loss, loss_info
 
     def test(self, val_path, epoch, save_model_path):
@@ -98,4 +99,4 @@ class Detection2dTrain(CommonTrain):
             self.best_score = self.torchModelProcess.save_best_model(mAP, save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.info("no test!")

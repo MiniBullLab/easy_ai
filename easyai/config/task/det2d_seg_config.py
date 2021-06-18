@@ -76,8 +76,8 @@ class Det2dSegConfig(Detect2dConfig):
         self.val_data['dataloader']['drop_last'] = False
 
         self.evaluation_result_name = 'det2d_seg_evaluation.txt'
-        self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
-        self.save_result_dir = os.path.join(self.ROOT_DIR, 'det2d_seg_results')
+        self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
+        self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_seg_results')
 
     def get_train_default_value(self):
         self.train_data = {'dataloader': {}}

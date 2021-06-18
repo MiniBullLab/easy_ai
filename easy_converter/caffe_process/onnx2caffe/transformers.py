@@ -7,7 +7,7 @@ from typing import Sequence, Text, Dict, List
 import numpy as np
 
 from onnx import TensorProto
-from easy_converter.converter.onnx2caffe.graph import Graph, Node
+from easy_converter.caffe_process.onnx2caffe.graph import Graph, Node
 
 
 class NodesFuser(object):

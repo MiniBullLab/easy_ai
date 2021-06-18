@@ -10,7 +10,7 @@ from easyai.loss.det2d.utility.select_positive_negative_sampler import SelectPos
 from easyai.loss.det2d.utility.box_coder import BoxCoder
 from easyai.loss.det2d.utility.rpn_postprocess import RPNPostProcessor
 from easyai.loss.utility.box2d_process import torch_corners_box2d_ious
-from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_DET2D_LOSS
 
 
 @REGISTERED_DET2D_LOSS.register_module(LossName.RPNLoss)

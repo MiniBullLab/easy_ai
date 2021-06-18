@@ -7,7 +7,7 @@ from easyai.evaluation.classify_accuracy import ClassifyAccuracy
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.name_manager.task_name import TaskName
-from easyai.tools.utility.registry import REGISTERED_OFFLINE_EVALUATION
+from easyai.tools.utility.tools_registry import REGISTERED_OFFLINE_EVALUATION
 
 
 @REGISTERED_OFFLINE_EVALUATION.register_module(TaskName.Classify_Task)

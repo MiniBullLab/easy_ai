@@ -5,6 +5,7 @@
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 from easyai.utility.registry import build_from_cfg
 from easyai.helper.arguments_parse import TaskArgumentsParse
+from easyai.utility.logger import EasyLogger
 
 
 class TrainTask():
@@ -24,14 +25,19 @@ class TrainTask():
                      'model_name': model_name,
                      'gpu_id': gpu_id,
                      'config_path': config_path}
+        EasyLogger.debug(task_args)
+        EasyLogger.debug(pretrain_model_path)
         if self.task_name is not None and \
                 REGISTERED_TRAIN_TASK.has_class(self.task_name):
-            task = build_from_cfg(task_args, REGISTERED_TRAIN_TASK)
-            task.load_pretrain_model(pretrain_model_path)
-            task.train(self.train_path, self.val_path)
-            self.image_model_convert(task, task.model_args)
+            try:
+                task = build_from_cfg(task_args, REGISTERED_TRAIN_TASK)
+                task.load_pretrain_model(pretrain_model_path)
+                task.train(self.train_path, self.val_path)
+                self.image_model_convert(task, task.model_args)
+            except Exception as err:
+                EasyLogger.error(err)
         else:
-            print("This task(%s) not exits!" % self.task_name)
+            EasyLogger.info("This task(%s) not exits!" % self.task_name)
 
     def set_convert_param(self, is_convert, input_names, output_names):
         self.is_convert = is_convert
@@ -41,6 +47,7 @@ class TrainTask():
     def image_model_convert(self, train_task, model_args):
         if self.is_convert:
             from easyai.tools.model_tool.model_to_onnx import ModelConverter
+            EasyLogger.debug(train_task.train_task_config.data)
             converter = ModelConverter(train_task.train_task_config.data['image_size'])
             self.save_onnx_path = converter.convert_process(model_args,
                                                             train_task.train_task_config.best_weights_path,
@@ -50,12 +57,16 @@ class TrainTask():
 
 
 def main():
-    print("process start...")
+    EasyLogger.info("process start...")
     options = TaskArgumentsParse.train_input_parse()
     train_task = TrainTask(options.task_name, options.trainPath, options.valPath)
     train_task.train(options.model, 0, options.config_path, options.pretrainModel)
-    print("process end!")
+    EasyLogger.info("process end!")
 
 
 if __name__ == '__main__':
+    log_file_path = EasyLogger.get_log_file_path("train.log")
+    EasyLogger.init(logfile_level="debug",
+                    log_file=log_file_path,
+                    stdout_level=None)
     main()

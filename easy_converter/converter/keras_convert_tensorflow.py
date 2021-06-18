@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
@@ -63,8 +63,6 @@ class KerasConvertTensorflow():
         self.output_model = str(temp_output_path)
         self.input_model = h5_model_path
         self.input_model_name = model_name
-
-        self.keras_model_factory = KerasModelFactory()
 
     def keras_convert_tensorflow(self):
         # If output_model path is relative and in cwd, make it absolute from root

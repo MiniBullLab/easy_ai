@@ -105,7 +105,7 @@ class ImageDrawing():
     def draw_ocr_result(self, src_image, result):
         random.seed(0)
         current_path = inspect.getfile(inspect.currentframe())
-        dir_name = os.path.join(os.path.dirname(current_path), "../utility")
+        dir_name = os.path.join(os.path.dirname(current_path), "../../config/fonts")
         font_file = os.path.join(dir_name, "chinese_cht.ttf")
         if isinstance(src_image, np.ndarray):
             src_image = Image.fromarray(src_image)

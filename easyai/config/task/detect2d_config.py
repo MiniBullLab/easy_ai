@@ -17,7 +17,7 @@ class Detect2dConfig(CommonTrainConfig):
         self.detect2d_class = None
         self.save_result_name = None
         # test
-        self.save_result_dir = os.path.join(self.ROOT_DIR, 'det2d_results')
+        self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_results')
 
         self.config_path = os.path.join(self.config_save_dir, "detection2d_config.json")
 
@@ -57,7 +57,7 @@ class Detect2dConfig(CommonTrainConfig):
                              'nms_threshold': 0.45}
 
         self.save_result_name = "det2d_result.txt"
-        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_name)
+        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
@@ -73,7 +73,7 @@ class Detect2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
 
         self.evaluation_result_name = 'det2d_evaluation.txt'
-        self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
+        self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
         self.train_data = {'dataloader': {}}

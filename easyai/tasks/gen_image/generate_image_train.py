@@ -7,6 +7,7 @@ from easyai.tasks.utility.gan_train import GanTrain
 from easyai.tasks.gen_image.generate_image import GenerateImage
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.GenerateImage)
@@ -103,7 +104,7 @@ class GenerateImageTrain(GanTrain):
                 result = self.model.g_loss_list[k](output_list[k], targets)
                 loss.append(result)
         else:
-            print("compute generator loss error")
+            EasyLogger.error("compute generator loss error")
         return loss
 
     def compute_d_loss(self, output_list, targets):
@@ -121,7 +122,7 @@ class GenerateImageTrain(GanTrain):
                 result = self.model.d_loss_list[k](output_list[k], targets)
                 loss.append(result)
         else:
-            print("compute discriminator loss error")
+            EasyLogger.error("compute discriminator loss error")
         return loss
 
     def update_logger(self, index, total, epoch, loss_values):

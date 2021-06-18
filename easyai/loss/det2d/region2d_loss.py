@@ -7,7 +7,7 @@ from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.base_yolo_loss import BaseYoloLoss
 from easyai.loss.utility.box2d_process import torch_rect_box_ious
 import math
-from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_DET2D_LOSS
 
 __all__ = ['Region2dLoss']
 

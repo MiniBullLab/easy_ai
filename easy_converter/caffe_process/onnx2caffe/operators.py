@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from caffe import params as P
 import math
-from easy_converter.converter.onnx2caffe.my_caffe import Function as myf
+from easy_converter.caffe_process.onnx2caffe.my_caffe import Function as myf
 
 
 def _compare(a, b, encoding="utf8"): #type: (Text, Text, Text) -> bool

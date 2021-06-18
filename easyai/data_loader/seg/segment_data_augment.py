@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
 from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess

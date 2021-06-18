@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import inspect
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from easy_tools.train_gui.process_status import ProcessStatus
-from easyai.tools.sample_tool.sample_info_get import DetectionSampleProcess
+from easy_tools.model_train.process_status import ProcessStatus
+from easyai.name_manager.task_name import TaskName
+from easyai.tools.sample_tool.sample_info_get import SampleInformation
 
 
 class Detection2dTrainWindow(QWidget):
@@ -23,7 +24,7 @@ class Detection2dTrainWindow(QWidget):
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.dirname(current_path)
         self.cmd_str = os.path.join(dir_name, "../train_scripts/DeNET_tool.sh")
-        self.sample_process = DetectionSampleProcess()
+        self.sample_process = SampleInformation()
 
     def closeEvent(self, event):
         if self.is_status == ProcessStatus.UNKNOW:
@@ -63,7 +64,8 @@ class Detection2dTrainWindow(QWidget):
             return
 
     def obtain_class(self, pressed):
-        class_names = self.sample_process.create_class_names(self.train_data_txt.text())
+        class_names = self.sample_process.create_class_names(self.train_data_txt.text(),
+                                                             TaskName.Detect2d_Task)
         if len(class_names) > 0:
             str_name = ",".join(class_names)
             self.class_data_txt.setText(str_name)

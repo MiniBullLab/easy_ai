@@ -4,14 +4,14 @@
 
 import os
 import abc
+from easyai.utility.logger import EasyLogger
 
 
 class BaseConfig():
 
-    ROOT_DIR = "./.easy_log"
-
     def __init__(self, task_name):
         self.task_name = task_name
+        self.root_save_dir = EasyLogger.ROOT_DIR
         self.model_save_dir_name = None
         self.snapshot_dir = None
         self.config_save_dir_name = None
@@ -38,11 +38,11 @@ class BaseConfig():
         self.model_save_dir_name = "snapshot"
         self.config_save_dir_name = "config"
 
-        self.snapshot_dir = os.path.join(self.ROOT_DIR, self.model_save_dir_name)
+        self.snapshot_dir = os.path.join(self.root_save_dir, self.model_save_dir_name)
 
-        self.config_save_dir = os.path.join(self.ROOT_DIR, self.config_save_dir_name)
+        self.config_save_dir = os.path.join(self.root_save_dir, self.config_save_dir_name)
 
-        self.log_save_path = os.path.join(self.ROOT_DIR, "%s.log" % self.log_name)
+        self.log_save_path = os.path.join(self.root_save_dir, "%s.log" % self.log_name)
 
-        if self.ROOT_DIR is not None and not os.path.exists(self.ROOT_DIR):
-            os.makedirs(self.ROOT_DIR, exist_ok=True)
+        if self.root_save_dir is not None and not os.path.exists(self.root_save_dir):
+            os.makedirs(self.root_save_dir, exist_ok=True)

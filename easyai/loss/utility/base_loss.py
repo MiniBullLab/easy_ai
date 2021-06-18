@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
+from easyai.utility.logger import EasyLogger
 
 
 class BaseLoss(nn.Module):
@@ -26,5 +27,5 @@ class BaseLoss(nn.Module):
         for key, value in self.loss_info.items():
             info_str += "%s: %.5f|" % (key, value)
         if info_str:
-            print('%s' % info_str)
+            EasyLogger.debug(info_str)
         return self.loss_info

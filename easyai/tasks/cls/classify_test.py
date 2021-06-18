@@ -8,6 +8,7 @@ from easyai.tasks.cls.classify import Classify
 from easyai.evaluation.classify_accuracy import ClassifyAccuracy
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Classify_Task)
@@ -35,7 +36,8 @@ class ClassifyTest(BaseTest):
             self.metirc_loss(index, loss_value)
         top1 = self.evaluation.get_top1()
         self.save_test_value(epoch)
-        print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        EasyLogger.info("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        # print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return top1, self.epoch_loss_average.avg
 
     def compute_loss(self, output_list, targets):
@@ -52,7 +54,7 @@ class ClassifyTest(BaseTest):
                 for k in range(0, loss_count):
                     loss += self.model.lossList[k](output_list[k], targets)
             else:
-                print("compute loss error")
+                EasyLogger.error("compute loss error")
         return loss.item()
 
     def save_test_value(self, epoch):

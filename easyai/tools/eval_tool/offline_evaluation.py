@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.tools.utility.registry import REGISTERED_OFFLINE_EVALUATION
+from easyai.tools.utility.tools_registry import REGISTERED_OFFLINE_EVALUATION
 from easyai.utility.registry import build_from_cfg
 from easyai.name_manager.task_name import TaskName
 from easyai.inference_task import InferenceTask

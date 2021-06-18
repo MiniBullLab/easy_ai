@@ -9,7 +9,7 @@ from easyai.loss.common.wing_loss import WingLoss
 from easyai.loss.common.common_loss import GaussianNLLoss
 from easyai.loss.keypoint2d.mouth_eye_dis_loss import MouthEyeFrontDisLoss
 from easyai.loss.keypoint2d.mouth_eye_dis_loss import MouthEyeProfierDisLoss
-from easyai.loss.utility.registry import REGISTERED_KEYPOINT2D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_KEYPOINT2D_LOSS
 
 
 @REGISTERED_KEYPOINT2D_LOSS.register_module(LossName.FaceLandmarkLoss)

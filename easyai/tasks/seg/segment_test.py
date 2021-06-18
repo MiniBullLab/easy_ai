@@ -9,6 +9,7 @@ from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Segment_Task)
@@ -42,7 +43,7 @@ class SegmentionTest(BaseTest):
 
         score, class_score = self.metric.get_score()
         self.save_test_value(epoch, score, class_score)
-        print("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
+        EasyLogger.info("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
         return score['Mean IoU'], self.epoch_loss_average.avg
 
     def compute_loss(self, output_list, targets):
@@ -61,7 +62,7 @@ class SegmentionTest(BaseTest):
                     output, target = self.output_process.output_feature_map_resize(output_list[k], targets)
                     loss += self.model.lossList[k](output, target)
             else:
-                print("compute loss error")
+                EasyLogger.error("compute loss error")
         return loss.item()
 
     def save_test_value(self, epoch, score, class_score):

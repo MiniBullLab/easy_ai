@@ -8,7 +8,7 @@ from easyai.loss.utility.base_loss import *
 from easyai.loss.common.common_loss import l2_loss
 from easyai.torch_utility.torch_vision.torchvision_visualizer import TorchVisionVisualizer
 from easyai.config.utility.image_task_config import ImageTaskConfig
-from easyai.loss.utility.registry import REGISTERED_GAN_G_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_GAN_G_LOSS
 
 
 @REGISTERED_GAN_G_LOSS.register_module(LossName.GANomalyGeneratorLoss)

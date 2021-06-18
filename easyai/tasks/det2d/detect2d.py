@@ -8,6 +8,7 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.det2d.detect2d_result_process import Detect2dResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Detect2d_Task)
@@ -26,11 +27,10 @@ class Detection2d(BaseInference):
         os.system('rm -rf ' + self.task_config.save_result_path)
         dataloader = self.get_image_data_lodaer(input_path)
         for i, (file_path, src_image, img) in enumerate(dataloader):
-            print('%g/%g' % (i + 1, len(dataloader)), end=' ')
             self.timer.tic()
             self.set_src_size(src_image)
             result = self.single_image_process(self.src_size, img)
-            print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
+            EasyLogger.info('Batch %d Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image, result):
                     break
@@ -95,7 +95,7 @@ class Detection2d(BaseInference):
                 preds.append(temp)
             prediction = torch.cat(preds, 1)
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         if prediction is not None:
             prediction = prediction.squeeze(0)
         return prediction

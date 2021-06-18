@@ -14,6 +14,7 @@ from easyai.data_loader.det2d.det2d_data_augment import DetectionDataAugment
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
 from easyai.name_manager.dataloader_name import DataloaderName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_TRAIN_DATALOADER
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_DATALOADER.register_module(DataloaderName.Det2dTrainDataloader)
@@ -97,7 +98,7 @@ class Det2dTrainDataloader(DataLoader):
         class_index = None
         if self.balanced_sample:
             class_index = np.random.randint(0, len(self.detect2d_class))
-            print("loading labels {}".format(self.detect2d_class[class_index]))
+            EasyLogger.debug("loading labels {}".format(self.detect2d_class[class_index]))
         return class_index
 
     def get_image_size(self):

@@ -9,10 +9,11 @@ import torch
 from easyai.tasks.utility.base_train import BaseTrain
 from easyai.helper.average_meter import AverageMeter
 from easyai.tasks.utility.base_task import DelayedKeyboardInterrupt
+from easyai.utility.logger import EasyLogger
 try:
     from apex import amp
 except ImportError:
-    print("import amp fail!")
+    EasyLogger.error("import amp fail!")
 
 
 class CommonTrain(BaseTrain):
@@ -55,7 +56,7 @@ class CommonTrain(BaseTrain):
                 self.torchModelProcess.load_latest_optimizer(self.train_task_config.latest_optimizer_path,
                                                              self.optimizer)
         else:
-            print("model is not create!")
+            EasyLogger.error("model is not create!")
 
     def build_lr_scheduler(self):
         self.lr_factory.set_epoch_iteration(self.total_batch_image)
@@ -93,7 +94,7 @@ class CommonTrain(BaseTrain):
                 self.torchModelProcess.save_optimizer_state(self.train_task_config.latest_optimizer_path,
                                                             epoch, self.optimizer)
         else:
-            print("optimizer is not build!")
+            EasyLogger.error("optimizer is not build!")
 
     def start_train(self):
         self.model.train()
@@ -101,6 +102,7 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_layer_name,
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
+        EasyLogger.warn("image count is : %d" % self.total_batch_image)
         assert self.total_batch_image > 0
 
         for key in self.loss_info_average:
@@ -121,12 +123,14 @@ class CommonTrain(BaseTrain):
             self.loss_info_average[key].update(value)
             self.train_logger.add_scalar(key, self.loss_info_average[key].avg, step)
 
-        print('Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
-                                                                                        index,
-                                                                                        total,
-                                                                                        loss_value,
-                                                                                        lr,
-                                                                                        self.timer.toc(True)))
+        info_str = 'Epoch: {}[{}/{}]\t Loss: {:.7f}\t Rate: {:.7f} \t Time: {:.5f}\t'.format(epoch,
+                                                                                             index,
+                                                                                             total,
+                                                                                             loss_value,
+                                                                                             lr,
+                                                                                             self.timer.toc(True))
+        EasyLogger.info(info_str)
+        print(info_str)
 
     def save_train_model(self, epoch):
         with DelayedKeyboardInterrupt():

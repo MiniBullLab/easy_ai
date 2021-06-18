@@ -57,7 +57,7 @@ class ClassifyConfig(CommonTrainConfig):
                            'cls91', 'cls92', 'cls93', 'cls94', 'cls95', 'cls96', 'cls97', 'cls98', 'cls99', 'cls100',
                            )
         self.save_result_name = "classify_result.txt"
-        self.save_result_path = os.path.join(self.ROOT_DIR, self.save_result_name)
+        self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
         self.post_process = {'type': 'MaxPostProcess'}
 
@@ -75,7 +75,7 @@ class ClassifyConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
 
         self.evaluation_result_name = 'cls_evaluation.txt'
-        self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
+        self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
         self.train_data = {'dataset': {},

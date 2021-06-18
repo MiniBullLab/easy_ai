@@ -4,6 +4,7 @@
 
 from torch.utils.data import Dataset
 from easyai.helper.image_process import ImageProcess
+from easyai.utility.logger import EasyLogger
 
 
 class TorchDataLoader(Dataset):
@@ -17,13 +18,20 @@ class TorchDataLoader(Dataset):
     def read_src_image(self, image_path):
         src_image = None
         cv_image = None
-        if self.data_channel == 1:
-            src_image = self.image_process.read_gray_image(image_path)
-            cv_image = src_image[:]
-        elif self.data_channel == 3:
-            cv_image, src_image = self.image_process.readRgbImage(image_path)
+        if self.image_process.isImageFile(image_path):
+            if self.data_channel == 1:
+                src_image = self.image_process.read_gray_image(image_path)
+                if src_image is not None:
+                    cv_image = src_image[:]
+            elif self.data_channel == 3:
+                cv_image, src_image = self.image_process.readRgbImage(image_path)
+            else:
+                EasyLogger.error("read src image error!")
+            if src_image is None:
+                EasyLogger.error("read %s error!" % image_path)
         else:
-            print("dataloader src image error!")
+            EasyLogger.error("%s not image" % image_path)
+        assert src_image is not None
         return cv_image, src_image
 
     def get_pad_color(self):
@@ -32,5 +40,7 @@ class TorchDataLoader(Dataset):
             result = 0
         elif self.data_channel == 3:
             result = (0, 0, 0)
+        else:
+            EasyLogger.error("data channel(%d) not support!" % self.data_channel)
         return result
 

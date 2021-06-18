@@ -5,6 +5,7 @@
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.registry import build_from_cfg
 from easyai.helper.arguments_parse import TaskArgumentsParse
+from easyai.utility.logger import EasyLogger
 
 
 class TestTask():
@@ -18,22 +19,29 @@ class TestTask():
                      'model_name': model_name,
                      'gpu_id': gpu_id,
                      'config_path': config_path}
+        EasyLogger.debug(task_args)
+        EasyLogger.debug(weight_path)
         if self.task_name is not None and \
                 REGISTERED_TEST_TASK.has_class(self.task_name):
-            task = build_from_cfg(task_args, REGISTERED_TEST_TASK)
-            task.load_weights(weight_path)
-            task.test(self.val_path)
+            try:
+                task = build_from_cfg(task_args, REGISTERED_TEST_TASK)
+                task.load_weights(weight_path)
+                task.test(self.val_path)
+            except Exception as err:
+                EasyLogger.error(err)
         else:
-            print("This task(%s) not exits!" % self.task_name)
+            EasyLogger.info("This task(%s) not exits!" % self.task_name)
 
 
 def main():
-    print("process start...")
+    EasyLogger.info("process start...")
     options = TaskArgumentsParse.test_input_parse()
     test_task = TestTask(options.task_name, options.valPath)
     test_task.test(options.model, 0, options.weights, options.config_path)
-    print("process end!")
+    EasyLogger.info("process end!")
 
 
 if __name__ == '__main__':
+    log_file_path = EasyLogger.get_log_file_path("test.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path)
     main()

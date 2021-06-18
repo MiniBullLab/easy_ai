@@ -6,9 +6,9 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from easy_tools.train_gui.classify_window import ClassifyTrainWindow
-from easy_tools.train_gui.det2d_window import Detection2dTrainWindow
-from easy_tools.train_gui.seg_window import SegmentTrainWindow
+from easy_tools.model_train.classify_window import ClassifyTrainWindow
+from easy_tools.model_train.det2d_window import Detection2dTrainWindow
+from easy_tools.model_train.seg_window import SegmentTrainWindow
 
 
 class EasyAiTrainWindow(QTabWidget):

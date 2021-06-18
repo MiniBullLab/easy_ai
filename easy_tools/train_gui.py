@@ -4,7 +4,7 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from easy_tools.train_gui.easyai_train import EasyAiTrainWindow
+from easy_tools.model_train.ai_train_window import EasyAiTrainWindow
 
 
 def main():

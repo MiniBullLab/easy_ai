@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.visualization.utility.registry import REGISTERED_TASK_SHOW
+from easyai.visualization.utility.show_registry import REGISTERED_TASK_SHOW
 from easyai.utility.registry import build_from_cfg
 
 

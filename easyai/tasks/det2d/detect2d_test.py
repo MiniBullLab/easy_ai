@@ -9,6 +9,7 @@ from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Detect2d_Task)
@@ -58,7 +59,7 @@ class Detection2dTest(BaseTest):
                 for k in range(0, loss_count):
                     loss += self.model.lossList[k](output_list[k], targets)
             else:
-                print("compute loss error")
+                EasyLogger.error("compute loss error")
         return loss.item()
 
     def save_test_value(self, epoch, mAP, aps):

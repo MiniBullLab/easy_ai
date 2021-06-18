@@ -6,7 +6,7 @@ from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
 from easyai.loss.det2d.utility.base_multi_loss import BaseMultiLoss
 from easyai.loss.utility.box2d_process import torch_corners_box2d_ious, torch_box2d_rect_corner
-from easyai.loss.utility.registry import REGISTERED_DET2D_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_DET2D_LOSS
 
 
 @REGISTERED_DET2D_LOSS.register_module(LossName.MultiBoxLoss)

@@ -4,6 +4,7 @@
 
 
 from torch import nn
+from easyai.utility.logger import EasyLogger
 
 
 class ModelWeightInit():
@@ -57,6 +58,7 @@ class ModelWeightInit():
                     if m.bias is not None:
                         nn.init.normal_(m.bias.data)
                 else:
+                    EasyLogger.error('initialization method [%s] is not implemented' % init_type)
                     raise NotImplementedError('initialization method [%s] is not implemented' % init_type)
                 if hasattr(m, 'bias') and m.bias is not None:
                     nn.init.constant_(m.bias.data, 0.0)
@@ -96,5 +98,5 @@ class ModelWeightInit():
                         nn.init.orthogonal_(param.data)
                     else:
                         nn.init.normal_(param.data)
-        print('initialize network with %s' % init_type)
+        EasyLogger.debug('initialize network with %s' % init_type)
 

@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 from typing import Dict, Text, Any, Callable
-from easy_converter.converter.onnx2caffe.graph import Node, Graph
+from easy_converter.caffe_process.onnx2caffe.graph import Node, Graph
 
 class ErrorHandling(object):
   '''

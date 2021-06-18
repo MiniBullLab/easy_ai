@@ -9,6 +9,7 @@ from easyai.data_loader.seg.segment_data_augment import SegmentDataAugment
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 from easyai.name_manager.dataloader_name import DatasetName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_DATASET.register_module(DatasetName.SegmentDataset)
@@ -54,4 +55,6 @@ class SegmentDataset(TorchDataLoader):
             mask = self.label_converter.process_segment_label(label_path,
                                                               self.label_type,
                                                               self.class_names)
+        if mask is None:
+            EasyLogger.error("segment(%s) label read fail!" % label_path)
         return mask

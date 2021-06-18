@@ -10,6 +10,7 @@ from easyai.tasks.seg.segment_result_process import SegmentResultProcess
 from easyai.helper.image_process import ImageProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Segment_Task)
@@ -36,7 +37,7 @@ class Segmentation(BaseInference):
             prediction, _ = self.infer(image)
             _, seg_image = self.result_process.post_process(prediction,
                                                             self.src_size)
-            print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
+            EasyLogger.info('Batch %d Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(src_image, seg_image,
                                              self.task_config.segment_class):
@@ -48,7 +49,8 @@ class Segmentation(BaseInference):
     def save_result(self, file_path, seg_image):
         path, filename_post = os.path.split(file_path)
         filename, post = os.path.splitext(filename_post)
-        save_result_path = os.path.join(self.task_config.save_result_path, "%s.png" % filename)
+        save_result_path = os.path.join(self.task_config.save_result_path,
+                                        "%s.png" % filename)
         self.image_process.opencv_save_image(save_result_path, seg_image)
 
     def save_result_confidence(self, file_path, prediction):

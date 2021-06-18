@@ -1,30 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import pathlib
 import caffe
 import numpy as np
-from easy_converter.converter.darknet2caffe.cfg import *
-from easy_converter.converter.darknet2caffe.prototxt import *
-from optparse import OptionParser
-
-
-def parse_arguments():
-    parser = OptionParser()
-    parser.description = "This program is keras convert to onnx"
-
-    parser.add_option("-c", "--cfg", dest="cfg_path",
-                      metavar="PATH", type="string", default=None,
-                      help="darknet cfg path")
-
-    parser.add_option("-w", "--weight", dest="weight_path",
-                      type="string", default=None,
-                      help="darknet weight path")
-
-    (options, args) = parser.parse_args()
-
-    return options
+from easy_converter.caffe_process.darknet2caffe.cfg import *
+from easy_converter.caffe_process.darknet2caffe.prototxt import *
 
 
 class DarknetConvertCaffe():
@@ -562,13 +544,3 @@ class DarknetConvertCaffe():
         net_info['layers'] = layers
         return net_info
 
-
-if __name__ == '__main__':
-    print("process start...")
-    options = parse_arguments()
-    # net_info = cfg2prototxt(options.cfg_path)
-    # print_prototxt(net_info)
-    # save_prototxt(net_info, 'tmp.prototxt')
-    convert = DarknetConvertCaffe(options.cfg_path, options.weight_path)
-    convert.convert_caffe()
-    print("process end!")

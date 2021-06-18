@@ -6,7 +6,7 @@ import os
 import inspect
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from easy_tools.train_gui.process_status import ProcessStatus
+from easy_tools.model_train.process_status import ProcessStatus
 
 
 class ClassifyTrainWindow(QWidget):

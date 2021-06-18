@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.torch_utility.torch_vision.torchvision_process import TorchVisionProcess
 from easyai.data_loader.augment.image_data_augment import ImageDataAugment
