@@ -21,7 +21,7 @@ class SegmentTrainWindow(QWidget):
         self.save_log = "segmentation_log.txt"
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.dirname(current_path)
-        self.cmd_str = os.path.join(dir_name, "../train_scripts/SegNET_tool.sh")
+        self.cmd_str = os.path.join(dir_name, "../train_scripts/SegNet_tool.sh")
 
     def closeEvent(self, event):
         if self.is_status == ProcessStatus.UNKNOW:
