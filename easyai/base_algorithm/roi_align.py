@@ -1,14 +1,18 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
 import torch
 from torch import nn
 from torch.autograd import Function
 from torch.autograd.function import once_differentiable
 from torch.nn.modules.utils import _pair
+from easyai.utility.logger import EasyLogger
 
 try:
     from easyai import _C
 except ImportError:
-    print("import _C fail!")
+    EasyLogger.error("import _C fail!")
 
 
 class _ROIAlign(Function):
@@ -93,5 +97,5 @@ except ImportError:
             tmpstr += ", sampling_ratio=" + str(self.sampling_ratio)
             tmpstr += ")"
             return tmpstr
-    print("import amp fail!")
+    EasyLogger.error("import amp fail!")
 

@@ -1,4 +1,9 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
+from easyai.utility.logger import EasyLogger
+
 try:
     from easyai import _C
     try:
@@ -7,10 +12,10 @@ try:
         nms = amp.float_function(_C.nms)
     except ImportError:
         nms = _C.nms
-        print("import amp fail!")
+        EasyLogger.error("import amp fail!")
 except ImportError:
     nms = None
-    print("import _C fail!")
+    EasyLogger.error("import _C fail!")
 
 # nms.__doc__ = """
 # This function performs Non-maximum suppresion"""

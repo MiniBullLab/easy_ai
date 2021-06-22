@@ -65,6 +65,6 @@ def train_main():
 
 
 if __name__ == "__main__":
-    log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
-    EasyLogger.init(logfile_level="debug", log_file=log_file_path)
+    # log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
+    # EasyLogger.init(logfile_level="debug", log_file=log_file_path)
     train_main()

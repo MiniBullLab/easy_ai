@@ -29,13 +29,13 @@ class TrainTask():
         EasyLogger.debug(pretrain_model_path)
         if self.task_name is not None and \
                 REGISTERED_TRAIN_TASK.has_class(self.task_name):
-            try:
-                task = build_from_cfg(task_args, REGISTERED_TRAIN_TASK)
-                task.load_pretrain_model(pretrain_model_path)
-                task.train(self.train_path, self.val_path)
-                self.image_model_convert(task, task.model_args)
-            except Exception as err:
-                EasyLogger.error(err)
+            # try:
+            task = build_from_cfg(task_args, REGISTERED_TRAIN_TASK)
+            task.load_pretrain_model(pretrain_model_path)
+            task.train(self.train_path, self.val_path)
+            self.image_model_convert(task, task.model_args)
+            # except Exception as err:
+            #     EasyLogger.error(err)
         else:
             EasyLogger.info("This task(%s) not exits!" % self.task_name)
 
@@ -65,8 +65,8 @@ def main():
 
 
 if __name__ == '__main__':
-    log_file_path = EasyLogger.get_log_file_path("train.log")
-    EasyLogger.init(logfile_level="debug",
-                    log_file=log_file_path,
-                    stdout_level=None)
+    # log_file_path = EasyLogger.get_log_file_path("train.log")
+    # EasyLogger.init(logfile_level="debug",
+    #                 log_file=log_file_path,
+    #                 stdout_level="info")
     main()
