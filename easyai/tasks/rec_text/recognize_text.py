@@ -7,6 +7,7 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.rec_text.text_result_process import TextResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.RecognizeText)
@@ -24,11 +25,11 @@ class RecognizeText(BaseInference):
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
         for i, (file_path, src_image, img) in enumerate(dataloader):
-            print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
             self.set_src_size(src_image)
             text_objects = self.single_image_process(img)
-            print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
+            EasyLogger.debug('Batch %d/%d Done. (%.3fs)' % (i, image_count,
+                                                            self.timer.toc()))
             print(file_path, text_objects[0].get_text())
 
     def single_image_process(self, input_image):

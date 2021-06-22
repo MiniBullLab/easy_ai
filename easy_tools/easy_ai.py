@@ -2,11 +2,14 @@
 # -*- coding:utf-8 -*-
 # Author: lipeijie
 
+from easyai.utility.logger import EasyLogger
+log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
+EasyLogger.init(logfile_level="debug", log_file=log_file_path)
+
 import os
 import inspect
 from optparse import OptionParser
 from easy_tools.model_train.ai_train import EasyAiModelTrain
-from easyai.utility.logger import EasyLogger
 
 
 def parse_arguments():
@@ -65,6 +68,4 @@ def train_main():
 
 
 if __name__ == "__main__":
-    log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
-    EasyLogger.init(logfile_level="debug", log_file=log_file_path)
     train_main()

@@ -4,6 +4,7 @@
 
 from easyai.visualization.utility.show_registry import REGISTERED_TASK_SHOW
 from easyai.utility.registry import build_from_cfg
+from easyai.utility.logger import EasyLogger
 
 
 class TaskShowFactory():
@@ -18,5 +19,5 @@ class TaskShowFactory():
         if REGISTERED_TASK_SHOW.has_class(task_name):
             result = build_from_cfg(config_args, REGISTERED_TASK_SHOW)
         else:
-            print("%s task not exits" % task_name)
+            EasyLogger.error("%s show not exits" % task_name)
         return result

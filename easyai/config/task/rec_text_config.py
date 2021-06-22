@@ -36,7 +36,6 @@ class RecognizeTextConfig(CommonTrainConfig):
 
     def save_data_value(self, config_dict):
         self.save_image_data_value(config_dict)
-        config_dict['language'] = self.language
         config_dict['character_set'] = self.character_set
         config_dict['character_count'] = self.character_count
 
@@ -49,8 +48,8 @@ class RecognizeTextConfig(CommonTrainConfig):
     def get_data_default_value(self):
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
-        self.character_set = os.path.join(dir_name, "zh_en.txt")
-        self.character_count = 6625
+        self.character_set = os.path.join(dir_name, "en.txt")
+        self.character_count = 93
 
         self.data = {'image_size': (320, 32),   # W * H
                      'data_channel': 3,

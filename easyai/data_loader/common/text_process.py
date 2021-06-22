@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 import os
+from easyai.utility.logger import EasyLogger
 
 
 class TextProcess():
@@ -27,6 +28,8 @@ class TextProcess():
         # TODO replace ‘ ’ with special symbol
         # dummy '[blank]' token for CTCLoss (index 0)
         character = ['[blank]'] + dict_character + [' ']
+        EasyLogger.debug("character count: %d" % len(character))
+        EasyLogger.debug(character)
         return character
 
     def text_encode(self, text):

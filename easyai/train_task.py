@@ -2,10 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
+log_file_path = EasyLogger.get_log_file_path("train.log")
+EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
+
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
 from easyai.utility.registry import build_from_cfg
 from easyai.helper.arguments_parse import TaskArgumentsParse
-from easyai.utility.logger import EasyLogger
 
 
 class TrainTask():
@@ -65,8 +68,4 @@ def main():
 
 
 if __name__ == '__main__':
-    log_file_path = EasyLogger.get_log_file_path("train.log")
-    EasyLogger.init(logfile_level="debug",
-                    log_file=log_file_path,
-                    stdout_level="error")
     main()
