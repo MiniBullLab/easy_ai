@@ -53,14 +53,13 @@ class EasyAiModelTrain():
 
     def segment_model_train(self, dir_name):
         segnet_process = SegNetProcess()
+        segnet_process.png_process(self.train_path)
 
         pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
         cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
         create_seg_sample = CreateSegmentionSample()
         create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
 
-        segnet_process.png_process(self.train_path)
-        segnet_process.png_process(self.val_path)
         segnet_process.resize_process(self.train_path)
         segnet_process.resize_process(self.val_path)
 

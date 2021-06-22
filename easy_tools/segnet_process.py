@@ -12,14 +12,14 @@ from easyai.data_loader.seg.segment_sample import SegmentSample
 class SegNetProcess():
 
     def __init__(self):
-        self.images_dir_name = "../JPEGImages"
-        self.label_dir_name = "../SegmentLabel"
+        self.label_dir_name = "SegmentLabel"
         self.annotation_post = ".png"
         self.dir_process = DirProcess()
         self.image_process = ImageProcess()
         self.dataset_process = ImageDataSetProcess()
 
     def resize_process(self, data_path):
+        image_count = 0
         segment_sample = SegmentSample(data_path)
         segment_sample.read_sample()
         for img_path, label_path in segment_sample.image_and_label_list:
@@ -32,13 +32,16 @@ class SegNetProcess():
                     result = self.dataset_process.cv_image_resize(src_image,
                                                                   (label_size[1],
                                                                    label_size[0]))
-                    self.image_process.opencv_save_image(label_path, result)
+                    self.image_process.opencv_save_image(img_path, result)
+                image_count += 1
             else:
                 print("(%s/%s) read segment data fail!" % (img_path, label_path))
+        # assert image_count > 0
 
     def png_process(self, data_path):
         temp_path, _ = os.path.split(data_path)
-        labels_dir = os.path.join(temp_path, self.label_dir_name)
+        root_path, _ = os.path.split(temp_path)
+        labels_dir = os.path.join(root_path, self.label_dir_name)
         for label_path in self.dir_process.getDirFiles(labels_dir, "*.*"):
             path, filename_and_post = os.path.split(label_path)
             filename, post = os.path.splitext(filename_and_post)
@@ -48,6 +51,7 @@ class SegNetProcess():
                 save_path = os.path.join(path, label_filename)
                 if image is not None:
                     self.image_process.opencv_save_image(save_path, image)
+                    os.remove(label_path)
                 else:
                     print("%s read segment label fail!" % label_path)
 
