@@ -37,7 +37,7 @@ class TrainTask():
             # except Exception as err:
             #     EasyLogger.error(err)
         else:
-            EasyLogger.info("This task(%s) not exits!" % self.task_name)
+            EasyLogger.error("This task(%s) not exits!" % self.task_name)
 
     def set_convert_param(self, is_convert, input_names, output_names):
         self.is_convert = is_convert
@@ -65,8 +65,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # log_file_path = EasyLogger.get_log_file_path("train.log")
-    # EasyLogger.init(logfile_level="debug",
-    #                 log_file=log_file_path,
-    #                 stdout_level="info")
+    log_file_path = EasyLogger.get_log_file_path("train.log")
+    EasyLogger.init(logfile_level="debug",
+                    log_file=log_file_path,
+                    stdout_level="error")
     main()

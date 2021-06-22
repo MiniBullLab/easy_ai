@@ -2,17 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import argparse
+import logging
 import os
 import sys
-import logging
-from logging.handlers import TimedRotatingFileHandler
 
-__all__ = ['EasyLogger']
 
 DEFAULT_LOGFILE_LEVEL = 'debug'
 DEFAULT_STDOUT_LEVEL = 'info'
@@ -28,7 +27,7 @@ LOG_LEVEL_DICT = {
 }
 
 
-class EasyLogger():
+class EasyLogger(object):
     """
     Args:
       Log level: CRITICAL>ERROR>WARNING>INFO>DEBUG.
@@ -37,8 +36,6 @@ class EasyLogger():
       log format: The format of log messages.
       stdout level: The log level to print on the screen.
     """
-    ROOT_DIR = "./.easy_log"
-
     logfile_level = None
     log_file = None
     log_format = None
@@ -51,7 +48,7 @@ class EasyLogger():
              log_file=DEFAULT_LOG_FILE,
              log_format=DEFAULT_LOG_FORMAT,
              rewrite=False,
-             stdout_level=DEFAULT_STDOUT_LEVEL):
+             stdout_level=None):
         EasyLogger.logfile_level = logfile_level
         EasyLogger.log_file = log_file
         EasyLogger.log_format = log_format
@@ -76,26 +73,11 @@ class EasyLogger():
 
             EasyLogger.logger.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
 
-            # file_handler = logging.FileHandler(EasyLogger.log_file, mode=filemode)
-            # file_handler.setFormatter(fmt)
-            # file_handler.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
-            # EasyLogger.logger.addHandler(file_handler)
+            fh = logging.FileHandler(EasyLogger.log_file, mode=filemode)
+            fh.setFormatter(fmt)
+            fh.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
 
-            file_handler = logging.handlers.RotatingFileHandler(
-                filename=EasyLogger.log_file,
-                maxBytes=1024 * 1024 * 50,
-                backupCount=3
-            )
-            file_handler.setFormatter(fmt)
-            file_handler.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
-            EasyLogger.logger.addHandler(file_handler)
-            EasyLogger.logger.addHandler(file_handler)
-
-            # time_handler = TimedRotatingFileHandler(filename=EasyLogger.log_file,
-            #                                         when="D",
-            #                                         interval=1,
-            #                                         backupCount=3)
-            # EasyLogger.logger.addHandler(time_handler)
+            EasyLogger.logger.addHandler(fh)
 
         if stdout_level is not None:
             if EasyLogger.logfile_level is None:
@@ -111,10 +93,6 @@ class EasyLogger():
             EasyLogger.logger.addHandler(console)
 
     @staticmethod
-    def get_log_file_path(file_name):
-        return os.path.join(EasyLogger.ROOT_DIR, file_name)
-
-    @staticmethod
     def set_log_file(file_path):
         EasyLogger.log_file = file_path
         EasyLogger.init(log_file=file_path)
@@ -124,6 +102,7 @@ class EasyLogger():
         if log_level not in LOG_LEVEL_DICT:
             print('Invalid logging level: {}'.format(log_level))
             return
+
         EasyLogger.init(logfile_level=log_level)
 
     @staticmethod
@@ -141,6 +120,7 @@ class EasyLogger():
         if log_level not in LOG_LEVEL_DICT:
             print('Invalid logging level: {}'.format(log_level))
             return
+
         EasyLogger.init(stdout_level=log_level)
 
     @staticmethod
@@ -148,7 +128,7 @@ class EasyLogger():
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename, lineno)
+        prefix = '[{}, {}]'.format(filename,lineno)
         EasyLogger.logger.debug('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -156,7 +136,7 @@ class EasyLogger():
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename, lineno)
+        prefix = '[{}, {}]'.format(filename,lineno)
         EasyLogger.logger.info('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -164,7 +144,7 @@ class EasyLogger():
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename, lineno)
+        prefix = '[{}, {}]'.format(filename,lineno)
         EasyLogger.logger.warn('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -172,7 +152,7 @@ class EasyLogger():
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename, lineno)
+        prefix = '[{}, {}]'.format(filename,lineno)
         EasyLogger.logger.error('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -180,7 +160,7 @@ class EasyLogger():
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename, lineno)
+        prefix = '[{}, {}]'.format(filename,lineno)
         EasyLogger.logger.critical('{} {}'.format(prefix, message))
 
 
@@ -188,7 +168,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--logfile_level', default="debug", type=str,
                         dest='logfile_level', help='To set the log level to files.')
-    parser.add_argument('--stdout_level', default="info", type=str,
+    parser.add_argument('--stdout_level', default=None, type=str,
                         dest='stdout_level', help='To set the level to print to screen.')
     parser.add_argument('--log_file', default="./default.log", type=str,
                         dest='log_file', help='The path of log files.')
@@ -199,7 +179,8 @@ def main():
 
     args = parser.parse_args()
     EasyLogger.init(logfile_level=args.logfile_level, stdout_level=args.stdout_level,
-                    log_file=args.log_file, log_format=args.log_format, rewrite=args.rewrite)
+                    log_file=args.log_file, log_format=args.log_format,
+                    rewrite=args.rewrite)
 
     EasyLogger.info("info test.")
     EasyLogger.debug("debug test.")

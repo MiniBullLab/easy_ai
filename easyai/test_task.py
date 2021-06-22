@@ -42,6 +42,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # log_file_path = EasyLogger.get_log_file_path("test.log")
-    # EasyLogger.init(logfile_level="debug", log_file=log_file_path)
+    log_file_path = EasyLogger.get_log_file_path("test.log")
+    EasyLogger.init(logfile_level="debug",
+                    log_file=log_file_path,
+                    stdout_level="error")
     main()

@@ -13,6 +13,7 @@ from easyai.solver.utility.freeze_process import FreezePorcess
 from easyai.torch_utility.train_log import TrainLogger
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
+from easyai.utility.logger import EasyLogger
 
 
 class BaseTrain(BaseTask):
@@ -46,7 +47,7 @@ class BaseTrain(BaseTask):
         self.lr_factory = LrSchedulerFactory(self.train_task_config.base_lr,
                                              self.train_task_config.max_epochs)
         self.train_logger = TrainLogger(self.train_task_config.log_name,
-                                        self.train_task_config.ROOT_DIR)
+                                        EasyLogger.ROOT_DIR)
 
     def set_train_config(self, config=None):
         if config is None:

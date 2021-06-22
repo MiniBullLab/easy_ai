@@ -60,11 +60,11 @@ def train_main():
     elif options.task_name.strip() == "SegNET":
         train_process.segment_model_train(dir_name)
     else:
-        EasyLogger.info("input task error!")
+        EasyLogger.error("input task error!")
     EasyLogger.info("process end!")
 
 
 if __name__ == "__main__":
-    # log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
-    # EasyLogger.init(logfile_level="debug", log_file=log_file_path)
+    log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path)
     train_main()
