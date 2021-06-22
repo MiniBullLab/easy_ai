@@ -32,7 +32,8 @@ class EasyAiModelTrain():
         pretrain_model_path = os.path.join(dir_name, "./data/classnet.pt")
         create_cls_sample = CreateClassifySample()
         create_cls_sample.process_sample(self.images_dir, self.dataset_path, "train_val", 10)
-        class_names = self.sample_process.create_class_names(self.train_path, TaskName.Classify_Task)
+        class_names = self.sample_process.create_class_names(self.train_path,
+                                                             TaskName.Classify_Task)
         if len(class_names) == 2:
             train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
             train_task.set_convert_param(True, input_name, output_name)
@@ -48,7 +49,8 @@ class EasyAiModelTrain():
         pretrain_model_path = os.path.join(dir_name, "./data/classnet.pt")
         create_cls_sample = CreateClassifySample()
         create_cls_sample.process_sample(self.images_dir, self.dataset_path, "train_val", 10)
-        class_names = self.sample_process.create_class_names(self.train_path, TaskName.Classify_Task)
+        class_names = self.sample_process.create_class_names(self.train_path,
+                                                             TaskName.Classify_Task)
         if len(class_names) > 1:
             try:
                 train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
@@ -69,7 +71,8 @@ class EasyAiModelTrain():
         pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
         create_det2d_sample = CreateDetectionSample()
         create_det2d_sample.createTrainAndTest(self.images_dir, self.dataset_path, 10)
-        class_names = self.sample_process.create_class_names(self.train_path, TaskName.Detect2d_Task)
+        class_names = self.sample_process.create_class_names(self.train_path,
+                                                             TaskName.Detect2d_Task)
         if len(class_names) > 0:
             try:
                 train_task = TrainTask(TaskName.Detect2d_Task, self.train_path, self.val_path)
