@@ -11,6 +11,7 @@ from easyai.tools.sample.create_classify_sample import CreateClassifySample
 from easyai.tools.sample.create_detection_sample import CreateDetectionSample
 from easyai.tools.sample.create_segment_sample import CreateSegmentionSample
 from easyai.tools.sample.detection_sample_process import DetectionSampleProcess
+from easy_tools.segnet_process import SegNetProcess
 
 
 class EasyAiModelTrain():
@@ -51,10 +52,18 @@ class EasyAiModelTrain():
             print("class name empty!")
 
     def segment_model_train(self, dir_name):
+        segnet_process = SegNetProcess()
+
         pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
         cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
         create_seg_sample = CreateSegmentionSample()
         create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
+
+        segnet_process.png_process(self.train_path)
+        segnet_process.png_process(self.val_path)
+        segnet_process.resize_process(self.train_path)
+        segnet_process.resize_process(self.val_path)
+
         train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path, True)
         train_task.train(cfg_path, self.gpu_id, self.config_path, pretrain_model_path)
         save_image_dir = os.path.join(self.config.root_save_dir, "seg_img")
