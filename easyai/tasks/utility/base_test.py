@@ -44,7 +44,7 @@ class BaseTest(BaseTask):
         self.model.eval()
         self.timer.tic()
         EasyLogger.warn("image count is : %d" % self.total_batch_image)
-        assert self.total_batch_image > 0
+        return self.total_batch_image > 0
 
     def metirc_loss(self, step, loss_value):
         self.epoch_loss_average.update(loss_value)

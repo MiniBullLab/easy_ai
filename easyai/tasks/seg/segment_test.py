@@ -32,7 +32,9 @@ class SegmentionTest(BaseTest):
     def test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
         self.metric.reset()
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
         for i, (images, segment_targets) in enumerate(self.dataloader):
             prediction, output_list = self.segment_inference.infer(images)
             result, _ = self.output_process.post_process(prediction)

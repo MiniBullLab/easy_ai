@@ -99,4 +99,5 @@ class Detection2dTrain(CommonTrain):
             self.best_score = self.torchModelProcess.save_best_model(mAP, save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
+            EasyLogger.warn("%s not exists!" % val_path)
             EasyLogger.info("no test!")

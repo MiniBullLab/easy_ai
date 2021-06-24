@@ -13,12 +13,14 @@ import numpy as np
 import cv2
 from easyai.helper.dir_process import DirProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
+from easyai.utility.logger import EasyLogger
 
 
 class CreateClassifySample():
 
     def __init__(self):
         self.dir_process = DirProcess()
+        self.images_dir_name = "../JPEGImages"
 
     def process_sample(self, input_dir, output_dir, flag, probability=1):
         if not os.path.exists(output_dir):
@@ -36,8 +38,10 @@ class CreateClassifySample():
         save_train_path = os.path.join(output_dir, "train.txt")
         save_val_path = os.path.join(output_dir, "val.txt")
         if os.path.exists(save_train_path):
-            print("%s exits" % save_train_path)
-            return
+            data_result = self.read_data_text(save_train_path)
+            if len(data_result) > 0:
+                EasyLogger.debug("%s exits" % save_train_path)
+                return
         save_train_file = open(save_train_path, "w")
         save_val_file = open(save_val_path, "w")
 
@@ -105,6 +109,17 @@ class CreateClassifySample():
         save_class_path = os.path.join(output_dir, "class.json")
         with codecs.open(save_class_path, 'w', encoding='utf-8') as f:
             json.dump(class_define, f, sort_keys=True, indent=4, ensure_ascii=False)
+
+    def read_data_text(self, data_path):
+        result = []
+        temp_path, _ = os.path.split(data_path)
+        images_dir = os.path.join(temp_path, self.images_dir_name)
+        for line_data in self.dir_process.getFileData(data_path):
+            data_list = [x.strip() for x in line_data.split() if x.strip()]
+            image_path = os.path.join(images_dir, data_list[0])
+            if os.path.exists(image_path):
+                result.append(image_path)
+        return result
 
 
 def main():

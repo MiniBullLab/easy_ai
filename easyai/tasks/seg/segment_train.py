@@ -106,6 +106,7 @@ class SegmentionTrain(CommonTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
+            EasyLogger.warn("%s not exists!" % val_path)
             EasyLogger.info("no test!")
 
 

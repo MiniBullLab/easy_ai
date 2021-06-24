@@ -30,7 +30,9 @@ class Detection2dTest(BaseTest):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
         self.create_dataloader(val_path)
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
         for i, (image_path, src_size, input_image) in enumerate(self.dataloader):
             print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
 

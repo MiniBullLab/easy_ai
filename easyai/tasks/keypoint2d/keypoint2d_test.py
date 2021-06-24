@@ -7,6 +7,7 @@ from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
 from easyai.tasks.keypoint2d.keypoint2d import KeyPoint2d
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.KeyPoint2d_Task)
@@ -27,7 +28,9 @@ class KeyPoint2dTest(BaseTest):
     def test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
         self.evaluator.reset()
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
         for i, (images, labels) in enumerate(self.dataloader):
             print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
             prediction = self.inference.infer(images)

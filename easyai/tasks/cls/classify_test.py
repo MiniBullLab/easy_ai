@@ -28,7 +28,9 @@ class ClassifyTest(BaseTest):
     def test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
         self.evaluation.clean_data()
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
         for index, (images, labels) in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(images)
             loss_value = self.compute_loss(output_list, labels)
