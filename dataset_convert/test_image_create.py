@@ -41,12 +41,17 @@ class CreateTestImage():
             os.makedirs(self.save_dir)
         temp_path, _ = os.path.split(val_path)
         images_dir = os.path.join(temp_path, "../%s" % self.images_dir_name)
+        image_count = 0
         for val_image in self.dir_process.getFileData(val_path):
             image_path = os.path.join(images_dir, val_image)
             if os.path.isfile(image_path):
                 path, image_name = os.path.split(image_path)
                 new_path = os.path.join(self.save_dir, image_name)
                 shutil.copy(image_path, new_path)
+            if image_count >= 10:
+                break
+            else:
+                image_count += 1
 
 
 if __name__ == "__main__":
