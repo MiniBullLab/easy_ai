@@ -42,8 +42,9 @@ class CreateTestImage():
         temp_path, _ = os.path.split(val_path)
         images_dir = os.path.join(temp_path, "../%s" % self.images_dir_name)
         image_count = 0
-        for val_image in self.dir_process.getFileData(val_path):
-            image_path = os.path.join(images_dir, val_image)
+        for line_data in self.dir_process.getFileData(val_path):
+            data_list = [x.strip() for x in line_data.split() if x.strip()]
+            image_path = os.path.join(images_dir, data_list[0])
             if os.path.isfile(image_path):
                 path, image_name = os.path.split(image_path)
                 new_path = os.path.join(self.save_dir, image_name)
