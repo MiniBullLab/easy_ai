@@ -19,7 +19,7 @@ class RecTextDataSetCollate(BaseDatasetCollate):
     def __call__(self, batch_list):
         max_img_w = max({data[0].shape[-1] for data in batch_list})
         max_img_w = int(np.ceil(max_img_w / 8) * 8)
-        length = [len(s) for s in batch_list[1]['text']]
+        length = [len(data[1]['text']) for data in batch_list]
         resize_images = []
         text_list = []
         targets = []

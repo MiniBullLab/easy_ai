@@ -17,6 +17,7 @@ class OCRLoader(DataLoader):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
         self.resize_type = resize_type
+        self.expand_ratio = (1.05, 1.25)
         self.dataset_process = Polygon2dDataSetProcess(resize_type, normalize_type,
                                                        mean, std,
                                                        pad_color=self.get_pad_color())
@@ -34,7 +35,8 @@ class OCRLoader(DataLoader):
             raise StopIteration
         temp_object = self.object_list[self.index]
         image = self.dataset_process.get_rotate_crop_image(self.src_image,
-                                                           temp_object.get_polygon()[:])
+                                                           temp_object.get_polygon()[:],
+                                                           self.expand_ratio)
         image = self.dataset_process.resize_image(image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)

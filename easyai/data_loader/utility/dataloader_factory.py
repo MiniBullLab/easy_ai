@@ -99,10 +99,10 @@ class DataloaderFactory():
                 else:
                     EasyLogger.error("%s collate_fn not exits" % type_name)
                     config_args.pop('collate_fn')
-        except ValueError as err:
+        except ValueError:
             EasyLogger.error(traceback.format_exc())
-            EasyLogger.error(err)
-        except TypeError as err:
+            EasyLogger.error(config_args)
+        except TypeError:
             EasyLogger.error(traceback.format_exc())
-            EasyLogger.error(err)
+            EasyLogger.error(config_args)
         return config_args

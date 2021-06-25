@@ -34,13 +34,12 @@ class Detection2dTest(BaseTest):
             EasyLogger.info("no test!")
             return
         for i, (image_path, src_size, input_image) in enumerate(self.dataloader):
-            print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
-
             prediction, output_list = self.inference.infer(input_image)
             detection_objects = self.inference.result_process.post_process(prediction,
                                                                            src_size.numpy()[0])
-
-            print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
+            EasyLogger.info('Batch %g/%g Done. (%.3fs)' % (i + 1,
+                                                           self.total_batch_image,
+                                                           self.timer.toc(True)))
             self.inference.save_result(image_path[0], detection_objects, 1)
 
         mAP, aps = self.evaluator.eval(self.test_task_config.save_result_dir, val_path)

@@ -22,10 +22,12 @@ class RecTextDataSet(TorchDataLoader):
         self.language = language
         self.image_size = tuple(image_size)
         self.is_augment = is_augment
+        self.expand_ratio = (1.0, 1.0)
+
         self.text_sample = RecTextSample(data_path, language)
         self.text_sample.read_sample()
 
-        self.dataset_process = RecTextDataSetProcess(data_path, resize_type, normalize_type,
+        self.dataset_process = RecTextDataSetProcess(char_path, resize_type, normalize_type,
                                                      mean, std, self.get_pad_color())
 
         self.dataset_augment = RecTextDataAugment()
@@ -33,9 +35,12 @@ class RecTextDataSet(TorchDataLoader):
     def __getitem__(self, index):
         img_path, label = self.text_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
-        # print(img_path, label)
         image = self.dataset_process.get_rotate_crop_image(src_image,
-                                                           label.get_polygon())
+                                                           label.get_polygon()[:],
+                                                           self.expand_ratio)
+        # import cv2
+        # cv2.imwrite("%d.png" % index, image)
+
         image = self.dataset_process.resize_image(image, self.image_size)
         if self.is_augment:
             image, label = self.dataset_augment.augment(image, label)

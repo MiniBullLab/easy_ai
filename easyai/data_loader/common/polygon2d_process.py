@@ -10,6 +10,22 @@ class Polygon2dProcess():
     def __init__(self):
         pass
 
+    def rotate_points(self, _points, _degree=0, _center=(0, 0)):
+        """
+        逆时针绕着一个点旋转点
+        Args:
+            _points:    需要旋转的点
+            _degree:    角度
+            _center:    中心点
+        Returns:    旋转后的点
+        """
+        angle = np.deg2rad(_degree)
+        rotate_matrix = np.array([[np.cos(angle), -np.sin(angle)],
+                                  [np.sin(angle), np.cos(angle)]])
+        center = np.atleast_2d(_center)
+        points = np.atleast_2d(_points)
+        return np.squeeze((rotate_matrix @ (points.T - center.T) + center.T).T)
+
     def original_coordinate_transformation(self, polygon):
         """
         调整坐标顺序为：

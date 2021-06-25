@@ -18,11 +18,14 @@ class CTCLoss(BaseLoss):
     def forward(self, input_data, target_dict=None):
         if target_dict is not None:
             batch_size = input_data.size(0)
+            device = input_data.device
             label, label_length = target_dict['targets'], target_dict['targets_lengths']
             pred = input_data.log_softmax(2)
             pred = pred.permute(1, 0, 2)
             preds_lengths = torch.tensor([pred.size(0)] * batch_size, dtype=torch.long)
-            loss = self.loss_func(pred, label, preds_lengths, label_length)
+            loss = self.loss_func(pred, label,
+                                  preds_lengths.to(device),
+                                  label_length.to(device))
         else:
             loss = F.softmax(input_data, dim=2)
         return loss

@@ -33,4 +33,8 @@ class RecTextProcess():
         return character
 
     def text_encode(self, text):
-        return [self.text_dict[char] for char in text]
+        result = []
+        for char in text:
+            index = self.text_dict.get(char, 0)
+            result.append(index)
+        return result

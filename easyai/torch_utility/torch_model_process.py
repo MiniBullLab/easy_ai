@@ -65,11 +65,11 @@ class TorchModelProcess():
                     checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
                     model.load_state_dict(checkpoint[dict_name])
             except Exception as err:
-                os.remove(weight_path)
+                # os.remove(weight_path)
                 checkpoint = None
                 EasyLogger.warn(err)
         else:
-            EasyLogger.warn("Loading latest model %s fail" % weight_path)
+            EasyLogger.error("Latest model %s exists" % weight_path)
         result = self.get_latest_model_value(checkpoint)
         return result
 

@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
 from easyai.tasks.utility.task_result_process import TaskPostProcess
 from easyai.data_loader.common.rec_text_process import RecTextProcess
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
@@ -15,6 +16,7 @@ class TextResultProcess(TaskPostProcess):
         self.character_path = character_path
         self.post_process_args = post_process_args
         self.text_process = RecTextProcess()
+        EasyLogger.debug(character_path)
         self.character = self.text_process.read_character(character_path)
         self.process_func = self.build_post_process(post_process_args)
 

@@ -154,19 +154,19 @@ class JsonProcess():
             illegibility = int(ocr_dict.get('illegibility', 1))
             transcription = ocr_dict['transcription']
             language = ocr_dict['language']
-            points_list = ocr_dict.get('polygon', [])
-            if illegibility == 0:
-                continue
-            if len(points_list) < 8:
-                print(json_path, points_list)
-                continue
+            points_list = ocr_dict.get('polygon', None)
             point_count = ocr_dict['pointCount']
+            if illegibility == 1:
+                continue
+            if points_list is None or len(points_list) < 8 or point_count < 4:
+                EasyLogger.error("{} {}".format(json_path, points_list))
+                continue
             ocr_object = OCRObject()
             ocr_object.name = class_name
             ocr_object.language = language
             ocr_object.object_text = transcription
             ocr_object.clear_polygon()
-            for index in range(0, point_count, 2):
+            for index in range(0, point_count * 2, 2):
                 point = Point2d(int(points_list[index]), int(points_list[index+1]))
                 ocr_object.add_point(point)
             result.append(ocr_object)

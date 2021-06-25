@@ -196,7 +196,7 @@ class OCRObject(Rect2D):
         return self.object_text
 
     def __repr__(self):
-        return '%s: %s' % (self.name, self.polygon)
+        return '{}: {}'.format(self.object_text, self.polygon)
 
 
 class Polygon2dObject(MyObject):

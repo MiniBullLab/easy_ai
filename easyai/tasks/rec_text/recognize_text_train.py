@@ -48,7 +48,7 @@ class RecognizeTextTrain(CommonTrain):
                 lr = lr_scheduler.get_lr(epoch, current_iter)
                 lr_scheduler.adjust_learning_rate(self.optimizer, lr)
                 loss_info = self.compute_backward(images, targets, i)
-                self.update_logger(i, self.total_images, epoch, loss_info)
+                self.update_logger(i, self.total_batch_image, epoch, loss_info)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)

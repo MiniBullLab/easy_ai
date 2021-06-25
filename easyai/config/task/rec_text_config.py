@@ -79,7 +79,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
-        self.val_data['dataloader']['collate_fn'] = "TextDataSetCollate"
+        self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
 
         self.evaluation_result_name = 'rec_text_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)

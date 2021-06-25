@@ -106,7 +106,7 @@ class ImageDrawing():
         random.seed(0)
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../../config/fonts")
-        font_file = os.path.join(dir_name, "chinese_cht.ttf")
+        font_file = os.path.join(dir_name, "方正隶书简体.ttf")
         if isinstance(src_image, np.ndarray):
             src_image = Image.fromarray(src_image)
         h, w = src_image.height, src_image.width
@@ -122,7 +122,7 @@ class ImageDrawing():
             draw_left.polygon(draw_points, fill=color)
             txt = temp_object.get_text()
             if temp_object.get_text() is not None:
-                font = ImageFont.truetype(font_file, 12, encoding="utf-8")
+                font = ImageFont.truetype(font_file, 18, encoding="utf-8")
                 draw_right.text([draw_points[0][0], draw_points[0][1]],
                                 txt, fill=(0, 0, 0), font=font)
         img_left = Image.blend(src_image, img_left, 0.5)

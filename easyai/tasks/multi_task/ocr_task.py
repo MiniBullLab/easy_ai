@@ -9,6 +9,7 @@ from easyai.helper.data_structure import OCRObject
 from easyai.data_loader.common.ocr_dataloader import OCRLoader
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.OCR_Task)
@@ -35,12 +36,12 @@ class OCRTask(BaseInference):
             ocr_result = self.convert_ocr_object(detection_objects)
 
             ocr_dataloader = OCRLoader(ocr_result, src_image,
-                                       self.text_inference.task_config.image_size,
-                                       self.text_inference.task_config.data_channel,
-                                       self.text_inference.task_config.resize_type,
-                                       self.text_inference.task_config.normalize_type,
-                                       self.text_inference.task_config.data_mean,
-                                       self.text_inference.task_config.data_std)
+                                       self.text_inference.task_config.data['image_size'],
+                                       self.text_inference.task_config.data['data_channel'],
+                                       self.text_inference.task_config.data['resize_type'],
+                                       self.text_inference.task_config.data['normalize_type'],
+                                       self.text_inference.task_config.data['mean'],
+                                       self.text_inference.task_config.data['std'])
             for index, roi_image in enumerate(ocr_dataloader):
                 text = self.text_inference.single_image_process(roi_image)
                 ocr_result[index].set_text(text[0].get_text())
