@@ -3,8 +3,8 @@
 # Author:lipeijie
 
 import os
-import sys
-sys.path.insert(0, os.getcwd() + "/..")
+# import sys
+# sys.path.insert(0, os.getcwd() + "/..")
 import random
 import cv2
 import numpy as np
@@ -13,27 +13,28 @@ from easyai.helper.json_process import JsonProcess
 from easyai.tools.sample_tool.sample_info_get import SampleInformation
 from easyai.name_manager.task_name import TaskName
 from easyai.helper.arguments_parse import ToolArgumentsParse
+from easyai.utility.logger import EasyLogger
 
 
 class CreateDetectionSample():
 
     def __init__(self,):
-        self.dirProcess = DirProcess()
+        self.dir_process = DirProcess()
         self.json_process = JsonProcess()
-        self.annotation_name = "Annotations"
-        self.images_dir_name = "JPEGImages"
+        self.annotation_name = "../Annotations"
+        self.images_dir_name = "../JPEGImages"
         self.annotation_post = ".json"
 
     def createBalanceSample(self, inputTrainPath, outputPath, class_names):
         if not os.path.exists(outputPath):
             os.makedirs(outputPath)
         path, _ = os.path.split(inputTrainPath)
-        annotationDir = os.path.join(path, "../%s" % self.annotation_name)
-        imagesDir = os.path.join(path, "../%s" % self.images_dir_name)
+        annotationDir = os.path.join(path, self.annotation_name)
+        imagesDir = os.path.join(path, self.images_dir_name)
         writeFile = self.createWriteFile(outputPath, class_names)
         if len(writeFile) == 0:
             return
-        for fileNameAndPost in self.dirProcess.getFileData(inputTrainPath):
+        for fileNameAndPost in self.dir_process.getFileData(inputTrainPath):
             fileName, post = os.path.splitext(fileNameAndPost)
             annotationFileName = fileName + self.annotation_post
             annotationPath = os.path.join(annotationDir, annotationFileName)
@@ -51,16 +52,18 @@ class CreateDetectionSample():
     def createTrainAndTest(self, inputDir, outputPath, probability):
         if not os.path.exists(outputPath):
             os.makedirs(outputPath)
-        annotations_dir = os.path.join(inputDir, "../%s" % self.annotation_name)
+        annotations_dir = os.path.join(inputDir, self.annotation_name)
         save_train_path = os.path.join(outputPath, "train.txt")
         save_val_path = os.path.join(outputPath, "val.txt")
         if os.path.exists(save_train_path):
-            print("%s exits" % save_train_path)
-            return
+            data_result = self.read_data_text(save_train_path)
+            if len(data_result) > 0:
+                EasyLogger.debug("%s exits" % save_train_path)
+                return
         save_train_file_path = open(save_train_path, "w")
         save_test_file_path = open(save_val_path, "w")
 
-        imageList = list(self.dirProcess.getDirFiles(inputDir, "*.*"))
+        imageList = list(self.dir_process.getDirFiles(inputDir, "*.*"))
         random.shuffle(imageList)
         for imageIndex, imagePath in enumerate(imageList):
             # print(imagePath)
@@ -85,6 +88,21 @@ class CreateDetectionSample():
             else:
                 print("%s exits" % class_image_path)
         return result
+    
+    def read_data_text(self, data_path):
+        result = []
+        temp_path, _ = os.path.split(data_path)
+        images_dir = os.path.join(temp_path, self.images_dir_name)
+        annotations_dir = os.path.join(temp_path, self.annotation_name)
+        for line_data in self.dir_process.getFileData(data_path):
+            data_list = [x.strip() for x in line_data.split() if x.strip()]
+            image_path = os.path.join(images_dir, data_list[0])
+            image_name, post = os.path.splitext(data_list[0])
+            json_path = os.path.join(annotations_dir,
+                                     "%s%s" % (image_name, self.annotation_post))
+            if os.path.exists(image_path) and os.path.exists(json_path):
+                result.append(image_path)
+        return result
 
 
 def test():
@@ -107,5 +125,6 @@ def test():
 
 if __name__ == "__main__":
    test()
+
 
 
