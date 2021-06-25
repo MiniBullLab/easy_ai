@@ -154,9 +154,11 @@ class JsonProcess():
             illegibility = int(ocr_dict.get('illegibility', 1))
             transcription = ocr_dict['transcription']
             language = ocr_dict['language']
-            points_list = ocr_dict.get('polygon', None)
-            print(json_path, points_list)
-            if (points_list is None) or illegibility == 0:
+            points_list = ocr_dict.get('polygon', [])
+            if illegibility == 0:
+                continue
+            if len(points_list) < 8:
+                print(json_path, points_list)
                 continue
             point_count = ocr_dict['pointCount']
             ocr_object = OCRObject()

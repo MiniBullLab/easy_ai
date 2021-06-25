@@ -73,7 +73,7 @@ class Rect2D(MyObject):
         return [self.min_corner.x, self.min_corner.y,
                 self.max_corner.x, self.max_corner.y]
 
-    def __str__(self):
+    def __repr__(self):
         return '%s:%d %d %d %d' % (self.name, self.min_corner.x, self.min_corner.y, self.max_corner.x, self.max_corner.y)
 
 
@@ -194,6 +194,9 @@ class OCRObject(Rect2D):
 
     def get_text(self):
         return self.object_text
+
+    def __repr__(self):
+        return '%s: %s' % (self.name, self.polygon)
 
 
 class Polygon2dObject(MyObject):

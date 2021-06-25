@@ -2,6 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author: lipeijie
 
+import traceback
+from easyai.utility.logger import EasyLogger
 import os
 from easyai.tools.utility.copy_image import CopyImage
 from easyai.train_task import TrainTask
@@ -10,7 +12,6 @@ from easyai.tools.sample_tool.create_classify_sample import CreateClassifySample
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
 from easyai.tools.sample_tool.create_segment_sample import CreateSegmentionSample
 from easyai.tools.sample_tool.sample_info_get import SampleInformation
-from easyai.utility.logger import EasyLogger
 from easy_tools.model_train.arm_config import ARMConfig
 
 
@@ -35,13 +36,17 @@ class EasyAiModelTrain():
         class_names = self.sample_process.create_class_names(self.train_path,
                                                              TaskName.Classify_Task)
         if len(class_names) == 2:
-            train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
-            train_task.set_convert_param(True, input_name, output_name)
-            train_task.train('binarynet', self.gpu_id, None, pretrain_model_path)
-            save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "binary_cls_img")
-            self.copy_process.copy(self.train_path, save_image_dir)
+            try:
+                train_task = TrainTask(TaskName.Classify_Task, self.train_path, self.val_path)
+                train_task.set_convert_param(True, input_name, output_name)
+                train_task.train('binarynet', self.gpu_id, None, pretrain_model_path)
+                save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "binary_cls_img")
+                self.copy_process.copy(self.train_path, save_image_dir)
+            except Exception as err:
+                EasyLogger.error(traceback.format_exc())
+                EasyLogger.error(err)
         else:
-            EasyLogger.info("binary classify class name error!")
+            EasyLogger.warn("binary classify class name error!")
 
     def classify_model_train(self, dir_name):
         input_name = ['cls_input']
@@ -61,9 +66,10 @@ class EasyAiModelTrain():
                 self.arm_config.create_classnet_config(input_name, output_name,
                                                        class_names)
             except Exception as err:
+                EasyLogger.error(traceback.format_exc())
                 EasyLogger.error(err)
         else:
-            EasyLogger.info("classify class name empty!")
+            EasyLogger.warn("classify class name empty!")
 
     def det2d_model_train(self, dir_name):
         input_name = ['det_input']
@@ -84,9 +90,10 @@ class EasyAiModelTrain():
                 self.arm_config.create_denet_config(input_name, output_name,
                                                     class_names)
             except Exception as err:
+                EasyLogger.error(traceback.format_exc())
                 EasyLogger.error(err)
         else:
-            EasyLogger.info("det2d class name empty!")
+            EasyLogger.warn("det2d class name empty!")
 
     def segment_model_train(self, dir_name):
         input_name = ['seg_input']
@@ -102,4 +109,5 @@ class EasyAiModelTrain():
             self.copy_process.copy(self.train_path, save_image_dir)
             self.arm_config.create_segnet_config(input_name, output_name)
         except Exception as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)

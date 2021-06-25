@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
 import os
 from easyai.name_manager.task_name import TaskName
 from easyai.config.utility.common_train_config import CommonTrainConfig
@@ -74,7 +75,8 @@ class SegmentionConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
 
         self.evaluation_result_name = 'seg_evaluation.txt'
-        self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
+        self.evaluation_result_path = os.path.join(EasyLogger.ROOT_DIR,
+                                                   self.evaluation_result_name)
 
     def get_train_default_value(self):
         self.train_data = {'dataset': {},
