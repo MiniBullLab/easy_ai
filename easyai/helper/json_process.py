@@ -6,6 +6,7 @@ import os
 import codecs
 import json
 from easyai.helper.data_structure import *
+from easyai.utility.logger import EasyLogger
 
 
 class JsonProcess():
@@ -140,7 +141,7 @@ class JsonProcess():
 
     def parse_ocr_data(self, json_path):
         if not os.path.exists(json_path):
-            print("error:%s file not exists" % json_path)
+            EasyLogger.error("%s file not exists" % json_path)
             return None, []
         with codecs.open(json_path, 'r', encoding='utf-8') as f:
             data_dict = json.load(f)
@@ -154,6 +155,7 @@ class JsonProcess():
             transcription = ocr_dict['transcription']
             language = ocr_dict['language']
             points_list = ocr_dict.get('polygon', None)
+            print(json_path, points_list)
             if (points_list is None) or illegibility == 0:
                 continue
             point_count = ocr_dict['pointCount']

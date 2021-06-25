@@ -70,7 +70,7 @@ class EasyAiModelTrain():
         output_name = ['det_output0', 'det_output1', 'det_output2']
         pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
         create_det2d_sample = CreateDetectionSample()
-        create_det2d_sample.createTrainAndTest(self.images_dir, self.dataset_path, 10)
+        create_det2d_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
         class_names = self.sample_process.create_class_names(self.train_path,
                                                              TaskName.Detect2d_Task)
         if len(class_names) > 0:

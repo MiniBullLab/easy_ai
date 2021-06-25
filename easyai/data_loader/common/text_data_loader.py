@@ -8,6 +8,7 @@ from pathlib import Path
 from easyai.helper import DirProcess
 from easyai.data_loader.utility.base_data_loader import *
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
+from easyai.utility.logger import EasyLogger
 
 
 class TextDataLoader(DataLoader):
@@ -61,7 +62,7 @@ class TextDataLoader(DataLoader):
                 if os.path.exists(image_path):
                     result.append(image_path)
                 else:
-                    print("%s not exist" % image_path)
+                    EasyLogger.error("%s not exist" % image_path)
             else:
-                print("% error" % line_data)
+                EasyLogger.warn("% error" % line_data)
         return result

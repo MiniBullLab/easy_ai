@@ -12,6 +12,9 @@ class Point2d():
         self.y = y
         return
 
+    def __repr__(self):
+        return "[%.3f, %.3f]" % (self.x, self.y)
+
 
 class Point3d():
     """

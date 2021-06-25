@@ -9,8 +9,8 @@ from easyai.name_manager.dataloader_name import DatasetCollateName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_COLLATE
 
 
-@REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.TextDataSetCollate)
-class TextDataSetCollate(BaseDatasetCollate):
+@REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.RecTextDataSetCollate)
+class RecTextDataSetCollate(BaseDatasetCollate):
 
     def __init__(self):
         super().__init__()

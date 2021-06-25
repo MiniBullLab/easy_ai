@@ -3,6 +3,8 @@
 # Author:lipeijie
 
 import os
+import traceback
+from easyai.utility.logger import EasyLogger
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.rec_text.recognize_text_test import RecognizeTextTest
 from easyai.name_manager.task_name import TaskName
@@ -16,7 +18,7 @@ class RecognizeTextTrain(CommonTrain):
         super().__init__(model_name, config_path, TaskName.RecognizeText)
         self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
                              class_number=self.train_task_config.character_count)
-        self.set_model(gpu_id=gpu_id)
+        self.set_model(gpu_id=gpu_id, init_type="normal")
         self.test_task = RecognizeTextTest(model_name, gpu_id, self.train_task_config)
 
     def load_latest_param(self, latest_weights_path):
@@ -40,12 +42,16 @@ class RecognizeTextTrain(CommonTrain):
             self.test(val_path, epoch, save_model_path)
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
-        for i, (images, targets) in enumerate(dataloader):
-            current_iter = epoch * self.total_batch_image + i
-            lr = lr_scheduler.get_lr(epoch, current_iter)
-            lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-            loss_info = self.compute_backward(images, targets, i)
-            self.update_logger(i, self.total_images, epoch, loss_info)
+        try:
+            for i, (images, targets) in enumerate(dataloader):
+                current_iter = epoch * self.total_batch_image + i
+                lr = lr_scheduler.get_lr(epoch, current_iter)
+                lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+                loss_info = self.compute_backward(images, targets, i)
+                self.update_logger(i, self.total_images, epoch, loss_info)
+        except Exception as err:
+            EasyLogger.error(traceback.format_exc())
+            EasyLogger.error(err)
 
     def compute_backward(self, input_datas, targets, setp_index):
         # Compute loss, compute gradient, update parameters
@@ -83,7 +89,7 @@ class RecognizeTextTrain(CommonTrain):
                 for key, value in temp_info.items():
                     loss_info[key] += value
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         return loss, loss_info
 
     def test(self, val_path, epoch, save_model_path):
@@ -97,7 +103,8 @@ class RecognizeTextTrain(CommonTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.warn("%s not exists!" % val_path)
+            EasyLogger.info("no test!")
 
 
 

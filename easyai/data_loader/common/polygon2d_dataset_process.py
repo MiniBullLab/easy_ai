@@ -7,6 +7,7 @@ import numpy as np
 from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 from easyai.data_loader.common.polygon2d_process import Polygon2dProcess
+from easyai.utility.logger import EasyLogger
 
 
 class Polygon2dDataSetProcess(TaskDataSetProcess):
@@ -16,7 +17,7 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
         self.polygon_process = Polygon2dProcess()
 
     def get_rotate_crop_image(self, src_image, polygon):
-        assert len(polygon) >= 4
+        assert len(polygon) >= 4, EasyLogger.error(polygon)
         points = np.array([[p.x, p.y] for p in polygon], dtype=np.float32)
         if len(polygon) > 4:
             rect = Rect2D()

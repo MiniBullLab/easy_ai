@@ -12,7 +12,7 @@ from easyai.utility.logger import EasyLogger
 try:
     from easyai import _C
 except ImportError:
-    EasyLogger.error("import _C fail!")
+    EasyLogger.warn("import _C fail!")
 
 
 class _ROIAlign(Function):
@@ -97,5 +97,5 @@ except ImportError:
             tmpstr += ", sampling_ratio=" + str(self.sampling_ratio)
             tmpstr += ")"
             return tmpstr
-    EasyLogger.error("import amp fail!")
+    EasyLogger.warn("import amp fail!")
 

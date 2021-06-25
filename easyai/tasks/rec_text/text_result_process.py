@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 from easyai.tasks.utility.task_result_process import TaskPostProcess
-from easyai.data_loader.common.text_process import TextProcess
+from easyai.data_loader.common.rec_text_process import RecTextProcess
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 from easyai.utility.registry import build_from_cfg
 
@@ -14,7 +14,7 @@ class TextResultProcess(TaskPostProcess):
         super().__init__()
         self.character_path = character_path
         self.post_process_args = post_process_args
-        self.text_process = TextProcess()
+        self.text_process = RecTextProcess()
         self.character = self.text_process.read_character(character_path)
         self.process_func = self.build_post_process(post_process_args)
 

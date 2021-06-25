@@ -6,14 +6,14 @@ import os
 from easyai.utility.logger import EasyLogger
 
 
-class TextProcess():
+class RecTextProcess():
 
     def __init__(self):
         self.text_dict = {}
 
     def read_character(self, char_path):
         if not os.path.exists(char_path):
-            print("char_path(%s) not exists" % char_path)
+            EasyLogger.error("char_path(%s) not exists" % char_path)
             return
         dict_character = []
         with open(char_path, "rb") as fin:

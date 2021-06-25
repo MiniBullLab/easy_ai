@@ -12,10 +12,10 @@ try:
         nms = amp.float_function(_C.nms)
     except ImportError:
         nms = _C.nms
-        EasyLogger.error("import amp fail!")
+        EasyLogger.warn("import amp fail!")
 except ImportError:
     nms = None
-    EasyLogger.error("import _C fail!")
+    EasyLogger.warn("import _C fail!")
 
 # nms.__doc__ = """
 # This function performs Non-maximum suppresion"""

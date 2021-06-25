@@ -21,8 +21,8 @@ class YoloV3Loss(BaseYoloLoss):
                  object_weight=1.0, class_weight=1.0, iou_threshold=0.5):
         super().__init__(LossName.YoloV3Loss, class_number, anchor_sizes, anchor_mask)
         self.reduction = reduction
-        self.coord_xy_weight = coord_weight
-        self.coord_wh_weight = coord_weight
+        self.coord_xy_weight = 2.0 * coord_weight
+        self.coord_wh_weight = 3.0 * coord_weight
         self.noobject_weight = noobject_weight
         self.object_weight = object_weight
         self.class_weight = class_weight
@@ -31,8 +31,8 @@ class YoloV3Loss(BaseYoloLoss):
         self.anchor_sizes = self.anchor_sizes / float(self.reduction)
 
         # criterion
-        self.bce_loss = nn.BCELoss(reduction='mean')
-        self.ce_loss = nn.CrossEntropyLoss(reduction='mean')
+        self.bce_loss = nn.BCELoss(reduction='sum')
+        self.ce_loss = nn.CrossEntropyLoss(reduction='sum')
 
         self.loss_info = {'object_count': 0, 'object_current': 0,
                           'average_iou': 0, 'recall50': 0, 'recall75': 0,
@@ -175,10 +175,11 @@ class YoloV3Loss(BaseYoloLoss):
             # Compute losses
             # x,y BCELoss; w,h SmoothL1Loss, conf BCELoss, class CELoss
             if mask_count > 0:
-                xy_bce_loss = F.binary_cross_entropy(coord_center, tcoord_center, reduction='none')
+                xy_bce_loss = F.binary_cross_entropy(coord_center, tcoord_center,
+                                                     reduction='none')
                 loss_coord_center = (coord_mask * xy_bce_loss).sum() / mask_count
                 wh_l1_loss = F.smooth_l1_loss(coord_wh, tcoord_wh, reduction='none')
-                loss_coord_wh = (coord_mask * wh_l1_loss).sum() / mask_count
+                loss_coord_wh = (coord_mask * wh_l1_loss).sum()
 
                 loss_conf_pos = self.object_weight * self.bce_loss(pos_conf, pos_tconf)
             else:

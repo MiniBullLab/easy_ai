@@ -35,9 +35,9 @@ class Det2dTrainDataloader(DataLoader):
         if balanced_sample:
             create_sample = CreateDetectionSample()
             save_sample_dir, _ = os.path.split(data_path)
-            create_sample.createBalanceSample(data_path,
-                                              save_sample_dir,
-                                              detect2d_class)
+            create_sample.create_balance_sample(data_path,
+                                                save_sample_dir,
+                                                detect2d_class)
         self.detection_sample = DetectionSample(data_path,
                                                 detect2d_class,
                                                 balanced_sample)

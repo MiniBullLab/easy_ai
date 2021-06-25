@@ -25,7 +25,7 @@ class RecTextDataSet(TorchDataLoader):
         self.text_sample = RecTextSample(data_path, language)
         self.text_sample.read_sample()
 
-        self.dataset_process = RecTextDataSetProcess(resize_type, normalize_type,
+        self.dataset_process = RecTextDataSetProcess(data_path, resize_type, normalize_type,
                                                      mean, std, self.get_pad_color())
 
         self.dataset_augment = RecTextDataAugment()

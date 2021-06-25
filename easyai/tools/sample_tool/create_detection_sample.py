@@ -25,13 +25,13 @@ class CreateDetectionSample():
         self.images_dir_name = "../JPEGImages"
         self.annotation_post = ".json"
 
-    def createBalanceSample(self, inputTrainPath, outputPath, class_names):
+    def create_balance_sample(self, inputTrainPath, outputPath, class_names):
         if not os.path.exists(outputPath):
             os.makedirs(outputPath)
         path, _ = os.path.split(inputTrainPath)
         annotationDir = os.path.join(path, self.annotation_name)
         imagesDir = os.path.join(path, self.images_dir_name)
-        writeFile = self.createWriteFile(outputPath, class_names)
+        writeFile = self.create_write_file(outputPath, class_names)
         if len(writeFile) == 0:
             return
         for fileNameAndPost in self.dir_process.getFileData(inputTrainPath):
@@ -49,12 +49,12 @@ class CreateDetectionSample():
                 for className in names:
                     writeFile[className].write(fileNameAndPost + "\n")
 
-    def createTrainAndTest(self, inputDir, outputPath, probability):
-        if not os.path.exists(outputPath):
-            os.makedirs(outputPath)
-        annotations_dir = os.path.join(inputDir, self.annotation_name)
-        save_train_path = os.path.join(outputPath, "train.txt")
-        save_val_path = os.path.join(outputPath, "val.txt")
+    def create_train_and_test(self, input_dir, output_path, probability):
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        annotations_dir = os.path.join(input_dir, self.annotation_name)
+        save_train_path = os.path.join(output_path, "train.txt")
+        save_val_path = os.path.join(output_path, "val.txt")
         if os.path.exists(save_train_path):
             data_result = self.read_data_text(save_train_path)
             if len(data_result) > 0:
@@ -63,7 +63,7 @@ class CreateDetectionSample():
         save_train_file_path = open(save_train_path, "w")
         save_test_file_path = open(save_val_path, "w")
 
-        imageList = list(self.dir_process.getDirFiles(inputDir, "*.*"))
+        imageList = list(self.dir_process.getDirFiles(input_dir, "*.*"))
         random.shuffle(imageList)
         for imageIndex, imagePath in enumerate(imageList):
             # print(imagePath)
@@ -79,7 +79,7 @@ class CreateDetectionSample():
         save_train_file_path.close()
         save_test_file_path.close()
 
-    def createWriteFile(self, outputPath, class_name):
+    def create_write_file(self, outputPath, class_name):
         result = {}
         for className in class_name:
             class_image_path = os.path.join(outputPath, className + ".txt")
@@ -110,21 +110,22 @@ def test():
     options = ToolArgumentsParse.process_sample_parse()
     test = CreateDetectionSample()
     if options.type.strip() == "train_val":
-        test.createTrainAndTest(options.inputPath,
-                                options.outputPath,
-                                options.probability)
+        test.create_train_and_test(options.inputPath,
+                                   options.outputPath,
+                                   options.probability)
     elif options.type.strip() == "balance":
         sample_process = SampleInformation()
         class_names = sample_process.create_class_names(options.inputPath,
                                                         TaskName.Detect2d_Task)
-        test.createBalanceSample(options.inputPath,
-                                 options.outputPath,
-                                 class_names)
+        test.create_balance_sample(options.inputPath,
+                                   options.outputPath,
+                                   class_names)
     print("End of game, have a nice day!")
 
 
 if __name__ == "__main__":
    test()
+
 
 
 

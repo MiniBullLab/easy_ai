@@ -20,7 +20,7 @@ class DatasetName():
 
 class DatasetCollateName():
 
-    TextDataSetCollate = "TextDataSetCollate"
+    RecTextDataSetCollate = "RecTextDataSetCollate"
 
 
 class DataloaderName():

@@ -44,13 +44,13 @@ class TorchModelProcess():
                 for k, v in pretrained_dict.items():
                     if k in model_dict and v.shape == model_dict[k].shape:
                         new_pretrained_dict[k] = v
-                # print("Load pretrained parameters:")
-                # for k, v in new_pretrained_dict.items():
-                #     print(k, v.shape)
+                EasyLogger.debug("Load pretrained parameters:")
+                for k, v in new_pretrained_dict.items():
+                    EasyLogger.debug("{} {}".format(k, v.shape))
                 model_dict.update(new_pretrained_dict)
                 model.load_state_dict(model_dict)
             else:
-                EasyLogger.error("pretain model %s not exist" % weight_path)
+                EasyLogger.warn("pretrained model %s not exist" % weight_path)
 
     def load_latest_model(self, weight_path, model, dict_name="model"):
         count = self.torchDeviceProcess.getCUDACount()
@@ -67,9 +67,9 @@ class TorchModelProcess():
             except Exception as err:
                 os.remove(weight_path)
                 checkpoint = None
-                EasyLogger.error(err)
+                EasyLogger.warn(err)
         else:
-            EasyLogger.error("Loading model %s fail" % weight_path)
+            EasyLogger.warn("Loading latest model %s fail" % weight_path)
         result = self.get_latest_model_value(checkpoint)
         return result
 
@@ -110,9 +110,9 @@ class TorchModelProcess():
                     amp_opt.load_state_dict(checkpoint['amp'])
             except Exception as err:
                 os.remove(optimizer_path)
-                print(err)
+                EasyLogger.warn(err)
         else:
-            EasyLogger.error("Loading optimizer %s fail" % optimizer_path)
+            EasyLogger.warn("Loading optimizer %s fail" % optimizer_path)
 
     def save_optimizer_state(self, optimizer_save_path,
                              epoch, optimizer, amp_opt=None):
@@ -132,7 +132,7 @@ class TorchModelProcess():
                     index = int(str_list[1])
                     optimizer_list[index].load_state_dict(checkpoint[optimizer_name])
         else:
-            EasyLogger.error("Loading optimizer %s fail" % optimizer_path)
+            EasyLogger.warn("Loading optimizer %s fail" % optimizer_path)
 
     def save_list_optimizer_state(self, optimizer_save_path,
                                   epoch, optimizer_list):

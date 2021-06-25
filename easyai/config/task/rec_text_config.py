@@ -7,6 +7,7 @@ import inspect
 from easyai.name_manager.task_name import TaskName
 from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TASK_CONFIG.register_module(TaskName.RecognizeText)
@@ -49,6 +50,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "en.txt")
+        EasyLogger.debug(self.character_set)
         self.character_count = 93
 
         self.data = {'image_size': (320, 32),   # W * H
@@ -92,11 +94,11 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['is_augment'] = False
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 1
+        self.train_data['dataloader']['batch_size'] = 4
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
-        self.train_data['dataloader']['collate_fn'] = "TextDataSetCollate"
+        self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
 
         self.log_name = "rec_text"
         self.is_save_epoch_model = False

@@ -2,12 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
+from easyai.utility.logger import EasyLogger
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_COLLATE
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_TRAIN_DATALOADER
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_VAL_DATALOADER
 from easyai.utility.registry import build_from_cfg
-from easyai.utility.logger import EasyLogger
 
 
 class DataloaderFactory():
@@ -99,7 +100,9 @@ class DataloaderFactory():
                     EasyLogger.error("%s collate_fn not exits" % type_name)
                     config_args.pop('collate_fn')
         except ValueError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         except TypeError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         return config_args
