@@ -74,5 +74,4 @@ class CRNN(BaseClassifyModel):
             else:
                 x = block(x)
             layer_outputs.append(x)
-            # print(key, x.shape)
         return output

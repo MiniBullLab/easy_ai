@@ -51,7 +51,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "en.txt")
         EasyLogger.debug(self.character_set)
-        self.character_count = 93
+        self.character_count = 100
 
         self.data = {'image_size': (320, 32),   # W * H
                      'data_channel': 3,
@@ -77,7 +77,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataloader']['type'] = "DataLoader"
         self.val_data['dataloader']['batch_size'] = 1
         self.val_data['dataloader']['shuffle'] = False
-        self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['num_workers'] = 0
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
 
@@ -96,7 +96,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataloader']['type'] = "DataLoader"
         self.train_data['dataloader']['batch_size'] = 4
         self.train_data['dataloader']['shuffle'] = True
-        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True
         self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
 
@@ -109,20 +109,20 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 100
+        self.max_epochs = 200
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 2e-4
-        self.optimizer_config = {0: {'type': 'SGD',
-                                     'momentum': 0.9,
-                                     'weight_decay': 5e-4}
+        self.base_lr = 0.001
+        self.optimizer_config = {0: {'type': 'Adam',
+                                     'weight_decay': 1e-4}
                                  }
         self.lr_scheduler_config = {'type': 'MultiStageLR',
-                                    'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
-                                    'warmup_type': 2,
+                                    'lr_stages': [[60, 1], [120, 0.5],
+                                                  [180, 0.25], [200, 0.125]],
+                                    'warmup_type': 0,
                                     'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20

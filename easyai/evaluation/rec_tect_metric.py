@@ -31,7 +31,7 @@ class RecognizeTextMetric(BaseEvaluation):
 
     def get_score(self):
         score = {'accuracy': self.accuracy.avg,
-                 'edit_distance': self.edit_distance}
+                 'edit_distance': self.edit_distance.avg}
         self.print_evaluation(score)
         return score
 

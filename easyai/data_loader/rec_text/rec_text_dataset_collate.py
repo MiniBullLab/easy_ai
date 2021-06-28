@@ -34,6 +34,7 @@ class RecTextDataSetCollate(BaseDatasetCollate):
         targets = torch.tensor(targets, dtype=torch.long)
         targets_lengths = torch.tensor(length, dtype=torch.long)
         resize_images = torch.stack(resize_images)
+        # print(resize_images.shape)
         labels = {'text': text_list,
                   'targets': targets,
                   'targets_lengths': targets_lengths}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.name_manager.solver_name import LrSechedulerName
 from easyai.utility.registry import build_from_cfg

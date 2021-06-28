@@ -27,14 +27,20 @@ class RecTextProcess():
             self.text_dict[char] = i + 1
         # TODO replace ‘ ’ with special symbol
         # dummy '[blank]' token for CTCLoss (index 0)
-        character = ['[blank]'] + dict_character + [' ']
+        character = ['[blank]'] + dict_character
+        EasyLogger.debug("text_dict: {}".format(self.text_dict))
         EasyLogger.debug("character count: %d" % len(character))
         EasyLogger.debug(character)
         return character
 
     def text_encode(self, text):
-        result = []
+        final_text = []
+        text_code = []
         for char in text:
             index = self.text_dict.get(char, 0)
-            result.append(index)
-        return result
+            if index != 0:
+                final_text.append(char)
+                text_code.append(index)
+            else:
+                EasyLogger.warn("Error char: %s(%s)" % (text, char))
+        return text_code, ''.join(final_text)

@@ -14,7 +14,7 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)
         self.text_process = RecTextProcess()
         EasyLogger.debug(char_path)
-        self.text_process.read_character(char_path)
+        self.character = self.text_process.read_character(char_path)
 
     def normalize_image(self, src_image):
         image = self.dataset_process.normalize(input_data=src_image,
@@ -26,7 +26,7 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
 
     def normalize_label(self, ocr_object):
         text = ocr_object.get_text()
-        text_code = self.text_process.text_encode(text)
+        text_code, text = self.text_process.text_encode(text)
         result = {'text': text,
                   'targets': text_code}
         return result

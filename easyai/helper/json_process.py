@@ -156,7 +156,7 @@ class JsonProcess():
             language = ocr_dict['language']
             points_list = ocr_dict.get('polygon', None)
             point_count = ocr_dict['pointCount']
-            if illegibility == 1:
+            if illegibility == 1 or not transcription.strip():
                 continue
             if points_list is None or len(points_list) < 8 or point_count < 4:
                 EasyLogger.error("{} {}".format(json_path, points_list))
