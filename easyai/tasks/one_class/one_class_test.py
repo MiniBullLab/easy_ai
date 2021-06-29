@@ -8,6 +8,7 @@ from easyai.tasks.one_class.one_class import OneClass
 from easyai.evaluation.one_class_roc import OneClassROC
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.OneClass)
@@ -23,15 +24,20 @@ class OneClassTest(BaseTest):
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.evaluation.reset()
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         for index, (images, labels) in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(images)
             loss_value = self.compute_loss(output_list, labels)
             self.evaluation.eval(prediction, labels.detach().numpy())
             self.metirc_loss(index, loss_value)
+            self.print_test_info(index, loss_value)
         roc_auc = self.evaluation.get_score()
         self.save_test_value(epoch, roc_auc)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))

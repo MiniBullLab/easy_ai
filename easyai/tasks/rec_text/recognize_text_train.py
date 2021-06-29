@@ -58,14 +58,17 @@ class RecognizeTextTrain(CommonTrain):
         output_list = self.model(input_datas.to(self.device))
         loss, loss_info = self.compute_loss(output_list, targets)
 
-        self.loss_backward(loss)
-
-        # accumulate gradient for x batches before optimizing
-        if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
-                or (setp_index == self.total_images - 1):
-            self.clip_grad()
-            self.optimizer.step()
+        if loss.item() == float("inf"):
             self.optimizer.zero_grad()
+        else:
+            self.loss_backward(loss)
+
+            # accumulate gradient for x batches before optimizing
+            if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
+                    or (setp_index == self.total_images - 1):
+                self.clip_grad()
+                self.optimizer.step()
+                self.optimizer.zero_grad()
         loss_info['all_loss'] = loss.item()
         return loss_info
 
@@ -94,8 +97,14 @@ class RecognizeTextTrain(CommonTrain):
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
+            if self.test_first:
+                self.test_task.create_dataloader(val_path)
+                self.test_first = False
+            if not self.test_task.start_test():
+                EasyLogger.info("no test!")
+                return
             self.test_task.load_weights(save_model_path)
-            accuracy, average_loss = self.test_task.test(val_path, epoch)
+            accuracy, average_loss = self.test_task.test(epoch)
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
             # save best model

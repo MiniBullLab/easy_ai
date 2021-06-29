@@ -7,6 +7,7 @@ from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.multi_task.det2d_seg_task_test import Det2dSegTaskTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Det2d_Seg_Task)
@@ -81,7 +82,7 @@ class Det2dSegTaskTrain(CommonTrain):
                 loss_list.append(self.model.lossList[k](output_list[k], targets[k]))
                 loss = sum(loss_list)
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         return loss, loss_list
 
     def update_logger(self, index, total, epoch, loss_list):
@@ -109,8 +110,14 @@ class Det2dSegTaskTrain(CommonTrain):
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
+            if self.test_first:
+                self.classify_test.create_dataloader(val_path)
+                self.test_first = False
+            if not self.classify_test.start_test():
+                EasyLogger.info("no test!")
+                return
             self.multi_task_test.load_weights(save_model_path)
-            mAP, score = self.multi_task_test.test(val_path, epoch)
+            mAP, score = self.multi_task_test.test(epoch)
             # wrong !!! how to use best_iou
             # save best model
             self.best_score = self.torchModelProcess.save_best_model(mAP, save_model_path,

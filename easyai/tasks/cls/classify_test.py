@@ -25,17 +25,20 @@ class ClassifyTest(BaseTest):
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.evaluation.clean_data()
         if not self.start_test():
             EasyLogger.info("no test!")
             return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         for index, (images, labels) in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(images)
             loss_value = self.compute_loss(output_list, labels)
             self.evaluation.torch_eval(prediction.data, labels.to(prediction.device))
             self.metirc_loss(index, loss_value)
+            self.print_test_info(index, loss_value)
         top1 = self.evaluation.get_top1()
         self.save_test_value(epoch)
         EasyLogger.info("Val epoch loss: {}".format(self.epoch_loss_average.avg))

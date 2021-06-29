@@ -45,3 +45,20 @@ class BaseClassifySample(BaseSample):
             else:
                 EasyLogger.error("% error" % line_data)
         return result
+
+    def get_image_and_text_list(self, train_path):
+        result = []
+        path, _ = os.path.split(train_path)
+        images_dir = os.path.join(path, "../JPEGImages")
+        for line_data in self.dirProcess.getFileData(train_path):
+            data_list = [x.strip() for x in line_data.split('|', 1) if x.strip()]
+            if len(data_list) == 2:
+                image_path = os.path.join(images_dir, data_list[0])
+                # print(image_path)
+                if os.path.exists(image_path):
+                    result.append((image_path, data_list[1].strip()))
+                else:
+                    EasyLogger.error("%s not exist" % image_path)
+            else:
+                EasyLogger.error("% error" % line_data)
+        return result

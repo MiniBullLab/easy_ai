@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class KeyPointAccuracy():
+class KeyPointAccuracy(BaseEvaluation):
 
     def __init__(self, points_count, class_names):
+        super().__init__()
         self.points_count = points_count
         self.class_names = class_names
         self.pixel_threshold = 5

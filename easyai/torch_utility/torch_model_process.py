@@ -71,6 +71,7 @@ class TorchModelProcess():
         else:
             EasyLogger.error("Latest model %s exists" % weight_path)
         result = self.get_latest_model_value(checkpoint)
+        EasyLogger.debug("Latest value: {}".format(result))
         return result
 
     def get_latest_model_value(self, checkpoint):

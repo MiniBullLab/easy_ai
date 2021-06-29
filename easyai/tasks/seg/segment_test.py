@@ -24,26 +24,29 @@ class SegmentionTest(BaseTest):
                                                    self.test_task_config.resize_type,
                                                    self.task_config.post_process)
 
-        self.metric = SegmentionMetric(len(self.test_task_config.segment_class))
+        self.evaluation = SegmentionMetric(len(self.test_task_config.segment_class))
 
     def load_weights(self, weights_path):
         self.segment_inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.metric.reset()
         if not self.start_test():
             EasyLogger.info("no test!")
             return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         for i, (images, segment_targets) in enumerate(self.dataloader):
             prediction, output_list = self.segment_inference.infer(images)
             result, _ = self.output_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()
-            self.metric.numpy_eval(result, gt)
+            self.evaluation.numpy_eval(result, gt)
             self.metirc_loss(i, loss_value)
+            self.print_test_info(i, loss_value)
 
-        score, class_score = self.metric.get_score()
+        score, class_score = self.evaluation.get_score()
         self.save_test_value(epoch, score, class_score)
         EasyLogger.info("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
         return score['Mean IoU'], self.epoch_loss_average.avg

@@ -3,11 +3,13 @@
 # Author:
 
 import numpy as np
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class SegmentionMetric():
+class SegmentionMetric(BaseEvaluation):
 
     def __init__(self, num_class):
+        super().__init__()
         self.number_class = num_class
         self.confusion_matrix = np.zeros((self.number_class, self.number_class))
 

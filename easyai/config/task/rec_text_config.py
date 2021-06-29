@@ -94,7 +94,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['is_augment'] = False
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 4
+        self.train_data['dataloader']['batch_size'] = 64
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True

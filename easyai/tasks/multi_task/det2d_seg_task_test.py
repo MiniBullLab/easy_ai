@@ -9,6 +9,7 @@ from easyai.tasks.multi_task.det2d_seg_task import Det2dSegTask
 from easyai.evaluation.segmen_metric import SegmentionMetric
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Det2d_Seg_Task)
@@ -27,15 +28,18 @@ class Det2dSegTaskTest(BaseTest):
     def load_weights(self, weights_path):
         self.multi_task_inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
+        self.create_dataloader(val_path)
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
-        self.create_dataloader(val_path)
         self.seg_metric.reset()
-        self.start_test()
         for i, (image_path, src_image, input_image, segment_targets) in enumerate(self.dataloader):
-            print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
-
             self.multi_task_inference.set_src_size(src_image.numpy()[0])
 
             predict_dets, predict_seg = self.multi_task_inference.infer(input_image)
@@ -47,7 +51,7 @@ class Det2dSegTaskTest(BaseTest):
             gt = segment_targets[0].data.cpu().numpy()
             self.seg_metric.numpy_eval(result_seg, gt)
 
-            print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
+            self.print_test_info(i)
 
             path, filename_post = os.path.split(image_path[0])
             self.multi_task_inference.save_result(filename_post, detection_objects)

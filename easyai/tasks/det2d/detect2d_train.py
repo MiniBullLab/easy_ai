@@ -93,8 +93,14 @@ class Detection2dTrain(CommonTrain):
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
+            if self.test_first:
+                self.classify_test.create_dataloader(val_path)
+                self.test_first = False
+            if not self.classify_test.start_test():
+                EasyLogger.info("no test!")
+                return
             self.detect_test.load_weights(save_model_path)
-            mAP = self.detect_test.test(val_path, epoch)
+            mAP = self.detect_test.test(epoch)
             # save best model
             self.best_score = self.torchModelProcess.save_best_model(mAP, save_model_path,
                                                                      self.train_task_config.best_weights_path)

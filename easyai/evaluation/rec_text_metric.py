@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
 from easyai.evaluation.base_evaluation import BaseEvaluation
 from easyai.helper.average_meter import AverageMeter
 import Levenshtein
@@ -37,4 +38,4 @@ class RecognizeTextMetric(BaseEvaluation):
 
     def print_evaluation(self, score):
         for k, v in score.items():
-            print(k, v)
+            EasyLogger.info("{}:{}".format(k, v))

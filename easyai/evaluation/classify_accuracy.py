@@ -4,16 +4,19 @@
 
 import numpy as np
 from easyai.helper.average_meter import AverageMeter
+from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.utility.logger import EasyLogger
 
 
-class ClassifyAccuracy():
+class ClassifyAccuracy(BaseEvaluation):
 
     def __init__(self, top_k=(1, 5)):
+        super().__init__()
         self.top1 = AverageMeter()
         self.topK = AverageMeter()
         self.param_top = top_k
         self.threshold = 0.5  # binary class threshold
-        self.clean_data()
+        self.reset()
 
     def torch_eval(self, output, target):
         precision = self.accuracy(output, target, self.param_top)
@@ -45,7 +48,7 @@ class ClassifyAccuracy():
         else:
             self.top1.update(0, 1)
 
-    def clean_data(self):
+    def reset(self):
         self.top1.reset()
         self.topK.reset()
 
@@ -77,9 +80,9 @@ class ClassifyAccuracy():
 
     def print_evaluation(self):
         if max(self.param_top) > 1:
-            print('prec{}: {:.3f} \t prec{}: {:.3f}\t'.format(self.param_top[0],
-                                                              self.param_top[1],
-                                                              self.top1.avg,
-                                                              self.topK.avg))
+            EasyLogger.info('prec{}: {:.3f} \t prec{}: {:.3f}\t'.format(self.param_top[0],
+                                                                        self.param_top[1],
+                                                                        self.top1.avg,
+                                                                        self.topK.avg))
         else:
-            print('prec1: {:.3f} \t'.format(self.top1.avg))
+            EasyLogger.info('prec1: {:.3f} \t'.format(self.top1.avg))

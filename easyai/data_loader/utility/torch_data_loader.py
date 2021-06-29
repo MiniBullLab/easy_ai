@@ -26,12 +26,10 @@ class TorchDataLoader(Dataset):
             elif self.data_channel == 3:
                 cv_image, src_image = self.image_process.readRgbImage(image_path)
             else:
-                EasyLogger.error("read src image error!")
-            if src_image is None:
-                EasyLogger.error("read %s error!" % image_path)
+                EasyLogger.error("data channel not support(%d)!" % self.data_channel)
         else:
             EasyLogger.error("%s not image" % image_path)
-        assert src_image is not None
+        assert src_image is not None, EasyLogger.error("read %s error!" % image_path)
         return cv_image, src_image
 
     def get_pad_color(self):

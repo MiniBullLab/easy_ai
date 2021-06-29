@@ -8,6 +8,7 @@ from easyai.evaluation.pose2d_accuracy import Pose2dAccuracy
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Pose2d_Task)
@@ -26,18 +27,21 @@ class Pose2dTest(BaseTest):
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.evaluation.reset()
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         for index, (images, targets) in enumerate(self.dataloader):
-            print('%g/%g' % (index + 1, self.total_batch_image), end=' ')
             prediction, output_list = self.inference.infer(images)
             result, _ = self.inference.result_process.post_process(prediction, (0, 0))
             loss_value = self.compute_loss(output_list, targets)
             self.evaluation.eval(result, targets.detach().numpy())
             self.metirc_loss(index, loss_value)
-            print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc(True)))
+            self.print_test_info(index, loss_value)
         average_socre = self.evaluation.get_score()
         self.save_test_value(epoch, average_socre)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))

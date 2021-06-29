@@ -8,16 +8,21 @@ from easyai.helper.data_structure import DetectionObject
 from easyai.helper.dir_process import DirProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
-from easyai.evaluation.calculate_rect_AP import CalculateRectAP
+from easyai.evaluation.utility.calculate_rect_AP import CalculateRectAP
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class DetectionMeanAp():
+class DetectionMeanAp(BaseEvaluation):
 
     def __init__(self, class_names):
+        super().__init__()
         self.class_names = class_names
         self.dir_process = DirProcess()
         self.json_process = JsonProcess()
         self.AP_process = CalculateRectAP()
+
+    def reset(self):
+        pass
 
     def eval(self, result_dir, val_path):
         aps = []

@@ -6,6 +6,7 @@ import os
 import numpy as np
 from PIL import Image
 import cv2
+import six
 
 
 class ImageProcess():
@@ -67,3 +68,11 @@ class ImageProcess():
             return cv2.cvtColor(np.asarray(image), cv2.COLOR_RGB2BGR)
         elif len(image.split()) == 4:
             return cv2.cvtColor(np.asarray(image), cv2.COLOR_RGBA2BGR)
+
+    def read_raw_buf(self, raw_data):
+        buf = six.BytesIO()
+        buf.write(raw_data)
+        buf.seek(0)
+        img = Image.open(buf).convert('RGB')  # for color image
+        img = np.array(img)
+        return img

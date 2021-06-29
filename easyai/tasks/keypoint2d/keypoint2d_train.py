@@ -7,6 +7,7 @@ from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.keypoint2d.keypoint2d_test import KeyPoint2dTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.KeyPoint2d_Task)
@@ -86,15 +87,22 @@ class KeyPoints2dTrain(CommonTrain):
                 for key, value in temp_info.items():
                     loss_info[key] += value
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         return loss, loss_info
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
+            if self.test_first:
+                self.classify_test.create_dataloader(val_path)
+                self.test_first = False
+            if not self.classify_test.start_test():
+                EasyLogger.info("no test!")
+                return
             self.keypoints_test.load_weights(save_model_path)
-            accuracy = self.keypoints_test.test(val_path, epoch)
+            accuracy = self.keypoints_test.test(epoch)
             # save best model
             self.best_score = self.torchModelProcess.save_best_model(accuracy, save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.warn("%s not exists!" % val_path)
+            EasyLogger.info("no test!")

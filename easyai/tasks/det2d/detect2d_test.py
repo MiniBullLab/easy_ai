@@ -21,28 +21,30 @@ class Detection2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(5e-3)
-        self.evaluator = DetectionMeanAp(self.test_task_config.detect2d_class)
+        self.evaluation = DetectionMeanAp(self.test_task_config.detect2d_class)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
-        os.system('rm -rf ' + self.test_task_config.save_result_dir)
-        os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
         if not self.start_test():
             EasyLogger.info("no test!")
             return
+        self.test(epoch)
+
+    def test(self, epoch=0):
+        os.system('rm -rf ' + self.test_task_config.save_result_dir)
+        os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
         for i, (image_path, src_size, input_image) in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(input_image)
             detection_objects = self.inference.result_process.post_process(prediction,
                                                                            src_size.numpy()[0])
-            EasyLogger.info('Batch %g/%g Done. (%.3fs)' % (i + 1,
-                                                           self.total_batch_image,
-                                                           self.timer.toc(True)))
+            self.print_test_info(i)
             self.inference.save_result(image_path[0], detection_objects, 1)
 
-        mAP, aps = self.evaluator.eval(self.test_task_config.save_result_dir, val_path)
+        mAP, aps = self.evaluation.eval(self.test_task_config.save_result_dir,
+                                        self.val_path)
         self.save_test_value(epoch, mAP, aps)
         return mAP
 

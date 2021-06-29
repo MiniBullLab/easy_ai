@@ -26,6 +26,8 @@ class BaseTest(BaseTask):
         self.inference = None
         self.model = None
         self.device = None
+        self.evaluation = None
+        self.val_path = None
 
     def set_test_config(self, config=None):
         if isinstance(config, BaseConfig):
@@ -40,6 +42,8 @@ class BaseTest(BaseTask):
             self.device = my_model.device
 
     def start_test(self):
+        if self.evaluation is not None:
+            self.evaluation.reset()
         self.epoch_loss_average.reset()
         self.model.eval()
         self.timer.tic()
@@ -47,10 +51,19 @@ class BaseTest(BaseTask):
         return self.total_batch_image > 0
 
     def metirc_loss(self, step, loss_value):
-        self.epoch_loss_average.update(loss_value)
-        info_str = "Val Batch {} loss: {:.7f} | Time: {:.5f}".format(step,
-                                                                     loss_value,
-                                                                     self.timer.toc(True))
+        if loss_value != float("inf") and loss_value != float("nan"):
+            self.epoch_loss_average.update(loss_value)
+
+    def print_test_info(self, step, loss_value=-1):
+        if loss_value >= 0:
+            info_str = "Val Batch [{}/{}] loss: {:.7f} | Time: {:.5f}".format(step + 1,
+                                                                              self.total_batch_image,
+                                                                              loss_value,
+                                                                              self.timer.toc(True))
+        else:
+            info_str = "Val Batch [{}/{}] | Time: {:.5f}".format(step + 1,
+                                                                 self.total_batch_image,
+                                                                 self.timer.toc(True))
         EasyLogger.info(info_str)
         print(info_str)
 
@@ -59,7 +72,11 @@ class BaseTest(BaseTask):
         pass
 
     @abc.abstractmethod
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
+        pass
+
+    @abc.abstractmethod
+    def test(self, epoch=0):
         pass
 
     def create_dataloader(self, data_path):
@@ -73,3 +90,4 @@ class BaseTest(BaseTask):
             self.total_batch_image = len(self.dataloader)
         else:
             self.total_batch_image = 0
+        self.val_path = data_path

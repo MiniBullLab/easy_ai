@@ -3,9 +3,10 @@
 # Author:lipeijie
 
 import numpy as np
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class Pose2dAccuracy():
+class Pose2dAccuracy(BaseEvaluation):
     """
     Calculate accuracy according to PCK,
     First value to be returned is average accuracy across 'idxs',
@@ -13,6 +14,7 @@ class Pose2dAccuracy():
     """
 
     def __init__(self, points_count, image_size):
+        super().__init__()
         self.points_count = points_count
         self.image_size = image_size
         self.points_acc = [0 for _ in range(self.points_count)]

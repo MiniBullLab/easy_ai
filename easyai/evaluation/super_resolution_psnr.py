@@ -4,18 +4,20 @@
 
 from math import log10
 from easyai.helper.average_meter import AverageMeter
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class SuperResolutionPSNR():
+class SuperResolutionPSNR(BaseEvaluation):
 
     def __init__(self):
+        super().__init__()
         self.epoch_avg_psnr = AverageMeter()
 
     def reset(self):
         self.epoch_avg_psnr.reset()
 
-    def eval(self, loss):
-        psnr = 10 * log10(1 / loss.item())
+    def eval(self, loss_value):
+        psnr = 10 * log10(1 / loss_value)
         self.epoch_avg_psnr.update(psnr, 1)
 
     def get_score(self):

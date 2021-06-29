@@ -171,3 +171,29 @@ class JsonProcess():
                 ocr_object.add_point(point)
             result.append(ocr_object)
         return image_name, result
+
+    def parse_segment_data(self, json_path):
+        if not os.path.exists(json_path):
+            EasyLogger.error("%s file not exists" % json_path)
+            return None, []
+        with codecs.open(json_path, 'r', encoding='utf-8') as f:
+            data_dict = json.load(f)
+        image_name = data_dict['filename']
+        objects_dict = data_dict['objects']
+        ocr_objects_list = objects_dict['segmentObject']
+        result = []
+        for ocr_dict in ocr_objects_list:
+            class_name = ocr_dict['class']
+            points_list = ocr_dict.get('mask', None)
+            point_count = ocr_dict['pointCount']
+            if points_list is None or len(points_list) < 6 or point_count < 3:
+                EasyLogger.error("{} {}".format(json_path, points_list))
+                continue
+            ocr_object = Polygon2dObject()
+            ocr_object.name = class_name
+            ocr_object.clear_polygon()
+            for index in range(0, point_count * 2, 2):
+                point = Point2d(int(points_list[index]), int(points_list[index+1]))
+                ocr_object.add_point(point)
+            result.append(ocr_object)
+        return image_name, result

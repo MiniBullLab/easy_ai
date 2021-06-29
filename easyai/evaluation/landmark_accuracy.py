@@ -4,11 +4,13 @@
 
 import numpy as np
 from easyai.helper.average_meter import AverageMeter
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class LandmarkAccuracy():
+class LandmarkAccuracy(BaseEvaluation):
 
     def __init__(self, points_count):
+        super().__init__()
         self.points_count = points_count
         self.threshold = 0.07
         self.accuracy = AverageMeter()

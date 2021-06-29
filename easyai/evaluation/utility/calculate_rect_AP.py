@@ -8,6 +8,7 @@ import numpy as np
 class CalculateRectAP():
 
     def __init__(self):
+        super().__init__()
         self.use_07_metric = False
 
     def calculate_ap(self, gt_boxes, detect_boxes, iou_thresh=0.5):

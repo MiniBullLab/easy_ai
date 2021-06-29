@@ -6,7 +6,7 @@ import traceback
 from easyai.utility.logger import EasyLogger
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.rec_tect_metric import RecognizeTextMetric
+from easyai.evaluation.rec_text_metric import RecognizeTextMetric
 from easyai.tasks.rec_text.recognize_text import RecognizeText
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
@@ -25,12 +25,14 @@ class RecognizeTextTest(BaseTest):
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.evaluation.reset()
         if not self.start_test():
             EasyLogger.info("no test!")
             return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         try:
             for index, (images, targets) in enumerate(self.dataloader):
                 prediction, output_list = self.inference.infer(images)
@@ -38,9 +40,7 @@ class RecognizeTextTest(BaseTest):
                 loss_value = self.compute_loss(output_list, targets)
                 self.evaluation.eval(result, targets['text'])
                 self.metirc_loss(index, loss_value)
-                EasyLogger.info('Batch %g/%g Done. (%.3fs)' % (index + 1,
-                                                               self.total_batch_image,
-                                                               self.timer.toc(True)))
+                self.print_test_info(index, loss_value)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)

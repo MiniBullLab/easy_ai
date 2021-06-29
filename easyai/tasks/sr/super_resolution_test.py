@@ -8,6 +8,7 @@ from easyai.tasks.sr.super_resolution import SuperResolution
 from easyai.evaluation.super_resolution_psnr import SuperResolutionPSNR
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.SuperResolution_Task)
@@ -19,21 +20,26 @@ class SuperResolutionTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
 
-        self.evalution = SuperResolutionPSNR()
+        self.evaluation = SuperResolutionPSNR()
 
     def load_weights(self, weights_path):
         self.sr_inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.evalution.reset()
-        self.start_test()
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         for i, (images, sr_targets) in enumerate(self.dataloader):
             prediction, output_list = self.sr_inference.infer(images)
             loss_value = self.compute_loss(output_list, sr_targets)
+            self.evaluation.eval(loss_value)
             self.metirc_loss(i, loss_value)
 
-        score = self.evalution.get_score()
+        score = self.evaluation.get_score()
         self.save_test_value(epoch, score)
         print("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
         return score, self.epoch_loss_average.avg

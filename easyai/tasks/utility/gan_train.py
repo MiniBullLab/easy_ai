@@ -19,6 +19,8 @@ class GanTrain(BaseTrain):
         self.total_batch_image = 0
         self.start_epoch = 0
 
+        self.test_first = True
+
     def load_pretrain_model(self, weights_path):
         if isinstance(weights_path, (list, tuple)):
             if len(weights_path) > 0:

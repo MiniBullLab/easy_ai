@@ -7,6 +7,7 @@ from easyai.tasks.utility.gan_train import GanTrain
 from easyai.tasks.one_class.one_class_test import OneClassTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.OneClass)
@@ -170,8 +171,14 @@ class OneClassTrain(GanTrain):
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path) and \
                 epoch % 5 == 0:
+            if self.test_first:
+                self.classify_test.create_dataloader(val_path)
+                self.test_first = False
+            if not self.classify_test.start_test():
+                EasyLogger.info("no test!")
+                return
             self.one_class_test.load_weights(save_model_path)
-            roc_auc, average_loss = self.one_class_test.test(val_path, epoch)
+            roc_auc, average_loss = self.one_class_test.test(epoch)
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
             # save best model

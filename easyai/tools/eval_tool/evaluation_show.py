@@ -5,7 +5,7 @@
 import json
 import codecs
 import matplotlib.pyplot as plt
-from easyai.evaluation.classify_pr import ClassifyPrecisionAndRecall
+from easyai.evaluation.utility.classify_pr import ClassifyPrecisionAndRecall
 from easyai.name_manager.task_name import TaskName
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.helper.arguments_parse import ToolArgumentsParse

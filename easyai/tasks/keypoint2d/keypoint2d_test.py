@@ -19,26 +19,27 @@ class KeyPoint2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(5e-3)
-        self.evaluator = KeyPointAccuracy(self.test_task_config.points_count,
-                                          self.test_task_config.points_class)
+        self.evaluation = KeyPointAccuracy(self.test_task_config.points_count,
+                                           self.test_task_config.points_class)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)
 
-    def test(self, val_path, epoch=0):
+    def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
-        self.evaluator.reset()
         if not self.start_test():
             EasyLogger.info("no test!")
             return
+        self.test(epoch)
+
+    def test(self, epoch=0):
         for i, (images, labels) in enumerate(self.dataloader):
-            print('%g/%g' % (i + 1, self.total_batch_image), end=' ')
             prediction = self.inference.infer(images)
             result, _ = self.inference.result_process.post_process(prediction, self.conf_threshold)
             labels = labels[0].data.cpu().numpy()
-            self.evaluator.eval(result, labels)
-            print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
-        accuracy, _ = self.evaluator.get_accuracy()
+            self.evaluation.eval(result, labels)
+            self.print_test_info(i)
+        accuracy, _ = self.evaluation.get_accuracy()
         self.save_test_value(epoch, accuracy)
         return accuracy
 

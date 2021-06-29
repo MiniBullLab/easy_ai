@@ -7,6 +7,7 @@ from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.sr.super_resolution_test import SuperResolutionTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.SuperResolution_Task)
@@ -88,8 +89,14 @@ class SuperResolutionTrain(CommonTrain):
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
+            if self.test_first:
+                self.classify_test.create_dataloader(val_path)
+                self.test_first = False
+            if not self.classify_test.start_test():
+                EasyLogger.info("no test!")
+                return
             self.sr_test.load_weights(save_model_path)
-            score, average_loss = self.sr_test.test(val_path, epoch)
+            score, average_loss = self.sr_test.test(epoch)
 
             self.train_logger.epoch_eval_loss_log(epoch, average_loss)
             # save best model

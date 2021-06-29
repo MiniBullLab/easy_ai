@@ -8,11 +8,13 @@ from sklearn.metrics import roc_curve, auc
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
+from easyai.evaluation.base_evaluation import BaseEvaluation
 
 
-class OneClassROC():
+class OneClassROC(BaseEvaluation):
 
     def __init__(self, save_dir):
+        super().__init__()
         self.save_index = 0
         self.save_dir = save_dir
         self.scores = np.array([])

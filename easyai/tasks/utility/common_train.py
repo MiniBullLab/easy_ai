@@ -23,6 +23,7 @@ class CommonTrain(BaseTrain):
         self.optimizer = None
         self.lr_scheduler = None
         self.start_epoch = 0
+        self.test_first = True
         self.loss_info_average = dict()
 
     def load_pretrain_model(self, weights_path):
@@ -102,7 +103,7 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_layer_name,
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
-        EasyLogger.warn("image count is : %d" % self.total_batch_image)
+        EasyLogger.info("image count is : %d" % self.total_batch_image)
         assert self.total_batch_image > 0, EasyLogger.error("no train dataset")
 
         for key in self.loss_info_average:
@@ -113,8 +114,8 @@ class CommonTrain(BaseTrain):
         lr = self.optimizer.param_groups[0]['lr']
         loss_value = loss_info['all_loss']
         loss_info.pop('all_loss')
-
-        self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
+        if loss_value != float("inf") and loss_value != float("nan"):
+            self.train_logger.loss_log(step, loss_value, self.train_task_config.display)
         self.train_logger.lr_log(step, lr, self.train_task_config.display)
 
         for key, value in loss_info.items():
