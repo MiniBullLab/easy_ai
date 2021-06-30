@@ -17,17 +17,17 @@ class SegmentionTest(BaseTest):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(TaskName.Segment_Task)
-        self.segment_inference = Segmentation(model_name, gpu_id, config_path)
+        self.inference = Segmentation(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.output_process = SegmentResultProcess(self.test_task_config.image_size,
-                                                   self.test_task_config.resize_type,
-                                                   self.task_config.post_process)
+        self.output_process = SegmentResultProcess(self.test_task_config.data['image_size'],
+                                                   self.test_task_config.data['resize_type'],
+                                                   self.test_task_config.post_process)
 
         self.evaluation = SegmentionMetric(len(self.test_task_config.segment_class))
 
     def load_weights(self, weights_path):
-        self.segment_inference.load_weights(weights_path)
+        self.inference.load_weights(weights_path)
 
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
@@ -38,7 +38,7 @@ class SegmentionTest(BaseTest):
 
     def test(self, epoch=0):
         for i, (images, segment_targets) in enumerate(self.dataloader):
-            prediction, output_list = self.segment_inference.infer(images)
+            prediction, output_list = self.inference.infer(images)
             result, _ = self.output_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, segment_targets)
             gt = segment_targets[0].data.cpu().numpy()

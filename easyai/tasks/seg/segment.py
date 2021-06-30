@@ -19,7 +19,7 @@ class Segmentation(BaseInference):
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.Segment_Task)
         self.set_model_param(data_channel=self.task_config.data['data_channel'],
-                             points_count=len(self.task_config.segment_class))
+                             class_number=len(self.task_config.segment_class))
         self.set_model(gpu_id=gpu_id)
         self.result_process = SegmentResultProcess(self.task_config.data['image_size'],
                                                    self.task_config.data['resize_type'],

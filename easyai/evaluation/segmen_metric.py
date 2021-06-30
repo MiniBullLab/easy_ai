@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
 from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.utility.logger import EasyLogger
 
 
 class SegmentionMetric(BaseEvaluation):
@@ -57,5 +58,5 @@ class SegmentionMetric(BaseEvaluation):
 
     def print_evaluation(self, score):
         for k, v in score.items():
-            print(k, v)
+            EasyLogger.debug("{}: {}".format(k, v))
 

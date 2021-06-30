@@ -66,11 +66,13 @@ class BaseTrain(BaseTask):
 
     def set_model(self, my_model=None, gpu_id=0, init_type="kaiming"):
         if my_model is None:
+            EasyLogger.debug(self.model_args)
             self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
             self.torchModelProcess.init_model(self.model, init_type)
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.model.train()
+        assert self.model is not None, EasyLogger.error("create model fail!")
 
     @abc.abstractmethod
     def load_pretrain_model(self, weights_path):

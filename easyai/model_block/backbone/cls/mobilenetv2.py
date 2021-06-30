@@ -89,7 +89,7 @@ class MobileNetV2(BaseBackbone):
         for key, block in self._modules.items():
             x = block(x)
             output_list.append(x)
-            print(key, x.shape)
+            # print(key, x.shape)
         return output_list
 
 

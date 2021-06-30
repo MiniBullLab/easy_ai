@@ -14,6 +14,7 @@ from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
+from easyai.utility.logger import EasyLogger
 
 
 class BaseInference(BaseTask):
@@ -48,6 +49,8 @@ class BaseInference(BaseTask):
         elif isinstance(config, BaseConfig):
             self.config_path = None
             self.task_config = config
+        assert self.task_config is not None, \
+            EasyLogger.error("create config fail! {}".format(config))
 
     def set_model_param(self, data_channel, **params):
         self.model_args["data_channel"] = data_channel
@@ -59,6 +62,7 @@ class BaseInference(BaseTask):
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.model.eval()
+        assert self.model is not None, EasyLogger.error("create model fail!")
 
     @abc.abstractmethod
     def process(self, input_path, data_type=1, is_show=False):

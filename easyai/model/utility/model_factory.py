@@ -17,6 +17,8 @@ from easyai.model_block.utility.model_parse import ModelParse
 from easyai.model.common.my_model import MyModel
 from easyai.model.utility.mode_weight_init import ModelWeightInit
 
+from easyai.utility.logger import EasyLogger
+
 
 class ModelFactory():
 
@@ -39,7 +41,7 @@ class ModelFactory():
 
     def get_model_from_cfg(self, cfg_path, default_args=None):
         if not cfg_path.endswith("cfg"):
-            print("%s model error" % cfg_path)
+            EasyLogger.error("%s model error" % cfg_path)
             return None
         path, file_name_and_post = os.path.split(cfg_path)
         file_name, post = os.path.splitext(file_name_and_post)
@@ -53,6 +55,7 @@ class ModelFactory():
             model_config['data_channel'] = 3
         model_name = model_config['type'].strip()
         model_config['type'] = model_name
+        EasyLogger.debug(model_config)
         if REGISTERED_CLS_MODEL.has_class(model_name):
             model = self.get_cls_model(model_config)
         elif REGISTERED_DET2D_MODEL.has_class(model_name):

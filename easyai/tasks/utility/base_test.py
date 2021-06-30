@@ -32,6 +32,8 @@ class BaseTest(BaseTask):
     def set_test_config(self, config=None):
         if isinstance(config, BaseConfig):
             self.test_task_config = config
+        assert self.test_task_config is not None, \
+            EasyLogger.error("set config fail！{}".format(config))
 
     def set_model(self, my_model=None):
         if my_model is None:
