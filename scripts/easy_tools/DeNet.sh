@@ -21,12 +21,12 @@ export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
 rm -rf ./.easy_log/detect2d*
 
-CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task DeNet --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_ai"
       exit 1
 fi
-python3 -m easy_tools.easy_convert --task DeNET --input ./.easy_log/snapshot/denet.onnx
+python3 -m easy_tools.easy_convert --task DeNet --input ./.easy_log/snapshot/denet.onnx
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_convert"
       exit 1
