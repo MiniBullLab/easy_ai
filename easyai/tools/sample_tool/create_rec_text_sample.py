@@ -29,7 +29,8 @@ class CreateRecognizeTextSample():
         self.image_save_dir = "rec_text"
         self.expand_ratio = (1.0, 1.0)
 
-    def create_train_and_test(self, input_dir, output_path, probability, language):
+    def create_train_and_test(self, input_dir, output_path, probability,
+                              language=("english",)):
         self.image_save_dir = ("".join(language)).strip()
         if not os.path.exists(output_path):
             os.makedirs(output_path)

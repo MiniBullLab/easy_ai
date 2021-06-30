@@ -23,7 +23,7 @@ class Detection2dTrainWindow(QWidget):
         self.save_log = "detect2d_log.txt"
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.dirname(current_path)
-        self.cmd_str = os.path.join(dir_name, "../train_scripts/DeNet_tool.sh")
+        self.cmd_str = os.path.join(dir_name, "../train_scripts/DeNet.sh")
         self.sample_process = SampleInformation()
 
     def closeEvent(self, event):

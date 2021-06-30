@@ -3,9 +3,9 @@
 # Author: lipeijie
 
 import os
-from easyai.helper.imageProcess import ImageProcess
-from easyai.helper.dirProcess import DirProcess
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.helper.image_process import ImageProcess
+from easyai.helper.dir_process import DirProcess
+from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.data_loader.seg.segment_sample import SegmentSample
 from easyai.utility.logger import EasyLogger
 

@@ -11,10 +11,10 @@ def easy_model_convert(task_name, onnx_path):
     if (onnx_path is None) or (not os.path.exists(onnx_path)):
         print("%s model not exists!" % onnx_path)
         return
-    if task_name.strip() == "DeNET":
+    if task_name.strip() == "DeNet":
         caffe_converter = OnnxConvertCaffe(onnx_path)
         caffe_converter.convert_caffe()
-    elif task_name.strip() == "SegNET":
+    elif task_name.strip() == "SegNet":
         pb_converter = OnnxConvertTensorflow(onnx_path)
         pb_converter.convert_tensorflow()
     else:

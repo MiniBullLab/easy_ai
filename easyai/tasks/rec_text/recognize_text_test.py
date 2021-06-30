@@ -46,7 +46,7 @@ class RecognizeTextTest(BaseTest):
             EasyLogger.error(err)
         average_socre = self.evaluation.get_score()
         self.save_test_value(epoch, average_socre)
-        EasyLogger.info("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        EasyLogger.info("Val epoch({}) loss: {}".format(epoch, self.epoch_loss_average.avg))
         # print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return average_socre['accuracy'], self.epoch_loss_average.avg
 

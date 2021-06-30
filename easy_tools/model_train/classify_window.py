@@ -21,7 +21,7 @@ class ClassifyTrainWindow(QWidget):
         self.save_log = "classify_log.txt"
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.dirname(current_path)
-        self.cmd_str = os.path.join(dir_name, "../train_scripts/ClassNet_tool.sh")
+        self.cmd_str = os.path.join(dir_name, "../train_scripts/ClassNet.sh")
 
     def closeEvent(self, event):
         if self.is_status == ProcessStatus.UNKNOW:

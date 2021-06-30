@@ -11,6 +11,7 @@ from easyai.name_manager.task_name import TaskName
 from easyai.tools.sample_tool.create_classify_sample import CreateClassifySample
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
 from easyai.tools.sample_tool.create_segment_sample import CreateSegmentionSample
+from easyai.tools.sample_tool.create_rec_text_sample import CreateRecognizeTextSample
 from easyai.tools.sample_tool.sample_info_get import SampleInformation
 from easy_tools.model_train.arm_config import ARMConfig
 from easy_tools.model_train.segnet_process import SegNetProcess
@@ -115,6 +116,22 @@ class EasyAiModelTrain():
             save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "seg_img")
             self.copy_process.copy(self.train_path, save_image_dir)
             self.arm_config.create_segnet_config(input_name, output_name)
+        except Exception as err:
+            EasyLogger.error(traceback.format_exc())
+            EasyLogger.error(err)
+
+    def rec_text_model_train(self, dir_name):
+        input_name = ['text_input']
+        output_name = ['text_output']
+        try:
+            create_sample = CreateRecognizeTextSample()
+            create_sample.create_train_and_test(self.images_dir, self.dataset_path, 3)
+
+            train_task = TrainTask(TaskName.RecognizeText, self.train_path, self.val_path)
+            train_task.set_convert_param(True, input_name, output_name)
+            train_task.train("CRNN", self.gpu_id, None, None)
+            save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "ocr_img")
+            self.copy_process.copy(self.train_path, save_image_dir)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)

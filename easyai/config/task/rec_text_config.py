@@ -53,7 +53,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         EasyLogger.debug(self.character_set)
         self.character_count = 100
 
-        self.data = {'image_size': (320, 32),   # W * H
+        self.data = {'image_size': (120, 32),   # W * H
                      'data_channel': 3,
                      'resize_type': -1,
                      'normalize_type': 1,
@@ -94,7 +94,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['is_augment'] = False
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 64
+        self.train_data['dataloader']['batch_size'] = 32
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True
@@ -109,7 +109,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 200
+        self.max_epochs = 300
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
@@ -121,7 +121,8 @@ class RecognizeTextConfig(CommonTrainConfig):
                                  }
         self.lr_scheduler_config = {'type': 'MultiStageLR',
                                     'lr_stages': [[60, 1], [120, 0.5],
-                                                  [180, 0.25], [200, 0.125]],
+                                                  [180, 0.25], [240, 0.125],
+                                                  [300, 0.0625]],
                                     'warmup_type': 0,
                                     'warmup_iters': 5}
         self.accumulated_batches = 1

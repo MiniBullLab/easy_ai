@@ -22,7 +22,9 @@ class RecognizeTextMetric(BaseEvaluation):
     def eval(self, result, targets):
         for pred, target in zip(result, targets):
             pred_text = pred.get_text()
-            max_length = max(len(pred_text), len(target))
+            pred_text = pred_text.replace(" ", "")
+            target = target.replace(" ", "")
+            max_length = max(len(pred_text), len(target), 1)
             norm_edit_dis = Levenshtein.distance(pred_text, target) / max_length
             self.edit_distance.update(norm_edit_dis)
             if pred_text == target:
@@ -32,7 +34,7 @@ class RecognizeTextMetric(BaseEvaluation):
 
     def get_score(self):
         score = {'accuracy': self.accuracy.avg,
-                 'edit_distance': self.edit_distance.avg}
+                 'edit_distance': 1 - self.edit_distance.avg}
         self.print_evaluation(score)
         return score
 

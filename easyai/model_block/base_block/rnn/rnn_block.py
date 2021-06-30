@@ -13,7 +13,7 @@ class Im2SeqBlock(BaseBlock):
 
     def forward(self, x):
         B, C, H, W = x.shape
-        assert H == 1
+        # assert H == 1
         x = x.view(B, C, H * W)
         x = x.transpose(1, 2)
         return x

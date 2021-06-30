@@ -13,7 +13,7 @@ else
 fi
 
 rm -rf ./.easy_log/segment*
-CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task SegNET --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
+CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task SegNet --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
 
 if [ $? -ne 0 ]; then
       echo "Failed to start easy_ai"

@@ -21,7 +21,7 @@ class TrainTask():
 
         self.convert_input_names = None
         self.convert_output_names = None
-        self.is_convert = False
+        self.is_convert = True
         self.save_onnx_path = None
 
     def train(self, model_name, gpu_id, config_path, pretrain_model_path):
