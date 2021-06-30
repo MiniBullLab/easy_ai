@@ -13,6 +13,7 @@ from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSamp
 from easyai.tools.sample_tool.create_segment_sample import CreateSegmentionSample
 from easyai.tools.sample_tool.sample_info_get import SampleInformation
 from easy_tools.model_train.arm_config import ARMConfig
+from easy_tools.model_train.segnet_process import SegNetProcess
 
 
 class EasyAiModelTrain():
@@ -99,9 +100,15 @@ class EasyAiModelTrain():
         input_name = ['seg_input']
         output_name = ['seg_output']
         try:
+            segnet_process = SegNetProcess()
+            segnet_process.png_process(self.train_path)
             pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
             create_seg_sample = CreateSegmentionSample()
             create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
+
+            segnet_process.resize_process(self.train_path)
+            segnet_process.resize_process(self.val_path)
+
             train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
             train_task.set_convert_param(True, input_name, output_name)
             train_task.train("segnet", self.gpu_id, None, pretrain_model_path)
