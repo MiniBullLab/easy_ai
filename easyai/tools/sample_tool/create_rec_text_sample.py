@@ -42,33 +42,43 @@ class CreateRecognizeTextSample():
             if len(data_result) > 0:
                 EasyLogger.debug("%s exits" % save_train_path)
                 return
-        save_train_file_path = open(save_train_path, "w", encoding='utf-8')
-        save_test_file_path = open(save_val_path, "w", encoding='utf-8')
+        save_train_file = open(save_train_path, "w", encoding='utf-8')
+        save_test_file = open(save_val_path, "w", encoding='utf-8')
 
         image_list = list(self.dir_process.getDirFiles(input_dir, "*.*"))
         random.shuffle(image_list)
         sample_index = 0
         for image_index, imagePath in enumerate(image_list):
             # print(imagePath)
-            image = cv2.imdecode(np.fromfile(imagePath, dtype=np.uint8), cv2.IMREAD_COLOR)
+            src_image = cv2.imdecode(np.fromfile(imagePath, dtype=np.uint8), cv2.IMREAD_COLOR)
             path, file_name_and_post = os.path.split(imagePath)
             image_name, post = os.path.splitext(file_name_and_post)
             json_path = os.path.join(annotations_dir, "%s%s" % (image_name, self.annotation_post))
-            if (image is not None) and os.path.exists(json_path):
+            if (src_image is not None) and os.path.exists(json_path):
                 _, ocr_objects = self.json_process.parse_ocr_data(json_path)
                 for ocr in ocr_objects:
                     if ocr.language.strip() in language:
+                        image = self.dataset_process.get_rotate_crop_image(src_image,
+                                                                           ocr.get_polygon()[:],
+                                                                           self.expand_ratio)
+                        dst_img_height, dst_img_width = image.shape[0:2]
+                        if dst_img_height < 20 or dst_img_width < 20:
+                            print(imagePath, "small eara(%s)" % ocr.get_text())
+                            continue
+                        if dst_img_height * 1.0 / dst_img_width >= 1.5:
+                            print(imagePath, "%s(90)" % ocr.get_text())
+                            continue
                         if (sample_index + 1) % probability == 0:
                             self.write_data(imagePath, image, ocr,
-                                            sample_index, save_test_file_path)
+                                            sample_index, save_test_file)
                         else:
                             self.write_data(imagePath, image, ocr,
-                                            sample_index, save_train_file_path)
+                                            sample_index, save_train_file)
                         sample_index += 1
-        save_train_file_path.close()
-        save_test_file_path.close()
+        save_train_file.close()
+        save_test_file.close()
 
-    def write_data(self, image_path, src_image, ocr, sample_index, save_file):
+    def write_data(self, image_path, image, ocr, sample_index, save_file):
         path, file_name_post = os.path.split(image_path)
         file_name, post = os.path.splitext(file_name_post)
         save_name = file_name + "_%08d" % sample_index + post
@@ -76,9 +86,6 @@ class CreateRecognizeTextSample():
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         save_path = os.path.join(save_dir, save_name)
-        image = self.dataset_process.get_rotate_crop_image(src_image,
-                                                           ocr.get_polygon()[:],
-                                                           self.expand_ratio)
         if image is not None:
             self.image_process.opencv_save_image(save_path, image)
             write_content = "%s/%s|%s\n" % (self.image_save_dir, save_name,

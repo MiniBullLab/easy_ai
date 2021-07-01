@@ -40,10 +40,10 @@ class Rect2D(MyObject):
     class to define 3dBox
     """
 
-    def __init__(self):
+    def __init__(self, x_min=0, y_min=0, x_max=0, y_max=0):
         super().__init__()
-        self.min_corner = Point2d(0, 0)
-        self.max_corner = Point2d(0, 0)
+        self.min_corner = Point2d(x_min, y_min)
+        self.max_corner = Point2d(x_max, y_max)
 
     def copy(self):
         b = Rect2D()

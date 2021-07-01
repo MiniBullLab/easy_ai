@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import numpy as np
 from easyai.data_loader.common.polygon2d_dataset_process import Polygon2dDataSetProcess
 from easyai.data_loader.common.rec_text_process import RecTextProcess
 from easyai.utility.logger import EasyLogger

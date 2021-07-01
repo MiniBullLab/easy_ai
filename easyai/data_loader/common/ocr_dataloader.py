@@ -37,6 +37,7 @@ class OCRLoader(DataLoader):
         image = self.dataset_process.get_rotate_crop_image(self.src_image,
                                                            temp_object.get_polygon()[:],
                                                            self.expand_ratio)
+        image = self.dataset_process.rotation90_image(image)
         image = self.dataset_process.resize_image(image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)

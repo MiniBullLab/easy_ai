@@ -34,9 +34,11 @@ class RecTextDataSet(TorchDataLoader):
     def __getitem__(self, index):
         img_path, label = self.text_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
-        image = self.dataset_process.resize_image(src_image, self.image_size)
         if self.is_augment:
-            image, label = self.dataset_augment.augment(image, label)
+            image, label = self.dataset_augment.augment(src_image, label)
+        else:
+            image = src_image[:]
+        image = self.dataset_process.resize_image(image, self.image_size)
         image = self.dataset_process.normalize_image(image)
         label = self.dataset_process.normalize_label(label)
         return image, label

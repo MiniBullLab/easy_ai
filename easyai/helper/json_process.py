@@ -164,7 +164,7 @@ class JsonProcess():
             ocr_object = OCRObject()
             ocr_object.name = class_name
             ocr_object.language = language
-            ocr_object.object_text = transcription
+            ocr_object.object_text = transcription.strip()
             ocr_object.clear_polygon()
             for index in range(0, point_count * 2, 2):
                 point = Point2d(int(points_list[index]), int(points_list[index+1]))

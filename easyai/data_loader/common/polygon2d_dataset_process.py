@@ -4,6 +4,7 @@
 
 import cv2
 import numpy as np
+from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 from easyai.data_loader.common.polygon2d_process import Polygon2dProcess
 from easyai.utility.logger import EasyLogger
@@ -19,8 +20,15 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
         assert len(polygon) >= 4, EasyLogger.error(polygon)
         temp_points = np.array([[p.x, p.y] for p in polygon], dtype=np.float32)
         if len(polygon) > 4:
+            # x_min = temp_points[:, 0].min()
+            # x_max = temp_points[:, 0].max()
+            # y_min = temp_points[:, 1].min()
+            # y_max = temp_points[:, 1].max()
+            # box = Rect2D(x_min, y_min, x_max, y_max)
+            # dst_img = self.get_roi_image(src_image, box)
             rotated_box = cv2.minAreaRect(temp_points)
             temp_points = cv2.boxPoints(rotated_box)
+        # else:
         points = self.polygon_process.original_coordinate_transformation(temp_points)
         img_crop_width = int(
             max(np.linalg.norm(points[0] - points[1]),
@@ -45,9 +53,21 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
                                       borderMode=cv2.BORDER_REPLICATE,
                                       flags=cv2.INTER_CUBIC,
                                       borderValue=self.pad_color)
-        dst_img_height, dst_img_width = dst_img.shape[0:2]
+        # dst_img_height, dst_img_width = dst_img.shape[0:2]
+        # if dst_img_height * 1.0 / dst_img_width >= 1.5:
+        #     dst_img = np.rot90(dst_img)
+        return dst_img
+
+    def rotation90_image(self, image):
+        dst_img = image[:]
+        dst_img_height, dst_img_width = image.shape[0:2]
         if dst_img_height * 1.0 / dst_img_width >= 1.5:
-            dst_img = np.rot90(dst_img)
+            dst_img = np.rot90(image)
+            # import cv2
+            # import os
+            # path, image_name = os.path.split(img_path)
+            # print(img_path)
+            # cv2.imwrite(image_name, dst_img)
         return dst_img
 
 

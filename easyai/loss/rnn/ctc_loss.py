@@ -28,15 +28,11 @@ class CTCLoss(BaseLoss):
                                  fill_value=self.blank_index,
                                  dtype=torch.long, device=device)
             for idx, tensor in enumerate(target_dict['targets']):
-                length = tensor.size(0)
-                if length >= seq_len:
-                    valid_len = int(seq_len - 2)
-                    targets[idx, :valid_len] = tensor[:valid_len]
-                else:
-                    targets[idx, :length] = tensor
+                valid_len = min(tensor.size(0), seq_len)
+                targets[idx, :valid_len] = tensor[:valid_len]
 
             target_lengths = torch.clamp(target_dict['targets_lengths'],
-                                         min=1, max=seq_len - 2).long().to(device)
+                                         min=1, max=seq_len).long().to(device)
 
             input_lengths = torch.full(size=(batch_size,),
                                        fill_value=seq_len,

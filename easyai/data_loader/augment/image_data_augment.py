@@ -80,10 +80,7 @@ class ImageDataAugment():
 
     def gaussian_blur(self, src_image):
         # random gaussian blur
-        image_size = (src_image.shape[1], src_image.shape[0])
-        image = src_image[:]
-        if image_size[0] >= 90 and random.randint(0, 1) == 0:
-            image = cv2.GaussianBlur(image, (5, 5), 1)
+        image = cv2.GaussianBlur(src_image, (5, 5), 1)
         return image
 
     def random_noise(self, src_image):

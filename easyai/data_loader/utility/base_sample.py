@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.helper import DirProcess
+from easyai.helper.dir_process import DirProcess
 from easyai.helper.json_process import JsonProcess
 
 

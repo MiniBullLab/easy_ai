@@ -64,6 +64,7 @@ class RecTextSample(BaseDetectionSample):
                 continue
             ocr_object = OCRObject()
             ocr_object.set_text(text_data)
+            EasyLogger.debug("{}{}".format(image_path, text_data))
             self.image_and_ocr_list.append((image_path, ocr_object))
         self.sample_count = self.get_sample_count()
 
