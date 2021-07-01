@@ -62,7 +62,7 @@ class CreateRecognizeTextSample():
                                                                            ocr.get_polygon()[:],
                                                                            self.expand_ratio)
                         dst_img_height, dst_img_width = image.shape[0:2]
-                        if dst_img_height < 20 or dst_img_width < 20:
+                        if dst_img_height < 10 or dst_img_width < 10:
                             print(imagePath, "small eara(%s)" % ocr.get_text())
                             continue
                         if dst_img_height * 1.0 / dst_img_width >= 1.5:

@@ -8,6 +8,7 @@ from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.name_manager.block_name import LayerType, BlockType, NeckType
 from easyai.name_manager.loss_name import LossName
 from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
+from easyai.model_block.base_block.rnn.rnn_block import Im2SeqBlock
 from easyai.model_block.neck.sequence_encoder import SequenceEncoder
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.model_registry import REGISTERED_RNN_MODEL
