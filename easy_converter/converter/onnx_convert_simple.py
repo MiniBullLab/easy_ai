@@ -9,10 +9,10 @@ import onnxsim
 
 class OnnxConvertSimple():
 
-    def __init__(self, onnx_path, input_shape, check_n=3,
+    def __init__(self, onnx_path, check_n=3,
                  skip_optimization=True, enable_fuse_bn=True):
         self.onnx_path = onnx_path
-        self.input_shape = input_shape
+        self.input_shape = None
         self.check_n = check_n
         self.skip_optimization = skip_optimization
         self.enable_fuse_bn = enable_fuse_bn

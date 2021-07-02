@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
+import pathlib
 import os.path
 import torch
 from torch import onnx
@@ -55,9 +60,14 @@ class TorchConvertOnnx():
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
         if weight_path is not None:
-            self.model_process.load_latest_model(weight_path, model)
+            temp_path = pathlib.Path(weight_path)
+            temp_path = temp_path.with_suffix(".native")
+            if temp_path.exists():
+                model = torch.jit.load(str(temp_path))
+            else:
+                self.model_process.load_latest_model(weight_path, model)
         save_onnx_path = os.path.join(self.save_dir, "%s.onnx" % model.get_name())
         onnx.export(model, self.input_x, save_onnx_path,
-                    export_params=True, verbose=False,
+                    export_params=True, verbose=True,
                     input_names=self.input_names, output_names=self.output_names)
         return save_onnx_path

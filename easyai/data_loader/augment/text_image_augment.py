@@ -24,6 +24,7 @@ class TextImageAugment():
 
         cut = img_w // cut_count
         thresh = cut // 3
+        print("distort", thresh)
         # thresh = img_h // segment // 3
         # thresh = img_h // 5
 

@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import pathlib
 import os.path
 import re
 import torch
@@ -92,6 +93,10 @@ class TorchModelProcess():
                       'model': model.state_dict()
                       }
         torch.save(checkpoint, weights_path)
+        # scripted_module = torch.jit.script(model)
+        # temp_path = pathlib.Path(weights_path)
+        # temp_path = temp_path.with_suffix(".native")
+        # torch.jit.save(scripted_module, str(temp_path))
 
     def save_best_model(self, value, latest_weights_file, best_weights_file):
         if value >= self.best_value:
@@ -100,6 +105,14 @@ class TorchModelProcess():
                 latest_weights_file,
                 best_weights_file,
             ))
+            # temp_path = pathlib.Path(latest_weights_file)
+            # temp_path = temp_path.with_suffix(".native")
+            # best_temp_path = pathlib.Path(best_weights_file)
+            # best_temp_path = best_temp_path.with_suffix(".native")
+            # os.system('cp {} {}'.format(
+            #     str(temp_path),
+            #     str(best_temp_path),
+            # ))
         return self.best_value
 
     def load_latest_optimizer(self, optimizer_path, optimizer, amp_opt=None):

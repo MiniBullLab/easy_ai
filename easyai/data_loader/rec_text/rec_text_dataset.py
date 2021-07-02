@@ -13,12 +13,13 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 @REGISTERED_DATASET.register_module(DatasetName.RecTextDataSet)
 class RecTextDataSet(TorchDataLoader):
 
-    def __init__(self, data_path, char_path, language,
+    def __init__(self, data_path, char_path, max_text_length, language,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
                  is_augment=False):
         super().__init__(data_path, data_channel)
         self.char_path = char_path
+        self.max_text_length = max_text_length
         self.language = language
         self.image_size = tuple(image_size)
         self.is_augment = is_augment
@@ -27,7 +28,8 @@ class RecTextDataSet(TorchDataLoader):
                                                      mean, std, self.get_pad_color())
 
         self.text_sample = RecTextSample(data_path, language)
-        self.text_sample.read_text_sample(self.dataset_process.character)
+        self.text_sample.read_text_sample(self.dataset_process.character,
+                                          self.max_text_length)
 
         self.dataset_augment = RecTextDataAugment()
 
@@ -39,6 +41,10 @@ class RecTextDataSet(TorchDataLoader):
         else:
             image = src_image[:]
         image = self.dataset_process.resize_image(image, self.image_size)
+        # import cv2
+        # import os
+        # path, image_name = os.path.split(img_path)
+        # cv2.imwrite(image_name, image)
         image = self.dataset_process.normalize_image(image)
         label = self.dataset_process.normalize_label(label)
         return image, label

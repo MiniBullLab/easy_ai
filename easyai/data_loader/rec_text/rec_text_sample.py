@@ -23,7 +23,7 @@ class RecTextSample(BaseDetectionSample):
 
         self.lmdb_env = None
 
-    def read_sample(self, char_list):
+    def read_sample(self, char_list, max_text_length):
         image_and_label_list = self.get_image_and_label_list(self.train_path)
         self.image_and_ocr_list = self.get_image_and_ocr_list(image_and_label_list)
         filtering_result = []
@@ -32,11 +32,13 @@ class RecTextSample(BaseDetectionSample):
                 if char in char_list:
                     filtering_result.append((image_path, ocr_object))
                     break
+            if len(ocr_object.object_text) > max_text_length:
+                continue
         self.image_and_ocr_list = filtering_result
 
         self.sample_count = self.get_sample_count()
 
-    def read_lmdb_sample(self, char_list):
+    def read_lmdb_sample(self, char_list, max_text_length):
         self.lmdb_env = lmdb.open(self.train_path, max_readers=32,
                                   readonly=True, lock=False,
                                   readahead=False, meminit=False)
@@ -47,13 +49,17 @@ class RecTextSample(BaseDetectionSample):
                 nSamples = int(txn.get('num-samples'.encode()))
                 for index in range(nSamples):
                     label_key = 'label_%09d'.encode() % index
-                    label = txn.get(label_key).decode('utf-8')
-                    if True in [c not in char_list for c in label]:
+                    text_data = txn.get(label_key).decode('utf-8')
+                    if not text_data.strip():
+                        continue
+                    if True in [c not in char_list for c in text_data.strip()]:
+                        continue
+                    if len(text_data.strip()) > max_text_length:
                         continue
                     self.image_and_ocr_list.append(index)
         self.sample_count = self.get_sample_count()
 
-    def read_text_sample(self, char_list):
+    def read_text_sample(self, char_list, max_text_length):
         self.image_and_ocr_list = []
         sample_process = BaseClassifySample()
         image_and_text_list = sample_process.get_image_and_text_list(self.train_path)
@@ -62,9 +68,11 @@ class RecTextSample(BaseDetectionSample):
                 continue
             if True in [c not in char_list for c in text_data.strip()]:
                 continue
+            if len(text_data.strip()) > max_text_length:
+                continue
             ocr_object = OCRObject()
-            ocr_object.set_text(text_data)
-            EasyLogger.debug("{}{}".format(image_path, text_data))
+            ocr_object.set_text(text_data.strip())
+            # EasyLogger.debug("{} {}".format(image_path, text_data))
             self.image_and_ocr_list.append((image_path, ocr_object))
         self.sample_count = self.get_sample_count()
 
@@ -83,7 +91,7 @@ class RecTextSample(BaseDetectionSample):
             img_buffer = txn.get(img_key)
             src_image = self.image_process.read_raw_buf(img_buffer)
             ocr_object = OCRObject()
-            ocr_object.set_text(label)
+            ocr_object.set_text(label.strip())
         return src_image, ocr_object
 
     def get_sample_count(self):

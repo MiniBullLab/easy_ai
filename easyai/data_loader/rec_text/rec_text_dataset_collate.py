@@ -47,8 +47,7 @@ class RecTextDataSetCollate(BaseDatasetCollate):
         :param _target_width:   目标宽度
         :return:    pad完成后的图像
         """
-        _channels, _height, _width = img.shape
-        to_return_img = np.ones([_channels, _height, target_width],
-                                dtype=img.dtype) * self.pad_value
-        to_return_img[:, :_height, :_width] = img
-        return to_return_img
+        channels, height, width = img.shape
+        padding_im = np.zeros((channels, height, target_width), dtype=img.dtype)
+        padding_im[:, :, 0:width] = img
+        return padding_im

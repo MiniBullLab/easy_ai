@@ -32,7 +32,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.load_image_data_value(config_dict)
         if config_dict.get('character_set', None) is not None:
             self.character_set = config_dict['character_set']
-        if config_dict.get('character_count', 0) is not None:
+        if config_dict.get('character_count', 0) != 0:
             self.character_count = int(config_dict['character_count'])
 
     def save_data_value(self, config_dict):
@@ -53,7 +53,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         EasyLogger.debug(self.character_set)
         self.character_count = 100
 
-        self.data = {'image_size': (120, 32),   # W * H
+        self.data = {'image_size': (320, 32),   # W * H
                      'data_channel': 3,
                      'resize_type': -1,
                      'normalize_type': 1,
@@ -71,6 +71,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataset']['type'] = "RecTextDataSet"
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['char_path'] = self.character_set
+        self.val_data['dataset']['max_text_length'] = 80
         self.val_data['dataset']['language'] = ("english", )
         self.val_data['dataset']['is_augment'] = False
 
@@ -90,11 +91,12 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['type'] = "RecTextDataSet"
         self.train_data['dataset'].update(self.data)
         self.train_data['dataset']['char_path'] = self.character_set
+        self.train_data['dataset']['max_text_length'] = 80
         self.train_data['dataset']['language'] = ("english",)
         self.train_data['dataset']['is_augment'] = False
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 32
+        self.train_data['dataloader']['batch_size'] = 64
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True
@@ -109,7 +111,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 300
+        self.max_epochs = 200
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
@@ -119,10 +121,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.optimizer_config = {0: {'type': 'Adam',
                                      'weight_decay': 1e-4}
                                  }
-        self.lr_scheduler_config = {'type': 'MultiStageLR',
-                                    'lr_stages': [[60, 1], [120, 0.5],
-                                                  [180, 0.25], [240, 0.125],
-                                                  [300, 0.0625]],
+        self.lr_scheduler_config = {'type': 'CosineLR',
                                     'warmup_type': 0,
                                     'warmup_iters': 5}
         self.accumulated_batches = 1

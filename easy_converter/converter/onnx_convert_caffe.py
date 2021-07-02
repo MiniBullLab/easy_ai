@@ -6,8 +6,8 @@ import pathlib
 import caffe
 import onnx
 from caffe.proto import caffe_pb2
-from easy_converter.caffe_process.onnx2caffe import ConvAddFuser,ConstantsToInitializers
-from easy_converter.caffe_process.onnx2caffe import Graph
+from easy_converter.caffe_process.onnx2caffe.transformers import ConvAddFuser,ConstantsToInitializers
+from easy_converter.caffe_process.onnx2caffe.graph import Graph
 import easy_converter.caffe_process.onnx2caffe.operators as cvt
 import easy_converter.caffe_process.onnx2caffe.weightloader as wlr
 from easy_converter.caffe_process.onnx2caffe.error_utils import ErrorHandling

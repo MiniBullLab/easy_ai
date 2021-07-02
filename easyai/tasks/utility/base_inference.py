@@ -55,6 +55,7 @@ class BaseInference(BaseTask):
     def set_model_param(self, data_channel, **params):
         self.model_args["data_channel"] = data_channel
         self.model_args.update(params)
+        EasyLogger.debug(self.model_args)
 
     def set_model(self, my_model=None, gpu_id=0):
         if my_model is None:
@@ -83,6 +84,7 @@ class BaseInference(BaseTask):
     def get_image_data_lodaer(self, input_path):
         if not os.path.exists(input_path):
             return None
+        EasyLogger.debug(self.task_config.data)
         image_size = tuple(self.task_config.data['image_size'])
         data_channel = self.task_config.data['data_channel']
         mean = self.task_config.data['mean']

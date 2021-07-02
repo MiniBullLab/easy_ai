@@ -16,7 +16,8 @@ from easyai.model_block.utility.base_backbone import *
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['MobileNetV3Large', 'MobileNetV3Small',
-           "MobileNetV3LargeV05", "MobileNetV3SmallV05"]
+           "MobileNetV3LargeV05", "MobileNetV3SmallV05",
+           "MobileNetV3SmallDown16"]
 
 
 class MobileNetV3(BaseBackbone):
