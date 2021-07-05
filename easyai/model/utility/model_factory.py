@@ -27,6 +27,7 @@ class ModelFactory():
         self.model_weight_init = ModelWeightInit()
 
     def get_model(self, model_config):
+        EasyLogger.debug(model_config)
         input_name = model_config['type'].strip()
         model_args = model_config.copy()
         if input_name.endswith("cfg"):
@@ -35,7 +36,7 @@ class ModelFactory():
         else:
             result = self.get_model_from_name(model_args)
             if result is None:
-                print("%s model error!" % input_name)
+                EasyLogger.error("%s model error!" % input_name)
         self.model_weight_init.init_weight(result)
         return result
 

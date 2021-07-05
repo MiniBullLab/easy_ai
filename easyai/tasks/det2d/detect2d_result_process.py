@@ -6,6 +6,7 @@
 from easyai.tasks.utility.task_result_process import TaskPostProcess
 from easyai.helper.data_structure import DetectionObject
 from easyai.base_algorithm.fast_non_max_suppression import FastNonMaxSuppression
+from easyai.utility.logger import EasyLogger
 
 
 class Detect2dResultProcess(TaskPostProcess):
@@ -19,6 +20,7 @@ class Detect2dResultProcess(TaskPostProcess):
         self.detect2d_class = detect2d_class
         self.nms_process = FastNonMaxSuppression()
         self.process_func = self.build_post_process(post_process_args)
+        EasyLogger.debug("det2d class name:{}".format(self.detect2d_class))
 
     def post_process(self, prediction, src_size):
         if prediction is None:

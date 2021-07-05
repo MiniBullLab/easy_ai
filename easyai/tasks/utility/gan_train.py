@@ -5,6 +5,7 @@
 import os
 from easyai.helper.average_meter import AverageMeter
 from easyai.tasks.utility.base_train import BaseTrain
+from easyai.utility.logger import EasyLogger
 
 
 class GanTrain(BaseTrain):
@@ -17,6 +18,7 @@ class GanTrain(BaseTrain):
         self.d_optimizer_list = []
         self.g_optimizer_list = []
         self.total_batch_image = 0
+        self.best_score = 0
         self.start_epoch = 0
 
         self.test_first = True
@@ -27,6 +29,15 @@ class GanTrain(BaseTrain):
                 self.torchModelProcess.load_pretain_model(weights_path[0], self.model)
         else:
             self.torchModelProcess.load_pretain_model(weights_path, self.model)
+
+    def load_latest_param(self, latest_weights_path):
+        if latest_weights_path and os.path.exists(latest_weights_path):
+            self.start_epoch, self.best_score \
+                = self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
+            EasyLogger.debug("Latest value: {} {}".format(self.start_epoch,
+                                                          self.best_score))
+        self.model = self.torchModelProcess.model_train_init(self.model)
+        self.build_optimizer()
 
     def build_optimizer(self):
         if self.model is not None:
@@ -49,7 +60,7 @@ class GanTrain(BaseTrain):
                                                                  g_model)
                 self.g_optimizer_list.append(optimizer)
         else:
-            print("model is not create!")
+            EasyLogger.error("model is not create!")
 
     def start_train(self):
         self.d_loss_average.reset()

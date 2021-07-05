@@ -22,6 +22,7 @@ class CommonTrain(BaseTrain):
         super().__init__(model_name, config_path, task_name)
         self.optimizer = None
         self.lr_scheduler = None
+        self.best_score = 0
         self.start_epoch = 0
         self.test_first = True
         self.loss_info_average = dict()
@@ -32,6 +33,15 @@ class CommonTrain(BaseTrain):
                 self.torchModelProcess.load_pretain_model(weights_path[0], self.model)
         else:
             self.torchModelProcess.load_pretain_model(weights_path, self.model)
+
+    def load_latest_param(self, latest_weights_path):
+        if latest_weights_path is not None and os.path.exists(latest_weights_path):
+            self.start_epoch, self.best_score = \
+                self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
+            EasyLogger.debug("Latest value: {} {}".format(self.start_epoch,
+                                                          self.best_score))
+        self.model = self.torchModelProcess.model_train_init(self.model)
+        self.build_optimizer()
 
     def build_optimizer(self):
         if self.model is not None:
@@ -103,7 +113,7 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_layer_name,
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
-        EasyLogger.info("image count is : %d" % self.total_batch_image)
+        EasyLogger.info("Train image count is : %d" % self.total_batch_image)
         assert self.total_batch_image > 0, EasyLogger.error("no train dataset")
 
         for key in self.loss_info_average:

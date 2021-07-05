@@ -21,10 +21,10 @@ class TextImageAugment():
 
     def distort(self, src_image, cut_count):
         img_h, img_w = src_image.shape[:2]
-
         cut = img_w // cut_count
         thresh = cut // 3
-        print("distort", thresh)
+        if thresh <= 0:
+            return src_image
         # thresh = img_h // segment // 3
         # thresh = img_h // 5
 
@@ -58,9 +58,10 @@ class TextImageAugment():
 
     def stretch(self, src_image, cut_count):
         img_h, img_w = src_image.shape[:2]
-
         cut = img_w // cut_count
         thresh = cut * 4 // 5
+        if thresh <= 0:
+            return src_image
         # thresh = img_h // segment // 3
         # thresh = img_h // 5
 

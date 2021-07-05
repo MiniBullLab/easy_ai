@@ -16,9 +16,9 @@ class TextResultProcess(TaskPostProcess):
         self.character_path = character_path
         self.post_process_args = post_process_args
         self.text_process = RecTextProcess()
-        EasyLogger.debug(character_path)
         self.character = self.text_process.read_character(character_path)
         self.process_func = self.build_post_process(post_process_args)
+        EasyLogger.debug(character_path)
 
     def post_process(self, prediction):
         if prediction is None:

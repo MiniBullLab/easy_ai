@@ -39,7 +39,7 @@ class ModelBlockPrint():
 def main(options_param):
     show = ModelBlockPrint()
     if options_param.model is not None:
-        show.model_print(options.backbone)
+        show.model_print(options.model)
     elif options_param.backbone is not None:
         show.backbone_model_print(options.backbone)
 

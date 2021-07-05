@@ -20,14 +20,6 @@ class KeyPoints2dTrain(CommonTrain):
         self.keypoints_test = KeyPoint2dTest(model_name, gpu_id, self.train_task_config)
         self.avg_loss = -1
 
-    def load_latest_param(self, latest_weights_path):
-        if latest_weights_path and os.path.exists(latest_weights_path):
-            self.start_epoch, self.best_score = \
-                self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
-
-        self.model = self.torchModelProcess.model_train_init(self.model)
-        self.build_optimizer()
-
     def train(self, train_path, val_path):
         self.create_dataloader(train_path)
         self.build_lr_scheduler()

@@ -20,14 +20,6 @@ class ClassifyTrain(CommonTrain):
         self.set_model(gpu_id=gpu_id)
         self.classify_test = ClassifyTest(model_name, gpu_id, self.train_task_config)
 
-    def load_latest_param(self, latest_weights_path):
-        if latest_weights_path is not None and os.path.exists(latest_weights_path):
-            self.start_epoch, self.best_score = \
-                self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
-
-        self.model = self.torchModelProcess.model_train_init(self.model)
-        self.build_optimizer()
-
     def train(self, train_path, val_path):
         self.create_dataloader(train_path)
         self.build_lr_scheduler()
@@ -99,7 +91,7 @@ class ClassifyTrain(CommonTrain):
                 self.classify_test.create_dataloader(val_path)
                 self.test_first = False
             if not self.classify_test.start_test():
-                EasyLogger.info("no test!")
+                EasyLogger.warn("no test!")
                 return
             self.classify_test.load_weights(save_model_path)
             precision, average_loss = self.classify_test.test(epoch)
@@ -111,4 +103,4 @@ class ClassifyTrain(CommonTrain):
                                                                      self.train_task_config.best_weights_path)
         else:
             EasyLogger.warn("%s not exists!" % val_path)
-            EasyLogger.info("no test!")
+            EasyLogger.warn("no test!")

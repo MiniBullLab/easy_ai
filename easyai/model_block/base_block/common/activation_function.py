@@ -49,7 +49,7 @@ class PaddleHardSigmoid(BaseBlock):
         super().__init__(ActivationType.PaddleHardSigmoid)
 
     def forward(self, x):
-        x = (1.2 * x).add_(3.).clamp_(0., 6.).div_(6.)
+        x = (1.2 * x).add_(3).clamp_(0., 6.).div_(6.)
         return x
 
 

@@ -53,7 +53,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         EasyLogger.debug(self.character_set)
         self.character_count = 100
 
-        self.data = {'image_size': (320, 32),   # W * H
+        self.data = {'image_size': (120, 32),   # W * H
                      'data_channel': 3,
                      'resize_type': -1,
                      'normalize_type': 1,
@@ -71,7 +71,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataset']['type'] = "RecTextDataSet"
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['char_path'] = self.character_set
-        self.val_data['dataset']['max_text_length'] = 80
+        self.val_data['dataset']['max_text_length'] = 30
         self.val_data['dataset']['language'] = ("english", )
         self.val_data['dataset']['is_augment'] = False
 
@@ -91,9 +91,9 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['type'] = "RecTextDataSet"
         self.train_data['dataset'].update(self.data)
         self.train_data['dataset']['char_path'] = self.character_set
-        self.train_data['dataset']['max_text_length'] = 80
+        self.train_data['dataset']['max_text_length'] = 30
         self.train_data['dataset']['language'] = ("english",)
-        self.train_data['dataset']['is_augment'] = False
+        self.train_data['dataset']['is_augment'] = True
 
         self.train_data['dataloader']['type'] = "DataLoader"
         self.train_data['dataloader']['batch_size'] = 64
@@ -122,8 +122,8 @@ class RecognizeTextConfig(CommonTrainConfig):
                                      'weight_decay': 1e-4}
                                  }
         self.lr_scheduler_config = {'type': 'CosineLR',
-                                    'warmup_type': 0,
-                                    'warmup_iters': 5}
+                                    'warmup_type': 2,
+                                    'warmup_iters': 2}
         self.accumulated_batches = 1
         self.display = 20
 

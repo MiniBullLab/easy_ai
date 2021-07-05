@@ -50,6 +50,7 @@ class TorchModelProcess():
                     EasyLogger.debug("{} {}".format(k, v.shape))
                 model_dict.update(new_pretrained_dict)
                 model.load_state_dict(model_dict)
+                EasyLogger.warn("Load pretrained parameters(%s) success" % weight_path)
             else:
                 EasyLogger.warn("pretrained model %s not exist" % weight_path)
 
@@ -71,14 +72,11 @@ class TorchModelProcess():
                 EasyLogger.warn(err)
         else:
             EasyLogger.error("Latest model %s exists" % weight_path)
-        result = self.get_latest_model_value(checkpoint)
-        EasyLogger.debug("Latest value: {}".format(result))
-        return result
 
     def get_latest_model_value(self, checkpoint):
         start_epoch = 0
         value = -1
-        if checkpoint:
+        if checkpoint is not None and len(checkpoint) > 0:
             if checkpoint.get('epoch') is not None:
                 start_epoch = checkpoint['epoch'] + 1
             if checkpoint.get('best_value') is not None:

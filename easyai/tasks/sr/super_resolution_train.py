@@ -20,14 +20,6 @@ class SuperResolutionTrain(CommonTrain):
         self.set_model(gpu_id=gpu_id)
         self.sr_test = SuperResolutionTest(model_name, gpu_id, self.train_task_config)
 
-    def load_latest_param(self, latest_weights_path):
-        if latest_weights_path and os.path.exists(latest_weights_path):
-            self.start_epoch, self.best_score \
-                = self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
-
-        self.model = self.torchModelProcess.model_train_init(self.model)
-        self.build_optimizer()
-
     def train(self, train_path, val_path):
         self.create_dataloader(train_path)
         self.build_lr_scheduler()
@@ -90,10 +82,10 @@ class SuperResolutionTrain(CommonTrain):
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):
             if self.test_first:
-                self.classify_test.create_dataloader(val_path)
+                self.sr_test.create_dataloader(val_path)
                 self.test_first = False
-            if not self.classify_test.start_test():
-                EasyLogger.info("no test!")
+            if not self.sr_test.start_test():
+                EasyLogger.warn("no test!")
                 return
             self.sr_test.load_weights(save_model_path)
             score, average_loss = self.sr_test.test(epoch)
@@ -104,5 +96,5 @@ class SuperResolutionTrain(CommonTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.warn("no test!")
 
