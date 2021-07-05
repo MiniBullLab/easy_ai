@@ -53,21 +53,16 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
                                       borderMode=cv2.BORDER_REPLICATE,
                                       flags=cv2.INTER_CUBIC,
                                       borderValue=self.pad_color)
-        # dst_img_height, dst_img_width = dst_img.shape[0:2]
-        # if dst_img_height * 1.0 / dst_img_width >= 1.5:
-        #     dst_img = np.rot90(dst_img)
         return dst_img
 
-    def rotation90_image(self, image):
+    def rotation90_image(self, image, ratio=1.5):
+        """
+        anticlockwise rotate 90
+        """
         dst_img = image[:]
         dst_img_height, dst_img_width = image.shape[0:2]
-        if dst_img_height * 1.0 / dst_img_width >= 1.5:
+        if dst_img_height * 1.0 / dst_img_width >= ratio:
             dst_img = np.rot90(image)
-            # import cv2
-            # import os
-            # path, image_name = os.path.split(img_path)
-            # print(img_path)
-            # cv2.imwrite(image_name, dst_img)
         return dst_img
 
 

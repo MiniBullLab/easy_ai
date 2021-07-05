@@ -66,8 +66,8 @@ class CreateRecognizeTextSample():
                             print(imagePath, "small eara(%s)" % ocr.get_text())
                             continue
                         if dst_img_height * 1.0 / dst_img_width >= 1.5:
+                            image = np.rot90(image)
                             print(imagePath, "%s(90)" % ocr.get_text())
-                            continue
                         if (sample_index + 1) % probability == 0:
                             self.write_data(imagePath, image, ocr,
                                             sample_index, save_test_file)

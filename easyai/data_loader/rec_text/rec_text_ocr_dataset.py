@@ -40,6 +40,7 @@ class RecTextOCRDataSet(TorchDataLoader):
         crop_image = self.dataset_process.get_rotate_crop_image(src_image,
                                                                 label.get_polygon()[:],
                                                                 self.expand_ratio)
+        crop_image = self.dataset_process.rotation90_image(crop_image)
         if self.is_augment:
             image, label = self.dataset_augment.augment(crop_image, label)
         else:
