@@ -39,7 +39,10 @@ class CRNN(BaseClassifyModel):
         pool = MyMaxPool2d(kernel_size=2, stride=2)
         self.add_block_list(pool.get_name(), pool, base_out_channels[-1])
 
-        neck = SequenceEncoder(self.block_out_channels[-1], 48)
+        # neck = SequenceEncoder(self.block_out_channels[-1], 48)
+        # self.add_block_list(neck.get_name(), neck, neck.out_channels)
+
+        neck = Im2SeqBlock(self.block_out_channels[-1])
         self.add_block_list(neck.get_name(), neck, neck.out_channels)
 
         layer = nn.Linear(self.block_out_channels[-1], self.class_number)
@@ -68,8 +71,6 @@ class CRNN(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif NeckType.SequenceEncoder in key:
-                x = block(x)
             elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:

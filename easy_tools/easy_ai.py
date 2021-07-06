@@ -62,7 +62,7 @@ def train_main():
         train_process.det2d_model_train(dir_name)
     elif options.task_name.strip() == "SegNet":
         train_process.segment_model_train(dir_name)
-    elif options.task_name.strip() == "OCR":
+    elif options.task_name.strip() == "TextNet":
         train_process.rec_text_model_train(dir_name)
     else:
         EasyLogger.error("input task error!")

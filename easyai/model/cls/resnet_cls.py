@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.name_manager.model_name import ModelName
 from easyai.name_manager.backbone_name import BackboneName

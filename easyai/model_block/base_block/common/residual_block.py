@@ -279,7 +279,7 @@ class InvertedResidualV2(BaseBlock):
             elif se_type == 2:
                 layer_name = "%s_3" % BlockType.SEConvBlock
                 layers[layer_name] = SEConvBlock(hidden_dim, hidden_dim, reduction=4,
-                                                 activate_name2=ActivationType.PaddleHardSigmoid)
+                                                 activate_name2=ActivationType.HardSigmoid)
             layer_name = "%s_4" % BlockType.ConvBNActivationBlock
             layers[layer_name] = ConvBNActivationBlock(in_channels=hidden_dim,
                                                        out_channels=out_channels,

@@ -60,6 +60,7 @@ class ModelName():
 
     # rnn
     CRNN = "CRNN"
+    TextNet = "TextNet"
 
     # multi
     DetPoes2dModel = "DetPoes2d"

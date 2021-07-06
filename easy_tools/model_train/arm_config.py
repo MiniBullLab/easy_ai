@@ -56,3 +56,12 @@ class ARMConfig():
         save_data['image_height'] = image_height
         with codecs.open(save_path, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, sort_keys=True, indent=4, ensure_ascii=False)
+
+    def create_textnet_config(self, input_name, output_name, threshold=0.3):
+        save_path = "textnet.json"
+        save_data = dict()
+        save_data['input_layer'] = input_name[0]
+        save_data['output_layer'] = output_name[0]
+        # save_data['threshold'] = threshold
+        with codecs.open(save_path, 'w', encoding='utf-8') as f:
+            json.dump(save_data, f, sort_keys=True, indent=4, ensure_ascii=False)

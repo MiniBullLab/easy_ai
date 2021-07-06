@@ -123,7 +123,7 @@ class RecognizeTextConfig(CommonTrainConfig):
                                  }
         self.lr_scheduler_config = {'type': 'CosineLR',
                                     'warmup_type': 2,
-                                    'warmup_iters': 2}
+                                    'warmup_iters': 3}
         self.accumulated_batches = 1
         self.display = 20
 
