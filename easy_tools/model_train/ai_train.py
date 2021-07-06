@@ -126,13 +126,14 @@ class EasyAiModelTrain():
         pretrain_model_path = os.path.join(dir_name, "./data/TextNet.pt")
         try:
             create_sample = CreateRecognizeTextSample()
-            create_sample.create_train_and_test(self.images_dir, self.dataset_path, 8)
+            create_sample.create_train_and_test(self.images_dir, self.dataset_path, 8,
+                                                language=("english",))
 
             train_task = TrainTask(TaskName.RecognizeText, self.train_path, self.val_path)
             train_task.set_convert_param(True, input_name, output_name)
             train_task.train("TextNet", self.gpu_id, None, pretrain_model_path)
             save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "text_img")
-            self.copy_process.copy(self.train_path, save_image_dir)
+            self.copy_process.copy(self.train_path, save_image_dir, '|')
             self.arm_config.create_textnet_config(input_name, output_name)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())

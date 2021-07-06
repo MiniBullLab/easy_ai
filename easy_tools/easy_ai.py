@@ -48,7 +48,7 @@ def parse_arguments():
 
 
 def train_main():
-    EasyLogger.info("process start...")
+    EasyLogger.info("easyai process start...")
     options = parse_arguments()
     current_path = inspect.getfile(inspect.currentframe())
     dir_name = os.path.dirname(current_path)
@@ -66,7 +66,7 @@ def train_main():
         train_process.rec_text_model_train(dir_name)
     else:
         EasyLogger.error("input task error!")
-    EasyLogger.info("process end!")
+    EasyLogger.info("easyai process end!")
 
 
 if __name__ == "__main__":

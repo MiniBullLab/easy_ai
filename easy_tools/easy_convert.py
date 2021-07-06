@@ -2,6 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author: lipeijie
 
+from easyai.utility.logger import EasyLogger
+log_file_path = EasyLogger.get_log_file_path("convert_runtime.log")
+EasyLogger.init(logfile_level="debug", log_file=log_file_path)
 
 import os
 import inspect
@@ -35,12 +38,12 @@ def parse_arguments():
 
 
 def main():
-    print("process start...")
+    EasyLogger.info("convert process start...")
     current_path = inspect.getfile(inspect.currentframe())
     dir_name = os.path.dirname(current_path)
     options = parse_arguments()
     easy_model_convert(options.task_name, options.input_path)
-    print("process end!")
+    EasyLogger.info("convert process end!")
 
 
 if __name__ == "__main__":

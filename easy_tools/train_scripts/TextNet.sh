@@ -1,86 +1,95 @@
 #!/bin/bash
-
-if [ -n "$1" ]; then
-    dataset_train_path=$1
-else
-    dataset_train_path=/easy_ai/ImageSets/train.txt
-fi
-
-if [ -n "$2" ]; then
-    dataset_val_path=$2
-else
-    dataset_val_path=/easy_ai/ImageSets/val.txt
-fi
-
-rm -rf ./.easy_log/recognize_text*
-CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task OCR --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
-if [ $? -ne 0 ]; then
-      echo "Failed to start easy_ai"
-      exit 1
-fi
-
-set -v
 root_path=$(pwd)
-modelDir="./.easy_log/snapshot"
-imageDir="./.easy_log/text_img"
-outDir="${root_path}/.easy_log/out"
-modelName=TextNet
-outNetName=TextNet
 
-inputColorFormat=1
-outputShape=1,3,32,120
-outputLayerName="o:text_output|ot:0,1,2,3|odf:fp32"
-inputDataFormat=0,0,0,0
+function run_onnx_convert() {
+    set -v
+    modelDir="./.easy_log/snapshot"
+    imageDir="./.easy_log/text_img"
+    outDir="${root_path}/.easy_log/out"
+    modelName=TextNet
+    outNetName=TextNet
 
-mean=127.5,127.5,127.5
-scale=127.5
+    inputColorFormat=1
+    outputShape=1,3,32,120
+    outputLayerName="o:text_output|ot:0,1,2,3|odf:fp32"
+    inputDataFormat=0,0,0,0
 
-rm -rf $outDir
-mkdir $outDir
-mkdir $outDir/dra_image_bin
+    mean=127.5,127.5,127.5
+    scale=127.5
 
-#amba
-source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
+    rm -rf $outDir
+    mkdir $outDir
+    mkdir $outDir/dra_image_bin
 
-#cuda10
-export PATH=/usr/local/cuda/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+    #amba
+    source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
 
-#caffe
-export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
+    #cuda10
+    export PATH=/usr/local/cuda/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
-graph_surgery.py onnx -m $modelDir/${modelName}.onnx  -t Default
-mv $modelDir/${modelName}.onnx $modelDir/${modelName}_raw.onnx
-mv $modelDir/${modelName}_modified.onnx $modelDir/${modelName}.onnx
+    #caffe
+    export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
-ls $imageDir/*.* > $imageDir/img_list.txt
-imgtobin.py -i $imageDir/img_list.txt \
-            -o $outDir/dra_image_bin \
-            -c $inputColorFormat \
-            -d 0,0,0,0 \
-            -s $outputShape
+    graph_surgery.py onnx -m $modelDir/${modelName}.onnx  -t Default
+    mv $modelDir/${modelName}.onnx $modelDir/${modelName}_raw.onnx
+    mv $modelDir/${modelName}_modified.onnx $modelDir/${modelName}.onnx
 
-ls $outDir/dra_image_bin/*.bin > $outDir/dra_image_bin/dra_bin_list.txt
+    ls $imageDir/*.* > $imageDir/img_list.txt
+    imgtobin.py -i $imageDir/img_list.txt \
+                -o $outDir/dra_image_bin \
+                -c $inputColorFormat \
+                -d 0,0,0,0 \
+                -s $outputShape
 
-onnxparser.py -m $modelDir/${modelName}.onnx \
-                -i $outDir/dra_image_bin/dra_bin_list.txt \
-                -o $outNetName \
-                -of $outDir/out_parser \
-                -is $outputShape \
-                -im $mean -ic $scale \
-                -iq -idf $inputDataFormat \
-                -odst $outputLayerName
+    ls $outDir/dra_image_bin/*.bin > $outDir/dra_image_bin/dra_bin_list.txt
 
-cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
+    onnxparser.py -m $modelDir/${modelName}.onnx \
+                    -i $outDir/dra_image_bin/dra_bin_list.txt \
+                    -o $outNetName \
+                    -of $outDir/out_parser \
+                    -is $outputShape \
+                    -im $mean -ic $scale \
+                    -iq -idf $inputDataFormat \
+                    -odst $outputLayerName
 
-rm -rf ${outDir}/cavalry
-mkdir -p ${outDir}/cavalry
+    cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 
-cavalry_gen -d $outDir/out_parser/vas_output/ \
-            -f $outDir/cavalry/$outNetName.bin \
-            -p $outDir/ \
-            -v > $outDir/cavalry/cavalry_info.txt
+    rm -rf ${outDir}/cavalry
+    mkdir -p ${outDir}/cavalry
 
-rm -rf vas_output
+    cavalry_gen -d $outDir/out_parser/vas_output/ \
+                -f $outDir/cavalry/$outNetName.bin \
+                -p $outDir/ \
+                -v > $outDir/cavalry/cavalry_info.txt
 
-cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
+    rm -rf vas_output
+
+    cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
+}
+
+function main() {
+    if [ -n "$1" ]; then
+        dataset_train_path=$1
+    else
+        dataset_train_path=/easy_ai/ImageSets/train.txt
+    fi
+
+    if [ -n "$2" ]; then
+        dataset_val_path=$2
+    else
+        dataset_val_path=/easy_ai/ImageSets/val.txt
+    fi
+    echo ${dataset_train_path}
+    echo ${dataset_val_path}
+
+    rm -rf ./.easy_log/recognize_text*
+    CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai -t TextNet -g 0 -i ${dataset_train_path} -v ${dataset_val_path}
+    if [ $? -ne 0 ]; then
+        echo "Failed to start easy_ai"
+        exit -1
+    fi
+    run_onnx_convert
+}
+
+main "$1" "$2"

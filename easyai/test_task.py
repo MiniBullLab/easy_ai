@@ -4,8 +4,9 @@
 
 import traceback
 from easyai.utility.logger import EasyLogger
-log_file_path = EasyLogger.get_log_file_path("test.log")
-EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
+if EasyLogger.check_init():
+    log_file_path = EasyLogger.get_log_file_path("inference.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
 
 
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK

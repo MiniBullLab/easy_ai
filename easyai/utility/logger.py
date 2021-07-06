@@ -112,6 +112,10 @@ class EasyLogger():
             EasyLogger.logger.addHandler(console)
 
     @staticmethod
+    def check_init():
+        return EasyLogger.logger is None
+
+    @staticmethod
     def get_log_file_path(file_name):
         return os.path.join(EasyLogger.ROOT_DIR, file_name)
 
