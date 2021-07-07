@@ -10,7 +10,7 @@ function run_onnx_convert() {
     outNetName=TextNet
 
     inputColorFormat=1
-    outputShape=1,3,32,120
+    outputShape=1,3,32,128
     outputLayerName="o:text_output|ot:0,1,2,3|odf:fp32"
     inputDataFormat=0,0,0,0
 
@@ -61,6 +61,7 @@ function run_onnx_convert() {
     cavalry_gen -d $outDir/out_parser/vas_output/ \
                 -f $outDir/cavalry/$outNetName.bin \
                 -p $outDir/ \
+                -V 2.1.7 \
                 -v > $outDir/cavalry/cavalry_info.txt
 
     rm -rf vas_output

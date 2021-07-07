@@ -51,9 +51,9 @@ class RecognizeTextConfig(CommonTrainConfig):
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "en.txt")
         EasyLogger.debug(self.character_set)
-        self.character_count = 100
+        self.character_count = 96
 
-        self.data = {'image_size': (120, 32),   # W * H
+        self.data = {'image_size': (128, 32),   # W * H
                      'data_channel': 3,
                      'resize_type': -1,
                      'normalize_type': 1,
@@ -71,7 +71,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataset']['type'] = "RecTextDataSet"
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['char_path'] = self.character_set
-        self.val_data['dataset']['max_text_length'] = 30
+        self.val_data['dataset']['max_text_length'] = 32
         self.val_data['dataset']['language'] = ("english", )
         self.val_data['dataset']['is_augment'] = False
 
@@ -91,7 +91,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['type'] = "RecTextDataSet"
         self.train_data['dataset'].update(self.data)
         self.train_data['dataset']['char_path'] = self.character_set
-        self.train_data['dataset']['max_text_length'] = 30
+        self.train_data['dataset']['max_text_length'] = 32
         self.train_data['dataset']['language'] = ("english",)
         self.train_data['dataset']['is_augment'] = True
 

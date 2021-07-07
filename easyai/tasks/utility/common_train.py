@@ -96,6 +96,16 @@ class CommonTrain(BaseTrain):
             else:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm)
 
+    def L2_regularization(self, loss, lambda_alpha=0.0002):
+        l2_alpha = 0.0
+        if self.model is not None:
+            for name, param in self.model.named_parameters():
+                if "alpha" in name:
+                    l2_alpha += torch.pow(param, 2)
+            loss += lambda_alpha * l2_alpha
+        else:
+            EasyLogger.error("model not exists")
+
     def save_optimizer(self, epoch):
         if self.optimizer is not None:
             if self.train_task_config.amp_config['enable_amp']:
