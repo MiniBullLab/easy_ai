@@ -117,7 +117,7 @@ class RecognizeTextConfig(CommonTrainConfig):
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 0.001
+        self.base_lr = 0.0005
         self.optimizer_config = {0: {'type': 'Adam',
                                      'weight_decay': 1e-4}
                                  }

@@ -205,6 +205,31 @@ class ToolArgumentsParse():
         return options
 
     @classmethod
+    def infer_path_parse(cls):
+        parser = OptionParser()
+        parser.description = "This program test"
+
+        parser.add_option("-i", "--input", dest="inputPath",
+                          metavar="PATH", type="string", default=None,
+                          help="test images")
+
+        parser.add_option("-c", "--config", dest="config_path",
+                          metavar="PATH", type="string", default=None,
+                          help="config path")
+
+        (options, args) = parser.parse_args()
+
+        if options.inputPath:
+            if not os.path.exists(options.inputPath):
+                parser.error("Could not find the input file")
+            else:
+                options.inputPath = os.path.normpath(options.inputPath)
+        else:
+            parser.error("'input' option is required to run this program")
+
+        return options
+
+    @classmethod
     def offline_test_path_parse(cls):
         parser = OptionParser()
         parser.description = "This program offline test"

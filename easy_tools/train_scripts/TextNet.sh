@@ -29,6 +29,7 @@ function run_onnx_convert() {
     export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
     #caffe
+    export LD_LIBRARY_PATH=/opt/caffe/lib:$LD_LIBRARY_PATH
     export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
     graph_surgery.py onnx -m $modelDir/${modelName}.onnx  -t Default
@@ -51,7 +52,8 @@ function run_onnx_convert() {
                     -is $outputShape \
                     -im $mean -ic $scale \
                     -iq -idf $inputDataFormat \
-                    -odst $outputLayerName
+                    -odst $outputLayerName \
+                    -c act-allow-fp16,coeff-force-fx16
 
     cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 
