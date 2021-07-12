@@ -49,9 +49,9 @@ class RecognizeTextConfig(CommonTrainConfig):
     def get_data_default_value(self):
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
-        self.character_set = os.path.join(dir_name, "en.txt")
+        self.character_set = os.path.join(dir_name, "temp_en.txt")
         EasyLogger.debug(self.character_set)
-        self.character_count = 96
+        self.character_count = 37
 
         self.data = {'image_size': (128, 32),   # W * H
                      'data_channel': 3,
@@ -117,7 +117,7 @@ class RecognizeTextConfig(CommonTrainConfig):
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 0.0005
+        self.base_lr = 0.01
         self.optimizer_config = {0: {'type': 'Adam',
                                      'weight_decay': 1e-4}
                                  }

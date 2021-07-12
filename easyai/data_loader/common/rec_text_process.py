@@ -22,7 +22,7 @@ class RecTextProcess():
             for line in lines:
                 line = line.decode('utf-8').strip("\n").strip("\r\n")
                 character_list += list(line)
-        character_list += [' ']
+        # character_list += [' ']
         self.text_dict = {}
         for i, char in enumerate(character_list):
             # NOTE: 0 is reserved for 'blank' token required by CTCLoss
