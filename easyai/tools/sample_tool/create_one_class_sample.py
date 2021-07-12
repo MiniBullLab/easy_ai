@@ -32,7 +32,7 @@ class CreateOneClassSample():
         intput_path, ok_dir_name = os.path.split(input_dir)
         data_class = self.get_data_class(intput_path)
         print("ok dir:", ok_dir_name)
-        assert len(data_class) == 2 or len(data_class) == 1
+        # assert len(data_class) == 2 or len(data_class) == 1
 
         save_train_path = os.path.join(output_dir, "train.txt")
         save_val_path = os.path.join(output_dir, "val.txt")
@@ -79,7 +79,7 @@ class CreateOneClassSample():
         intput_path, ok_dir_name = os.path.split(input_dir)
         data_class = self.get_data_class(intput_path)
         print("ok dir:", ok_dir_name)
-        assert len(data_class) == 2 or len(data_class) == 1
+        # assert len(data_class) == 2 or len(data_class) == 1
         save_val_path = os.path.join(output_dir, "%s.txt" % flag)
         if os.path.exists(save_val_path):
             return

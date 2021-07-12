@@ -29,6 +29,12 @@ def main():
     for cls_dir in os.listdir(options.inputPath):
         print("classify name: {}".format(cls_dir))
         for img_name in os.listdir(os.path.join(options.input_path, cls_dir)):
+            # file_name, file_post = os.path.splitext(img_name)
+            # temp_name = file_name.split("_")[0]
+            # save_name = temp_name + file_post
+            # print(save_name)
+            # os.rename(os.path.join(options.input_path, cls_dir, img_name),
+            #           os.path.join(options.input_path, cls_dir, cls_dir + "_" + save_name))
             os.rename(os.path.join(options.input_path, cls_dir, img_name),
                       os.path.join(options.input_path, cls_dir, cls_dir + "_" + img_name))
 
