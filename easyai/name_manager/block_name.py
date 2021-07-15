@@ -133,6 +133,7 @@ class RNNType():
     Im2SeqBlock = "Im2Seq"
     EncoderRNNBlock = "LSTM"
     BidirectionalLSTM = "BiLSTM"
+    RNNAttention = "RNNAttention"
 
 
 class NeckType():
@@ -160,4 +161,6 @@ class HeadType():
 
     BinarizeHead = "binarize"
     DBHead = "dbHead"
+
+    TextAttentionHead = "TextAttentionHead"
 

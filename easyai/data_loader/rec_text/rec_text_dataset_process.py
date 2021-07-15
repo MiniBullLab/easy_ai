@@ -49,7 +49,7 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
         for center_axis in range(half_of_max_window, w - half_of_max_window, step):
             slice_channel = []
             for window_size in windows:
-                image_slice = image[:, , center_axis - window_size // 2: center_axis + window_size // 2]
+                image_slice = image[:, :, center_axis - window_size // 2: center_axis + window_size // 2]
                 image_slice = self.dataset_process.resize(image_slice, (32, 32), 0)
                 # image_slice = cv2.resize(image_slice, (32, 32))
                 slice_channel.append(image_slice)

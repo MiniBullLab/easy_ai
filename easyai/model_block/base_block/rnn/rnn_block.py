@@ -43,11 +43,35 @@ class BidirectionalLSTM(BaseBlock):
         self.embedding = nn.Linear(hidden_size * 2, out_channels)
 
     def forward(self, x):
-        recurrent, _ = self.rnn(x)
+        data_tensor = x.transpose(0, 1)
+        recurrent, _ = self.rnn(data_tensor)
         T, b, h = recurrent.size()
         t_rec = recurrent.view(T * b, h)
 
         output = self.embedding(t_rec)  # [T * b, nOut]
         output = output.view(T, b, -1)
-
+        output = output.transpose(0, 1)
         return output
+
+
+class RNNAttention(BaseBlock):
+
+    def __init__(self, input_size, hidden_size, num_embeddings):
+        super().__init__(RNNType.RNNAttention)
+        self.i2h = nn.Linear(input_size, hidden_size, bias=False)
+        self.h2h = nn.Linear(hidden_size, hidden_size)  # either i2i or h2h should have bias
+        self.score = nn.Linear(hidden_size, 1, bias=False)
+        self.rnn = nn.LSTMCell(input_size + num_embeddings, hidden_size)
+        self.hidden_size = hidden_size
+
+    def forward(self, prev_hidden, batch_H, char_onehots):
+        # [batch_size x num_encoder_step x num_channel] -> [batch_size x num_encoder_step x hidden_size]
+        batch_H_proj = self.i2h(batch_H)
+        prev_hidden_proj = self.h2h(prev_hidden[0]).unsqueeze(1)
+        e = self.score(torch.tanh(batch_H_proj + prev_hidden_proj))  # batch_size x num_encoder_step * 1
+
+        alpha = F.softmax(e, dim=1)
+        context = torch.bmm(alpha.permute(0, 2, 1), batch_H).squeeze(1)  # batch_size x num_channel
+        concat_context = torch.cat([context, char_onehots], 1)  # batch_size x (num_channel + num_embedding)
+        cur_hidden = self.rnn(concat_context, prev_hidden)
+        return cur_hidden, alpha

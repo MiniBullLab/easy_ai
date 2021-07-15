@@ -8,6 +8,7 @@ class BackboneName():
     ResNet18 = "resnet18"
     ResNet18V2 = "resnet18_v2"
     ResNet34 = "resnet34"
+    TextResNet34 = "text_resnet34"
     ResNet50 = "resnet50"
     ResNet101 = "resnet101"
     ResNet152 = "resnet152"
