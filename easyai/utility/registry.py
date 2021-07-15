@@ -98,7 +98,7 @@ def build_from_cfg(cfg, registry, default_args=None):
         obj_cls = obj_type
     else:
         raise TypeError(
-            "type must be a str or valid type, but got {}".format(type(obj_type))
+            "type must be a ocr or valid type, but got {}".format(type(obj_type))
         )
     if default_args is not None:
         for name, value in default_args.items():

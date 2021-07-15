@@ -104,7 +104,7 @@ class KerasModelProcess():
         """
         args:
             model :: keras.models.Model instance
-            replace_layer_subname :: str -- if str in layer name, replace it
+            replace_layer_subname :: ocr -- if ocr in layer name, replace it
             replacement_fn :: fn to call to replace all instances
                 > fn output must produce shape as the replaced layers input
         returns:

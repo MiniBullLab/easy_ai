@@ -66,8 +66,8 @@ class OnnxConvertCaffe():
 
     def convert_mse_error(self, caffe_net):
         pass
-        # input_name = str(self.graph.inputs[0][0])
-        # output_name = str(self.graph.outputs[0][0])
+        # input_name = ocr(self.graph.inputs[0][0])
+        # output_name = ocr(self.graph.outputs[0][0])
         #
         # # get caffe output
         # caffe_net.blobs[input_name].data[...] = var_numpy

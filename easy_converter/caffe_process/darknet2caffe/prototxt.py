@@ -96,8 +96,8 @@ def is_number(s):
 def print_prototxt(net_info):
     # whether add double quote
     def format_value(value):
-        #str = u'%s' % value
-        #if str.isnumeric():
+        #ocr = u'%s' % value
+        #if ocr.isnumeric():
         if is_number(value):
             return value
         elif value == 'true' or value == 'false' or value == 'MAX' or value == 'SUM' or value == 'AVE':
@@ -135,8 +135,8 @@ def save_prototxt(net_info, protofile, region=True):
     fp = open(protofile, 'w')
     # whether add double quote
     def format_value(value):
-        #str = u'%s' % value
-        #if str.isnumeric():
+        #ocr = u'%s' % value
+        #if ocr.isnumeric():
         if is_number(value):
             return value
         elif value == 'true' or value == 'false' or value == 'MAX' or value == 'SUM' or value == 'AVE':

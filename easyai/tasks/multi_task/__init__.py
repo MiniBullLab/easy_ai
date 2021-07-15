@@ -4,5 +4,3 @@ from . import det2d_seg_task_train
 
 from . import det_pose2d_task
 
-from . import ocr_task
-

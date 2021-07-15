@@ -27,10 +27,10 @@ def conv2d_bn(x, filters, num_row, num_col, padding='same', strides=(1, 1), acti
         num_col {int} -- number of columns in filters
 
     Keyword Arguments:
-        padding {str} -- mode of padding (default: {'same'})
+        padding {ocr} -- mode of padding (default: {'same'})
         strides {tuple} -- stride of convolution operation (default: {(1, 1)})
-        activation {str} -- activation function (default: {'relu'})
-        name {str} -- name of the layer (default: {None})
+        activation {ocr} -- activation function (default: {'relu'})
+        name {ocr} -- name of the layer (default: {None})
 
     Returns:
         [keras layer] -- [output layer]
@@ -58,9 +58,9 @@ def trans_conv2d_bn(x, filters, num_row, num_col, padding='same', strides=(2, 2)
         num_col {int} -- number of columns in filters
 
     Keyword Arguments:
-        padding {str} -- mode of padding (default: {'same'})
+        padding {ocr} -- mode of padding (default: {'same'})
         strides {tuple} -- stride of convolution operation (default: {(2, 2)})
-        name {str} -- name of the layer (default: {None})
+        name {ocr} -- name of the layer (default: {None})
 
     Returns:
         [keras layer] -- [output layer]

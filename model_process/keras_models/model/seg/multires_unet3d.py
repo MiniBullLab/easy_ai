@@ -28,10 +28,10 @@ def conv3d_bn(x, filters, num_row, num_col, num_z, padding='same', strides=(1, 1
         num_z {int} -- length along z axis in filters
 
     Keyword Arguments:
-        padding {str} -- mode of padding (default: {'same'})
+        padding {ocr} -- mode of padding (default: {'same'})
         strides {tuple} -- stride of convolution operation (default: {(1, 1, 1)})
-        activation {str} -- activation function (default: {'relu'})
-        name {str} -- name of the layer (default: {None})
+        activation {ocr} -- activation function (default: {'relu'})
+        name {ocr} -- name of the layer (default: {None})
 
     Returns:
         [keras layer] -- [output layer]
@@ -59,9 +59,9 @@ def trans_conv3d_bn(x, filters, num_row, num_col, num_z, padding='same', strides
         num_z {int} -- length along z axis in filters
 
     Keyword Arguments:
-        padding {str} -- mode of padding (default: {'same'})
+        padding {ocr} -- mode of padding (default: {'same'})
         strides {tuple} -- stride of convolution operation (default: {(2, 2, 2)})
-        name {str} -- name of the layer (default: {None})
+        name {ocr} -- name of the layer (default: {None})
 
     Returns:
         [keras layer] -- [output layer]

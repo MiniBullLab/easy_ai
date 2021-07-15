@@ -131,6 +131,7 @@ class RNNType():
 
     Im2SeqBlock = "Im2Seq"
     EncoderRNNBlock = "LSTM"
+    BidirectionalLSTM = "BiLSTM"
 
 
 class NeckType():
