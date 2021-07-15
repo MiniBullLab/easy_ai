@@ -32,5 +32,29 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
                   'targets': text_code}
         return result
 
+    def padding_images(self, image, image_size):
+        src_size = (image.shape[1], image.shape[0])  # [width, height]
+        if src_size[0] < image_size[0]:
+            # Padding
+            img = np.concatenate([np.array([[0] * ((image_size[0] - image.shape[1]) // 2)] * 32), image], axis=1)
+            img = np.concatenate([img, np.array([[0] * (image_size[0] - img.shape[1])] * 32)], axis=1)
+        else:
+            img = self.dataset_process.resize(image, image_size, 0)
+        return img
+
+    def slide_image(self, image, windows, step):
+        _, h, w = image.shape  # No channel for gray image.
+        output_image = []
+        half_of_max_window = max(windows) // 2  # 从最大窗口的中线开始滑动，每次移动step的距离
+        for center_axis in range(half_of_max_window, w - half_of_max_window, step):
+            slice_channel = []
+            for window_size in windows:
+                image_slice = image[:, , center_axis - window_size // 2: center_axis + window_size // 2]
+                image_slice = self.dataset_process.resize(image_slice, (32, 32), 0)
+                # image_slice = cv2.resize(image_slice, (32, 32))
+                slice_channel.append(image_slice)
+            output_image.append(np.asarray(slice_channel, dtype=np.float32))
+        return np.asarray(output_image, dtype=np.float32)
+
 
 

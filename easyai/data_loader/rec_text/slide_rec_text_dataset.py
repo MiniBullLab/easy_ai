@@ -10,18 +10,20 @@ from easyai.name_manager.dataloader_name import DatasetName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
 
-@REGISTERED_DATASET.register_module(DatasetName.RecTextDataSet)
-class RecTextDataSet(TorchDataLoader):
+@REGISTERED_DATASET.register_module(DatasetName.SlideRecTextDataSet)
+class SlideRecTextDataSet(TorchDataLoader):
 
     def __init__(self, data_path, char_path, max_text_length, language,
                  resize_type, normalize_type, mean=0, std=1,
-                 image_size=(416, 416), data_channel=3,
-                 is_augment=False):
+                 image_size=(416, 416), data_channel=3, windows=(24, 32, 40),
+                 step=4, is_augment=False):
         super().__init__(data_path, data_channel)
         self.char_path = char_path
         self.max_text_length = max_text_length
         self.language = language
         self.image_size = tuple(image_size)
+        self.windows = windows
+        self.step = step
         self.is_augment = is_augment
 
         self.dataset_process = RecTextDataSetProcess(char_path, resize_type, normalize_type,
@@ -36,19 +38,17 @@ class RecTextDataSet(TorchDataLoader):
     def __getitem__(self, index):
         img_path, label = self.text_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
-        # src_image = self.dataset_process.rotation90_image(src_image)
-        # import cv2
-        # import os
-        # path, image_name = os.path.split(img_path)
-        # cv2.imwrite(image_name, src_image)
         if self.is_augment:
             image, label = self.dataset_augment.augment(src_image, label)
         else:
             image = src_image[:]
         image = self.dataset_process.resize_image(image, self.image_size)
+        image = self.dataset_process.padding_images(image, self.image_size)
         image = self.dataset_process.normalize_image(image)
+        image = self.dataset_process.slide_image(image, self.windows, self.step)
         label = self.dataset_process.normalize_label(label)
         return image, label
 
     def __len__(self):
         return self.text_sample.get_sample_count()
+

@@ -15,6 +15,7 @@ class DatasetName():
     Pose2dDataset = "Pose2dDataset"
     SegmentDataset = "SegmentDataset"
     RecTextDataSet = "RecTextDataSet"
+    SlideRecTextDataSet = "SlideRecTextDataSet"
     RecTextOCRDataSet = "RecTextOCRDataSet"
     SuperResolutionDataset = "SuperResolutionDataset"
 

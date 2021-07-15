@@ -82,6 +82,7 @@ class BlockType():
     ConvBNActivationBlock1d = "convBNActivationBlock1d"
 
     ConvBNActivationBlock = "convBNActivationBlock"
+    ConvDropBNActivationBlock = "convDropBNActivationBlock"
     ConvBNACTWithPoolBlock = "convBNACTWithPoolBlock"
     BNActivationConvBlock = "bnActivationConvBlock"
     ActivationConvBNBlock = "activationConvBNBlock"
@@ -141,6 +142,8 @@ class NeckType():
 
 
 class HeadType():
+
+    ClassifyHead = "ClassifyHead"
 
     SSDBoxHead = "ssdBox"
     MultiSSDBoxHead = "multiSSDBox"

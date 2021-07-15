@@ -40,6 +40,7 @@ class BackboneName():
     Vgg13 = "vgg13"
     Vgg16 = "vgg16"
     Vgg19 = "vgg19"
+    TextVGG = "text_vgg"
     SqueezeNet = "squeezenet"
     DilatedSqueezeNet = "dilated_squeezenet"
     Densenet121 = "densenet121"

@@ -60,6 +60,7 @@ class ModelName():
 
     # rnn
     CRNN = "CRNN"
+    CNNCTC = "CNNCTC"
     TextNet = "TextNet"
 
     # multi

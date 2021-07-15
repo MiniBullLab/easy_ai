@@ -29,7 +29,7 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
             rotated_box = cv2.minAreaRect(temp_points)
             temp_points = cv2.boxPoints(rotated_box)
         # else:
-        points = self.polygon_process.original_coordinate_transformation(temp_points)
+        points = self.polygon_process.clockwise_coordinate_transformation(temp_points)
         img_crop_width = int(
             max(np.linalg.norm(points[0] - points[1]),
                 np.linalg.norm(points[2] - points[3])))

@@ -12,8 +12,9 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_CO
 @REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.RecTextDataSetCollate)
 class RecTextDataSetCollate(BaseDatasetCollate):
 
-    def __init__(self):
+    def __init__(self, is_padding=True):
         super().__init__()
+        self.is_padding = is_padding
         self.pad_value = 0
 
     def __call__(self, batch_list):
@@ -25,8 +26,11 @@ class RecTextDataSetCollate(BaseDatasetCollate):
         targets = []
         batch_max_length = max(length)
         for image, label in batch_list:
-            img = self.width_pad_img(image, max_img_w)
-            resize_images.append(torch.tensor(img, dtype=torch.float))
+            if self.is_padding:
+                img = self.width_pad_img(image, max_img_w)
+                resize_images.append(torch.tensor(img, dtype=torch.float))
+            else:
+                resize_images.append(torch.tensor(image, dtype=torch.float))
             text_list.append(label['text'])
             text_code = label['targets']
             text_code.extend([0] * (batch_max_length - len(label['text'])))

@@ -2,7 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.name_manager import HeadType
+from easyai.name_manager.block_name import HeadType
+from easyai.model_block.utility.base_block import *
 
 
 class MultiOutputHead(BaseBlock):

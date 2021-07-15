@@ -88,6 +88,30 @@ class ConvBNActivationBlock(BaseBlock):
         return x
 
 
+class ConvDropBNActivationBlock(BaseBlock):
+
+    def __init__(self, p, in_channels, out_channels, kernel_size, stride=1, padding=0,
+                 dilation=1, groups=1, bias=False,
+                 bn_name=NormalizationType.BatchNormalize2d,
+                 activation_name=ActivationType.ReLU):
+        super().__init__(BlockType.ConvDropBNActivationBlock)
+        conv = nn.Conv2d(in_channels, out_channels, kernel_size,
+                         stride, padding, dilation, groups, bias=bias)
+        drop = nn.Dropout(p=p)
+        bn = NormalizationFunction.get_function(bn_name, out_channels)
+        activation = ActivationFunction.get_function(activation_name)
+        self.block = nn.Sequential(OrderedDict([
+            (LayerType.Convolutional, conv),
+            (LayerType.Dropout, drop),
+            (bn_name, bn),
+            (activation_name, activation)
+        ]))
+
+    def forward(self, x):
+        x = self.block(x)
+        return x
+
+
 class ConvBNACTWithPoolBlock(BaseBlock):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
