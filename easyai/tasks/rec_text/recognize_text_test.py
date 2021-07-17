@@ -4,7 +4,6 @@
 
 import traceback
 from easyai.utility.logger import EasyLogger
-import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.rec_text.recognize_text import RecognizeText
 from easyai.name_manager.evaluation_name import EvaluationName
@@ -35,11 +34,11 @@ class RecognizeTextTest(BaseTest):
 
     def test(self, epoch=0):
         try:
-            for index, (images, targets) in enumerate(self.dataloader):
-                prediction, output_list = self.inference.infer(images)
+            for index, batch_data in enumerate(self.dataloader):
+                prediction, output_list = self.inference.infer(batch_data['image'])
                 result = self.inference.result_process.post_process(prediction)
-                loss_value = self.compute_loss(output_list, targets)
-                self.evaluation.eval(result, targets['text'])
+                loss_value = self.compute_loss(output_list, batch_data)
+                self.evaluation.eval(result, batch_data['label'])
                 self.metirc_loss(index, loss_value)
                 self.print_test_info(index, loss_value)
         except Exception as err:
@@ -50,22 +49,6 @@ class RecognizeTextTest(BaseTest):
         EasyLogger.info("Val epoch({}) loss: {}".format(epoch, self.epoch_loss_average.avg))
         # print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return average_socre['accuracy'], self.epoch_loss_average.avg
-
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        with torch.no_grad():
-            if loss_count == 1 and output_count == 1:
-                loss = self.model.lossList[0](output_list[0], targets)
-            elif loss_count == 1 and output_count > 1:
-                loss = self.model.lossList[0](output_list, targets)
-            elif loss_count > 1 and loss_count == output_count:
-                for k in range(0, loss_count):
-                    loss += self.model.lossList[k](output_list[k], targets)
-            else:
-                EasyLogger.error("compute loss error")
-        return loss.item()
 
     def save_test_value(self, epoch, score):
         # Write epoch results

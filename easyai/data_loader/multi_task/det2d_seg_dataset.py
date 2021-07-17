@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.multi_task.multi_task_sample import MultiTaskSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess

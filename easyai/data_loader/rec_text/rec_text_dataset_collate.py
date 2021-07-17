@@ -18,31 +18,32 @@ class RecTextDataSetCollate(BaseDatasetCollate):
         self.pad_value = 0
 
     def __call__(self, batch_list):
-        max_img_w = max({data[0].shape[-1] for data in batch_list})
+        max_img_w = max({data[0].shape[-1] for data in batch_list['image']})
         max_img_w = int(np.ceil(max_img_w / 8) * 8)
-        length = [len(data[1]['text']) for data in batch_list]
+        length = [len(data) for data in batch_list['text']]
         resize_images = []
         text_list = []
         targets = []
         batch_max_length = max(length)
-        for image, label in batch_list:
+        for all_data in batch_list:
             if self.is_padding:
-                img = self.width_pad_img(image, max_img_w)
+                img = self.width_pad_img(all_data['image'], max_img_w)
                 resize_images.append(torch.tensor(img, dtype=torch.float))
             else:
-                resize_images.append(torch.tensor(image, dtype=torch.float))
-            text_list.append(label['text'])
-            text_code = label['targets']
-            text_code.extend([0] * (batch_max_length - len(label['text'])))
+                resize_images.append(torch.tensor(all_data['image'], dtype=torch.float))
+            text_list.append(all_data['text'])
+            text_code = all_data['targets']
+            text_code.extend([0] * (batch_max_length - len(all_data['text'])))
             targets.append(text_code)
         targets = torch.tensor(targets, dtype=torch.long)
         targets_lengths = torch.tensor(length, dtype=torch.long)
         resize_images = torch.stack(resize_images)
         # print(resize_images.shape)
-        labels = {'text': text_list,
-                  'targets': targets,
-                  'targets_lengths': targets_lengths}
-        return resize_images, labels
+        result_data = {'image': resize_images,
+                       'label': text_list,
+                       'targets': targets,
+                       'targets_lengths': targets_lengths}
+        return result_data
 
     def width_pad_img(self, img, target_width):
         """

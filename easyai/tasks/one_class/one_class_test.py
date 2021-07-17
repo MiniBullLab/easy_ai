@@ -5,7 +5,6 @@
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.one_class.one_class import OneClass
-from easyai.evaluation.one_class.one_class_roc import OneClassROC
 from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
@@ -35,10 +34,10 @@ class OneClassTest(BaseTest):
         self.test(epoch)
 
     def test(self, epoch=0):
-        for index, (images, labels) in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(images)
-            loss_value = self.compute_loss(output_list, labels)
-            self.evaluation.eval(prediction, labels.detach().numpy())
+        for index, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.inference.infer(batch_data['image'])
+            loss_value = self.compute_loss(output_list, batch_data)
+            self.evaluation.eval(prediction, batch_data['label'].detach().numpy())
             self.metirc_loss(index, loss_value)
             self.print_test_info(index, loss_value)
         roc_auc = self.evaluation.get_score()
@@ -46,19 +45,18 @@ class OneClassTest(BaseTest):
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return roc_auc, self.epoch_loss_average.avg
 
-    def compute_loss(self, output_list, targets):
+    def compute_loss(self, output_list, batch_data):
         loss = 0
         loss_count = len(self.model.g_loss_list)
         output_count = len(output_list)
-        targets = targets.to(self.device)
         with torch.no_grad():
             if loss_count == 1 and output_count == 1:
-                loss = self.model.g_loss_list[0](output_list[0], targets)
+                loss = self.model.g_loss_list[0](output_list[0], batch_data)
             elif loss_count == 1 and output_count > 1:
-                loss = self.model.g_loss_list[0](output_list, targets)
+                loss = self.model.g_loss_list[0](output_list, batch_data)
             elif loss_count > 1 and loss_count == output_count:
                 for k in range(0, loss_count):
-                    loss += self.model.g_loss_list[k](output_list[k], targets)
+                    loss += self.model.g_loss_list[k](output_list[k], batch_data)
             else:
                 print("compute loss error")
         return loss.item()

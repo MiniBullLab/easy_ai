@@ -35,7 +35,7 @@ class OneClassTrain(GanTrain):
             self.test(val_path, epoch, save_model_path)
 
     def trian_epoch(self, epoch, d_lr_scheduler, g_lr_scheduler, dataloader):
-        for i, (images, targets) in enumerate(dataloader):
+        for i, batch_data in enumerate(dataloader):
             current_iter = epoch * self.total_batch_image + i
             g_lr = g_lr_scheduler.get_lr(epoch, current_iter)
             for optimizer in self.g_optimizer_list:
@@ -43,10 +43,10 @@ class OneClassTrain(GanTrain):
             d_lr = d_lr_scheduler.get_lr(epoch, current_iter)
             for optimizer in self.d_optimizer_list:
                 d_lr_scheduler.adjust_learning_rate(optimizer, d_lr)
-            loss_values = self.compute_backward(images, targets, i)
+            loss_values = self.compute_backward(batch_data, i)
             self.update_logger(i, self.total_batch_image, epoch, loss_values)
 
-    def compute_backward(self, input_datas, targets, step_index):
+    def compute_backward(self, batch_data, step_index):
         # Compute loss, compute gradient, update parameters
         d_loss_values = None
         g_loss_values = None
@@ -55,21 +55,21 @@ class OneClassTrain(GanTrain):
         d_output_list = self.model(g_output_list[0], g_output_list[2],
                                    net_type=2)
         if step_index == 0 or (step_index % self.train_task_config.g_skip_batch_backward == 0):
-            g_loss_values = self.generator_backward(g_output_list, targets)
+            g_loss_values = self.generator_backward(g_output_list, batch_data)
         if step_index == 0 or (step_index % self.train_task_config.d_skip_batch_backward == 0):
-            d_loss_values = self.discriminator_backward(d_output_list, targets)
+            d_loss_values = self.discriminator_backward(d_output_list, batch_data)
         return d_loss_values, g_loss_values
 
-    def generator_backward(self, output_list, targets):
-        loss = self.compute_g_loss(output_list, targets)
+    def generator_backward(self, output_list, batch_data):
+        loss = self.compute_g_loss(output_list, batch_data)
         for temp_index, optimizer in enumerate(self.g_optimizer_list):
             optimizer.zero_grad()
             loss[temp_index].backward()
             optimizer.step()
         return loss
 
-    def discriminator_backward(self, output_list, targets):
-        loss = self.compute_d_loss(output_list, targets)
+    def discriminator_backward(self, output_list, batch_data):
+        loss = self.compute_d_loss(output_list, batch_data)
         for temp_index, optimizer in enumerate(self.d_optimizer_list):
             optimizer.zero_grad()
             loss[temp_index].backward()
@@ -79,36 +79,36 @@ class OneClassTrain(GanTrain):
                 self.torchModelProcess.init_model(self.model.d_model_list[temp_index], init_type="normal")
         return loss
 
-    def compute_g_loss(self, output_list, targets):
+    def compute_g_loss(self, output_list, batch_data):
         loss = []
         loss_count = len(self.model.g_loss_list)
         output_count = len(output_list)
         if loss_count == 1 and output_count == 1:
-            result = self.model.g_loss_list[0](output_list[0], targets)
+            result = self.model.g_loss_list[0](output_list[0], batch_data)
             self.model.g_loss_list[0].print_loss_info()
             loss.append(result)
         elif loss_count == 1 and output_count > 1:
-            result = self.model.g_loss_list[0](output_list, targets)
+            result = self.model.g_loss_list[0](output_list, batch_data)
             self.model.g_loss_list[0].print_loss_info()
             loss.append(result)
         elif loss_count > 1 and loss_count == output_count:
             for k in range(0, loss_count):
-                result = self.model.g_loss_list[k](output_list[k], targets)
+                result = self.model.g_loss_list[k](output_list[k], batch_data)
                 self.model.g_loss_list[k].print_loss_info()
                 loss.append(result)
         else:
             print("compute generator loss error")
         return loss
 
-    def compute_d_loss(self, output_list, targets):
+    def compute_d_loss(self, output_list, batch_data):
         loss = []
         loss_count = len(self.model.d_loss_list)
         output_count = len(output_list)
         if loss_count == 1 and output_count == 1:
-            result = self.model.d_loss_list[0](output_list[0], targets)
+            result = self.model.d_loss_list[0](output_list[0], batch_data)
             loss.append(result)
         elif loss_count == 1 and output_count > 1:
-            result = self.model.d_loss_list[0](output_list, targets)
+            result = self.model.d_loss_list[0](output_list, batch_data)
             loss.append(result)
         elif loss_count > 1 and loss_count == output_count:
             for k in range(0, loss_count):

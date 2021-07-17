@@ -73,6 +73,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
         self.evaluation_result_name = 'seg_evaluation.txt'
         self.evaluation_result_path = os.path.join(EasyLogger.ROOT_DIR,
@@ -92,6 +93,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
         self.is_save_epoch_model = False
         self.latest_weights_name = 'seg_latest.pt'

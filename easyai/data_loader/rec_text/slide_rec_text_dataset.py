@@ -47,7 +47,9 @@ class SlideRecTextDataSet(TorchDataLoader):
         image = self.dataset_process.normalize_image(image)
         image = self.dataset_process.slide_image(image, self.windows, self.step)
         label = self.dataset_process.normalize_label(label)
-        return image, label
+        result_data = {'image': image}
+        result_data.update(label)
+        return result_data
 
     def __len__(self):
         return self.text_sample.get_sample_count()

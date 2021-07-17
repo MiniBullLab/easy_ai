@@ -69,19 +69,20 @@ class JointsMSELoss(BaseLoss):
         return torch.stack(result_target, dim=0).to(device), \
                torch.stack(result_weight, dim=0).to(device)
 
-    def forward(self, outputs, targets=None):
+    def forward(self, outputs, batch_data=None):
         """
         Arguments:
             outputs (Tensor))
-            targets (Tensor)
+            batch_data (Dict Tensor)
 
         Returns:
             loss (Tensor)
         """
-        if targets is None:
+        if batch_data is None:
             return outputs
         else:
             device = outputs.device
+            targets = batch_data['label']
             batch_size = outputs.size(0)
             heatmaps_gt, target_weight = self.build_gaussian_map(targets.detach(), device)
             # print(heatmaps_gt.shape, outputs.shape, target_weight.shape)

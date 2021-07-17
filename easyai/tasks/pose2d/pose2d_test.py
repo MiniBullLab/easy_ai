@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.pose2d.pose2d import Pose2d
 from easyai.name_manager.evaluation_name import EvaluationName
@@ -37,34 +36,17 @@ class Pose2dTest(BaseTest):
         self.test(epoch)
 
     def test(self, epoch=0):
-        for index, (images, targets) in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(images)
+        for index, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.inference.infer(batch_data['image'])
             result, _ = self.inference.result_process.post_process(prediction, (0, 0))
-            loss_value = self.compute_loss(output_list, targets)
-            self.evaluation.eval(result, targets.detach().numpy())
+            loss_value = self.compute_loss(output_list, batch_data)
+            self.evaluation.eval(result, batch_data['label'].detach().numpy())
             self.metirc_loss(index, loss_value)
             self.print_test_info(index, loss_value)
         average_socre = self.evaluation.get_score()
         self.save_test_value(epoch, average_socre)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return average_socre, self.epoch_loss_average.avg
-
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        targets = targets.to(self.device)
-        with torch.no_grad():
-            if loss_count == 1 and output_count == 1:
-                loss = self.model.lossList[0](output_list[0], targets)
-            elif loss_count == 1 and output_count > 1:
-                loss = self.model.lossList[0](output_list, targets)
-            elif loss_count > 1 and loss_count == output_count:
-                for k in range(0, loss_count):
-                    loss += self.model.lossList[k](output_list[k], targets)
-            else:
-                print("compute loss error")
-        return loss.item()
 
     def save_test_value(self, epoch, score):
         # Write epoch results

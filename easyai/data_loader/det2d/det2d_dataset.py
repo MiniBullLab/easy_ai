@@ -27,13 +27,20 @@ class Det2dDataset(TorchDataLoader):
 
     def __getitem__(self, index):
         img_path, label_path = self.detection_sample.get_sample_path(index)
-        cv_image, src_image = self.read_src_image(img_path)
-        image = self.dataset_process.resize_image(src_image,
-                                                  self.image_size)
+        _, src_image = self.read_src_image(img_path)
+        boxes = self.detection_sample.get_sample_boxes(label_path)
+        image, labels = self.dataset_process.resize_dataset(src_image,
+                                                            self.image_size,
+                                                            boxes,
+                                                            self.detect2d_class)
         image = self.dataset_process.normalize_image(image)
-        src_size = np.array([cv_image.shape[1], cv_image.shape[0]])  # [width, height]
+        labels = self.dataset_process.normalize_labels(labels, self.image_size)
+        labels = self.dataset_process.change_outside_labels(labels)
+        torch_labels = self.dataset_process.numpy_to_torch(labels, flag=0)
+        src_size = np.array([src_image.shape[1], src_image.shape[0]])  # [width, height]
         src_size = self.dataset_process.numpy_to_torch(src_size, flag=0)
-        return img_path, src_size, image
+        return {'image': image, 'label': torch_labels,
+                'image_path': img_path, "src_size": src_size}
 
     def __len__(self):
         return self.detection_sample.get_sample_count()

@@ -48,7 +48,9 @@ class RecTextOCRDataSet(TorchDataLoader):
         image = self.dataset_process.resize_image(image, self.image_size)
         image = self.dataset_process.normalize_image(image)
         label = self.dataset_process.normalize_label(label)
-        return image, label
+        result_data = {'image': image}
+        result_data.update(label)
+        return result_data
 
     def __len__(self):
         return self.text_sample.get_sample_count()

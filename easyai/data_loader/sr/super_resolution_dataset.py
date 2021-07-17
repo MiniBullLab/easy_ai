@@ -35,7 +35,7 @@ class SuperResolutionDataset(TorchDataLoader):
                                                             src_hr_image,
                                                             self.target_size)
         torch_image, torch_target = self.dataset_process.normalize_dataset(image, target)
-        return torch_image, torch_target
+        return {'image': torch_image, 'label': torch_target}
 
     def __len__(self):
         return self.sr_sample.get_sample_count()

@@ -32,8 +32,8 @@ class GANomalyGeneratorLoss(BaseLoss):
         self.max_socre = 0
         self.loss_info = {'adv_loss': 0, 'con_loss': 0, 'enc_loss': 0}
 
-    def forward(self, outputs, targets=None):
-        if targets is not None:
+    def forward(self, outputs, batch_data=None):
+        if batch_data is not None:
             if len(outputs) == 3:
                 loss = self.enc_loss(outputs[2], outputs[0])
                 if loss.item() > self.max_socre:

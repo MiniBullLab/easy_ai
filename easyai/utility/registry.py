@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import inspect
-from easyai.utility import misc
+import six
 from easyai.utility.logger import EasyLogger
 
 
@@ -90,7 +90,7 @@ def build_from_cfg(cfg, registry, default_args=None):
     assert isinstance(default_args, dict) or default_args is None
     args = cfg.copy()
     obj_type = args.pop("type")
-    if misc.is_str(obj_type):
+    if isinstance(obj_type, six.string_types):
         obj_cls = registry.get(obj_type)
         if obj_cls is None:
             raise KeyError(

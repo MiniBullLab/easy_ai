@@ -71,6 +71,7 @@ class Detect2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = {"type": "Det2dDataSetCollate"}
 
         self.evaluation_result_name = 'det2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)

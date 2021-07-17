@@ -59,6 +59,7 @@ class SuperResolutionConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = {"type": "SuperResolutionDataSetCollate"}
 
         self.evaluation_result_name = 'sr_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
@@ -76,6 +77,7 @@ class SuperResolutionConfig(CommonTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['collate_fn'] = {"type": "SuperResolutionDataSetCollate"}
 
         self.is_save_epoch_model = False
         self.latest_weights_name = 'sr_latest.pt'

@@ -38,12 +38,11 @@ class SegmentionTest(BaseTest):
         self.test(epoch)
 
     def test(self, epoch=0):
-        for i, (images, segment_targets) in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(images)
+        for i, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.inference.infer(batch_data['image'])
             result, _ = self.output_process.post_process(prediction)
-            loss_value = self.compute_loss(output_list, segment_targets)
-            gt = segment_targets[0].data.cpu().numpy()
-            self.evaluation.numpy_eval(result, gt)
+            loss_value = self.compute_loss(output_list, batch_data)
+            self.evaluation.numpy_eval(result, batch_data['label'][0].data.cpu().numpy())
             self.metirc_loss(i, loss_value)
             self.print_test_info(i, loss_value)
 

@@ -125,7 +125,7 @@ class YoloV3Loss(BaseYoloLoss):
         return coord_mask, object_mask, no_object_mask, \
                cls_mask, tcoord, tconf, tcls
 
-    def forward(self, outputs, targets=None):
+    def forward(self, outputs, batch_data=None):
         """ Compute Yolo loss.
         """
         # Parameters
@@ -150,11 +150,12 @@ class YoloV3Loss(BaseYoloLoss):
         pred_boxes = self.decode_predict_box(coord, batch_size, height, width, device)
         pred_boxes = pred_boxes.view(batch_size, -1, 4)
 
-        if targets is None:
+        if batch_data is None:
             pred_boxes *= self.reduction
             cls = F.softmax(cls, 2)
             return torch.cat([pred_boxes, conf, cls], 2)
         else:
+            targets = batch_data['label'].to(device)
             coord_mask, object_mask, no_object_mask, \
             cls_mask, tcoord, tconf, tcls = self.build_targets(pred_boxes, targets, height, width, device)
 

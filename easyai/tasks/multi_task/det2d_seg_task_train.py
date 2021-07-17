@@ -37,17 +37,18 @@ class Det2dSegTaskTrain(CommonTrain):
                 if sum([len(x) for x in detects]) < 1:  # if no targets continue
                     continue
                 # the order if output in my cfg is segment, detct1, detect2, detect3
-                targets = [segments, detects, detects, detects]
-                loss, loss_list = self.compute_backward(images, targets, i)
+                batch_data = [images, segments, detects, detects, detects]
+                loss, loss_list = self.compute_backward(batch_data, i)
                 self.update_logger(i, self.total_images, epoch, loss_list)
 
             save_model_path = self.save_train_model(epoch)
             self.test(val_path, epoch, save_model_path)
 
-    def compute_backward(self, input_datas, targets, setp_index):
+    def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
+        input_datas = batch_data[0].to(self.device)
         output_list = self.model(input_datas.to(self.device))
-        loss, loss_list = self.compute_loss(output_list, targets)
+        loss, loss_list = self.compute_loss(output_list, batch_data[1:])
 
         self.loss_backward(loss)
 

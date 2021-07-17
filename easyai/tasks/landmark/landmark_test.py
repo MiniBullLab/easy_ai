@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.landmark.landmark import Landmark
 from easyai.name_manager.evaluation_name import EvaluationName
@@ -46,23 +45,6 @@ class Pose2dTest(BaseTest):
         self.save_test_value(epoch, average_socre)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return average_socre, self.epoch_loss_average.avg
-
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        targets = targets.to(self.device)
-        with torch.no_grad():
-            if loss_count == 1 and output_count == 1:
-                loss = self.model.lossList[0](output_list[0], targets)
-            elif loss_count == 1 and output_count > 1:
-                loss = self.model.lossList[0](output_list, targets)
-            elif loss_count > 1 and loss_count == output_count:
-                for k in range(0, loss_count):
-                    loss += self.model.lossList[k](output_list[k], targets)
-            else:
-                EasyLogger.error("compute loss error")
-        return loss.item()
 
     def save_test_value(self, epoch, socre):
         # Write epoch results

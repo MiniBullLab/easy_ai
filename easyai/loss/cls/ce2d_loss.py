@@ -47,19 +47,21 @@ class CrossEntropy2dLoss(BaseLoss):
         else:
             return result
 
-    def forward(self, input_data, target=None):
+    def forward(self, input_data, batch_data=None):
         input_data = input_data.float()
-        if target is not None:
+        if batch_data is not None:
+            device = input_data.device
+            targets = batch_data['label'].to(device)
             if self.weight_type == 0:
-                loss = F.cross_entropy(input_data, target,
+                loss = F.cross_entropy(input_data, targets,
                                        weight=self.weight,
                                        reduction=self.reduction,
                                        ignore_index=self.ignore_index)
             else:
-                loss = F.cross_entropy(input_data, target,
+                loss = F.cross_entropy(input_data, targets,
                                        reduction='none',
                                        ignore_index=self.ignore_index)
-                loss = self.compute_loss_from_weight(loss, target)
+                loss = self.compute_loss_from_weight(loss, targets)
         else:
             loss = F.softmax(input_data, dim=1)
         return loss
@@ -102,17 +104,19 @@ class BinaryCrossEntropy2dLoss(BaseLoss):
         else:
             return result
 
-    def forward(self, input_data, target=None):
-        if target is not None:
-            target = target.type(input_data.dtype)
+    def forward(self, input_data, batch_data=None):
+        if batch_data is not None:
+            device = input_data.device
+            targets = batch_data['label'].to(device)
+            # targets = targets.type(input_data.dtype)
             if self.weight_type == 0:
-                loss = F.binary_cross_entropy(input_data, target,
+                loss = F.binary_cross_entropy(input_data, targets,
                                               weight=self.weight,
                                               reduction=self.reduction)
             else:
-                loss = F.binary_cross_entropy(input_data, target,
+                loss = F.binary_cross_entropy(input_data, targets,
                                               reduction='none')
-                loss = self.compute_loss_from_weight(loss, target)
+                loss = self.compute_loss_from_weight(loss, targets)
         else:
             loss = input_data
         return loss

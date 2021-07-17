@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.data_loader.pose2d.pose2d_augment import Pose2dDataAugment
+from easyai.data_loader.keypoint2d.pose2d_augment import Pose2dDataAugment
 
 
 class LandmarkDataAugment(Pose2dDataAugment):

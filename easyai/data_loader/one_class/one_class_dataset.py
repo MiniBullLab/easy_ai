@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch.utils.data as data
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.gen_image.gen_image_sample import GenImageSample
 from easyai.data_loader.gen_image.gen_image_dataset_process import GenImageDatasetProcess
@@ -28,7 +27,7 @@ class OneClassDataset(TorchDataLoader):
         _, src_image = self.read_src_image(img_path)
         image = self.dataset_process.resize_image(src_image, self.image_size)
         image = self.dataset_process.normalize_image(image)
-        return image, label
+        return {'image': image, 'label': label}
 
     def __len__(self):
         return self.gan_sample.get_sample_count()

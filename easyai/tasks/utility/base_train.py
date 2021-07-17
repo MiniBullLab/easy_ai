@@ -82,7 +82,7 @@ class BaseTrain(BaseTask):
         pass
 
     @abc.abstractmethod
-    def compute_backward(self, input_datas, targets, step_index):
+    def compute_backward(self, batch_data, step_index):
         pass
 
     def set_is_sparse_train(self, is_sparse=False, sparse_ratio=0.0):

@@ -147,7 +147,7 @@ class Keypoint2dRegionLoss(BaseYoloLoss):
                coord_mask, conf_mask, cls_mask, \
                txs, tys, tconf, tcls
 
-    def forward(self, outputs, targets=None):
+    def forward(self, outputs, batch_data=None):
         N, C, H, W = outputs.size()
         device = outputs.device
         output = outputs.view(N, (self.loc_count + 1 + self.class_number),
@@ -169,10 +169,11 @@ class Keypoint2dRegionLoss(BaseYoloLoss):
         pred_corners = pred_corners.transpose(0, 1).contiguous().\
             view(N, -1, self.loc_count)
 
-        if targets is None:
+        if batch_data is None:
             cls = F.softmax(cls, 2)
             return torch.cat([pred_corners, conf, cls], 2)
         else:
+            targets = batch_data['label'].to(device)
             num_ground_truth, num_det_correct, \
             coord_mask, conf_mask, cls_mask, \
             txs, tys, tconf, tcls = self.build_targets(pred_corners, targets, H, W, device)

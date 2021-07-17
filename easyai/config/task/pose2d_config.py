@@ -82,6 +82,7 @@ class Pose2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = {"type": "Pose2dDataSetCollate"}
 
         self.evaluation_result_name = 'pose2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
@@ -101,6 +102,7 @@ class Pose2dConfig(CommonTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['collate_fn'] = {"type": "Pose2dDataSetCollate"}
 
         self.is_save_epoch_model = False
         self.latest_weights_name = 'pose2d_latest.pt'

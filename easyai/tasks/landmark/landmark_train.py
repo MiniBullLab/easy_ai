@@ -35,13 +35,14 @@ class LandmarkTrain(CommonTrain):
             current_iter = epoch * self.total_batch_image + temp_index
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-            loss_info = self.compute_backward(images, targets, temp_index)
+            loss_info = self.compute_backward((images, targets), temp_index)
             self.update_logger(temp_index, self.total_images, epoch, loss_info)
 
-    def compute_backward(self, input_datas, targets, setp_index):
+    def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
+        input_datas = batch_data[0].to(self.device)
         output_list = self.model(input_datas.to(self.device))
-        loss, loss_info = self.compute_loss(output_list, targets)
+        loss, loss_info = self.compute_loss(output_list, batch_data[1])
 
         self.loss_backward(loss)
 

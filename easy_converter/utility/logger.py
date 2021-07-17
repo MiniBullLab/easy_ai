@@ -2,19 +2,20 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import argparse
-import logging
 import os
 import sys
+import logging
+import logging.handlers
 
+__all__ = ['EasyLogger']
 
 DEFAULT_LOGFILE_LEVEL = 'debug'
-DEFAULT_STDOUT_LEVEL = 'info'
+DEFAULT_STDOUT_LEVEL = None
 DEFAULT_LOG_FILE = './default.log'
 DEFAULT_LOG_FORMAT = '%(asctime)s %(levelname)-7s %(message)s'
 
@@ -27,7 +28,7 @@ LOG_LEVEL_DICT = {
 }
 
 
-class EasyLogger(object):
+class EasyLogger():
     """
     Args:
       Log level: CRITICAL>ERROR>WARNING>INFO>DEBUG.
@@ -36,6 +37,8 @@ class EasyLogger(object):
       log format: The format of log messages.
       stdout level: The log level to print on the screen.
     """
+    ROOT_DIR = "./.easy_log"
+
     logfile_level = None
     log_file = None
     log_format = None
@@ -73,11 +76,27 @@ class EasyLogger(object):
 
             EasyLogger.logger.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
 
-            fh = logging.FileHandler(EasyLogger.log_file, mode=filemode)
-            fh.setFormatter(fmt)
-            fh.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
+            # fh = logging.FileHandler(EasyLogger.log_file, mode=filemode)
+            # fh.setFormatter(fmt)
+            # fh.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
+            # EasyLogger.logger.addHandler(fh)
 
-            EasyLogger.logger.addHandler(fh)
+            file_handler = logging.handlers.RotatingFileHandler(
+                filename=EasyLogger.log_file,
+                maxBytes=1024 * 1024 * 50,
+                backupCount=5
+            )
+            file_handler.setFormatter(fmt)
+            file_handler.setLevel(LOG_LEVEL_DICT[EasyLogger.logfile_level])
+            EasyLogger.logger.addHandler(file_handler)
+
+            # time_handler = logging.handlers.TimedRotatingFileHandler(
+            #     filename=EasyLogger.log_file, when="D",
+            #     interval=1, backupCount=3)
+            # EasyLogger.logger.addHandler(time_handler)
+        # else:
+        #     print("default log level debug")
+        #     EasyLogger.logger.setLevel(logging.DEBUG)
 
         if stdout_level is not None:
             if EasyLogger.logfile_level is None:
@@ -93,6 +112,14 @@ class EasyLogger(object):
             EasyLogger.logger.addHandler(console)
 
     @staticmethod
+    def check_init():
+        return EasyLogger.logger is None
+
+    @staticmethod
+    def get_log_file_path(file_name):
+        return os.path.join(EasyLogger.ROOT_DIR, file_name)
+
+    @staticmethod
     def set_log_file(file_path):
         EasyLogger.log_file = file_path
         EasyLogger.init(log_file=file_path)
@@ -102,7 +129,6 @@ class EasyLogger(object):
         if log_level not in LOG_LEVEL_DICT:
             print('Invalid logging level: {}'.format(log_level))
             return
-
         EasyLogger.init(logfile_level=log_level)
 
     @staticmethod
@@ -120,7 +146,6 @@ class EasyLogger(object):
         if log_level not in LOG_LEVEL_DICT:
             print('Invalid logging level: {}'.format(log_level))
             return
-
         EasyLogger.init(stdout_level=log_level)
 
     @staticmethod
@@ -128,7 +153,7 @@ class EasyLogger(object):
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename,lineno)
+        prefix = '[{}, {}]'.format(filename, lineno)
         EasyLogger.logger.debug('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -136,7 +161,7 @@ class EasyLogger(object):
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename,lineno)
+        prefix = '[{}, {}]'.format(filename, lineno)
         EasyLogger.logger.info('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -144,7 +169,7 @@ class EasyLogger(object):
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename,lineno)
+        prefix = '[{}, {}]'.format(filename, lineno)
         EasyLogger.logger.warn('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -152,7 +177,7 @@ class EasyLogger(object):
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename,lineno)
+        prefix = '[{}, {}]'.format(filename, lineno)
         EasyLogger.logger.error('{} {}'.format(prefix, message))
 
     @staticmethod
@@ -160,7 +185,7 @@ class EasyLogger(object):
         EasyLogger.check_logger()
         filename = os.path.basename(sys._getframe().f_back.f_code.co_filename)
         lineno = sys._getframe().f_back.f_lineno
-        prefix = '[{}, {}]'.format(filename,lineno)
+        prefix = '[{}, {}]'.format(filename, lineno)
         EasyLogger.logger.critical('{} {}'.format(prefix, message))
 
 

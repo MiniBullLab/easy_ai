@@ -96,3 +96,19 @@ class BaseTest(BaseTask):
         else:
             self.total_batch_image = 0
         self.val_path = data_path
+
+    def compute_loss(self, output_list, batch_data):
+        loss = 0
+        loss_count = len(self.model.lossList)
+        output_count = len(output_list)
+        with torch.no_grad():
+            if loss_count == 1 and output_count == 1:
+                loss = self.model.lossList[0](output_list[0], batch_data)
+            elif loss_count == 1 and output_count > 1:
+                loss = self.model.lossList[0](output_list, batch_data)
+            elif loss_count > 1 and loss_count == output_count:
+                for k in range(0, loss_count):
+                    loss += self.model.lossList[k](output_list[k], batch_data)
+            else:
+                EasyLogger.error("compute loss error")
+        return loss.item()

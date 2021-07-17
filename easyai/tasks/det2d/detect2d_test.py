@@ -3,7 +3,6 @@
 # Author:lipeijie
 
 import os
-import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.det2d.detect2d import Detection2d
 from easyai.name_manager.evaluation_name import EvaluationName
@@ -38,34 +37,19 @@ class Detection2dTest(BaseTest):
     def test(self, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
-        for i, (image_path, src_size, input_image) in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(input_image)
+        for i, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.inference.infer(batch_data['image'])
+            loss_value = self.compute_loss(output_list, batch_data)
             detection_objects = self.inference.result_process.post_process(prediction,
-                                                                           src_size.numpy()[0])
-            self.print_test_info(i)
-            self.inference.save_result(image_path[0], detection_objects, 1)
+                                                                           batch_data['src_size'][0].numpy())
+            self.metirc_loss(i, loss_value)
+            self.print_test_info(i, loss_value)
+            self.inference.save_result(batch_data['image_path'][0], detection_objects, 1)
 
         mAP, aps = self.evaluation.eval(self.test_task_config.save_result_dir,
                                         self.val_path)
         self.save_test_value(epoch, mAP, aps)
         return mAP
-
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        targets = targets.to(self.device)
-        with torch.no_grad():
-            if loss_count == 1 and output_count == 1:
-                loss = self.model.lossList[0](output_list[0], targets)
-            elif loss_count == 1 and output_count > 1:
-                loss = self.model.lossList[0](output_list, targets)
-            elif loss_count > 1 and loss_count == output_count:
-                for k in range(0, loss_count):
-                    loss += self.model.lossList[k](output_list[k], targets)
-            else:
-                EasyLogger.error("compute loss error")
-        return loss.item()
 
     def save_test_value(self, epoch, mAP, aps):
         # Write epoch results

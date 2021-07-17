@@ -35,11 +35,11 @@ class KeyPoint2dTest(BaseTest):
         self.test(epoch)
 
     def test(self, epoch=0):
-        for i, (images, labels) in enumerate(self.dataloader):
-            prediction = self.inference.infer(images)
-            result, _ = self.inference.result_process.post_process(prediction, self.conf_threshold)
-            labels = labels[0].data.cpu().numpy()
-            self.evaluation.eval(result, labels)
+        for i, batch_data in enumerate(self.dataloader):
+            prediction = self.inference.infer(batch_data['image'])
+            result, _ = self.inference.result_process.post_process(prediction,
+                                                                   self.conf_threshold)
+            self.evaluation.eval(result, batch_data['label'][0].data.cpu().numpy())
             self.print_test_info(i)
         accuracy, _ = self.evaluation.get_accuracy()
         self.save_test_value(epoch, accuracy)

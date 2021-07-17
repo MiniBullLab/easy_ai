@@ -60,6 +60,7 @@ class OneClassConfig(GanTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
         self.evaluation_result_name = 'one_class_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.ROOT_DIR, self.evaluation_result_name)
@@ -75,6 +76,7 @@ class OneClassConfig(GanTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
         self.enable_mixed_precision = False
         self.is_save_epoch_model = False

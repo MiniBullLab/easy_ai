@@ -4,6 +4,7 @@
 
 from torch.utils.data import Dataset
 from easyai.helper.image_process import ImageProcess
+from easyai.helper.pointcloud_process import PointCloudProcess
 from easyai.utility.logger import EasyLogger
 
 
@@ -14,6 +15,7 @@ class TorchDataLoader(Dataset):
         self.data_path = data_path
         self.data_channel = data_channel
         self.image_process = ImageProcess()
+        self.pointcloud_process = PointCloudProcess(dim=data_channel)
 
     def read_src_image(self, image_path):
         src_image = None

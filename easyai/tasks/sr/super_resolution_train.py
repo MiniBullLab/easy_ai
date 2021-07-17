@@ -33,17 +33,18 @@ class SuperResolutionTrain(CommonTrain):
             self.test(val_path, epoch, save_model_path)
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
-        for temp_index, (images, labels) in enumerate(dataloader):
+        for temp_index, batch_data in enumerate(dataloader):
             current_idx = epoch * self.total_batch_image + temp_index
             lr = lr_scheduler.get_lr(epoch, current_idx)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
-            loss_info = self.compute_backward(images, labels, temp_index)
+            loss_info = self.compute_backward(batch_data, temp_index)
             self.update_logger(temp_index, self.total_batch_image, epoch, loss_info)
 
-    def compute_backward(self, input_datas, targets, setp_index):
+    def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
-        output_list = self.model(input_datas.to(self.device))
-        loss, loss_info = self.compute_loss(output_list, targets.to(self.device))
+        input_datas = batch_data['image'].to(self.device)
+        output_list = self.model(input_datas)
+        loss, loss_info = self.compute_loss(output_list, batch_data)
 
         self.loss_backward(loss)
 
@@ -56,22 +57,22 @@ class SuperResolutionTrain(CommonTrain):
         loss_info['all_loss'] = loss.item()
         return loss_info
 
-    def compute_loss(self, output_list, targets):
+    def compute_loss(self, output_list, batch_data):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
         loss_info = {}
         if loss_count == 1 and output_count == 1:
-            loss = self.model.lossList[0](output_list[0], targets)
+            loss = self.model.lossList[0](output_list[0], batch_data)
             loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count == 1 and output_count > 1:
-            loss = self.model.lossList[0](output_list, targets)
+            loss = self.model.lossList[0](output_list, batch_data)
             loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count > 1 and loss_count == output_count:
-            loss = self.model.lossList[0](output_list[0], targets)
+            loss = self.model.lossList[0](output_list[0], batch_data)
             loss_info = self.model.lossList[0].print_loss_info()
             for k in range(1, loss_count):
-                loss += self.model.lossList[k](output_list[k], targets)
+                loss += self.model.lossList[k](output_list[k], batch_data)
                 temp_info = self.model.lossList[k].print_loss_info()
                 for key, value in temp_info.items():
                     loss_info[key] += value

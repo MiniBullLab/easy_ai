@@ -88,8 +88,7 @@ class Det2dTrainDataloader(DataLoader):
             list_labels.append(torch_labels)
 
         torch_images = torch.stack(list_images, dim=0)
-
-        return torch_images, list_labels
+        return {'image': torch_images, 'label': list_labels}
 
     def __len__(self):
         return self.nB  # number of batches

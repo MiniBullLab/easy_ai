@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.data_loader.pose2d.pose2d_dataset_process import Pose2dDataSetProcess
+from easyai.data_loader.keypoint2d.pose2d_dataset_process import Pose2dDataSetProcess
 
 
 class LandmarkDataSetProcess(Pose2dDataSetProcess):

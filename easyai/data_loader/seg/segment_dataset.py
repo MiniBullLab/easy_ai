@@ -43,7 +43,7 @@ class SegmentDataset(TorchDataLoader):
         target = self.dataset_process.change_label(target, self.number_class)
         torch_image = self.dataset_process.normalize_image(image)
         torch_target = self.dataset_process.numpy_to_torch(target).long()
-        return torch_image, torch_target
+        return {'image': torch_image, 'label': torch_target}
 
     def __len__(self):
         return self.segment_sample.get_sample_count()

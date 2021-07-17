@@ -19,10 +19,17 @@ class DatasetName():
     RecTextOCRDataSet = "RecTextOCRDataSet"
     SuperResolutionDataset = "SuperResolutionDataset"
 
+    ClassifyPointCloudDataSet = "ClassifyPointCloudDataSet"
+
 
 class DatasetCollateName():
 
+    ClassifyDataSetCollate = "ClassifyDataSetCollate"
+    Det2dDataSetCollate = "Det2dDataSetCollate"
+    KeyPoint2dDataSetCollate = "KeyPoint2dDataSetCollate"
+    Pose2dDataSetCollate = "Pose2dDataSetCollate"
     RecTextDataSetCollate = "RecTextDataSetCollate"
+    SuperResolutionDataSetCollate = "SuperResolutionDataSetCollate"
 
 
 class DataloaderName():

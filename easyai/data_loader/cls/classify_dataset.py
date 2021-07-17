@@ -33,7 +33,7 @@ class ClassifyDataSet(TorchDataLoader):
         if self.is_augment:
             image = self.dataset_augment.augment(image)
         image = self.dataset_process.normalize_image(image)
-        return image, label
+        return {'image': image, 'label': label}
 
     def __len__(self):
         return self.classify_sample.get_sample_count()

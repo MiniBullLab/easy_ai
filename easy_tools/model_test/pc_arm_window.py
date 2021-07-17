@@ -75,8 +75,9 @@ class PCAndArmTestWindow(QWidget):
             elif task_name == TaskName.Detect2d_Task:
                 model_name = 'detnet'
             elif task_name == TaskName.Segment_Task:
-                cfg_path = os.path.join(dir_name, "../data/segnet.cfg")
-                model_name = cfg_path
+                model_name = "segnet"
+            elif task_name == TaskName.RecognizeText:
+                model_name = "TextNet"
         if flag == 0:
             if self.weight_txt.text():
                 self.test_process.set_param(flag=flag, task_name=task_name,
@@ -133,6 +134,7 @@ class PCAndArmTestWindow(QWidget):
         self.task_name_box.addItem(TaskName.Classify_Task)
         self.task_name_box.addItem(TaskName.Detect2d_Task)
         self.task_name_box.addItem(TaskName.Segment_Task)
+        self.task_name_box.addItem(TaskName.RecognizeText)
 
         layout1 = QHBoxLayout()
         layout1.setSpacing(20)

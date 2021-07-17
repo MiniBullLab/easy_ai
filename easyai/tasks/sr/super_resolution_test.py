@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.sr.super_resolution import SuperResolution
 from easyai.name_manager.evaluation_name import EvaluationName
@@ -34,9 +33,9 @@ class SuperResolutionTest(BaseTest):
         self.test(epoch)
 
     def test(self, epoch=0):
-        for i, (images, sr_targets) in enumerate(self.dataloader):
-            prediction, output_list = self.sr_inference.infer(images)
-            loss_value = self.compute_loss(output_list, sr_targets)
+        for i, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.sr_inference.infer(batch_data['image'])
+            loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.eval(loss_value)
             self.metirc_loss(i, loss_value)
 
@@ -44,23 +43,6 @@ class SuperResolutionTest(BaseTest):
         self.save_test_value(epoch, score)
         print("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
         return score, self.epoch_loss_average.avg
-
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        targets = targets.to(self.device)
-        with torch.no_grad():
-            if loss_count == 1 and output_count == 1:
-                loss = self.model.lossList[0](output_list[0], targets)
-            elif loss_count == 1 and output_count > 1:
-                loss = self.model.lossList[0](output_list, targets)
-            elif loss_count > 1 and loss_count == output_count:
-                for k in range(0, loss_count):
-                    loss += self.model.lossList[k](output_list[k], targets)
-            else:
-                print("compute loss error")
-        return loss.item()
 
     def save_test_value(self, epoch, score):
         # write epoch results

@@ -57,6 +57,7 @@ class GenerateImageConfig(GanTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
         self.enable_mixed_precision = False
         self.is_save_epoch_model = False

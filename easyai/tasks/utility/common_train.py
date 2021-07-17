@@ -167,6 +167,6 @@ class CommonTrain(BaseTrain):
         return save_model_path
 
     @abc.abstractmethod
-    def compute_loss(self, output_list, targets):
+    def compute_loss(self, output_list, batch_data):
         pass
 
