@@ -5,7 +5,8 @@
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.one_class.one_class import OneClass
-from easyai.evaluation.one_class_roc import OneClassROC
+from easyai.evaluation.one_class.one_class_roc import OneClassROC
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -19,7 +20,9 @@ class OneClassTest(BaseTest):
         self.inference = OneClass(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.evaluation = OneClassROC(self.test_task_config.root_save_dir)
+        self.evaluation_args = {"type": EvaluationName.OneClassROC,
+                                'save_dir': self.test_task_config.root_save_dir}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)

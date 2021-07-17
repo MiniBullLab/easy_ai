@@ -3,8 +3,8 @@
 # Author:lipeijie
 
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.key_point_accuracy import KeyPointAccuracy
 from easyai.tasks.keypoint2d.keypoint2d import KeyPoint2d
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -19,8 +19,10 @@ class KeyPoint2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(5e-3)
-        self.evaluation = KeyPointAccuracy(self.test_task_config.points_count,
-                                           self.test_task_config.points_class)
+        self.evaluation_args = {"type": EvaluationName.KeyPointAccuracy,
+                                "points_count": self.test_task_config.points_count,
+                                "class_names": self.test_task_config.points_class}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)

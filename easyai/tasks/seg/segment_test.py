@@ -6,7 +6,7 @@ import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
-from easyai.evaluation.segmen_metric import SegmentionMetric
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -23,8 +23,9 @@ class SegmentionTest(BaseTest):
         self.output_process = SegmentResultProcess(self.test_task_config.data['image_size'],
                                                    self.test_task_config.data['resize_type'],
                                                    self.test_task_config.post_process)
-
-        self.evaluation = SegmentionMetric(len(self.test_task_config.segment_class))
+        self.evaluation_args = {"type": EvaluationName.SegmentionMetric,
+                                'num_class': len(self.test_task_config.segment_name)}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)

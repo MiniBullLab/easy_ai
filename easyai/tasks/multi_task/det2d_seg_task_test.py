@@ -4,9 +4,8 @@
 
 import os
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.tasks.multi_task.det2d_seg_task import Det2dSegTask
-from easyai.evaluation.segmen_metric import SegmentionMetric
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -20,8 +19,12 @@ class Det2dSegTaskTest(BaseTest):
         self.inference = Det2dSegTask(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.det2d_evaluator = DetectionMeanAp(self.test_task_config.detect2d_class)
-        self.seg_metric = SegmentionMetric(len(self.test_task_config.segment_name))
+        self.evaluation_args = {"type": EvaluationName.DetectionMeanAp,
+                                'class_names': self.test_task_config.detect2d_class}
+        self.det2d_evaluator = self.evaluation_factory.get_evaluation(self.evaluation_args)
+        self.evaluation_args = {"type": EvaluationName.SegmentionMetric,
+                                'num_class': len(self.test_task_config.segment_name)}
+        self.seg_metric = self.evaluation_factory.get_evaluation(self.evaluation_args)
         self.threshold_det = 5e-3
         self.threshold_seg = 0.5
 

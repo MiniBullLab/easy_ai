@@ -254,11 +254,11 @@ class ToolArgumentsParse():
 
         parser.add_option("-m", "--model", dest="model",
                           metavar="PATH", type="string", default="cfg/conv_block.cfg",
-                          help="cfg file path or model name")
+                          help="PC cfg file path or model name")
 
         parser.add_option("-w", "--weights", dest="weights",
                           metavar="PATH", type="string", default="weights/latest.pt",
-                          help="path to store weights")
+                          help="PC path to store weights")
 
         parser.add_option("-c", "--config", dest="config_path",
                           metavar="PATH", type="string", default=None,

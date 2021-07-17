@@ -2,12 +2,16 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.utility.logger import EasyLogger
-from easyai.evaluation.base_evaluation import BaseEvaluation
-from easyai.helper.average_meter import AverageMeter
 import Levenshtein
+from easyai.utility.logger import EasyLogger
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
+from easyai.helper.average_meter import AverageMeter
+from easyai.helper.data_structure import OCRObject
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.RecognizeTextMetric)
 class RecognizeTextMetric(BaseEvaluation):
 
     def __init__(self):
@@ -23,6 +27,8 @@ class RecognizeTextMetric(BaseEvaluation):
         for pred, target in zip(result, targets):
             pred_text = pred.get_text()
             pred_text = pred_text.replace(" ", "")
+            if isinstance(target, OCRObject):
+                target = target.get_text()
             target = target.replace(" ", "")
             max_length = max(len(pred_text), len(target), 1)
             norm_edit_dis = Levenshtein.distance(pred_text, target) / max_length

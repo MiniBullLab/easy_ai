@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import abc
+from easyai.evaluation.utility.evaluation_factory import EvaluationFactory
 
 
 class BaseOfflineEvaluation():
 
     def __init__(self):
-        pass
+        self.evaluation_factory = EvaluationFactory()
 
     @abc.abstractmethod
     def process(self, test_path, target_path):

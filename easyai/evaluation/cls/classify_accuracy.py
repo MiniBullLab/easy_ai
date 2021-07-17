@@ -4,10 +4,13 @@
 
 import numpy as np
 from easyai.helper.average_meter import AverageMeter
-from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 from easyai.utility.logger import EasyLogger
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.ClassifyAccuracy)
 class ClassifyAccuracy(BaseEvaluation):
 
     def __init__(self, top_k=(1, 5)):

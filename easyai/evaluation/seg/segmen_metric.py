@@ -3,10 +3,13 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
 from easyai.utility.logger import EasyLogger
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.SegmentionMetric)
 class SegmentionMetric(BaseEvaluation):
 
     def __init__(self, num_class):

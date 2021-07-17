@@ -5,8 +5,8 @@
 import os
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.detection_mAP import DetectionMeanAp
 from easyai.tasks.det2d.detect2d import Detection2d
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -21,7 +21,9 @@ class Detection2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(5e-3)
-        self.evaluation = DetectionMeanAp(self.test_task_config.detect2d_class)
+        self.evaluation_args = {"type": EvaluationName.DetectionMeanAp,
+                                'class_names': self.test_task_config.detect2d_class}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)

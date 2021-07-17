@@ -8,9 +8,12 @@ from sklearn.metrics import roc_curve, auc
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
-from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.OneClassROC)
 class OneClassROC(BaseEvaluation):
 
     def __init__(self, save_dir):

@@ -6,8 +6,8 @@ import traceback
 from easyai.utility.logger import EasyLogger
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.rec_text_metric import RecognizeTextMetric
 from easyai.tasks.rec_text.recognize_text import RecognizeText
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
@@ -20,7 +20,8 @@ class RecognizeTextTest(BaseTest):
         self.inference = RecognizeText(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.evaluation = RecognizeTextMetric()
+        self.evaluation_args = {"type": EvaluationName.RecognizeTextMetric}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)

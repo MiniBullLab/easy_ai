@@ -4,6 +4,7 @@
 
 import inspect
 from easyai.utility import misc
+from easyai.utility.logger import EasyLogger
 
 
 class Registry(object):
@@ -61,12 +62,13 @@ class Registry(object):
             )
         if cls_name is None:
             cls_name = module_class.__name__
+        # print(self._module_dict)
         if cls_name in self._module_dict:
             raise KeyError(
                 "{} is already registered in {}".format(cls_name, self.name)
             )
         self._module_dict[cls_name] = module_class
-        # print(module_class, "register name: %s" % cls_name)
+        EasyLogger.debug("{} register name: {}".format(module_class, cls_name))
 
     def register_module(self, cls_name=None):
         def deco(cls):

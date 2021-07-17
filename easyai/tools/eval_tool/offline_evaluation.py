@@ -34,6 +34,9 @@ class OfflineEvaluation():
                              'seg_label_type': self.task_config.seg_label_type,
                              'segment_class': self.task_config.segment_class}
                 self.offline_test = build_from_cfg(test_args, REGISTERED_OFFLINE_EVALUATION)
+            else:
+                test_args = {'type': self.task_name}
+                self.offline_test = build_from_cfg(test_args, REGISTERED_OFFLINE_EVALUATION)
         else:
             print("This task(%s) not exits!" % self.task_name)
 

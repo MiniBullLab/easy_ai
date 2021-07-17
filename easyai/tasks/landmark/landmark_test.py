@@ -4,8 +4,8 @@
 
 import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.landmark_accuracy import LandmarkAccuracy
 from easyai.tasks.landmark.landmark import Landmark
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -20,7 +20,9 @@ class Pose2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(1e-5)
-        self.evaluation = LandmarkAccuracy(self.test_task_config.points_count)
+        self.evaluation_args = {"type": EvaluationName.LandmarkAccuracy,
+                                "points_count": self.test_task_config.points_count}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.inference.load_weights(weights_path)

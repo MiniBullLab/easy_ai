@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.helper import DirProcess
-from easyai.evaluation.classify_accuracy import ClassifyAccuracy
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
 from easyai.helper.arguments_parse import ToolArgumentsParse
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tools.utility.tools_registry import REGISTERED_OFFLINE_EVALUATION
 
@@ -16,10 +16,12 @@ class OfflineClassifyEvaluation(BaseOfflineEvaluation):
     def __init__(self):
         super().__init__()
         self.dirProcess = DirProcess()
-        self.evaluation = ClassifyAccuracy()
+        self.evaluation_args = {"type": EvaluationName.ClassifyAccuracy,
+                                'top_k': (1,)}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def process(self, test_path, target_path):
-        self.evaluation.clean_data()
+        self.evaluation.reset()
         test_data_list = self.get_test_data(test_path)
         target_data_list = self.get_target_data(target_path)
         for image_name, class_index in test_data_list:

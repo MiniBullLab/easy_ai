@@ -9,9 +9,13 @@ from easyai.helper.dir_process import DirProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.evaluation.utility.calculate_rect_AP import CalculateRectAP
-from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
+from easyai.utility.logger import EasyLogger
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.DetectionMeanAp)
 class DetectionMeanAp(BaseEvaluation):
 
     def __init__(self, class_names):
@@ -45,14 +49,12 @@ class DetectionMeanAp(BaseEvaluation):
         return np.mean(aps), aps
 
     def print_evaluation(self, aps):
-        print('Mean AP = {:.4f}'.format(np.mean(aps)))
-        print('~~~~~~~~')
-        print('Results:')
+        EasyLogger.info('Mean AP = {:.4f}'.format(np.mean(aps)))
+        EasyLogger.info('Results:')
         for i, ap in enumerate(aps):
-            print(self.class_names[i] + ': ' + '{:.3f}'.format(ap))
+            EasyLogger.info("{} : {:.3f}".format(self.class_names[i], ap))
             # print(self.className[i] + '_iou: ' + '{:.3f}'.format(ious[aps.index(ap)]))
         # print('Iou acc: ' + '{:.3f}'.format(np.mean(ious)))
-        print('~~~~~~~~')
 
     def get_gt_boxes(self, val_path, class_name):
         result = {}

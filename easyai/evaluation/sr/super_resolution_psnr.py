@@ -4,9 +4,12 @@
 
 from math import log10
 from easyai.helper.average_meter import AverageMeter
-from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.SuperResolutionPSNR)
 class SuperResolutionPSNR(BaseEvaluation):
 
     def __init__(self):

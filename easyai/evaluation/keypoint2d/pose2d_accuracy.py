@@ -3,9 +3,13 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.evaluation.base_evaluation import BaseEvaluation
+from easyai.evaluation.utility.base_evaluation import BaseEvaluation
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
+from easyai.utility.logger import EasyLogger
 
 
+@REGISTERED_EVALUATION.register_module(EvaluationName.Pose2dAccuracy)
 class Pose2dAccuracy(BaseEvaluation):
     """
     Calculate accuracy according to PCK,

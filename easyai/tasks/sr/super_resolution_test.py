@@ -5,7 +5,7 @@
 import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.sr.super_resolution import SuperResolution
-from easyai.evaluation.super_resolution_psnr import SuperResolutionPSNR
+from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -20,7 +20,8 @@ class SuperResolutionTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
 
-        self.evaluation = SuperResolutionPSNR()
+        self.evaluation_args = {"type": EvaluationName.SuperResolutionPSNR}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def load_weights(self, weights_path):
         self.sr_inference.load_weights(weights_path)

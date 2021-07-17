@@ -7,6 +7,7 @@ import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
+from easyai.evaluation.utility.evaluation_factory import EvaluationFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
 from easyai.utility.logger import EasyLogger
@@ -20,6 +21,8 @@ class BaseTest(BaseTask):
         self.timer = TimerProcess()
         self.epoch_loss_average = AverageMeter()
         self.dataloader_factory = DataloaderFactory()
+        self.evaluation_factory = EvaluationFactory()
+        self.evaluation_args = None
         self.test_task_config = None
         self.dataloader = None
         self.total_batch_image = 0
