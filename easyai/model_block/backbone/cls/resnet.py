@@ -125,11 +125,9 @@ class ResNet(BaseBackbone):
 
     def forward(self, x):
         output_list = []
-        for key, block in self._modules.items():
-            print(key, x.shape)
+        for block in self._modules.values():
             x = block(x)
             output_list.append(x)
-            print(key, x.shape)
         return output_list
 
 
