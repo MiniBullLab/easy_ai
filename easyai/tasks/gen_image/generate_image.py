@@ -43,16 +43,16 @@ class GenerateImage(BaseInference):
         else:
             os.system('rm -rf ' + self.task_config.save_result_path)
             dataloader = self.get_image_data_lodaer(input_path)
-            for index, (file_path, src_image, image) in enumerate(dataloader):
+            for index, batch_data in enumerate(dataloader):
                 self.timer.tic()
-                prediction, _ = self.infer(image)
+                prediction, _ = self.infer(batch_data)
                 result = self.result_process.post_process(prediction)
                 print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
                 if is_show:
                     if not self.result_show.show(result):
                         break
                 else:
-                    self.save_result(file_path, result)
+                    self.save_result(batch_data['file_path'], result)
 
     def save_result(self, file_path, prediction):
         os.makedirs(self.task_config.save_result_path, exist_ok=True)
@@ -63,7 +63,7 @@ class GenerateImage(BaseInference):
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            fake_images = self.model.generator_input_data(input_data)
+            fake_images = self.model.generator_input_data(input_data['image'])
             output_list = self.model(fake_images.to(self.device))
             output = self.compute_output(output_list)
         return output, output_list

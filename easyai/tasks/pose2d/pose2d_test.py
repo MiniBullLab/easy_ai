@@ -37,7 +37,7 @@ class Pose2dTest(BaseTest):
 
     def test(self, epoch=0):
         for index, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(batch_data['image'])
+            prediction, output_list = self.inference.infer(batch_data)
             result, _ = self.inference.result_process.post_process(prediction, (0, 0))
             loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.eval(result, batch_data['label'].detach().numpy())

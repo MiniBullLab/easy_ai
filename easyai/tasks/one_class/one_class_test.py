@@ -35,14 +35,15 @@ class OneClassTest(BaseTest):
 
     def test(self, epoch=0):
         for index, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(batch_data['image'])
+            prediction, output_list = self.inference.infer(batch_data)
             loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.eval(prediction, batch_data['label'].detach().numpy())
             self.metirc_loss(index, loss_value)
             self.print_test_info(index, loss_value)
         roc_auc = self.evaluation.get_score()
         self.save_test_value(epoch, roc_auc)
-        print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        EasyLogger.info("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        # print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return roc_auc, self.epoch_loss_average.avg
 
     def compute_loss(self, output_list, batch_data):

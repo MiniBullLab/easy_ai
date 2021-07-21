@@ -26,12 +26,13 @@ class DetPose2dTask(BaseInference):
         self.task_config = self.det2d_inference.task_config
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
-        for i, (file_path, src_image, img) in enumerate(dataloader):
+        for i, batch_data in enumerate(dataloader):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
-            self.set_src_size(src_image)
-            detection_objects = self.det2d_inference.single_image_process(self.src_size, img)
-            box_dataloader = Box2dLoader(detection_objects, src_image,
+            self.set_src_size(batch_data['src_image'])
+            detection_objects = self.det2d_inference.single_image_process(self.src_size,
+                                                                          batch_data)
+            box_dataloader = Box2dLoader(detection_objects, batch_data['src_image'],
                                          self.pose2d_inference.task_config.image_size,
                                          self.pose2d_inference.task_config.data_channel,
                                          self.pose2d_inference.task_config.resize_type,
@@ -39,17 +40,19 @@ class DetPose2dTask(BaseInference):
                                          self.pose2d_inference.task_config.data_mean,
                                          self.pose2d_inference.task_config.data_std)
             objects_pose = []
-            for box, roi_image in box_dataloader:
-                pose = self.pose2d_inference.single_image_process((box.width(), box.height()),
-                                                                  roi_image)
+            for box_data in box_dataloader:
+                box_size = (box_data['box'].width(), box_data['box'].height())
+                pose = self.pose2d_inference.single_image_process(box_size,
+                                                                  box_data)
                 for point in pose.get_key_points():
                     if point.x < 0 or point.y < 0:
                         continue
-                    point.x = point.x + box.min_corner.x
-                    point.y = point.y + box.min_corner.y
+                    point.x = point.x + box_data['box'].min_corner.x
+                    point.y = point.y + box_data['box'].min_corner.y
                 objects_pose.append(pose)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
-            if not self.result_show.show(src_image, detection_objects, objects_pose,
+            if not self.result_show.show(batch_data['src_image'],
+                                         detection_objects, objects_pose,
                                          self.pose2d_inference.task_config.skeleton):
                 break
 

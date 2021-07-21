@@ -31,20 +31,20 @@ class Segmentation(BaseInference):
         os.makedirs(self.task_config.save_result_path, exist_ok=True)
 
         dataloader = self.get_image_data_lodaer(input_path)
-        for index, (file_path, src_image, image) in enumerate(dataloader):
+        for index, batch_data in enumerate(dataloader):
             self.timer.tic()
-            self.set_src_size(src_image)
-            prediction, _ = self.infer(image)
+            self.set_src_size(batch_data['src_image'])
+            prediction, _ = self.infer(batch_data)
             _, seg_image = self.result_process.post_process(prediction,
                                                             self.src_size)
             EasyLogger.info('Batch %d Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image, seg_image,
+                if not self.result_show.show(batch_data['src_image'], seg_image,
                                              self.task_config.segment_class):
                     break
             else:
-                self.save_result_confidence(file_path, prediction)
-                self.save_result(file_path, seg_image)
+                self.save_result_confidence(batch_data['file_path'], prediction)
+                self.save_result(batch_data['file_path'], seg_image)
 
     def save_result(self, file_path, seg_image):
         path, filename_post = os.path.split(file_path)
@@ -62,7 +62,8 @@ class Segmentation(BaseInference):
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             output = self.compute_output(output_list[:])
         return output, output_list
 

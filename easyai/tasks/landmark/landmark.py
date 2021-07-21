@@ -24,26 +24,28 @@ class Landmark(BaseInference):
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
-        for i, (file_path, src_image, img) in enumerate(dataloader):
+        for i, batch_data in enumerate(dataloader):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
-            self.set_src_size(src_image)
-            objects_pose = self.single_image_process(self.src_size, img)
+            self.set_src_size(batch_data['src_image'])
+            objects_pose = self.single_image_process(self.src_size, batch_data)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image, [objects_pose], self.task_config.skeleton):
+                if not self.result_show.show(batch_data['src_image'],
+                                             [objects_pose], self.task_config.skeleton):
                     break
             else:
                 pass
 
-    def single_image_process(self, src_size, input_image):
-        prediction, _ = self.infer(input_image)
+    def single_image_process(self, src_size, input_data):
+        prediction, _ = self.infer(input_data)
         _, pose = self.result_process.post_process(prediction, src_size)
         return pose
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             output = self.compute_output(output_list)
         return output, output_list
 

@@ -39,7 +39,7 @@ class SegmentionTest(BaseTest):
 
     def test(self, epoch=0):
         for i, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(batch_data['image'])
+            prediction, output_list = self.inference.infer(batch_data)
             result, _ = self.output_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.numpy_eval(result, batch_data['label'][0].data.cpu().numpy())

@@ -34,7 +34,7 @@ class SuperResolutionTest(BaseTest):
 
     def test(self, epoch=0):
         for i, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.sr_inference.infer(batch_data['image'])
+            prediction, output_list = self.sr_inference.infer(batch_data)
             loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.eval(loss_value)
             self.metirc_loss(i, loss_value)

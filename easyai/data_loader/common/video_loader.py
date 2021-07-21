@@ -46,7 +46,8 @@ class VideoLoader(DataLoader):
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)
         video_name = self.data_path + "_%d" % self.index
-        return video_name, cv_image, torch_image
+        return {"file_path": video_name, "src_image": cv_image,
+                "image": torch_image}
 
     def __len__(self):
         return self.count

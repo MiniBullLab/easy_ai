@@ -34,7 +34,7 @@ class ClassifyTest(BaseTest):
 
     def test(self, epoch=0):
         for index, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(batch_data['image'])
+            prediction, output_list = self.inference.infer(batch_data)
             loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.torch_eval(prediction.data,
                                        batch_data['label'].to(prediction.device))

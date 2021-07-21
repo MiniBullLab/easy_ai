@@ -24,22 +24,23 @@ class RecognizeText(BaseInference):
     def process(self, input_path, data_type=1, is_show=False):
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
-        for i, (file_path, src_image, img) in enumerate(dataloader):
+        for i, batch_data in enumerate(dataloader):
             self.timer.tic()
-            self.set_src_size(src_image)
-            text_objects = self.single_image_process(img)
+            self.set_src_size(batch_data['src_image'])
+            text_objects = self.single_image_process(batch_data)
             EasyLogger.debug('Batch %d/%d Done. (%.3fs)' % (i, image_count,
                                                             self.timer.toc()))
-            print(file_path, text_objects[0].get_text())
+            print(batch_data['file_path'], text_objects[0].get_text())
 
-    def single_image_process(self, input_image):
-        prediction, _ = self.infer(input_image)
+    def single_image_process(self, input_data):
+        prediction, _ = self.infer(input_data)
         result = self.result_process.post_process(prediction)
         return result
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             output = self.compute_output(output_list)
         return output, output_list
 
@@ -59,7 +60,7 @@ class RecognizeText(BaseInference):
                 preds.append(temp)
             prediction = torch.cat(preds, 1)
         else:
-            print("compute loss error")
+            EasyLogger.error("compute loss error")
         if prediction is not None:
             prediction = prediction.squeeze(0)
             prediction = prediction.data.cpu().numpy()

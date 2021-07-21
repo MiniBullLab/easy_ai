@@ -24,18 +24,18 @@ class OneClass(BaseInference):
     def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         dataloader = self.get_image_data_lodaer(input_path)
-        for index, (file_path, src_image, image) in enumerate(dataloader):
+        for index, batch_data in enumerate(dataloader):
             self.timer.tic()
-            prediction, _ = self.infer(image)
+            prediction, _ = self.infer(batch_data)
             class_index, class_confidence = self.result_process.post_process(prediction)
             print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image,
+                if not self.result_show.show(batch_data['src_image'],
                                              class_index,
                                              self.task_config.class_name):
                     break
             else:
-                self.save_result(file_path, class_index, class_confidence)
+                self.save_result(batch_data['file_path'], class_index, class_confidence)
 
     def save_result(self, file_path, class_index, class_confidence):
         path, filename_post = os.path.split(file_path)
@@ -46,7 +46,8 @@ class OneClass(BaseInference):
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             output = self.compute_output(output_list)
         return output, output_list
 

@@ -38,7 +38,7 @@ class Detection2dTest(BaseTest):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
         for i, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(batch_data['image'])
+            prediction, output_list = self.inference.infer(batch_data)
             loss_value = self.compute_loss(output_list, batch_data)
             detection_objects = self.inference.result_process.post_process(prediction,
                                                                            batch_data['src_size'][0].numpy())

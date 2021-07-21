@@ -45,7 +45,8 @@ class TextDataLoader(DataLoader):
         image = self.dataset_process.resize_image(src_image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)
-        return image_path, cv_image, torch_image
+        return {"file_path": image_path, "src_image": cv_image,
+                "image": torch_image}
 
     def __len__(self):
         return self.count

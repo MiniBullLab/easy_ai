@@ -41,7 +41,7 @@ class OCRLoader(DataLoader):
         image = self.dataset_process.resize_image(image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
         torch_image = torch_image.unsqueeze(0)
-        return torch_image
+        return {"image": torch_image}
 
     def __len__(self):
         return self.count

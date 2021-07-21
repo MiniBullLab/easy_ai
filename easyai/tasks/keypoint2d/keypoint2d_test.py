@@ -36,7 +36,7 @@ class KeyPoint2dTest(BaseTest):
 
     def test(self, epoch=0):
         for i, batch_data in enumerate(self.dataloader):
-            prediction = self.inference.infer(batch_data['image'])
+            prediction = self.inference.infer(batch_data)
             result, _ = self.inference.result_process.post_process(prediction,
                                                                    self.conf_threshold)
             self.evaluation.eval(result, batch_data['label'][0].data.cpu().numpy())

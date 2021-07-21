@@ -52,7 +52,8 @@ class SuperResolution(BaseInference):
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             prediction = self.compute_output(output_list[:])
         return prediction, output_list
 

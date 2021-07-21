@@ -28,25 +28,26 @@ class OCRTask(BaseInference):
         self.task_config = self.det2d_inference.task_config
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
-        for i, (file_path, src_image, img) in enumerate(dataloader):
+        for i, batch_data in enumerate(dataloader):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
-            self.set_src_size(src_image)
-            detection_objects = self.det2d_inference.single_image_process(self.src_size, img)
+            self.set_src_size(batch_data['src_image'])
+            detection_objects = self.det2d_inference.single_image_process(self.src_size,
+                                                                          batch_data)
             ocr_result = self.convert_ocr_object(detection_objects)
 
-            ocr_dataloader = OCRLoader(ocr_result, src_image,
+            ocr_dataloader = OCRLoader(ocr_result, batch_data['src_image'],
                                        self.text_inference.task_config.data['image_size'],
                                        self.text_inference.task_config.data['data_channel'],
                                        self.text_inference.task_config.data['resize_type'],
                                        self.text_inference.task_config.data['normalize_type'],
                                        self.text_inference.task_config.data['mean'],
                                        self.text_inference.task_config.data['std'])
-            for index, roi_image in enumerate(ocr_dataloader):
-                text = self.text_inference.single_image_process(roi_image)
+            for index, ocr_data in enumerate(ocr_dataloader):
+                text = self.text_inference.single_image_process(ocr_data)
                 ocr_result[index].set_text(text[0].get_text())
                 ocr_result[index].text_confidence = text[0].text_confidence
-            if not self.result_show.show(src_image, ocr_result):
+            if not self.result_show.show(batch_data['src_image'], ocr_result):
                 break
 
     def infer(self, input_data, net_type=0):
