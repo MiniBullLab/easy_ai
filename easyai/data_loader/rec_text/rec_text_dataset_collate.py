@@ -12,10 +12,10 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_CO
 @REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.RecTextDataSetCollate)
 class RecTextDataSetCollate(BaseDatasetCollate):
 
-    def __init__(self, is_padding=True):
+    def __init__(self, is_padding=True, pad_value=0):
         super().__init__()
         self.is_padding = is_padding
-        self.pad_value = 0
+        self.pad_value = pad_value
 
     def __call__(self, batch_list):
         max_img_w = max([data['image'].shape[-1] for data in batch_list])

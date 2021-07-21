@@ -114,17 +114,16 @@ class ConvDropBNActivationBlock(BaseBlock):
 
 class ConvBNACTWithPoolBlock(BaseBlock):
 
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
+    def __init__(self, in_channels, out_channels, stride=1, kernel_size=1, padding=0,
                  dilation=1, groups=1, bias=False,
                  bnName=NormalizationType.BatchNormalize2d,
                  activationName=ActivationType.ReLU):
         super().__init__(BlockType.ConvBNACTWithPoolBlock)
-        self.pool = MyAvgPool2d(kernel_size=2, stride=2, padding=0,
-                                use_reshape=False)
+        self.pool = nn.AvgPool2d(kernel_size=stride, stride=stride, padding=0)
         self.conv = ConvBNActivationBlock(in_channels=in_channels,
                                           out_channels=out_channels,
                                           kernel_size=kernel_size,
-                                          stride=stride,
+                                          stride=1,
                                           padding=padding,
                                           dilation=dilation,
                                           groups=groups,

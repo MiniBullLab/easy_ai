@@ -21,7 +21,7 @@ class ResNet(BaseBackbone):
                  strides=(1, 2, 2, 2), dilations=(1, 1, 1, 1), use_short=(0, 0, 0, 0),
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU,
-                 block_flag=0, head_type=1):
+                 block_flag=0, head_type=1, first_stride=2):
         super().__init__(data_channel)
         self.set_name(BackboneName.ResNet18)
         self.num_blocks = num_blocks
@@ -35,6 +35,7 @@ class ResNet(BaseBackbone):
         self.first_output = 64
         self.in_channels = self.first_output
         self.head_type = head_type
+        self.first_stride = first_stride
 
         self.create_block_list()
 
@@ -45,7 +46,7 @@ class ResNet(BaseBackbone):
             layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
                                            out_channels=self.first_output,
                                            kernel_size=3,
-                                           stride=1,
+                                           stride=self.first_stride,
                                            padding=1,
                                            bnName=self.bn_name,
                                            activationName=self.activation_name)
@@ -54,7 +55,7 @@ class ResNet(BaseBackbone):
             layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
                                            out_channels=self.first_output,
                                            kernel_size=7,
-                                           stride=2,
+                                           stride=self.first_stride,
                                            padding=3,
                                            bnName=self.bn_name,
                                            activationName=self.activation_name)
@@ -66,7 +67,7 @@ class ResNet(BaseBackbone):
             layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
                                            out_channels=32,
                                            kernel_size=3,
-                                           stride=1,
+                                           stride=self.first_stride,
                                            padding=1,
                                            bnName=self.bn_name,
                                            activationName=self.activation_name)
@@ -91,27 +92,6 @@ class ResNet(BaseBackbone):
             self.add_block_list(layer12.get_name(), layer12, self.first_output)
 
             layer2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-            self.add_block_list(LayerType.MyMaxPool2d, layer2, self.first_output)
-        elif self.head_type == 3:
-            layer1 = ConvBNActivationBlock(in_channels=self.data_channel,
-                                           out_channels=32,
-                                           kernel_size=3,
-                                           stride=1,
-                                           padding=1,
-                                           bnName=self.bn_name,
-                                           activationName=self.activation_name)
-            self.add_block_list(layer1.get_name(), layer1, 32)
-
-            layer11 = ConvBNActivationBlock(in_channels=32,
-                                            out_channels=self.first_output,
-                                            kernel_size=3,
-                                            stride=1,
-                                            padding=1,
-                                            bnName=self.bn_name,
-                                            activationName=self.activation_name)
-            self.add_block_list(layer11.get_name(), layer11, self.first_output)
-
-            layer2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)
             self.add_block_list(LayerType.MyMaxPool2d, layer2, self.first_output)
 
         self.in_channels = self.first_output
@@ -145,9 +125,11 @@ class ResNet(BaseBackbone):
 
     def forward(self, x):
         output_list = []
-        for block in self._modules.values():
+        for key, block in self._modules.items():
+            print(key, x.shape)
             x = block(x)
             output_list.append(x)
+            print(key, x.shape)
         return output_list
 
 
@@ -221,7 +203,9 @@ class TextResNet34(ResNet):
         super().__init__(data_channel=data_channel,
                          num_blocks=[3, 4, 6, 3],
                          strides=(1, (2, 1), (2, 1), (2, 1)),
+                         use_short=(1, 2, 2, 2),
                          block_flag=0,
-                         head_type=2)
+                         head_type=2,
+                         first_stride=1)
         self.set_name(BackboneName.TextResNet34)
 

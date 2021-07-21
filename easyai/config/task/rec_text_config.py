@@ -127,8 +127,8 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.accumulated_batches = 1
         self.display = 20
 
-        self.clip_grad_config = {'enable_clip': False,
-                                 'max_norm': 20}
+        self.clip_grad_config = {'enable_clip': True,
+                                 'max_norm': 5}
 
         self.freeze_layer_type = 0
         self.freeze_layer_name = "baseNet_0"

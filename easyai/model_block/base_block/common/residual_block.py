@@ -66,12 +66,17 @@ class ResidualBlock(BaseBlock):
             )
 
         self.shortcut = nn.Sequential()
-        if use_short > 0 or stride != 1 or in_channels != expansion * out_channels:
+        if isinstance(stride, (list, tuple)):
+            temp_stride = max(stride)
+        else:
+            temp_stride = stride
+        if use_short > 0 or temp_stride != 1 or in_channels != expansion * out_channels:
             if use_short == 2:
                 self.shortcut = ConvBNACTWithPoolBlock(in_channels=in_channels,
                                                        out_channels=out_channels * expansion,
+                                                       stride=stride,
                                                        kernel_size=1,
-                                                       stride=1,
+                                                       padding=0,
                                                        bnName=bn_name,
                                                        activationName=ActivationType.Linear)
             else:
