@@ -4,6 +4,7 @@
 
 import os
 import collections
+import string
 from easyai.utility.logger import EasyLogger
 
 
@@ -11,6 +12,9 @@ class RecTextProcess():
 
     def __init__(self):
         self.text_dict = collections.OrderedDict()
+        # for i, char in enumerate(string.printable[:-6]):
+        #     # NOTE: 0 is reserved for 'blank' token required by CTCLoss
+        #     self.text_dict[char] = i + 1
 
     def read_character(self, char_path):
         if not os.path.exists(char_path):

@@ -115,6 +115,8 @@ class BlockType():
     SpatialPyramidPooling = "SPPBlock"
     MultiROIPooling = "multiROIPool"
 
+    SequencePooling = "SequencePooling"
+
     DenseUpsamplingConvBlock = "ducBlock"
     DeConvBNActivationBlock = "deconvBNActivationBlock"
 
@@ -163,4 +165,9 @@ class HeadType():
     DBHead = "dbHead"
 
     TextAttentionHead = "TextAttentionHead"
+
+
+class STNType():
+
+    TPSSpatialTransformerNetwork = "TPSSpatialTransformerNetwork"
 

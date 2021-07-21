@@ -143,3 +143,14 @@ class MultiROIPooling(BaseBlock):
             result[idx_in_level] = pooler(per_level_feature, rois_per_level).to(dtype)
 
         return result
+
+
+class SequencePooling(BaseBlock):
+
+    def __init__(self):
+        super().__init__(BlockType.SequencePooling)
+        self.adaptive_pool = nn.AdaptiveAvgPool2d((None, 1))
+
+    def forward(self, x):
+        x = self.adaptive_pool(x)
+        return x

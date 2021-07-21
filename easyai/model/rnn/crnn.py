@@ -5,11 +5,11 @@
 from easyai.name_manager.model_name import ModelName
 from easyai.name_manager.backbone_name import BackboneName
 from easyai.name_manager.block_name import NormalizationType, ActivationType
-from easyai.name_manager.block_name import LayerType, BlockType, NeckType
+from easyai.name_manager.block_name import LayerType, BlockType
 from easyai.name_manager.loss_name import LossName
 from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
 from easyai.model_block.base_block.rnn.rnn_block import Im2SeqBlock
-from easyai.model_block.neck.sequence_encoder import SequenceEncoder
+from easyai.model_block.base_block.rnn.rnn_block import EncoderRNNBlock
 from easyai.model.utility.base_classify_model import *
 from easyai.model.utility.model_registry import REGISTERED_RNN_MODEL
 
@@ -25,7 +25,7 @@ class CRNN(BaseClassifyModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
 
-        self.model_args['type'] = BackboneName.MobileNetV3SmallDown16
+        self.model_args['type'] = BackboneName.TextResNet34
 
         self.create_block_list()
 
@@ -39,11 +39,11 @@ class CRNN(BaseClassifyModel):
         pool = MyMaxPool2d(kernel_size=2, stride=2)
         self.add_block_list(pool.get_name(), pool, base_out_channels[-1])
 
-        # neck = SequenceEncoder(self.block_out_channels[-1], 48)
-        # self.add_block_list(neck.get_name(), neck, neck.out_channels)
+        seq_layer = Im2SeqBlock(self.block_out_channels[-1])
+        self.add_block_list(seq_layer.get_name(), seq_layer, seq_layer.out_channels)
 
-        neck = Im2SeqBlock(self.block_out_channels[-1])
-        self.add_block_list(neck.get_name(), neck, neck.out_channels)
+        # neck = EncoderRNNBlock(self.block_out_channels[-1], 48)
+        # self.add_block_list(neck.get_name(), neck, neck.out_channels)
 
         layer = nn.Linear(self.block_out_channels[-1], self.class_number)
         self.add_block_list(LayerType.FcLinear, layer, self.class_number)
