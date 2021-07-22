@@ -138,6 +138,11 @@ class RNNType():
     RNNAttention = "RNNAttention"
 
 
+class TransformerType():
+
+    TransformerEncoder = "TransformerEncoder"
+    TransformerDecoder = "TransformerDecoder"
+
 class NeckType():
 
     DBFPNNeck = "DBFPN"
@@ -165,6 +170,7 @@ class HeadType():
     DBHead = "dbHead"
 
     TextAttentionHead = "TextAttentionHead"
+    Seq2SeqHead = "Seq2SeqHead"
 
 
 class STNType():

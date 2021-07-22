@@ -52,3 +52,4 @@ class LossName():
 
     # rnn
     CTCLoss = "CTCLoss"
+    TransformerLoss = "TransformerLoss"

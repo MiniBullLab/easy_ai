@@ -89,7 +89,7 @@ class CommonTrain(BaseTrain):
 
     def clip_grad(self):
         if self.train_task_config.clip_grad_config['enable_clip']:
-            self.print_grad_norm()
+            # self.print_grad_norm()
             max_norm = float(self.train_task_config.clip_grad_config['max_norm'])
             if self.train_task_config.amp_config['enable_amp']:
                 torch.nn.utils.clip_grad_norm_(amp.master_params(self.optimizer), max_norm)

@@ -20,7 +20,7 @@ class AttentionModule1(BaseBlock):
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(AttentionNetBlockName.AttentionModule1)
-        # """The hyperparameter p denotes the number of preprocessing Residual
+        # """The hyperparameter p denotes the number of preprocess Residual
         # Units before splitting into trunk branch and mask branch. t denotes
         # the number of Residual Units in trunk branch. r denotes the number of
         # Residual Units between adjacent pooling layer in the mask branch."""
@@ -122,7 +122,7 @@ class AttentionModule2(BaseBlock):
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(AttentionNetBlockName.AttentionModule2)
-        # """The hyperparameter p denotes the number of preprocessing Residual
+        # """The hyperparameter p denotes the number of preprocess Residual
         # Units before splitting into trunk branch and mask branch. t denotes
         # the number of Residual Units in trunk branch. r denotes the number of
         # Residual Units between adjacent pooling layer in the mask branch."""

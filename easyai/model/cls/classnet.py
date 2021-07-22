@@ -21,7 +21,6 @@ class ClassNet(BaseClassifyModel):
         self.set_name(ModelName.ClassNet)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
-
         self.model_args['type'] = BackboneName.ResNet18
 
         self.create_block_list()

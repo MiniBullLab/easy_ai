@@ -48,11 +48,15 @@ class RecTextDataSetCollate(BaseDatasetCollate):
     def width_pad_img(self, img, target_width):
         """
         将图像进行高度不变，宽度的调整的pad
-        :param _img:    待pad的图像
-        :param _target_width:   目标宽度
+        :param img:    待pad的图像
+        :param target_width:   目标宽度
         :return:    pad完成后的图像
         """
         channels, height, width = img.shape
         padding_im = np.zeros((channels, height, target_width), dtype=img.dtype)
         padding_im[:, :, 0:width] = img
+        # if target_width != width:  # add border Pad
+        #     padding_im[:, :, padding_im:] = img[:, :, width - 1].\
+        #         unsqueeze(2).expand(channels, height, target_width - width)
         return padding_im
+

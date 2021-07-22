@@ -29,7 +29,7 @@ class OCRTask(BaseInference):
         dataloader = self.get_image_data_lodaer(input_path)
         image_count = len(dataloader)
         for i, batch_data in enumerate(dataloader):
-            print('%g/%g' % (i + 1, image_count), end=' ')
+            EasyLogger.info('%g/%g' % (i + 1, image_count))
             self.timer.tic()
             self.set_src_size(batch_data['src_image'])
             detection_objects = self.det2d_inference.single_image_process(self.src_size,

@@ -11,6 +11,7 @@ from easyai.data_loader.common.images_loader import ImagesLoader
 from easyai.data_loader.common.video_loader import VideoLoader
 from easyai.data_loader.common.text_data_loader import TextDataLoader
 from easyai.torch_utility.torch_model_process import TorchModelProcess
+from easyai.tasks.utility.preprocess_factory import PreprocessFactory
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -25,6 +26,8 @@ class BaseInference(BaseTask):
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
         self.show_factory = TaskShowFactory()
+        self.preprocess_factory = PreprocessFactory()
+        self.preprocess_func = None
         self.model = None
         self.task_config = None
         self.src_size = (0, 0)
@@ -100,7 +103,12 @@ class BaseInference(BaseTask):
         else:
             dataloader = VideoLoader(input_path, image_size, data_channel,
                                      resize_type, normalize_type, mean, std)
+        self.preprocess_func = self.preprocess_factory.build_preprocess(self.task_config.preprocess)
         return dataloader
+
+    def preprocessing(self, batch_data):
+        if self.preprocess_func is not None:
+            self.preprocess_func(batch_data)
 
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]

@@ -98,5 +98,8 @@ class ModelWeightInit():
                         nn.init.orthogonal_(param.data)
                     else:
                         nn.init.normal_(param.data)
+            elif isinstance(m, nn.LayerNorm):
+                if m.weight.dim() > 1:
+                    nn.init.xavier_uniform_(m.weight.data)
         EasyLogger.debug('initialize network with %s' % init_type)
 

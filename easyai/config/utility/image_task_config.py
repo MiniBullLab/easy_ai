@@ -15,6 +15,7 @@ class ImageTaskConfig(BaseConfig):
         super().__init__(task_name)
         # data
         self.data = dict()
+        self.preprocess = None
         self.post_process = None
 
         self.save_result_path = None
