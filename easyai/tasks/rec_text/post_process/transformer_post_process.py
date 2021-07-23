@@ -9,7 +9,7 @@ from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 
 
-@REGISTERED_POST_PROCESS.register_module(PostProcessName.CTCPostProcess)
+@REGISTERED_POST_PROCESS.register_module(PostProcessName.TransformerPostProcess)
 class TransformerPostProcess(BasePostProcess):
 
     def __init__(self):

@@ -8,8 +8,8 @@ from easyai.name_manager.dataloader_name import DatasetCollateName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_COLLATE
 
 
-@REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.ClassifyDataSetCollate)
-class ClassifyDataSetCollate(BaseDatasetCollate):
+@REGISTERED_DATASET_COLLATE.register_module(DatasetCollateName.ClassifyPointCloudDataSetCollate)
+class ClassifyPointCloudDataSetCollate(BaseDatasetCollate):
 
     def __init__(self):
         super().__init__()
@@ -22,4 +22,4 @@ class ClassifyDataSetCollate(BaseDatasetCollate):
             images.append(all_data['image'])
         labels = torch.stack(labels)
         images = torch.stack(images)
-        return {'image': images, 'label': labels}
+        return {'point_cloud': images, 'label': labels}

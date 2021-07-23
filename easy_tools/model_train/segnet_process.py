@@ -7,6 +7,7 @@ from easyai.helper.image_process import ImageProcess
 from easyai.helper.dir_process import DirProcess
 from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.data_loader.seg.segment_sample import SegmentSample
+from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
 from easyai.utility.logger import EasyLogger
 
 
@@ -55,4 +56,7 @@ class SegNetProcess():
                     os.remove(label_path)
                 else:
                     EasyLogger.error("%s read segment label fail!" % label_path)
+
+        def label_convert():
+            pass
 

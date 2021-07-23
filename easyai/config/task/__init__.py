@@ -13,6 +13,9 @@ from . import polygon2d_config
 from . import rec_text_config
 from . import ocr_config
 
+from . import pc_classify_config
+
+
 
 
 

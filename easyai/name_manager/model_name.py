@@ -66,6 +66,12 @@ class ModelName():
     # multi
     DetPoes2dModel = "DetPoes2d"
 
+    # pc
+    PointNetCls = "PointNetCls"
+    PointNet2Cls = "PointNet2Cls"
+    PointNetSeg = "PointNetSeg"
+    PointNet2Seg = "PointNet2Seg"
+
 
 
 

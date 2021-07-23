@@ -11,6 +11,8 @@ from easyai.model.utility.model_registry import REGISTERED_SR_MODEL
 from easyai.model.utility.model_registry import REGISTERED_GAN_MODEL
 from easyai.model.utility.model_registry import REGISTERED_RNN_MODEL
 from easyai.model.utility.model_registry import REGISTERED_MULTI_MODEL
+from easyai.model.utility.model_registry import REGISTERED_PC_CLS_MODEL
+from easyai.model.utility.model_registry import REGISTERED_PC_SEG_MODEL
 from easyai.utility.registry import build_from_cfg
 
 from easyai.model_block.utility.model_parse import ModelParse
@@ -58,55 +60,25 @@ class ModelFactory():
         model_config['type'] = model_name
         EasyLogger.debug(model_config)
         if REGISTERED_CLS_MODEL.has_class(model_name):
-            model = self.get_cls_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_CLS_MODEL)
         elif REGISTERED_DET2D_MODEL.has_class(model_name):
-            model = self.get_det2d_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_DET2D_MODEL)
         elif REGISTERED_SEG_MODEL.has_class(model_name):
-            model = self.get_seg_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_SEG_MODEL)
         elif REGISTERED_SR_MODEL.has_class(model_name):
-            model = self.get_sr_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_SR_MODEL)
         elif REGISTERED_GAN_MODEL.has_class(model_name):
-            model = self.get_gan_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_GAN_MODEL)
         elif REGISTERED_KEYPOINT2D_MODEL.has_class(model_name):
-            model = self.get_keypoint2d_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_KEYPOINT2D_MODEL)
         elif REGISTERED_RNN_MODEL.has_class(model_name):
-            model = self.get_rnn_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_RNN_MODEL)
         elif REGISTERED_MULTI_MODEL.has_class(model_name):
-            model = self.get_multi_model(model_config)
+            model = build_from_cfg(model_config, REGISTERED_MULTI_MODEL)
+        elif REGISTERED_PC_CLS_MODEL.has_class(model_name):
+            model = build_from_cfg(model_config, REGISTERED_PC_CLS_MODEL)
+        elif REGISTERED_PC_SEG_MODEL.has_class(model_name):
+            model = build_from_cfg(model_config, REGISTERED_PC_SEG_MODEL)
         else:
             model = None
         return model
-
-    def get_cls_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_CLS_MODEL)
-        return model
-
-    def get_det2d_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_DET2D_MODEL)
-        return model
-
-    def get_seg_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_SEG_MODEL)
-        return model
-
-    def get_sr_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_SR_MODEL)
-        return model
-
-    def get_gan_model(self, model_config):
-        # print(model_config)
-        model = build_from_cfg(model_config, REGISTERED_GAN_MODEL)
-        return model
-
-    def get_keypoint2d_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_KEYPOINT2D_MODEL)
-        return model
-
-    def get_rnn_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_RNN_MODEL)
-        return model
-
-    def get_multi_model(self, model_config):
-        model = build_from_cfg(model_config, REGISTERED_MULTI_MODEL)
-        return model
-

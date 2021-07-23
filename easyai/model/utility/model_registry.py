@@ -13,3 +13,7 @@ REGISTERED_GAN_MODEL = Registry("gan_model")
 REGISTERED_RNN_MODEL = Registry("rnn_model")
 
 REGISTERED_MULTI_MODEL = Registry("multi_model")
+
+REGISTERED_PC_CLS_MODEL = Registry("pc_cls_model")
+REGISTERED_PC_SEG_MODEL = Registry("pc_seg_model")
+
