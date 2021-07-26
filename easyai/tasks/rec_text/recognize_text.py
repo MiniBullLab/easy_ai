@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.rec_text.text_result_process import TextResultProcess
@@ -30,7 +31,15 @@ class RecognizeText(BaseInference):
             text_objects = self.single_image_process(batch_data)
             EasyLogger.debug('Batch %d/%d Done. (%.3fs)' % (i, image_count,
                                                             self.timer.toc()))
-            print(batch_data['file_path'], text_objects[0].get_text())
+            if is_show:
+                print(batch_data['file_path'], text_objects[0].get_text())
+            else:
+                self.save_result(batch_data['file_path'], text_objects)
+
+    def save_result(self, file_path, ocr_object):
+        path, filename_post = os.path.split(file_path)
+        with open(self.task_config.save_result_path, 'a') as file:
+            file.write("{} {} \n".format(filename_post, ocr_object[0].get_text()))
 
     def single_image_process(self, input_data):
         prediction, _ = self.infer(input_data)

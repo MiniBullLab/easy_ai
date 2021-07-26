@@ -70,7 +70,7 @@ class CommonTrain(BaseTrain):
             EasyLogger.error("model is not create!")
 
     def build_lr_scheduler(self):
-        self.lr_factory.set_epoch_iteration(self.total_batch_image)
+        self.lr_factory.set_epoch_iteration(self.total_batch_data)
         self.lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.lr_scheduler_config)
 
     def adjust_epoch_optimizer(self, epoch):

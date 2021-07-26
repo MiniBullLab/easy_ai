@@ -49,6 +49,13 @@ class CreateTestImage():
                 path, image_name = os.path.split(image_path)
                 new_path = os.path.join(self.save_dir, image_name)
                 shutil.copy(image_path, new_path)
+            else:
+                data_list = [x.strip() for x in line_data.split("|") if x.strip()]
+                image_path = os.path.join(images_dir, data_list[0])
+                if os.path.isfile(image_path):
+                    path, image_name = os.path.split(image_path)
+                    new_path = os.path.join(self.save_dir, image_name)
+                    shutil.copy(image_path, new_path)
             if image_count >= 10:
                 break
             else:
