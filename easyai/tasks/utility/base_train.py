@@ -28,7 +28,7 @@ class BaseTrain(BaseTask):
         self.dataloader = None
         self.model = None
         self.train_task_config = None
-        self.total_batch_image = 0
+        self.total_batch_data = 0
         self.is_sparse = False
         self.sparse_ratio = 0.0
 
@@ -106,9 +106,9 @@ class BaseTrain(BaseTask):
                                                                        dataloader_config,
                                                                        dataset_config)
         if self.dataloader is not None:
-            self.total_batch_image = len(self.dataloader)
+            self.total_batch_data = len(self.dataloader)
         else:
-            self.total_batch_image = 0
+            self.total_batch_data = 0
 
 
 

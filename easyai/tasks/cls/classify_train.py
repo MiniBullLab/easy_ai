@@ -39,11 +39,11 @@ class ClassifyTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for index, batch_data in enumerate(dataloader):
-            current_iter = epoch * self.total_batch_image + index
+            current_iter = epoch * self.total_batch_data + index
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             loss_value = self.compute_backward(batch_data, index)
-            self.update_logger(index, self.total_batch_image, epoch, loss_value)
+            self.update_logger(index, self.total_batch_data, epoch, loss_value)
 
     def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
@@ -55,7 +55,7 @@ class ClassifyTrain(CommonTrain):
 
         # accumulate gradient for x batches before optimizing
         if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) or \
-                (setp_index == self.total_images - 1):
+                (setp_index == self.total_batch_data - 1):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()

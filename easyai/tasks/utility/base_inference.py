@@ -106,6 +106,9 @@ class BaseInference(BaseTask):
         self.preprocess_func = self.preprocess_factory.build_preprocess(self.task_config.preprocess)
         return dataloader
 
+    def get_point_cloud_data_lodaer(self, input_path):
+        pass
+
     def preprocessing(self, batch_data):
         if self.preprocess_func is not None:
             self.preprocess_func(batch_data)

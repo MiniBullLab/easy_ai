@@ -10,11 +10,11 @@ from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
 
 
-@REGISTERED_TEST_TASK.register_module(TaskName.Classify_Task)
-class ClassifyTest(BaseTest):
+@REGISTERED_TEST_TASK.register_module(TaskName.PC_Classify_Task)
+class PointCloudClassifyTest(BaseTest):
 
     def __init__(self, model_name, gpu_id, config_path=None):
-        super().__init__(TaskName.Classify_Task)
+        super().__init__(TaskName.PC_Classify_Task)
         self.inference = Classify(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
@@ -56,4 +56,6 @@ class ClassifyTest(BaseTest):
         else:
             with open(self.test_task_config.evaluation_result_path, 'a') as file:
                 file.write("Epoch: {} | prec1: {:.3f}\n".format(epoch, self.evaluation.get_top1()))
+
+
 
