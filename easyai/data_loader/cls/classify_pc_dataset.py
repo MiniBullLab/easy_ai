@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:eijie
+# Author:lipeijie
 
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.cls.classify_sample import ClassifySample
@@ -13,8 +13,8 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 @REGISTERED_DATASET.register_module(DatasetName.ClassifyPointCloudDataSet)
 class ClassifyPointCloudDataSet(TorchDataLoader):
 
-    def __init__(self, data_path, dim, is_augment=False):
-        super().__init__(data_path, dim)
+    def __init__(self, data_path, point_features, is_augment=False):
+        super().__init__(data_path, point_features)
         self.is_augment = is_augment
         self.classify_sample = ClassifySample(data_path)
         self.classify_sample.read_sample(flag=1)

@@ -31,7 +31,7 @@ class Det2dSegTaskTrain(CommonTrain):
         for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
             self.optimizer.zero_grad()
             for i, (images, detects, segments) in enumerate(self.dataloader):
-                current_iter = epoch * self.total_batch_image + i
+                current_iter = epoch * self.total_batch_data + i
                 lr = self.lr_scheduler.get_lr(epoch, current_iter)
                 self.lr_scheduler.adjust_learning_rate(self.optimizer, lr)
                 if sum([len(x) for x in detects]) < 1:  # if no targets continue
@@ -54,7 +54,7 @@ class Det2dSegTaskTrain(CommonTrain):
 
         # accumulate gradient for x batches before optimizing
         if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
-                or (setp_index == self.total_images - 1):
+                or (setp_index == self.total_batch_data - 1):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()

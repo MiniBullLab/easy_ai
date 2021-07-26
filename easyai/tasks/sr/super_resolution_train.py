@@ -34,11 +34,11 @@ class SuperResolutionTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for temp_index, batch_data in enumerate(dataloader):
-            current_idx = epoch * self.total_batch_image + temp_index
+            current_idx = epoch * self.total_batch_data + temp_index
             lr = lr_scheduler.get_lr(epoch, current_idx)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             loss_info = self.compute_backward(batch_data, temp_index)
-            self.update_logger(temp_index, self.total_batch_image, epoch, loss_info)
+            self.update_logger(temp_index, self.total_batch_data, epoch, loss_info)
 
     def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
@@ -50,7 +50,7 @@ class SuperResolutionTrain(CommonTrain):
 
         # accumulate gradient for x batches before optimizing
         if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
-                or (setp_index == self.total_images - 1):
+                or (setp_index == self.total_batch_data - 1):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()

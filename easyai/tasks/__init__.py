@@ -13,4 +13,7 @@ from . import rec_text
 from . import ocr
 from . import multi_task
 
+from . import pc_cls
+
+
 

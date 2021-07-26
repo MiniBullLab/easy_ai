@@ -36,11 +36,11 @@ class RecognizeTextTrain(CommonTrain):
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         try:
             for i, batch_data in enumerate(dataloader):
-                current_iter = epoch * self.total_batch_image + i
+                current_iter = epoch * self.total_batch_data + i
                 lr = lr_scheduler.get_lr(epoch, current_iter)
                 lr_scheduler.adjust_learning_rate(self.optimizer, lr)
                 loss_info = self.compute_backward(batch_data, i)
-                self.update_logger(i, self.total_batch_image, epoch, loss_info)
+                self.update_logger(i, self.total_batch_data, epoch, loss_info)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
@@ -58,7 +58,7 @@ class RecognizeTextTrain(CommonTrain):
 
             # accumulate gradient for x batches before optimizing
             if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
-                    or (setp_index == self.total_images - 1):
+                    or (setp_index == self.total_batch_data - 1):
                 self.clip_grad()
                 self.optimizer.step()
                 self.optimizer.zero_grad()

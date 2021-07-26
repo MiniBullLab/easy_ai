@@ -8,4 +8,8 @@ from . import keypoint2d
 from . import rnn
 from . import multi_model
 
+from . import pc_cls
+from . import pc_seg
+
+
 

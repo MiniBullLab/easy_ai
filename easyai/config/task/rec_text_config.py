@@ -111,7 +111,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 200
+        self.max_epochs = 150
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
@@ -122,12 +122,12 @@ class RecognizeTextConfig(CommonTrainConfig):
                                      'weight_decay': 1e-4}
                                  }
         self.lr_scheduler_config = {'type': 'CosineLR',
-                                    'warmup_type': 2,
+                                    'warmup_type': 0,
                                     'warmup_iters': 3}
         self.accumulated_batches = 1
         self.display = 20
 
-        self.clip_grad_config = {'enable_clip': True,
+        self.clip_grad_config = {'enable_clip': False,
                                  'max_norm': 5}
 
         self.freeze_layer_type = 0

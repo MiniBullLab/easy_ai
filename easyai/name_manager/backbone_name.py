@@ -123,3 +123,10 @@ class GanBaseModelName():
     GANomalyGenerator = "ganomaly_generator"
 
 
+class PointCloudBackboneName():
+
+    # pc
+    PointNet = "pointnet"
+    PointNet2 = "pointnet2"
+
+

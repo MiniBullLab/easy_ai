@@ -46,8 +46,10 @@ class DataloaderFactory():
                 else:
                     EasyLogger.error("%s dataloader not exits" % type_name)
         except ValueError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         except TypeError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         return result
 
@@ -81,8 +83,10 @@ class DataloaderFactory():
                 else:
                     EasyLogger.error("%s dataloader not exits" % type_name)
         except ValueError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         except TypeError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         return result
 

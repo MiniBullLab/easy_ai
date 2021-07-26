@@ -25,7 +25,7 @@ class BaseTest(BaseTask):
         self.evaluation_args = None
         self.test_task_config = None
         self.dataloader = None
-        self.total_batch_image = 0
+        self.total_batch_data = 0
         self.inference = None
         self.model = None
         self.device = None
@@ -52,8 +52,8 @@ class BaseTest(BaseTask):
         self.epoch_loss_average.reset()
         self.model.eval()
         self.timer.tic()
-        EasyLogger.warn("Test image count is : %d" % self.total_batch_image)
-        return self.total_batch_image > 0
+        EasyLogger.warn("Test data count is : %d" % self.total_batch_data)
+        return self.total_batch_data > 0
 
     def metirc_loss(self, step, loss_value):
         if loss_value != float("inf") and loss_value != float("nan"):
@@ -62,19 +62,21 @@ class BaseTest(BaseTask):
     def print_test_info(self, step, loss_value=-1):
         if loss_value >= 0:
             info_str = "Val Batch [{}/{}] loss: {:.7f} | Time: {:.5f}".format(step + 1,
-                                                                              self.total_batch_image,
+                                                                              self.total_batch_data,
                                                                               loss_value,
                                                                               self.timer.toc(True))
         else:
             info_str = "Val Batch [{}/{}] | Time: {:.5f}".format(step + 1,
-                                                                 self.total_batch_image,
+                                                                 self.total_batch_data,
                                                                  self.timer.toc(True))
         EasyLogger.info(info_str)
         print(info_str)
 
-    @abc.abstractmethod
     def load_weights(self, weights_path):
-        pass
+        if self.inference is not  None:
+            self.inference.load_weights(weights_path)
+        else:
+            EasyLogger.error("inference init error")
 
     @abc.abstractmethod
     def process_test(self, val_path, epoch=0):
@@ -92,9 +94,9 @@ class BaseTest(BaseTask):
                                                                      dataloader_config,
                                                                      dataset_config)
         if self.dataloader is not None:
-            self.total_batch_image = len(self.dataloader)
+            self.total_batch_data = len(self.dataloader)
         else:
-            self.total_batch_image = 0
+            self.total_batch_data = 0
         self.val_path = data_path
 
     def compute_loss(self, output_list, batch_data):

@@ -24,9 +24,6 @@ class KeyPoint2dTest(BaseTest):
                                 "class_names": self.test_task_config.points_class}
         self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
-    def load_weights(self, weights_path):
-        self.inference.load_weights(weights_path)
-
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
         if not self.start_test():

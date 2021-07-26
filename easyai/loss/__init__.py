@@ -8,5 +8,8 @@ from . import sr
 from . import keypoint2d
 from . import rnn
 
+from . import pc_cls
+
+
 
 

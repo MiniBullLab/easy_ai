@@ -35,13 +35,13 @@ class Detection2dTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for i, batch_data in enumerate(dataloader):
-            current_iter = epoch * self.total_batch_image + i
+            current_iter = epoch * self.total_batch_data + i
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             if sum([len(x) for x in batch_data['label']]) < 1:  # if no targets continue
                 continue
             loss_info = self.compute_backward(batch_data, i)
-            self.update_logger(i, self.total_batch_image, epoch, loss_info)
+            self.update_logger(i, self.total_batch_data, epoch, loss_info)
 
     def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters

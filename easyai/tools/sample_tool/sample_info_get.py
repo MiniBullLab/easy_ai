@@ -30,6 +30,9 @@ class SampleInformation():
             train_task_config.detect2d_class = self.get_detection_class(train_path)
             train_task_config.save_config()
             result = train_task_config.detect2d_class
+        elif task_name.strip() == TaskName.Segment_Task:
+            train_task_config = self.config_factory.get_config(task_name)
+            result = self.get_detection_class(train_path)
         assert result is not None
         return result
 
@@ -58,6 +61,18 @@ class SampleInformation():
             # print(label_path)
             _, boxes = self.json_process.parse_rect_data(label_path)
             temp_names = [box.name for box in boxes if box.name.strip()]
+            all_names.extend(temp_names)
+        class_names = set(all_names)
+        return tuple(class_names)
+
+    def get_segment_class(self, train_path):
+        all_names = []
+        path, _ = os.path.split(train_path)
+        annotation_dir = os.path.join(path, "../Annotations")
+        for label_path in self.dir_process.getDirFiles(annotation_dir, self.annotation_post):
+            # print(label_path)
+            file_name_post, polygon_list = self.json_process.parse_segment_data(label_path)
+            temp_names = [polygon.name for polygon in polygon_list if polygon.name.strip()]
             all_names.extend(temp_names)
         class_names = set(all_names)
         return tuple(class_names)

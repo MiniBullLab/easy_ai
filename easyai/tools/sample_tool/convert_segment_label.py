@@ -72,7 +72,7 @@ class ConvertSegmentionLable():
 
     def convert_json_to_segment_label(self, json_path, label_type, class_list):
         mask = None
-        file_name_post, polygon_list = self.json_process.parse_rect_data(json_path)
+        file_name_post, polygon_list = self.json_process.parse_segment_data(json_path)
         path, _ = os.path.split(json_path)
         image_dir = os.path.join(path, self.images_dir_name)
         image_path = os.path.join(image_dir, file_name_post)

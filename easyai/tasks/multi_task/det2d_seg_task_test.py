@@ -28,9 +28,6 @@ class Det2dSegTaskTest(BaseTest):
         self.threshold_det = 5e-3
         self.threshold_seg = 0.5
 
-    def load_weights(self, weights_path):
-        self.multi_task_inference.load_weights(weights_path)
-
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
         if not self.start_test():

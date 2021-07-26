@@ -22,7 +22,7 @@ class OneClassTrain(GanTrain):
 
     def train(self, train_path, val_path):
         self.create_dataloader(train_path)
-        self.lr_factory.set_epoch_iteration(self.total_batch_image)
+        self.lr_factory.set_epoch_iteration(self.total_batch_data)
         d_lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.d_lr_scheduler_config)
         g_lr_scheduler = self.lr_factory.get_lr_scheduler(self.train_task_config.g_lr_scheduler_config)
 
@@ -36,7 +36,7 @@ class OneClassTrain(GanTrain):
 
     def trian_epoch(self, epoch, d_lr_scheduler, g_lr_scheduler, dataloader):
         for i, batch_data in enumerate(dataloader):
-            current_iter = epoch * self.total_batch_image + i
+            current_iter = epoch * self.total_batch_data + i
             g_lr = g_lr_scheduler.get_lr(epoch, current_iter)
             for optimizer in self.g_optimizer_list:
                 g_lr_scheduler.adjust_learning_rate(optimizer, g_lr)
@@ -44,7 +44,7 @@ class OneClassTrain(GanTrain):
             for optimizer in self.d_optimizer_list:
                 d_lr_scheduler.adjust_learning_rate(optimizer, d_lr)
             loss_values = self.compute_backward(batch_data, i)
-            self.update_logger(i, self.total_batch_image, epoch, loss_values)
+            self.update_logger(i, self.total_batch_data, epoch, loss_values)
 
     def compute_backward(self, batch_data, step_index):
         # Compute loss, compute gradient, update parameters

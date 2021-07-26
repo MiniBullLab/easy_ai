@@ -31,6 +31,8 @@ class DatasetCollateName():
     RecTextDataSetCollate = "RecTextDataSetCollate"
     SuperResolutionDataSetCollate = "SuperResolutionDataSetCollate"
 
+    ClassifyPointCloudDataSetCollate = "ClassifyPointCloudDataSetCollate"
+
 
 class DataloaderName():
 

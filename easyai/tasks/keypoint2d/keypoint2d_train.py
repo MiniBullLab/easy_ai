@@ -35,7 +35,7 @@ class KeyPoints2dTrain(CommonTrain):
 
     def train_epoch(self, epoch, lr_scheduler, dataloader):
         for i, batch_data in enumerate(dataloader):
-            current_iter = epoch * self.total_batch_image + i
+            current_iter = epoch * self.total_batch_data + i
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             if sum([len(x) for x in batch_data['label']]) < 1:  # if no targets continue
@@ -53,7 +53,7 @@ class KeyPoints2dTrain(CommonTrain):
 
         # accumulate gradient for x batches before optimizing
         if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
-                or (setp_index == self.total_images - 1):
+                or (setp_index == self.total_batch_data - 1):
             self.clip_grad()
             self.optimizer.step()
             self.optimizer.zero_grad()

@@ -53,3 +53,7 @@ class LossName():
     # rnn
     CTCLoss = "CTCLoss"
     TransformerLoss = "TransformerLoss"
+
+    # pc
+    PointNetClsLoss = "pointClsNetLoss"
+    PointNetSegLoss = "pointSegNetLoss"
