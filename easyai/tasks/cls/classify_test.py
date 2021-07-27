@@ -27,7 +27,9 @@ class ClassifyTest(BaseTest):
         if not self.start_test():
             EasyLogger.info("no test!")
             return
-        self.test(epoch)
+        top1, loss_value = self.test(epoch)
+        print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        print("top1: {.5f}".format(top1))
 
     def test(self, epoch=0):
         for index, batch_data in enumerate(self.dataloader):
@@ -40,7 +42,6 @@ class ClassifyTest(BaseTest):
         top1 = self.evaluation.get_top1()
         self.save_test_value(epoch)
         EasyLogger.info("Val epoch loss: {}".format(self.epoch_loss_average.avg))
-        # print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
         return top1, self.epoch_loss_average.avg
 
     def save_test_value(self, epoch):

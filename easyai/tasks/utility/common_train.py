@@ -123,8 +123,8 @@ class CommonTrain(BaseTrain):
                                       self.train_task_config.freeze_bn_layer_name,
                                       self.train_task_config.freeze_bn_type)
         self.timer.tic()
-        EasyLogger.info("Train image count is : %d" % self.total_batch_image)
-        assert self.total_batch_image > 0, EasyLogger.error("no train dataset")
+        EasyLogger.info("Train image count is : %d" % self.total_batch_data)
+        assert self.total_batch_data > 0, EasyLogger.error("no train dataset")
 
         for key in self.loss_info_average:
             self.loss_info_average[key].reset()
