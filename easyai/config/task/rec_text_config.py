@@ -80,7 +80,8 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 0
         self.val_data['dataloader']['drop_last'] = False
-        self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
+        self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
+                                                     "target_type": 0}
 
         self.evaluation_result_name = 'rec_text_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
@@ -100,7 +101,8 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True
-        self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
+        self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
+                                                       "target_type": 0}
 
         self.log_name = "rec_text"
         self.is_save_epoch_model = False

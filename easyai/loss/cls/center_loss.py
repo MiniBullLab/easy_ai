@@ -10,42 +10,35 @@ class CenterLoss(nn.Module):
     Wen et al. A Discriminative Feature Learning Approach for Deep Face Recognition. ECCV 2016.
 
     Args:
-        num_classes (int): number of classes.
-        feat_dim (int): feature dimension.
+        class_number (int): number of classes.
+        feature_dim (int): feature dimension.
     """
 
-    def __init__(self, num_classes=10, feat_dim=2, use_gpu=True):
+    def __init__(self, class_number=10, feature_dim=2):
         super(CenterLoss, self).__init__()
-        self.num_classes = num_classes
-        self.feat_dim = feat_dim
-        self.use_gpu = use_gpu
-
-        if self.use_gpu:
-            self.centers = nn.Parameter(torch.randn(self.num_classes, self.feat_dim).cuda())
-        else:
-            self.centers = nn.Parameter(torch.randn(self.num_classes, self.feat_dim))
+        self.class_number = class_number
+        self.feature_dim = feature_dim
+        self.centers = nn.Parameter(torch.randn(self.num_classes, self.feat_dim))
 
         nn.init.normal_(self.centers, mean=0, std=1)
 
-    #         nn.init.kaiming_normal_(tensor)
-    #         nn.init.constant_(tensor,0.5)
-
-    def forward(self, x, labels):
+    def forward(self, input_data, labels):
         """
         Args:
-            x: feature matrix with shape (batch_size, feat_dim).
+            input_data: feature matrix with shape (batch_size, feat_dim).
             labels: ground truth labels with shape (batch_size).
         """
-        batch_size = x.size(0)
-        distmat = torch.pow(x, 2).sum(dim=1, keepdim=True).expand(batch_size, self.num_classes) + \
-                  torch.pow(self.centers, 2).sum(dim=1, keepdim=True).expand(self.num_classes, batch_size).t()
-        distmat.addmm_(1, -2, x, self.centers.t())
+        device = input_data.device
+        batch_size = input_data.size(0)
+        distmat = torch.pow(input_data, 2).sum(dim=1, keepdim=True).\
+                      expand(batch_size, self.class_number) + \
+                  torch.pow(self.centers, 2).sum(dim=1, keepdim=True).\
+                      expand(self.class_number, batch_size).t()
+        distmat.addmm_(1, -2, input_data, self.centers.t().to(device))
 
-        classes = torch.arange(self.num_classes).long()
-        if self.use_gpu:
-            classes = classes.cuda()
-        labels = labels.unsqueeze(1).expand(batch_size, self.num_classes)
-        mask = labels.eq(classes.expand(batch_size, self.num_classes))
+        classes = torch.arange(self.class_number).long().to(device)
+        labels = labels.unsqueeze(1).expand(batch_size, self.class_number)
+        mask = labels.eq(classes.expand(batch_size, self.class_number))
 
         dist = distmat * mask.float()
         loss = dist.clamp(min=1e-12, max=1e+12).sum() / batch_size
