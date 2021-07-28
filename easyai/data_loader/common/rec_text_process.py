@@ -26,13 +26,12 @@ class RecTextProcess():
             for line in lines:
                 line = line.decode('utf-8').strip("\n").strip("\r\n")
                 character_list += list(line)
-        # character_list += [' ']
+        character_list += [' ']
         self.text_dict = {}
         for i, char in enumerate(character_list):
             # NOTE: 0 is reserved for 'blank' token required by CTCLoss
             self.text_dict[char] = i + 1
-        # TODO replace ‘ ’ with special symbol
-        # dummy '[blank]' token for CTCLoss (index 0)
+        # '[blank]' token for CTCLoss (index 0)
         character_set = self.text_dict.keys()
         character = ['[blank]'] + list(character_set)
         EasyLogger.debug("character count: %d" % len(character))

@@ -51,7 +51,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "temp_en.txt")
         EasyLogger.debug(self.character_set)
-        self.character_count = 37
+        self.character_count = 38
 
         self.data = {'image_size': (128, 32),   # W * H
                      'data_channel': 3,
@@ -80,7 +80,8 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 0
         self.val_data['dataloader']['drop_last'] = False
-        self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
+        self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
+                                                     "target_type": 1}
 
         self.evaluation_result_name = 'rec_text_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
@@ -100,7 +101,8 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True
-        self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate"}
+        self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
+                                                       "target_type": 1}
 
         self.log_name = "rec_text"
         self.is_save_epoch_model = False

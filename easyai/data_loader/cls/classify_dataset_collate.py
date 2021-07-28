@@ -18,8 +18,8 @@ class ClassifyDataSetCollate(BaseDatasetCollate):
         labels = []
         images = []
         for all_data in batch_list:
-            labels.append(all_data['label'])
             images.append(all_data['image'])
-        labels = torch.stack(labels)
+            labels.append(all_data['label'])
         images = torch.stack(images)
+        labels = torch.tensor(labels)
         return {'image': images, 'label': labels}

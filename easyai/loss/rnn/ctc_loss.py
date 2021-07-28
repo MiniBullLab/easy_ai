@@ -11,11 +11,15 @@ from easyai.utility.logger import EasyLogger
 @REGISTERED_RNN_LOSS.register_module(LossName.CTCLoss)
 class CTCLoss(BaseLoss):
 
-    def __init__(self, blank_index, reduction='mean'):
+    def __init__(self, blank_index, reduction='mean',
+                 use_focal=False, alpha=0.25, gamma=0.5):
         super().__init__(LossName.CTCLoss)
         self.blank_index = blank_index
         self.loss_func = torch.nn.CTCLoss(blank=blank_index,
                                           reduction=reduction)
+        self.use_focal = use_focal
+        self.alpha = alpha
+        self.gamma = gamma
 
     def forward(self, input_data, batch_data=None):
         if batch_data is not None:
@@ -43,6 +47,9 @@ class CTCLoss(BaseLoss):
             if loss.item() == float("inf"):
                 EasyLogger.error("{} {} {}".format(batch_data['label'],
                                                    pred.shape, target_lengths))
+            elif self.use_focal:
+                p = torch.exp(-loss)
+                loss = self.alpha * torch.pow((1 - p), self.gamma) * loss
         else:
             loss = F.softmax(input_data, dim=2)
         return loss

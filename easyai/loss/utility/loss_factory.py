@@ -267,6 +267,9 @@ class LossFactory():
         if input_name == LossName.CTCLoss:
             loss_config['blank_index'] = int(loss_config['blank_index'])
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
+            loss_config['use_focal'] = bool(loss_config.get("use_focal", False))
+        elif input_name == LossName.AggregationCrossEntropyLoss:
+            loss_config['class_number'] = int(loss_config['class_number'])
         loss = build_from_cfg(loss_config, REGISTERED_RNN_LOSS)
         return loss
 
