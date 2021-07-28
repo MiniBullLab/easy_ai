@@ -341,15 +341,15 @@ def container_char_generate(generate_num, file_path):
     for i in range(0, generate_num):
         char_list = [rnd.choice(string.ascii_uppercase) for i in range(4)]
         num_list = [str(rnd.randint(0,9)) for i in range(6)]
-        if i%4==0:
+        if i%3==0:
             container_ = char_list
-        elif i%4==1:
+        elif i%3==1:
             container_ = num_list+[" "]+[str(rnd.randint(0,9))]
-        elif i%4==2:
+        elif i%3==2:
             container_ = char_list+[" "]+num_list+[" "]+[str(rnd.randint(0,9))]
-        elif i%4==3:
-            container_ = char_list + [" "] + num_list + [" "] + [str(rnd.randint(0, 9))]
-            rnd.shuffle(container_)
+        # elif i%4==3:
+        #     container_ = char_list + [" "] + num_list + [" "] + [str(rnd.randint(0, 9))]
+        #     rnd.shuffle(container_)
         for str_ in container_:
             file_write.write(str_)
         file_write.write("\n")
@@ -517,9 +517,9 @@ def main():
 
     for image_index, img_n in enumerate(os.listdir(args.output_dir)):
         if (image_index + 1) % 5 == 0:
-            file_val.write(img_n+"|"+img_n.split("_")[0].replace(" ", "")+"\n")
+            file_val.write(img_n+"|"+img_n.split("_")[0]+"\n")
         else:
-            file_train.write(img_n+"|"+img_n.split("_")[0].replace(" ", "")+"\n")
+            file_train.write(img_n+"|"+img_n.split("_")[0]+"\n")
 
 
 if __name__ == "__main__":
