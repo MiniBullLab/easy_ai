@@ -23,10 +23,11 @@ class AggregationCrossEntropyLoss(BaseLoss):
         """
         if batch_data is not None:
             batch_size = input_data.size(0)
-            # device = input_data.device
-            pred = input_data + 1e-10
+            device = input_data.device
+            pred = F.softmax(input_data, dim=2)
+            pred = pred + 1e-10
             seq_len = pred.size(1)
-            label = batch_data['targets']
+            label = batch_data['targets'].to(device)
             label[:, 0] = seq_len - label[:, 0]
 
             # ACE Implementation (four fundamental formulas)
