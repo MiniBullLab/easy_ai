@@ -34,3 +34,4 @@ class PostProcessName():
     # rec_text
     CTCPostProcess = "CTCPostProcess"
     TransformerPostProcess = "TransformerPostProcess"
+    ACEPostProcess = "ACEPostProcess"
