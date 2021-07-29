@@ -155,7 +155,7 @@ class YoloV3Loss(BaseYoloLoss):
             cls = F.softmax(cls, 2)
             return torch.cat([pred_boxes, conf, cls], 2)
         else:
-            targets = batch_data['label'].to(device)
+            targets = batch_data['label']
             coord_mask, object_mask, no_object_mask, \
             cls_mask, tcoord, tconf, tcls = self.build_targets(pred_boxes, targets, height, width, device)
 
