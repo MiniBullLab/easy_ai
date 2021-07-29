@@ -5,17 +5,17 @@
 import numpy as np
 from easyai.data_loader.common.polygon2d_dataset_process import Polygon2dDataSetProcess
 from easyai.data_loader.common.rec_text_process import RecTextProcess
-from easyai.utility.logger import EasyLogger
 
 
 class RecTextDataSetProcess(Polygon2dDataSetProcess):
 
-    def __init__(self, char_path, resize_type, normalize_type,
+    def __init__(self, resize_type, normalize_type,
                  mean=0, std=1, pad_color=0):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)
         self.text_process = RecTextProcess()
-        EasyLogger.debug(char_path)
-        self.character = self.text_process.read_character(char_path)
+
+    def read_character(self, char_path):
+        return self.text_process.read_character(char_path)
 
     def normalize_image(self, src_image):
         image = self.dataset_process.normalize(input_data=src_image,
@@ -41,6 +41,21 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
         else:
             img = self.dataset_process.resize(image, image_size, 0)
         return img
+
+    def width_pad_images(self, img, target_width):
+        """
+        将图像进行高度不变，宽度的调整的pad
+        :param img:    待pad的图像
+        :param target_width:   目标宽度
+        :return:    pad完成后的图像
+        """
+        channels, height, width = img.shape
+        padding_im = np.zeros((channels, height, target_width), dtype=img.dtype)
+        padding_im[:, :, 0:width] = img
+        # if target_width != width:  # add border Pad
+        #     padding_im[:, :, padding_im:] = img[:, :, width - 1].\
+        #         unsqueeze(2).expand(channels, height, target_width - width)
+        return padding_im
 
     def slide_image(self, image, windows, step):
         _, h, w = image.shape  # No channel for gray image.

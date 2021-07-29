@@ -54,6 +54,7 @@ class LossName():
     CTCLoss = "CTCLoss"
     TransformerLoss = "TransformerLoss"
     AggregationCrossEntropyLoss = "ACELoss"
+    ACELabelSmoothingLoss = "ACELabelSmoothingLoss"
 
     # pc
     PointNetClsLoss = "pointClsNetLoss"

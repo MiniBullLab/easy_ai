@@ -51,7 +51,7 @@ class RecognizeTextTrain(CommonTrain):
         output_list = self.model(input_datas)
         loss, loss_info = self.compute_loss(output_list, batch_data)
 
-        if loss.item() == float("inf"):
+        if loss.item() == float("inf") or loss.item() == float("nan"):
             self.optimizer.zero_grad()
         else:
             self.loss_backward(loss)

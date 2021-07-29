@@ -12,14 +12,15 @@ from easyai.utility.logger import EasyLogger
 class CTCLoss(BaseLoss):
 
     def __init__(self, blank_index, reduction='mean',
-                 use_focal=False, alpha=0.25, gamma=0.5):
+                 use_focal=False, alpha=0.99, gamma=1):
         super().__init__(LossName.CTCLoss)
         self.blank_index = blank_index
-        self.loss_func = torch.nn.CTCLoss(blank=blank_index,
-                                          reduction=reduction)
+        self.reduction = reduction
         self.use_focal = use_focal
         self.alpha = alpha
         self.gamma = gamma
+        self.loss_func = torch.nn.CTCLoss(blank=blank_index,
+                                          reduction=reduction)
 
     def forward(self, input_data, batch_data=None):
         if batch_data is not None:
@@ -42,14 +43,17 @@ class CTCLoss(BaseLoss):
                                        fill_value=seq_len,
                                        dtype=torch.long,
                                        device=device)
-            loss = self.loss_func(pred, targets,
-                                  input_lengths, target_lengths)
-            if loss.item() == float("inf"):
+            ctc_loss = self.loss_func(pred, targets,
+                                      input_lengths, target_lengths)
+            if self.use_focal and self.reduction == "none":
+                prob = torch.exp(-ctc_loss)
+                focal_loss = self.alpha * (1 - prob).pow(self.gamma) * ctc_loss
+                loss = focal_loss.sum() / batch_size
+            else:
+                loss = ctc_loss
+            if loss.item() == float("inf") or loss.item() == float("nan"):
                 EasyLogger.error("{} {} {}".format(batch_data['label'],
                                                    pred.shape, target_lengths))
-            elif self.use_focal:
-                p = torch.exp(-loss)
-                loss = self.alpha * torch.pow((1 - p), self.gamma) * loss
         else:
             loss = F.softmax(input_data, dim=2)
         return loss

@@ -8,6 +8,7 @@ from easyai.data_loader.rec_text.rec_text_dataset_process import RecTextDataSetP
 from easyai.data_loader.rec_text.rec_text_augment import RecTextDataAugment
 from easyai.name_manager.dataloader_name import DatasetName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_DATASET.register_module(DatasetName.RecTextOCRDataSet)
@@ -25,11 +26,12 @@ class RecTextOCRDataSet(TorchDataLoader):
         self.is_augment = is_augment
         self.expand_ratio = (1.0, 1.0)
 
-        self.dataset_process = RecTextDataSetProcess(char_path, resize_type, normalize_type,
+        self.dataset_process = RecTextDataSetProcess(resize_type, normalize_type,
                                                      mean, std, self.get_pad_color())
-
+        EasyLogger.debug(char_path)
+        character = self.dataset_process.read_character(char_path)
         self.text_sample = RecTextSample(data_path, language)
-        self.text_sample.read_sample(self.dataset_process.character,
+        self.text_sample.read_sample(character,
                                      max_text_length)
 
         self.dataset_augment = RecTextDataAugment()
