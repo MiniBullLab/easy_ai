@@ -24,7 +24,7 @@ class SegmentionTest(BaseTest):
                                                    self.test_task_config.data['resize_type'],
                                                    self.test_task_config.post_process)
         self.evaluation_args = {"type": EvaluationName.SegmentionMetric,
-                                'num_class': len(self.test_task_config.segment_name)}
+                                'num_class': len(self.test_task_config.segment_class)}
         self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def process_test(self, val_path, epoch=0):

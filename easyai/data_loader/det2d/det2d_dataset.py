@@ -8,6 +8,7 @@ from easyai.data_loader.det2d.det2d_sample import DetectionSample
 from easyai.data_loader.det2d.det2d_dataset_process import DetectionDataSetProcess
 from easyai.name_manager.dataloader_name import DatasetName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_DATASET.register_module(DatasetName.Det2dDataset)
@@ -18,6 +19,8 @@ class Det2dDataset(TorchDataLoader):
                  image_size=(416, 416), data_channel=3):
         super().__init__(data_path, data_channel)
         self.image_size = tuple(image_size)
+        self.detect2d_class = detect2d_class
+        EasyLogger.debug("det2d class: {}".format(detect2d_class))
         self.detection_sample = DetectionSample(data_path,
                                                 detect2d_class,
                                                 False)
