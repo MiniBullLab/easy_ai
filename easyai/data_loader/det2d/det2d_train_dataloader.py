@@ -23,8 +23,10 @@ class Det2dTrainDataloader(DataLoader):
     def __init__(self, data_path, detect2d_class,
                  resize_type, normalize_type, mean=0, std=1,
                  batch_size=1, image_size=(768, 320),
-                 data_channel=3, multi_scale=False, is_augment=False, balanced_sample=False):
-        super().__init__(data_path, data_channel)
+                 data_channel=3, multi_scale=False,
+                 is_augment=False, balanced_sample=False,
+                 transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.detect2d_class = detect2d_class
         self.multi_scale = multi_scale
         self.is_augment = is_augment

@@ -14,8 +14,8 @@ from easyai.utility.logger import EasyLogger
 class TextDataLoader(DataLoader):
 
     def __init__(self, input_path, image_size=(416, 416), data_channel=3,
-                 resize_type=0, normalize_type=0, mean=0, std=1):
-        super().__init__(input_path, data_channel)
+                 resize_type=0, normalize_type=0, mean=0, std=1, transform_func=None):
+        super().__init__(input_path, data_channel, transform_func)
         if Path(input_path).suffix not in ['.txt', '.text']:
             raise Exception("Invalid path!", input_path)
         self.image_size = image_size
@@ -44,6 +44,8 @@ class TextDataLoader(DataLoader):
         cv_image, src_image = self.read_src_image(image_path)
         image = self.dataset_process.resize_image(src_image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
+        if self.transform_func is not None:
+            torch_image = self.transform_func(torch_image)
         torch_image = torch_image.unsqueeze(0)
         return {"file_path": image_path, "src_image": cv_image,
                 "image": torch_image}

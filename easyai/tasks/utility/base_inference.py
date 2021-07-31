@@ -10,8 +10,9 @@ from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.common.images_loader import ImagesLoader
 from easyai.data_loader.common.video_loader import VideoLoader
 from easyai.data_loader.common.text_data_loader import TextDataLoader
+from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.tasks.utility.preprocess_factory import PreprocessFactory
+from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -26,20 +27,15 @@ class BaseInference(BaseTask):
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
         self.show_factory = TaskShowFactory()
-        self.preprocess_factory = PreprocessFactory()
-        self.preprocess_func = None
+        self.transform_factory = DataTransformsFactory()
+        self.batch_data_process_factory = BatchDataProcessFactory()
+        self.model_name = model_name
+        self.model_args = None
         self.model = None
         self.task_config = None
+        self.batch_data_process_func = None
         self.src_size = (0, 0)
         self.result_show = self.show_factory.get_task_show(self.task_name)
-        if isinstance(model_name, (list, tuple)):
-            if len(model_name) > 0:
-                self.model_args = {"type": model_name[0]}
-            else:
-                self.model_args = {"type": None}
-        elif isinstance(model_name, str):
-            self.model_args = {"type": model_name}
-
         self.set_task_config(config_path)
 
     def set_task_config(self, config=None):
@@ -56,8 +52,20 @@ class BaseInference(BaseTask):
             EasyLogger.error("create config fail! {}".format(config))
 
     def set_model_param(self, data_channel, **params):
-        self.model_args["data_channel"] = data_channel
-        self.model_args.update(params)
+        if self.model_name is None and self.task_config.model_config is not None:
+            self.model_args = self.task_config.model_config
+        else:
+            if isinstance(self.model_name, (list, tuple)):
+                if len(self.model_name) > 0:
+                    self.model_args = {"type": self.model_name[0]}
+                else:
+                    self.model_args = {"type": None}
+            elif isinstance(self.model_name, str):
+                self.model_args = {"type": self.model_name}
+            else:
+                pass
+            self.model_args["data_channel"] = data_channel
+            self.model_args.update(params)
         EasyLogger.debug(self.model_args)
 
     def set_model(self, my_model=None, gpu_id=0):
@@ -90,28 +98,34 @@ class BaseInference(BaseTask):
         EasyLogger.debug(self.task_config.data)
         image_size = tuple(self.task_config.data['image_size'])
         data_channel = self.task_config.data['data_channel']
-        mean = self.task_config.data['mean']
-        std = self.task_config.data['std']
-        normalize_type = self.task_config.data['normalize_type']
+        mean = self.task_config.data.get('mean', 1)
+        std = self.task_config.data.get('std', 0)
         resize_type = self.task_config.data['resize_type']
+        normalize_type = self.task_config.data['normalize_type']
+        transform_args = self.task_config.data.get('transform_func', None)
+        transform_func = self.transform_factory.get_data_transform(transform_args)
         if Path(input_path).is_dir():
             dataloader = ImagesLoader(input_path, image_size, data_channel,
-                                      resize_type, normalize_type, mean, std)
+                                      resize_type, normalize_type, mean, std,
+                                      transform_func)
         elif Path(input_path).suffix in ['.txt', '.text']:
             dataloader = TextDataLoader(input_path, image_size, data_channel,
-                                        resize_type, normalize_type, mean, std)
+                                        resize_type, normalize_type, mean, std,
+                                        transform_func)
         else:
             dataloader = VideoLoader(input_path, image_size, data_channel,
-                                     resize_type, normalize_type, mean, std)
-        self.preprocess_func = self.preprocess_factory.build_preprocess(self.task_config.preprocess)
+                                     resize_type, normalize_type, mean, std,
+                                     transform_func)
+        self.batch_data_process_func = \
+            self.batch_data_process_factory.build_process(self.task_config.batch_data_process)
         return dataloader
 
     def get_point_cloud_data_lodaer(self, input_path):
         pass
 
-    def preprocessing(self, batch_data):
-        if self.preprocess_func is not None:
-            self.preprocess_func(batch_data)
+    def batch_processing(self, batch_data):
+        if self.batch_data_process_func is not None:
+            self.batch_data_process_func(batch_data)
 
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]

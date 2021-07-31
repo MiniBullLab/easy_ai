@@ -38,7 +38,7 @@ class OneClassConfig(GanTrainConfig):
     def get_data_default_value(self):
         self.data = {'image_size': (32, 32),  # W * H
                      'data_channel': 3,
-                     'resize_type': 0,
+                     'resize_type': 1,
                      'normalize_type': -1,
                      'mean': (0.5, 0.5, 0.5),
                      'std': (0.5, 0.5, 0.5)}

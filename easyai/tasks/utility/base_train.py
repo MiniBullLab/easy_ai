@@ -6,6 +6,7 @@ import abc
 import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
+from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
@@ -23,22 +24,18 @@ class BaseTrain(BaseTask):
         self.set_task_name(task_name)
         self.timer = TimerProcess()
         self.dataloader_factory = DataloaderFactory()
+        self.batch_data_process_factory = BatchDataProcessFactory()
         self.torchModelProcess = TorchModelProcess()
         self.freeze_process = FreezePorcess()
-        self.dataloader = None
+        self.model_name = model_name
+        self.model_args = None
         self.model = None
         self.train_task_config = None
+        self.batch_data_process_func = None
+        self.dataloader = None
         self.total_batch_data = 0
         self.is_sparse = False
         self.sparse_ratio = 0.0
-
-        if isinstance(model_name, (list, tuple)):
-            if len(model_name) > 0:
-                self.model_args = {"type": model_name[0]}
-            else:
-                self.model_args = {"type": None}
-        elif isinstance(model_name, str):
-            self.model_args = {"type": model_name}
 
         self.set_train_config(config_path)
 
@@ -60,8 +57,21 @@ class BaseTrain(BaseTask):
             self.train_task_config = config
 
     def set_model_param(self, data_channel, **params):
-        self.model_args["data_channel"] = data_channel
-        self.model_args.update(params)
+        if self.model_name is None and self.train_task_config.model_config is not None:
+            self.model_args = self.train_task_config.model_config
+        else:
+            if isinstance(self.model_name, (list, tuple)):
+                if len(self.model_name) > 0:
+                    self.model_args = {"type": self.model_name[0]}
+                else:
+                    self.model_args = {"type": None}
+            elif isinstance(self.model_name, str):
+                self.model_args = {"type": self.model_name}
+            else:
+                EasyLogger.error("model config error!(%s)" % self.model_name)
+            self.model_args["data_channel"] = data_channel
+            self.model_args.update(params)
+        EasyLogger.debug(self.model_args)
 
     def set_model(self, my_model=None, gpu_id=0, init_type="kaiming"):
         if my_model is None:
@@ -105,10 +115,16 @@ class BaseTrain(BaseTask):
         self.dataloader = self.dataloader_factory.get_train_dataloader(data_path,
                                                                        dataloader_config,
                                                                        dataset_config)
+        self.batch_data_process_func = \
+            self.batch_data_process_factory.build_process(self.train_task_config.batch_data_process)
         if self.dataloader is not None:
             self.total_batch_data = len(self.dataloader)
         else:
             self.total_batch_data = 0
+
+    def batch_processing(self, batch_data):
+        if self.batch_data_process_func is not None:
+            self.batch_data_process_func(batch_data)
 
 
 

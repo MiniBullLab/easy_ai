@@ -16,8 +16,8 @@ class LandmarkDataset(TorchDataLoader):
     def __init__(self, data_path, class_name,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
-                 points_count=68, is_augment=False):
-        super().__init__(data_path, data_channel)
+                 points_count=68, is_augment=False, transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.class_name = class_name
         self.image_size = tuple(image_size)
         self.is_augment = is_augment

@@ -13,8 +13,9 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 class OneClassDataset(TorchDataLoader):
 
     def __init__(self, data_path, resize_type, normalize_type,
-                 mean=0, std=1, image_size=(768, 320), data_channel=3):
-        super().__init__(data_path, data_channel)
+                 mean=0, std=1, image_size=(768, 320), data_channel=3,
+                 transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.image_size = tuple(image_size)
         self.gan_sample = GenImageSample(data_path)
         self.gan_sample.read_sample()

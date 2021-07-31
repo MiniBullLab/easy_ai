@@ -43,7 +43,7 @@ class Polygon2dConfig(CommonTrainConfig):
     def get_data_default_value(self):
         self.data = {'image_size': (736, 736),  # W * H
                      'data_channel': 3,
-                     'resize_type': -2,
+                     'resize_type': 4,
                      'normalize_type': -1,
                      'mean': (0.485, 0.456, 0.406),
                      'std': (0.229, 0.224, 0.225)}

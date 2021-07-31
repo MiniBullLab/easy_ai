@@ -17,14 +17,16 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def resize(self, src_image, dst_size, resize_type, **param):
         result = None
         if resize_type == 0:
-            result = self.cv_image_resize(src_image, dst_size)
+            result = src_image
         elif resize_type == 1:
+            result = self.cv_image_resize(src_image, dst_size)
+        elif resize_type == 2:
             pad_color = param['pad_color']
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             ratio, pad_size = self.get_square_size(src_size, dst_size)
             result = self.image_resize_square(src_image, ratio, pad_size,
                                               pad_color=pad_color)
-        elif resize_type == -1:
+        elif resize_type == 3:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             # resize_ratio = dst_size[1] / src_image.shape[0]
             # resize_w = int(src_size[0] * resize_ratio)
@@ -36,7 +38,7 @@ class ImageDataSetProcess(BaseDataSetProcess):
                 resize_w = dst_size[0]
             dst_size = (resize_w, dst_size[1])
             result = self.cv_image_resize(src_image, dst_size, interpolation="bilinear")
-        elif resize_type == -2:
+        elif resize_type == 4:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             resize_w, resize_h = self.get_short_size(src_size, dst_size)
             # print(resize_w, resize_h)
@@ -48,8 +50,10 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def inv_resize(self, src_size, dst_size, resize_type, image_data, **param):
         result = None
         if resize_type == 0:
-            result = self.cv_image_resize(image_data, src_size)
+            result = image_data
         elif resize_type == 1:
+            result = self.cv_image_resize(image_data, src_size)
+        elif resize_type == 2:
             ratio, pad = self.get_square_size(src_size, dst_size)
             start_h = pad[1] // 2
             stop_h = dst_size[1] - (pad[1] - (pad[1] // 2))
@@ -62,13 +66,15 @@ class ImageDataSetProcess(BaseDataSetProcess):
     def normalize(self, input_data, normalize_type, **param):
         result = None
         if normalize_type == 0:
-            result = self.image_normalize(input_data)
+            result = input_data
         elif normalize_type == 1:
+            result = self.image_normalize(input_data)
+        elif normalize_type == 2:
             mean = param['mean']
             std = param['std']
             normaliza_image = self.image_normalize(input_data)
             result = self.standard_normalize(normaliza_image, mean, std)
-        elif normalize_type == 2:
+        elif normalize_type == 3:
             temp_x = self.image_normalize(input_data)
             result = (temp_x - 0.5) / 0.5
         return result

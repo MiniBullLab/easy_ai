@@ -10,10 +10,11 @@ from easyai.utility.logger import EasyLogger
 
 class TorchDataLoader(Dataset):
 
-    def __init__(self, data_path, data_channel):
+    def __init__(self, data_path, data_channel, transform_func=None):
         super().__init__()
         self.data_path = data_path
         self.data_channel = data_channel
+        self.transform_func = transform_func
         self.image_process = ImageProcess()
         self.pointcloud_process = PointCloudProcess(dim=data_channel)
 

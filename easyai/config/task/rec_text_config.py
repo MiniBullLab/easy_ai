@@ -55,8 +55,8 @@ class RecognizeTextConfig(CommonTrainConfig):
 
         self.data = {'image_size': (256, 32),   # W * H
                      'data_channel': 3,
-                     'resize_type': -1,
-                     'normalize_type': 1,
+                     'resize_type': 3,
+                     'normalize_type': 2,
                      'mean': (0.5, 0.5, 0.5),
                      'std': (0.5, 0.5, 0.5)}
 
@@ -68,12 +68,14 @@ class RecognizeTextConfig(CommonTrainConfig):
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}
-        self.val_data['dataset']['type'] = "SlideRecTextDataSet"
+        self.val_data['dataset']['type'] = "RecTextDataSet"
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['char_path'] = self.character_set
         self.val_data['dataset']['max_text_length'] = 32
         self.val_data['dataset']['language'] = ("english", )
         self.val_data['dataset']['is_augment'] = False
+        self.val_data['dataset']['transform_func'] = {"type": "ImageWidthSlide",
+                                                      "image_size": self.data['image_size']}
 
         self.val_data['dataloader']['type'] = "DataLoader"
         self.val_data['dataloader']['batch_size'] = 1
@@ -90,12 +92,14 @@ class RecognizeTextConfig(CommonTrainConfig):
     def get_train_default_value(self):
         self.train_data = {'dataset': {},
                            'dataloader': {}}
-        self.train_data['dataset']['type'] = "SlideRecTextDataSet"
+        self.train_data['dataset']['type'] = "RecTextDataSet"
         self.train_data['dataset'].update(self.data)
         self.train_data['dataset']['char_path'] = self.character_set
         self.train_data['dataset']['max_text_length'] = 32
         self.train_data['dataset']['language'] = ("english",)
         self.train_data['dataset']['is_augment'] = True
+        self.train_data['dataset']['transform_func'] = {"type": "ImageWidthSlide",
+                                                        "image_size": self.data['image_size']}
 
         self.train_data['dataloader']['type'] = "DataLoader"
         self.train_data['dataloader']['batch_size'] = 2

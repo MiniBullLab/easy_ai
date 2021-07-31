@@ -15,10 +15,12 @@ class ImageTaskConfig(BaseConfig):
         super().__init__(task_name)
         # data
         self.data = dict()
-        self.preprocess = None
+        self.batch_data_process = None
         self.post_process = None
 
         self.save_result_path = None
+
+        self.model_config = None
 
         # test
         self.evaluation_result_name = None
