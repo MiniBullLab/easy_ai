@@ -22,7 +22,7 @@ class CNNCTC(BaseClassifyModel):
         self.set_name(ModelName.CRNN)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
-
+        self.model_args["data_channel"] = data_channel * 3
         self.model_args['type'] = BackboneName.TextVGG
 
         self.create_block_list()
@@ -64,14 +64,15 @@ class CNNCTC(BaseClassifyModel):
                 output.append(x)
             else:
                 x = block(x)
+            # print(key, x.shape)
         return output
 
     def forward(self, x):
         result = []
         output = []
         for s in range(x.shape[1]):  # x: batch, window, slice channel, h, w
-            result.append(self.single_forward(x[:, s, :, :, :]))
-        out = torch.stack(result)
+            result.extend(self.single_forward(x[:, s, :, :, :]))
+        out = torch.stack(result, axis=0)
         out = out.permute(1, 0, 2)
         output.append(out)
         return output

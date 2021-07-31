@@ -45,8 +45,9 @@ class SlideRecTextDataSet(TorchDataLoader):
         else:
             image = src_image[:]
         image = self.dataset_process.resize_image(image, self.image_size)
-        image = self.dataset_process.padding_images(image, self.image_size)
+        # image = self.dataset_process.padding_images(image, self.image_size)
         image = self.dataset_process.normalize_image(image)
+        image = self.dataset_process.width_pad_images(image, self.image_size[0], 2)
         image = self.dataset_process.slide_image(image, self.windows, self.step)
         label = self.dataset_process.normalize_label(label)
         result_data = {'image': image}
