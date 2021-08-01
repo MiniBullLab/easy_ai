@@ -7,6 +7,7 @@ import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
+from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.evaluation.utility.evaluation_factory import EvaluationFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -21,10 +22,12 @@ class BaseTest(BaseTask):
         self.timer = TimerProcess()
         self.epoch_loss_average = AverageMeter()
         self.dataloader_factory = DataloaderFactory()
+        self.batch_data_process_factory = BatchDataProcessFactory()
         self.evaluation_factory = EvaluationFactory()
         self.evaluation_args = None
         self.test_task_config = None
         self.dataloader = None
+        self.batch_data_process_func = None
         self.total_batch_data = 0
         self.inference = None
         self.model = None
@@ -93,6 +96,8 @@ class BaseTest(BaseTask):
         self.dataloader = self.dataloader_factory.get_val_dataloader(data_path,
                                                                      dataloader_config,
                                                                      dataset_config)
+        self.batch_data_process_func = \
+            self.batch_data_process_factory.build_process(self.test_task_config.batch_data_process)
         if self.dataloader is not None:
             self.total_batch_data = len(self.dataloader)
         else:
@@ -114,3 +119,7 @@ class BaseTest(BaseTask):
             else:
                 EasyLogger.error("compute loss error")
         return loss.item()
+
+    def batch_processing(self, batch_data):
+        if self.batch_data_process_func is not None:
+            self.batch_data_process_func(batch_data)

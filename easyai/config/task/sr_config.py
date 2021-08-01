@@ -40,8 +40,8 @@ class SuperResolutionConfig(CommonTrainConfig):
     def get_data_default_value(self):
         self.data = {'image_size': (720, 1024),  # W * H
                      'data_channel': 1,
-                     'resize_type': 0,
-                     'normalize_type': 0,
+                     'resize_type': 1,
+                     'normalize_type': 1,
                      'mean': (0, ),
                      'std': (1, )}
 

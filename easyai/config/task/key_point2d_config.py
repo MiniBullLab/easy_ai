@@ -57,8 +57,8 @@ class KeyPoint2dConfig(CommonTrainConfig):
     def get_data_default_value(self):
         self.data = {'image_size': (640, 352),  # W * H
                      'data_channel': 3,
-                     'resize_type': 1,
-                     'normalize_type': 0,
+                     'resize_type': 2,
+                     'normalize_type': 1,
                      'mean': (0, 0, 0),
                      'std': (1, 1, 1)}
 

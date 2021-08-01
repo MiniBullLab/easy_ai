@@ -15,7 +15,6 @@ class DatasetName():
     Pose2dDataset = "Pose2dDataset"
     SegmentDataset = "SegmentDataset"
     RecTextDataSet = "RecTextDataSet"
-    SlideRecTextDataSet = "SlideRecTextDataSet"
     RecTextOCRDataSet = "RecTextOCRDataSet"
     SuperResolutionDataset = "SuperResolutionDataset"
 
@@ -39,3 +38,8 @@ class DataloaderName():
     Det2dTrainDataloader = "Det2dTrainDataloader"
     Det2dSegTrainDataloader = "Det2dSegTrainDataloader"
     DataLoader = "DataLoader"
+
+
+class DataTansformsName():
+
+    ImageWidthSlide = "ImageWidthSlide"

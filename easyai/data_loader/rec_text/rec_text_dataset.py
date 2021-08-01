@@ -17,8 +17,8 @@ class RecTextDataSet(TorchDataLoader):
     def __init__(self, data_path, char_path, max_text_length, language,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
-                 is_augment=False):
-        super().__init__(data_path, data_channel)
+                 is_augment=False, transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.char_path = char_path
         self.max_text_length = max_text_length
         self.language = language
@@ -48,6 +48,8 @@ class RecTextDataSet(TorchDataLoader):
             image = src_image[:]
         image = self.dataset_process.resize_image(image, self.image_size)
         image = self.dataset_process.normalize_image(image)
+        if self.transform_func is not None:
+            image = self.transform_func(image)
         label = self.dataset_process.normalize_label(label)
         result_data = {'image': image}
         result_data.update(label)

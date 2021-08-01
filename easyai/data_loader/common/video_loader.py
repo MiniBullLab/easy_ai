@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
 from easyai.helper import VideoProcess
@@ -12,8 +12,8 @@ from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 class VideoLoader(DataLoader):
 
     def __init__(self, video_path, image_size=(416, 416), data_channel=3,
-                 resize_type=0, normalize_type=0, mean=0, std=1):
-        super().__init__(video_path, data_channel)
+                 resize_type=0, normalize_type=0, mean=0, std=1, transform_func=None):
+        super().__init__(video_path, data_channel, transform_func)
         self.video_process = VideoProcess()
         self.image_process = ImageDataSetProcess()
         self.dataset_process = TaskDataSetProcess(resize_type, normalize_type,
@@ -44,6 +44,8 @@ class VideoLoader(DataLoader):
         src_image = self.read_src_image(cv_image)
         image = self.dataset_process.resize_image(src_image, self.image_size)
         torch_image = self.dataset_process.normalize_image(image)
+        if self.transform_func is not None:
+            torch_image = self.transform_func(torch_image)
         torch_image = torch_image.unsqueeze(0)
         video_name = self.data_path + "_%d" % self.index
         return {"file_path": video_name, "src_image": cv_image,

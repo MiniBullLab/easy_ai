@@ -41,7 +41,7 @@ class ClassifyConfig(CommonTrainConfig):
     def get_data_default_value(self):
         self.data = {'image_size': (224, 224),  # W * H
                      'data_channel': 3,
-                     'resize_type': 0,
+                     'resize_type': 1,
                      'normalize_type': -1,
                      'mean': (0.5070751592371323, 0.48654887331495095, 0.4409178433670343),
                      'std': (0.2666410733740041, 0.2666410733740041, 0.2666410733740041)}

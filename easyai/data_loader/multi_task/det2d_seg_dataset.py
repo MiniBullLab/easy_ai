@@ -16,8 +16,8 @@ class Det2dSegDataset(TorchDataLoader):
 
     def __init__(self, data_path, detect2d_class, seg_class_name,
                  seg_label_type, resize_type, normalize_type, mean=0, std=1,
-                 image_size=(416, 416), data_channel=3):
-        super().__init__(data_path, data_channel)
+                 image_size=(416, 416), data_channel=3, transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.detect2d_class = detect2d_class
         self.seg_number_class = len(seg_class_name)
         self.seg_label_type = seg_label_type

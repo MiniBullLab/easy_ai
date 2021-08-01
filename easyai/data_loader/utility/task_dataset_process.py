@@ -29,8 +29,9 @@ class TaskDataSetProcess(BaseDataSetProcess):
                                                    normalize_type=self.normalize_type,
                                                    mean=self.mean,
                                                    std=self.std)
-            image = self.dataset_process.numpy_transpose(image)
-            image = self.numpy_to_torch(image, flag=0)
+            if self.normalize_type != 0:
+                image = self.dataset_process.numpy_transpose(image)
+                image = self.numpy_to_torch(image, flag=0)
         return image
 
     def resize_image(self, src_image, image_size):

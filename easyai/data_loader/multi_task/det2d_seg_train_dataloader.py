@@ -25,8 +25,9 @@ class Det2dSegTrainDataloader(DataLoader):
     def __init__(self, data_path, detect2d_class, seg_class_name,
                  seg_label_type, resize_type, normalize_type, mean=0, std=1,
                  batch_size=1, image_size=(768, 320), data_channel=3,
-                 multi_scale=False, is_augment=False, balanced_sample=False):
-        super().__init__(data_path, data_channel)
+                 multi_scale=False, is_augment=False, balanced_sample=False,
+                 transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.detect2d_class = detect2d_class
         self.seg_number_class = len(seg_class_name)
         self.seg_label_type = seg_label_type

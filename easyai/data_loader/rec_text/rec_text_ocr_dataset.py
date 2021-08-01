@@ -17,8 +17,8 @@ class RecTextOCRDataSet(TorchDataLoader):
     def __init__(self, data_path, char_path, max_text_length, language,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(416, 416), data_channel=3,
-                 is_augment=False):
-        super().__init__(data_path, data_channel)
+                 is_augment=False, transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.char_path = char_path
         self.max_text_length = max_text_length
         self.language = language

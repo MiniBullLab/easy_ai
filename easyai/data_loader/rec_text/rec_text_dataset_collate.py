@@ -34,8 +34,10 @@ class RecTextDataSetCollate(BaseDatasetCollate):
         resize_images = []
         text_list = []
         for all_data in batch_list:
-            if self.padding_type == 1:
-                img = self.dataset_process.width_pad_images(all_data['image'], max_img_w)
+            if self.padding_type > 0:
+                img = self.dataset_process.width_pad_images(all_data['image'],
+                                                            max_img_w,
+                                                            self.padding_type)
                 resize_images.append(torch.tensor(img, dtype=torch.float))
             else:
                 resize_images.append(torch.tensor(all_data['image'], dtype=torch.float))

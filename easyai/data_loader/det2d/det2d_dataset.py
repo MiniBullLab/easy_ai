@@ -16,8 +16,9 @@ class Det2dDataset(TorchDataLoader):
 
     def __init__(self, data_path, detect2d_class,
                  resize_type, normalize_type, mean=0, std=1,
-                 image_size=(416, 416), data_channel=3):
-        super().__init__(data_path, data_channel)
+                 image_size=(416, 416), data_channel=3,
+                 transform_func=None):
+        super().__init__(data_path, data_channel, transform_func)
         self.image_size = tuple(image_size)
         self.detect2d_class = detect2d_class
         EasyLogger.debug("det2d class: {}".format(detect2d_class))

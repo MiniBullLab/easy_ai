@@ -32,17 +32,6 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
                   'targets': text_code}
         return result
 
-    def padding_images(self, image, image_size):
-        src_size = (image.shape[1], image.shape[0])  # [width, height]
-        print(src_size)
-        if src_size[0] < image_size[0]:
-            # Padding
-            img = np.concatenate([np.array([[0] * ((image_size[0] - image.shape[1]) // 2)] * 32), image], axis=1)
-            img = np.concatenate([img, np.array([[0] * (image_size[0] - img.shape[1])] * 32)], axis=1)
-        else:
-            img = self.dataset_process.resize(image, image_size, 0)
-        return img
-
     def width_pad_images(self, img, target_width, pad_type=1):
         """
         将图像进行高度不变，宽度的调整的pad
@@ -71,23 +60,6 @@ class RecTextDataSetProcess(Polygon2dDataSetProcess):
             else:
                 padding_img = img
         return padding_img
-
-    def slide_image(self, image, windows, step):
-        _, h, w = image.shape
-        output_image = []
-        half_of_max_window = max(windows) // 2  # 从最大窗口的中线开始滑动，每次移动step的距离
-        for center_axis in range(half_of_max_window, w - half_of_max_window, step):
-            slice_channel = []
-            for window_size in windows:
-                # print("window_size:", window_size)
-                # print(center_axis - window_size // 2, center_axis + window_size // 2)
-                image_slice = image[:, :, center_axis - window_size // 2: center_axis + window_size // 2]
-                image_slice = image_slice.transpose(1, 2, 0)
-                image_slice = self.dataset_process.resize(image_slice, (h, h), 0)
-                image_slice = image_slice.transpose(2, 0, 1)
-                slice_channel.append(image_slice)
-            output_image.append(np.concatenate(slice_channel, axis=0))
-        return np.asarray(output_image, dtype=np.float32)
 
 
 

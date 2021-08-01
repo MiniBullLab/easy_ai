@@ -10,9 +10,10 @@ from easyai.utility.logger import EasyLogger
 
 class DataLoader():
 
-    def __init__(self, data_path, data_channel):
+    def __init__(self, data_path, data_channel, transform_func=None):
         self.data_path = data_path
         self.data_channel = data_channel
+        self.transform_func = transform_func
         self.image_process = ImageProcess()
 
     def all_numpy_to_tensor(self, input_data):

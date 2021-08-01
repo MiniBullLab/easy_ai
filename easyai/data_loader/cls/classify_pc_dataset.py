@@ -13,8 +13,9 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 @REGISTERED_DATASET.register_module(DatasetName.ClassifyPointCloudDataSet)
 class ClassifyPointCloudDataSet(TorchDataLoader):
 
-    def __init__(self, data_path, point_features, is_augment=False):
-        super().__init__(data_path, point_features)
+    def __init__(self, data_path, point_features, is_augment=False,
+                 transform_func=None):
+        super().__init__(data_path, point_features, transform_func)
         self.is_augment = is_augment
         self.classify_sample = ClassifySample(data_path)
         self.classify_sample.read_sample(flag=1)
