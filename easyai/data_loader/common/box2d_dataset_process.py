@@ -15,6 +15,15 @@ class Box2dDataSetProcess(TaskDataSetProcess):
     def resize_box(self, boxes, class_name, src_size, dst_size):
         labels = []
         if self.resize_type == 0:
+            for box in boxes:
+                rect = Rect2D()
+                rect.class_id = class_name.index(box.name)
+                rect.min_corner.x = box.min_corner.x
+                rect.min_corner.y = box.min_corner.y
+                rect.max_corner.x = box.max_corner.x
+                rect.max_corner.y = box.max_corner.y
+                labels.append(rect)
+        elif self.resize_type == 1:
             ratio_w = float(dst_size[0]) / src_size[0]
             ratio_h = float(dst_size[1]) / src_size[1]
             for box in boxes:
@@ -25,7 +34,7 @@ class Box2dDataSetProcess(TaskDataSetProcess):
                 rect.max_corner.x = ratio_w * box.max_corner.x
                 rect.max_corner.y = ratio_h * box.max_corner.y
                 labels.append(rect)
-        elif self.resize_type == 1:
+        elif self.resize_type == 2:
             ratio, pad_size = self.dataset_process.get_square_size(src_size, dst_size)
             for box in boxes:
                 rect = Rect2D()

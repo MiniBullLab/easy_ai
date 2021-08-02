@@ -50,21 +50,22 @@ class SegmentionTest(BaseTest):
         EasyLogger.info("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
         return score['Mean IoU'], self.epoch_loss_average.avg
 
-    def compute_loss(self, output_list, targets):
+    def compute_loss(self, output_list, batch_data):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
-        targets = targets.to(self.device)
         with torch.no_grad():
             if loss_count == 1 and output_count == 1:
-                output, target = self.output_process.output_feature_map_resize(output_list[0], targets)
-                loss = self.model.lossList[0](output, target)
+                output = self.output_process.output_feature_map_resize(output_list[0],
+                                                                       batch_data)
+                loss = self.model.lossList[0](output, batch_data)
             elif loss_count == 1 and output_count > 1:
-                loss = self.model.lossList[0](output_list, targets)
+                loss = self.model.lossList[0](output_list, batch_data)
             elif loss_count > 1 and loss_count == output_count:
                 for k in range(0, loss_count):
-                    output, target = self.output_process.output_feature_map_resize(output_list[k], targets)
-                    loss += self.model.lossList[k](output, target)
+                    output = self.output_process.output_feature_map_resize(output_list[k],
+                                                                           batch_data)
+                    loss += self.model.lossList[k](output, batch_data)
             else:
                 EasyLogger.error("compute loss error")
         return loss.item()

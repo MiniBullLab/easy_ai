@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
 import torch
 import numpy as np
 from easyai.tasks.utility.task_result_process import TaskPostProcess
@@ -35,21 +36,21 @@ class SegmentResultProcess(TaskPostProcess):
         result = result.astype(np.float32)
         return result
 
-    def output_feature_map_resize(self, input_data, target):
+    def output_feature_map_resize(self, input_data, batch_data):
         n, c, h, w = input_data.size()
-        nt, ht, wt = target.size()
+        nt, ht, wt = batch_data['label'].size()
         # Handle inconsistent size between input and target
         if h > ht and w > wt:  # upsample labels
-            target = target.type(input_data.dtype)
+            target = batch_data['label'].type(input_data.dtype)
             target = target.unsqueeze(1)
             target = torch.nn.functional.upsample(target, size=(h, w), mode='nearest')
             target = target.squeeze(1).long()
+            batch_data['label'] = target
         elif h < ht and w < wt:  # upsample images
             input_data = torch.nn.functional.upsample(input_data, size=(ht, wt), mode='bilinear')
         elif h == ht and w == wt:
             pass
         else:
-            print("input_data: (%d,%d) and target: (%d,%d) error "
-                  % (h, w, ht, wt))
+            EasyLogger.error("input_data: (%d,%d) and target: (%d,%d) error " % (h, w, ht, wt))
             raise Exception("segment_data_resize error")
-        return input_data, target
+        return input_data

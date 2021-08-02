@@ -29,6 +29,7 @@ class DatasetCollateName():
     Pose2dDataSetCollate = "Pose2dDataSetCollate"
     RecTextDataSetCollate = "RecTextDataSetCollate"
     SuperResolutionDataSetCollate = "SuperResolutionDataSetCollate"
+    SegmentDataSetCollate = "SegmentDataSetCollate"
 
     ClassifyPointCloudDataSetCollate = "ClassifyPointCloudDataSetCollate"
 
