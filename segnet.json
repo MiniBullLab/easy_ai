@@ -1,0 +1,6 @@
+{
+    "image_height": 400,
+    "image_width": 504,
+    "input_layer": "seg_input",
+    "output_layer": "seg_output"
+}

@@ -108,7 +108,7 @@ class BinaryCrossEntropy2dLoss(BaseLoss):
         if batch_data is not None:
             device = input_data.device
             targets = batch_data['label'].to(device)
-            # targets = targets.type(input_data.dtype)
+            targets = targets.type(input_data.dtype)
             if self.weight_type == 0:
                 loss = F.binary_cross_entropy(input_data, targets,
                                               weight=self.weight,

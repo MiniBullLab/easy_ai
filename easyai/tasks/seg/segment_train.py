@@ -68,19 +68,22 @@ class SegmentionTrain(CommonTrain):
         output_count = len(output_list)
         loss_info = {}
         if loss_count == 1 and output_count == 1:
-            output, target = self.output_process.output_feature_map_resize(output_list[0], targets)
-            loss = self.model.lossList[0](output, target)
+            output = self.output_process.output_feature_map_resize(output_list[0],
+                                                                   batch_data)
+            loss = self.model.lossList[0](output, batch_data)
             loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count == 1 and output_count > 1:
             loss = self.model.lossList[0](output_list, batch_data)
             loss_info = self.model.lossList[0].print_loss_info()
         elif loss_count > 1 and loss_count == output_count:
-            output, target = self.output_process.output_feature_map_resize(output_list[0], targets)
+            output = self.output_process.output_feature_map_resize(output_list[0],
+                                                                   batch_data)
             loss = self.model.lossList[0](output, batch_data)
             loss_info = self.model.lossList[0].print_loss_info()
             for k in range(1, loss_count):
-                output, target = self.output_process.output_feature_map_resize(output_list[k], targets)
-                loss += self.model.lossList[k](output, target)
+                output = self.output_process.output_feature_map_resize(output_list[k],
+                                                                       batch_data)
+                loss += self.model.lossList[k](output, batch_data)
                 temp_info = self.model.lossList[k].print_loss_info()
                 for key, value in temp_info.items():
                     loss_info[key] += value
