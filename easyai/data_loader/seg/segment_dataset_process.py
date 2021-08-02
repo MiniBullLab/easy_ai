@@ -20,15 +20,9 @@ class SegmentDatasetProcess(TaskDataSetProcess):
         return image, target
 
     def resize_lable(self, label, dst_size):
-        target = None
-        if self.resize_type == 0:
-            target = self.dataset_process.cv_image_resize(label, dst_size)
-            target = np.array(target, dtype=np.uint8)
-        elif self.resize_type == 1:
-            src_size = (label.shape[1], label.shape[0])  # [width, height]
-            ratio, pad_size = self.dataset_process.get_square_size(src_size, dst_size)
-            target = self.dataset_process.image_resize_square(label, ratio, pad_size,
-                                                              self.label_pad_color)
+        target = self.dataset_process.resize(label, dst_size, self.resize_type,
+                                             pad_color=self.label_pad_color)
+        if target is not None:
             target = np.array(target, dtype=np.uint8)
         return target
 
