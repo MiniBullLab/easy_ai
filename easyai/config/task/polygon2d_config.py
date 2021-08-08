@@ -81,11 +81,11 @@ class Polygon2dConfig(CommonTrainConfig):
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 2e-4
-        self.optimizer_config = {0: {'type': 'SGD',
-                                     'momentum': 0.9,
-                                     'weight_decay': 5e-4}
+        self.base_lr = 0.001
+        self.optimizer_config = {0: {'type': 'Adam',
+                                     'weight_decay': 1e-4}
                                  }
+
         self.lr_scheduler_config = {'type': 'MultiStageLR',
                                     'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
                                     'warmup_type': 2,
