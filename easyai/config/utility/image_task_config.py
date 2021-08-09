@@ -20,6 +20,7 @@ class ImageTaskConfig(BaseConfig):
 
         self.save_result_path = None
 
+        self.model_type = 0
         self.model_config = None
 
         # test

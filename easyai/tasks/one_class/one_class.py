@@ -9,6 +9,7 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.one_class.one_class_result_process import OneClassResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.OneClass)
@@ -66,9 +67,10 @@ class OneClass(BaseInference):
                 result = self.model.g_loss_list[k](output_list[k])
                 output.append(result)
         else:
-            print("compute generator prediction error")
+            EasyLogger.error("compute generator prediction error")
         if isinstance(output, (list, tuple)):
             prediction = [np.squeeze(x.data.cpu().numpy()) for x in output]
         elif output is not None:
             prediction = np.squeeze(output.data.cpu().numpy())
         return prediction
+
