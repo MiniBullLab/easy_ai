@@ -76,7 +76,7 @@ class BaseTest(BaseTask):
         print(info_str)
 
     def load_weights(self, weights_path):
-        if self.inference is not  None:
+        if self.inference is not None:
             self.inference.load_weights(weights_path)
         else:
             EasyLogger.error("inference init error")
@@ -104,7 +104,15 @@ class BaseTest(BaseTask):
             self.total_batch_data = 0
         self.val_path = data_path
 
-    def compute_loss(self, output_list, batch_data):
+    def compute_loss(self, model_output, batch_data):
+        loss = 0
+        if self.test_task_config.model_type == 0:
+            loss = self.common_loss(model_output, batch_data)
+        elif self.test_task_config.model_type == 1:
+            loss = self.gan_loss(model_output, batch_data)
+        return loss
+
+    def common_loss(self, output_list, batch_data):
         loss = 0
         loss_count = len(self.model.lossList)
         output_count = len(output_list)
@@ -118,6 +126,22 @@ class BaseTest(BaseTask):
                     loss += self.model.lossList[k](output_list[k], batch_data)
             else:
                 EasyLogger.error("compute loss error")
+        return loss.item()
+
+    def gan_loss(self, output_list, batch_data):
+        loss = 0
+        loss_count = len(self.model.g_loss_list)
+        output_count = len(output_list)
+        with torch.no_grad():
+            if loss_count == 1 and output_count == 1:
+                loss = self.model.g_loss_list[0](output_list[0], batch_data)
+            elif loss_count == 1 and output_count > 1:
+                loss = self.model.g_loss_list[0](output_list, batch_data)
+            elif loss_count > 1 and loss_count == output_count:
+                for k in range(0, loss_count):
+                    loss += self.model.g_loss_list[k](output_list[k], batch_data)
+            else:
+                EasyLogger.error("compute gan loss error")
         return loss.item()
 
     def batch_processing(self, batch_data):

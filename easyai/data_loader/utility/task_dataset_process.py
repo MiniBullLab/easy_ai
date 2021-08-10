@@ -35,9 +35,14 @@ class TaskDataSetProcess(BaseDataSetProcess):
         return image
 
     def resize_image(self, src_image, image_size):
-        image = self.dataset_process.resize(src_image, image_size,
-                                            self.resize_type,
-                                            pad_color=self.pad_color)
+        if self.resize_type < 0:
+            torchvision_transform = self.torchvision_process.torch_resize(image_size,
+                                                                          self.resize_type)
+            image = torchvision_transform(src_image)
+        else:
+            image = self.dataset_process.resize(src_image, image_size,
+                                                self.resize_type,
+                                                pad_color=self.pad_color)
         return image
 
     def get_roi_image(self, src_image, expand_box):

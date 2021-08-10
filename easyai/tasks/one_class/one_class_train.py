@@ -50,7 +50,8 @@ class OneClassTrain(GanTrain):
         # Compute loss, compute gradient, update parameters
         d_loss_values = None
         g_loss_values = None
-        g_output_list = self.model(input_datas.to(self.device),
+        image_datas = batch_data['image'].to(self.device)
+        g_output_list = self.model(image_datas,
                                    net_type=1)
         d_output_list = self.model(g_output_list[0], g_output_list[2],
                                    net_type=2)
@@ -77,45 +78,6 @@ class OneClassTrain(GanTrain):
 
             if loss[temp_index].item() < 1e-5:
                 self.torchModelProcess.init_model(self.model.d_model_list[temp_index], init_type="normal")
-        return loss
-
-    def compute_g_loss(self, output_list, batch_data):
-        loss = []
-        loss_count = len(self.model.g_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            result = self.model.g_loss_list[0](output_list[0], batch_data)
-            self.model.g_loss_list[0].print_loss_info()
-            loss.append(result)
-        elif loss_count == 1 and output_count > 1:
-            result = self.model.g_loss_list[0](output_list, batch_data)
-            self.model.g_loss_list[0].print_loss_info()
-            loss.append(result)
-        elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
-                result = self.model.g_loss_list[k](output_list[k], batch_data)
-                self.model.g_loss_list[k].print_loss_info()
-                loss.append(result)
-        else:
-            print("compute generator loss error")
-        return loss
-
-    def compute_d_loss(self, output_list, batch_data):
-        loss = []
-        loss_count = len(self.model.d_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            result = self.model.d_loss_list[0](output_list[0], batch_data)
-            loss.append(result)
-        elif loss_count == 1 and output_count > 1:
-            result = self.model.d_loss_list[0](output_list, batch_data)
-            loss.append(result)
-        elif loss_count > 1 and loss_count == output_count:
-            for k in range(0, loss_count):
-                result = self.model.d_loss_list[k](output_list[k], targets)
-                loss.append(result)
-        else:
-            print("compute discriminator loss error")
         return loss
 
     def update_logger(self, index, total, epoch, loss_values):
@@ -178,4 +140,4 @@ class OneClassTrain(GanTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
-            print("no test!")
+            EasyLogger.info("no test!")

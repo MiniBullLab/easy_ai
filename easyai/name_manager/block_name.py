@@ -112,9 +112,9 @@ class BlockType():
     SEBlock = "seBlock"
     SEConvBlock = "seConvBlock"
 
+    MultiAvgPool2d = "multiAvgPool2d"
     SpatialPyramidPooling = "SPPBlock"
     MultiROIPooling = "multiROIPool"
-
     SequencePooling = "SequencePooling"
 
     DenseUpsamplingConvBlock = "ducBlock"
@@ -152,6 +152,7 @@ class NeckType():
 class HeadType():
 
     ClassifyHead = "ClassifyHead"
+    PatchHead = "PatchHead"
 
     SSDBoxHead = "ssdBox"
     MultiSSDBoxHead = "multiSSDBox"

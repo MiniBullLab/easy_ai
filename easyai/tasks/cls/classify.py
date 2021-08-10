@@ -57,8 +57,6 @@ class Classify(BaseInference):
         return output, output_list
 
     def compute_output(self, output_list):
-        output = None
-        if len(output_list) == 1:
-            output = self.model.lossList[0](output_list[0])
+        output = self.common_output(output_list)
         return output
 

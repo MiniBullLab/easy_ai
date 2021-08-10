@@ -12,7 +12,7 @@ class OneClassResultProcess(TaskPostProcess):
         self.post_process_args = post_process_args
         self.process_func = self.build_post_process(post_process_args)
 
-    def post_process(self, prediction, threshold=0.0):
+    def post_process(self, prediction):
         if prediction is None:
             return None
         class_indices, class_confidence = self.process_func(prediction)

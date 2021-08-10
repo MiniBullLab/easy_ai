@@ -37,6 +37,7 @@ class ModelName():
     GhostNetCls = "GhostNetCls"
     BinaryClassNet = "binarynet"
     ClassNet = "classnet"
+    PatchCoreNet = "PatchCoreNet"
 
     RPNDet2d = "rpnDet2d"
     YoloV3Det2d = "yolov3"

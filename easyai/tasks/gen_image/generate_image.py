@@ -69,16 +69,8 @@ class GenerateImage(BaseInference):
         return output, output_list
 
     def compute_output(self, output_list):
-        output = None
         prediction = None
-        loss_count = len(self.model.g_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            output = self.model.g_loss_list[0](output_list[0])
-        elif loss_count == 1 and output_count > 1:
-            output = self.model.g_loss_list[0](output_list)
-        else:
-            EasyLogger.error("compute output error!")
+        output = self.gan_output(output_list)
         if output is not None:
             prediction = np.squeeze(output.data.cpu().numpy())
         return prediction

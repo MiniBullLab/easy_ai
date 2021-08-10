@@ -9,7 +9,6 @@ from easyai.tasks.utility.base_inference import BaseInference
 from easyai.tasks.one_class.one_class_result_process import OneClassResultProcess
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
-from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.OneClass)
@@ -48,26 +47,17 @@ class OneClass(BaseInference):
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
             image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
-            output = self.compute_output(output_list)
-        return output, output_list
+            model_output = self.model(image_data)
+            output = self.compute_output(model_output)
+        return output, model_output
 
-    def compute_output(self, output_list):
+    def compute_output(self, model_output):
         output = None
         prediction = None
-        loss_count = len(self.model.g_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            output = self.model.g_loss_list[0](output_list[0])
-        elif loss_count == 1 and output_count > 1:
-            output = self.model.g_loss_list[0](output_list)
-        elif loss_count > 1 and loss_count == output_count:
-            output = []
-            for k in range(0, loss_count):
-                result = self.model.g_loss_list[k](output_list[k])
-                output.append(result)
-        else:
-            EasyLogger.error("compute generator prediction error")
+        if self.task_config.model_type == 0:
+            output = self.common_output(model_output)
+        elif self.task_config.model_type == 1:
+            output = self.gan_output(model_output)
         if isinstance(output, (list, tuple)):
             prediction = [np.squeeze(x.data.cpu().numpy()) for x in output]
         elif output is not None:
