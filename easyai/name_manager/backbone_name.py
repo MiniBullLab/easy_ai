@@ -113,6 +113,8 @@ class BackboneName():
 
     HourGlassNet = "hourglassnet"
 
+    VisionResnet50 = "vision_resnet50"
+
 
 class GanBaseModelName():
 

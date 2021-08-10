@@ -62,6 +62,9 @@ class BackboneFactory():
             result = build_from_cfg(model_config, REGISTERED_CLS_BACKBONE)
         return result
 
+    def get_troch_vision_model(self, model_config):
+        pass
+
     def get_gan_base_model(self, model_config):
         input_name = model_config['type'].strip()
         if model_config.get('data_channel') is None:
