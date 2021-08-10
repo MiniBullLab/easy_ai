@@ -114,6 +114,8 @@ class BackboneName():
     HourGlassNet = "hourglassnet"
 
     VisionResnet50 = "vision_resnet50"
+    VisionWideResnet50 = "vision_wide_resnet50"
+
 
 
 class GanBaseModelName():

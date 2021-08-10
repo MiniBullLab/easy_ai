@@ -7,6 +7,7 @@ from easyai.utility.logger import EasyLogger
 import os.path
 from easyai.model_block.backbone.common.my_backbone import MyBackbone
 from easyai.model_block.utility.model_parse import ModelParse
+from easyai.model_block.utility.backbone_registry import REGISTERED_VISION_BACKBONE
 from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_D_BACKBONE
 from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_G_BACKBONE
@@ -31,6 +32,8 @@ class BackboneFactory():
                 result = self.get_backbone_from_cfg(input_name)
             else:
                 result = self.get_backbone_from_name(model_args)
+                if result is None:
+                    result = self.get_troch_vision_model(model_config)
                 if result is None:
                     result = self.get_gan_base_model(model_config)
                 if result is None:
@@ -63,7 +66,11 @@ class BackboneFactory():
         return result
 
     def get_troch_vision_model(self, model_config):
-        pass
+        input_name = model_config['type'].strip()
+        result = None
+        if REGISTERED_VISION_BACKBONE.has_class(input_name):
+            result = build_from_cfg(model_config, REGISTERED_VISION_BACKBONE)
+        return result
 
     def get_gan_base_model(self, model_config):
         input_name = model_config['type'].strip()
