@@ -100,7 +100,7 @@ class LossFactory():
         return loss_input
 
     def get_common_loss(self, loss_config):
-        loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
+        loss = build_from_cfg(loss_config, REGISTERED_COMMON_LOSS)
         return loss
 
     def get_cls_loss(self, loss_config):
