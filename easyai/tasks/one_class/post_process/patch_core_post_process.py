@@ -59,7 +59,7 @@ class PatchCorePostProcess(BasePostProcess):
         print('initial embedding size : ', total_embeddings.shape)
         print('final embedding size : ', embedding_coreset.shape)
         with open(self.save_path, 'wb') as f:
-            pickle.dump(self.embedding_coreset, f)
+            pickle.dump(embedding_coreset, f)
 
     def __call__(self, prediction):
         embedding_coreset = pickle.load(open(self.save_path, 'rb'))
