@@ -67,6 +67,8 @@ class BackboneFactory():
 
     def get_troch_vision_model(self, model_config):
         input_name = model_config['type'].strip()
+        if model_config.get('pretrained') is None:
+            model_config['pretrained'] = True
         result = None
         if REGISTERED_VISION_BACKBONE.has_class(input_name):
             result = build_from_cfg(model_config, REGISTERED_VISION_BACKBONE)
