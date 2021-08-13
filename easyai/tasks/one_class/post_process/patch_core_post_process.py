@@ -63,6 +63,8 @@ class PatchCorePostProcess(BasePostProcess):
 
     def __call__(self, prediction):
         embedding_coreset = pickle.load(open(self.save_path, 'rb'))
+        if prediction.ndim == 3:
+            prediction = np.expand_dims(prediction, 0)
         embedding_test = np.array(self.reshape_embedding(np.array(prediction)))
         if self.method == "KNN":
             knn = KNN(torch.from_numpy(embedding_coreset).cuda(), k=self.n_neighbors)
