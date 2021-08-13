@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 from easyai.name_manager.block_name import HeadType
+from easyai.model_block.base_block.common.upsample_layer import Upsample
 from easyai.model_block.utility.base_block import *
 
 
@@ -10,6 +11,7 @@ class PatchHead(BaseBlock):
 
     def __init__(self):
         super().__init__(HeadType.PatchHead)
+        self.up = Upsample(scale_factor=2)
 
     def embedding_concat(self, x, y):
         # from https://github.com/xiahaifeng1995/PaDiM-Anomaly-Detection-Localization-master
@@ -25,6 +27,10 @@ class PatchHead(BaseBlock):
         z = F.fold(z, kernel_size=s, output_size=(H1, W1), stride=s)
 
         return z
+
+    def up_concat(self, x, y):
+        z = self.up(y)
+        return torch.cat([x, z], dim=1)
 
     def forward(self, embeddings):
         x = embeddings[0]

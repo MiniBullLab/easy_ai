@@ -9,7 +9,7 @@ Karsten Roth, Latha Pemula, Joaquin Zepeda, Bernhard Schölkopf, Thomas Brox, Pe
 from easyai.name_manager.model_name import ModelName
 from easyai.name_manager.backbone_name import BackboneName
 from easyai.name_manager.block_name import NormalizationType, ActivationType
-from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.block_name import LayerType, BlockType, HeadType
 from easyai.name_manager.loss_name import LossName
 from easyai.model_block.base_block.common.pooling_layer import MultiAvgPool2d
 from easyai.model_block.head.cls.patch_head import PatchHead
@@ -57,6 +57,7 @@ class PatchCoreNet(BaseClassifyModel):
 
     def forward(self, x):
         base_outputs = []
+        multi_outputs = []
         layer_outputs = []
         output = []
         for key, block in self._modules.items():
@@ -68,7 +69,10 @@ class PatchCoreNet(BaseClassifyModel):
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
             elif BlockType.MultiAvgPool2d in key:
-                x = block(layer_outputs, base_outputs)
+                multi_outputs = block(layer_outputs, base_outputs)
+                x = multi_outputs[-1]
+            elif HeadType.PatchHead in key:
+                x = block(multi_outputs)
             elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
