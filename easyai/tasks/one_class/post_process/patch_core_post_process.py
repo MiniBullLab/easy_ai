@@ -78,7 +78,7 @@ class PatchCorePostProcess(BasePostProcess):
         w = (1 - (np.max(np.exp(N_b)) / np.sum(np.exp(N_b))))
         score = w * max(score_patches[:, 0])  # Image-level score
         if score > self.threshold:
-            class_index = 0
-        else:
             class_index = 1
+        else:
+            class_index = 0
         return class_index, score

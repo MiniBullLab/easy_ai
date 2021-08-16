@@ -32,9 +32,9 @@ class OneClassTest(BaseTest):
     def test(self, epoch=0):
         for index, batch_data in enumerate(self.dataloader):
             prediction, model_output = self.inference.infer(batch_data)
-            result, _ = self.inference.result_process.post_process(prediction)
+            _, score = self.inference.result_process.post_process(prediction)
             loss_value = self.compute_loss(model_output, batch_data)
-            self.evaluation.eval(result, batch_data['label'].detach().numpy())
+            self.evaluation.eval(score, batch_data['label'].detach().numpy())
             self.metirc_loss(index, loss_value)
             self.print_test_info(index, loss_value)
         roc_auc = self.evaluation.get_score()

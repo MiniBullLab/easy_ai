@@ -153,6 +153,7 @@ class HeadType():
 
     ClassifyHead = "ClassifyHead"
     PatchHead = "PatchHead"
+    PadimHead = "PadimHead"
 
     SSDBoxHead = "ssdBox"
     MultiSSDBoxHead = "multiSSDBox"
