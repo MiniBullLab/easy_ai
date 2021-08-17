@@ -3,7 +3,6 @@
 # Author:lipeijie
 
 import torch
-import os
 import pickle
 import numpy as np
 from sklearn.random_projection import SparseRandomProjection

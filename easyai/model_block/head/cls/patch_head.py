@@ -71,5 +71,5 @@ class PatchHead(BaseBlock):
     def forward(self, embeddings):
         x = embeddings[0]
         y = embeddings[1]
-        embedding = self.embedding_concat(x, y)  # n, c, h, w
+        embedding = self.up_concat(x, y)  # n, c, h, w
         return embedding

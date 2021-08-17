@@ -39,3 +39,4 @@ class PostProcessName():
     # one_class
     GanomalyPostProcess = "GanomalyPostProcess"
     PatchCorePostProcess = "PatchCorePostProcess"
+    PadimPostProcess = "PadimPostProcess"

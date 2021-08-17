@@ -6,8 +6,8 @@ function run_onnx_convert() {
     modelDir="./.easy_log/snapshot"
     imageDir="./.easy_log/one_class_img"
     outDir="${root_path}/.easy_log/out"
-    modelName=oneclassnet
-    outNetName=oneclassnet
+    modelName=OneClassNet
+    outNetName=OneClassNet
 
     inputColorFormat=1
     outputShape=1,3,224,224
@@ -79,8 +79,8 @@ function main() {
     echo ${dataset_train_path}
     echo ${dataset_val_path}
 
-    rm -rf ./.easy_log/classify*
-    CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task ClassNet --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
+    rm -rf ./.easy_log/one_class*
+    CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task OneClass --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
     if [ $? -ne 0 ]; then
           echo "Failed to start easy_ai"
           exit -1

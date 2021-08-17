@@ -39,6 +39,7 @@ class ModelName():
     ClassNet = "classnet"
     PatchCoreNet = "PatchCoreNet"
     PadimNet = "PadimNet"
+    OneClassNet = "OneClassNet"
 
     RPNDet2d = "rpnDet2d"
     YoloV3Det2d = "yolov3"
