@@ -137,9 +137,9 @@ class GanTrainConfig(ImageTaskConfig):
         config_dict['freeze_bn_layer_name'] = self.freeze_bn_layer_name
 
     def load_test_value(self, config_dict):
-        if config_dict.get('val_data', None) is not None:
-            self.val_data = int(config_dict['val_data'])
+        if config_dict.get('val_data', dict()) is not None:
+            self.val_data = config_dict['val_data']
 
     def save_test_value(self, config_dict):
-        if self.val_data is not None:
+        if self.val_data is not None and len(self.val_data) > 0:
             config_dict['val_data'] = self.val_data

@@ -49,27 +49,16 @@ class RecognizeText(BaseInference):
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
             image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
-            output = self.compute_output(output_list)
-        return output, output_list
+            model_output = self.model(image_data)
+            output = self.compute_output(model_output)
+        return output, model_output
 
-    def compute_output(self, output_list):
-        count = len(output_list)
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        prediction = None
-        if loss_count == 1 and output_count == 1:
-            prediction = self.model.lossList[0](output_list[0])
-        elif loss_count == 1 and output_count > 1:
-            prediction = self.model.lossList[0](output_list)
-        elif loss_count > 1 and loss_count == output_count:
-            preds = []
-            for i in range(0, count):
-                temp = self.model.lossList[i](output_list[i])
-                preds.append(temp)
-            prediction = torch.cat(preds, 1)
+    def compute_output(self, model_output):
+        output = self.common_output(model_output)
+        if isinstance(output, (list, tuple)):
+            prediction = torch.cat(output, 1)
         else:
-            EasyLogger.error("compute loss error")
+            prediction = output
         if prediction is not None:
             prediction = prediction.squeeze(0)
             prediction = prediction.data.cpu().numpy()

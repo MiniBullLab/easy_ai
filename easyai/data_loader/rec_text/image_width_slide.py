@@ -28,7 +28,7 @@ class ImageWidthSlide():
         _, h, w = image.shape
         output_image = []
         half_of_max_window = max(self.windows) // 2  # 从最大窗口的中线开始滑动，每次移动step的距离
-        for center_axis in range(half_of_max_window, w - half_of_max_window, step):
+        for center_axis in range(half_of_max_window, w - half_of_max_window, self.step):
             slice_channel = []
             for window_size in self.windows:
                 # print("window_size:", window_size)

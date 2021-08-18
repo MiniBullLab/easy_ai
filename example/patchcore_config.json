@@ -1,0 +1,165 @@
+{
+    "accumulated_batches": 1,
+    "base_lr": 0.0002,
+    "best_weights_name": "one_class_best.pt",
+    "d_lr_scheduler_config": {
+        "lr_stages": [
+            [
+                50,
+                1
+            ],
+            [
+                70,
+                0.1
+            ],
+            [
+                100,
+                0.01
+            ]
+        ],
+        "type": "MultiStageLR",
+        "warmup_iters": 1000,
+        "warmup_type": 0
+    },
+    "d_optimizer_config": {
+        "0": {
+            "betas": [
+                0.5,
+                0.999
+            ],
+            "eps": 1e-08,
+            "type": "Adam",
+            "weight_decay": 0
+        }
+    },
+    "d_skip_batch_backward": 1,
+    "data": {
+        "data_channel": 3,
+        "image_size": [
+            224,
+            224
+        ],
+        "mean": [
+            0.485,
+            0.456,
+            0.406
+        ],
+        "normalize_type": -1,
+        "resize_type": -1,
+        "std": [
+            0.229,
+            0.224,
+            0.225
+        ]
+    },
+    "display": 1,
+    "freeze_bn_layer_name": "",
+    "freeze_bn_type": 0,
+    "freeze_layer_name": "",
+    "freeze_layer_type": 0,
+    "g_lr_scheduler_config": {
+        "lr_stages": [
+            [
+                50,
+                1
+            ],
+            [
+                70,
+                0.1
+            ],
+            [
+                100,
+                0.01
+            ]
+        ],
+        "type": "MultiStageLR",
+        "warmup_iters": 1000,
+        "warmup_type": 0
+    },
+    "g_optimizer_config": {
+        "0": {
+            "betas": [
+                0.5,
+                0.999
+            ],
+            "eps": 1e-08,
+            "type": "Adam",
+            "weight_decay": 0
+        }
+    },
+    "g_skip_batch_backward": 1,
+    "is_save_epoch_model": false,
+    "latest_optimizer_name": "one_class_optimizer.pt",
+    "latest_weights_name": "one_class_latest.pt",
+    "max_epochs": 1,
+    "model_type": 0,
+    "post_process": {
+        "save_path": ".easy_log/embedding.pickle",
+        "threshold": 1.8,
+        "type": "PatchCorePostProcess"
+    },
+    "train_data": {
+        "dataloader": {
+            "batch_size": 32,
+            "collate_fn": {
+                "type": "ClassifyDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "shuffle": true,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "image_size": [
+                224,
+                224
+            ],
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "normalize_type": -1,
+            "resize_type": -1,
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ],
+            "type": "OneClassDataset"
+        }
+    },
+    "val_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "type": "ClassifyDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "shuffle": false,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "image_size": [
+                224,
+                224
+            ],
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "normalize_type": -1,
+            "resize_type": -1,
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ],
+            "type": "OneClassDataset"
+        }
+    }
+}

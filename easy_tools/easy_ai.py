@@ -64,6 +64,8 @@ def train_main():
         train_process.segment_model_train(dir_name)
     elif options.task_name.strip() == "TextNet":
         train_process.rec_text_model_train(dir_name)
+    elif options.task_name.strip() == "OneClass":
+        train_process.one_class_model_train(dir_name)
     else:
         EasyLogger.error("input task error!")
     EasyLogger.info("easyai process end!")

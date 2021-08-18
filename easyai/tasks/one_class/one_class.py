@@ -16,8 +16,11 @@ class OneClass(BaseInference):
 
     def __init__(self, model_name, gpu_id, config_path=None):
         super().__init__(model_name, config_path, TaskName.OneClass)
-        self.set_model_param(data_channel=self.task_config.data['data_channel'],
-                             image_size=self.task_config.data['image_size'])
+        if self.task_config.model_type == 0:
+            self.set_model_param(data_channel=self.task_config.data['data_channel'])
+        elif self.task_config.model_type == 1:
+            self.set_model_param(data_channel=self.task_config.data['data_channel'],
+                                 image_size=self.task_config.data['image_size'])
         self.set_model(gpu_id=gpu_id)
         self.result_process = OneClassResultProcess(self.task_config.post_process)
 
@@ -47,28 +50,20 @@ class OneClass(BaseInference):
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
             image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
-            output = self.compute_output(output_list)
-        return output, output_list
+            model_output = self.model(image_data)
+            output = self.compute_output(model_output)
+        return output, model_output
 
-    def compute_output(self, output_list):
+    def compute_output(self, model_output):
         output = None
         prediction = None
-        loss_count = len(self.model.g_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            output = self.model.g_loss_list[0](output_list[0])
-        elif loss_count == 1 and output_count > 1:
-            output = self.model.g_loss_list[0](output_list)
-        elif loss_count > 1 and loss_count == output_count:
-            output = []
-            for k in range(0, loss_count):
-                result = self.model.g_loss_list[k](output_list[k])
-                output.append(result)
-        else:
-            print("compute generator prediction error")
+        if self.task_config.model_type == 0:
+            output = self.common_output(model_output)
+        elif self.task_config.model_type == 1:
+            output = self.gan_output(model_output)
         if isinstance(output, (list, tuple)):
             prediction = [np.squeeze(x.data.cpu().numpy()) for x in output]
         elif output is not None:
             prediction = np.squeeze(output.data.cpu().numpy())
         return prediction
+

@@ -13,7 +13,7 @@ from easyai.model_block.utility.base_block import *
 class ConvBNActivationBlock1d(BaseBlock):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
-                 dilation=1, groups=1, bias=True, bnName=NormalizationType.BatchNormalize1d,
+                 dilation=1, groups=1, bias=False, bnName=NormalizationType.BatchNormalize1d,
                  activationName=ActivationType.ReLU):
         super().__init__(BlockType.ConvBNActivationBlock1d)
         conv = nn.Conv1d(in_channels, out_channels, kernel_size,

@@ -68,3 +68,8 @@ class ClassifyPointCloudAugment():
         shifts = np.random.uniform(-shift_range, shift_range, 3)
         src_cloud += shifts
         return src_cloud
+
+    def jitter_pointcloud(self, src_cloud, sigma=0.01, clip=0.05):
+        N, C = src_cloud.shape
+        src_cloud += np.clip(sigma * np.random.randn(N, C), -1 * clip, clip)
+        return src_cloud

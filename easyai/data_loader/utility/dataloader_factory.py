@@ -124,7 +124,7 @@ class DataloaderFactory():
             if 'transform_func' in config_args:
                 type_name = config_args['transform_func']['type'].strip()
                 if REGISTERED_DATA_TRANSFORMS.has_class(type_name):
-                    transform_func = build_from_cfg(config_args.pop('collate_fn'),
+                    transform_func = build_from_cfg(config_args.pop('transform_func'),
                                                     REGISTERED_DATA_TRANSFORMS)
                     config_args['transform_func'] = transform_func
                 else:

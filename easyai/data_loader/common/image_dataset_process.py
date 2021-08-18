@@ -45,6 +45,9 @@ class ImageDataSetProcess(BaseDataSetProcess):
             if int(resize_w) <= 0 or int(resize_h) <= 0:
                 return None, (None, None)
             result = self.cv_image_resize(src_image, (int(resize_w), int(resize_h)))
+        elif resize_type == 5:
+            temp_size = self.get_random_size(dst_size)
+            result = self.cv_image_resize(src_image, temp_size)
         return result
 
     def inv_resize(self, src_size, dst_size, resize_type, image_data, **param):

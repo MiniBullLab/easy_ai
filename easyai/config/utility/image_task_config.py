@@ -20,6 +20,7 @@ class ImageTaskConfig(BaseConfig):
 
         self.save_result_path = None
 
+        self.model_type = 0
         self.model_config = None
 
         # test
@@ -55,13 +56,17 @@ class ImageTaskConfig(BaseConfig):
     def load_image_data_value(self, config_dict):
         if config_dict.get('data', dict()) is not None:
             self.data = config_dict['data']
-
+        self.model_type = config_dict.get('model_type', 0)
+        self.model_config = config_dict.get('model_config', None)
         if config_dict.get('post_process', None) is not None:
             self.post_process = config_dict['post_process']
 
     def save_image_data_value(self, config_dict):
         if self.data is not None and len(self.data) > 0:
             config_dict['data'] = self.data
+        config_dict['model_type'] = self.model_type
+        if self.model_config is not None:
+            config_dict['model_config'] = self.model_config
         if self.post_process is not None:
             config_dict['post_process'] = self.post_process
 

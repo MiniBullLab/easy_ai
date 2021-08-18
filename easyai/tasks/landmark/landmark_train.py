@@ -55,28 +55,5 @@ class LandmarkTrain(CommonTrain):
         loss_info['all_loss'] = loss.item()
         return loss_info
 
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        loss_info = {}
-        if loss_count == 1 and output_count == 1:
-            loss = self.model.lossList[0](output_list[0], targets)
-            loss_info = self.model.lossList[0].print_loss_info()
-        elif loss_count == 1 and output_count > 1:
-            loss = self.model.lossList[0](output_list, targets)
-            loss_info = self.model.lossList[0].print_loss_info()
-        elif loss_count > 1 and loss_count == output_count:
-            loss = self.model.lossList[0](output_list[0], targets)
-            loss_info = self.model.lossList[0].print_loss_info()
-            for k in range(1, loss_count):
-                loss += self.model.lossList[k](output_list[k], targets)
-                temp_info = self.model.lossList[k].print_loss_info()
-                for key, value in temp_info.items():
-                    loss_info[key] += value
-        else:
-            print("compute loss error")
-        return loss, loss_info
-
     def test(self, val_path, epoch, save_model_path):
         pass

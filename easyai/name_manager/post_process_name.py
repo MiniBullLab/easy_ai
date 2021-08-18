@@ -35,3 +35,8 @@ class PostProcessName():
     CTCPostProcess = "CTCPostProcess"
     TransformerPostProcess = "TransformerPostProcess"
     ACEPostProcess = "ACEPostProcess"
+
+    # one_class
+    GanomalyPostProcess = "GanomalyPostProcess"
+    PatchCorePostProcess = "PatchCorePostProcess"
+    PadimPostProcess = "PadimPostProcess"

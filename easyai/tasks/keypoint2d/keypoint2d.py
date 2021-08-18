@@ -45,11 +45,11 @@ class KeyPoint2d(BaseInference):
         return output
 
     def compute_output(self, output_list):
-        count = len(output_list)
-        preds = []
-        for i in range(0, count):
-            temp = self.model.lossList[i](output_list[i])
-            preds.append(temp)
-        prediction = torch.cat(preds, 1)
-        prediction = prediction.squeeze(0)
+        output = self.common_output(output_list)
+        if isinstance(output, (list, tuple)):
+            prediction = torch.cat(output, 1)
+        else:
+            prediction = output
+        if prediction is not None:
+            prediction = prediction.squeeze(0)
         return prediction

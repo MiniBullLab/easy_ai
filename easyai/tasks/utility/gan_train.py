@@ -85,3 +85,39 @@ class GanTrain(BaseTrain):
         self.torchModelProcess.save_latest_model(epoch, 0, self.model, save_model_path)
 
         return save_model_path
+
+    def compute_g_loss(self, output_list, batch_data):
+        loss = []
+        loss_count = len(self.model.g_loss_list)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            result = self.model.g_loss_list[0](output_list[0], batch_data)
+            loss.append(result)
+        elif loss_count == 1 and output_count > 1:
+            result = self.model.g_loss_list[0](output_list, batch_data)
+            loss.append(result)
+        elif loss_count > 1 and loss_count == output_count:
+            for k in range(0, loss_count):
+                result = self.model.g_loss_list[k](output_list[k], batch_data)
+                loss.append(result)
+        else:
+            EasyLogger.error("compute generator loss error")
+        return loss
+
+    def compute_d_loss(self, output_list, batch_data):
+        loss = []
+        loss_count = len(self.model.d_loss_list)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            result = self.model.d_loss_list[0](output_list[0], batch_data)
+            loss.append(result)
+        elif loss_count == 1 and output_count > 1:
+            result = self.model.d_loss_list[0](output_list, batch_data)
+            loss.append(result)
+        elif loss_count > 1 and loss_count == output_count:
+            for k in range(0, loss_count):
+                result = self.model.d_loss_list[k](output_list[k], batch_data)
+                loss.append(result)
+        else:
+            EasyLogger.error("compute discriminator loss error")
+        return loss

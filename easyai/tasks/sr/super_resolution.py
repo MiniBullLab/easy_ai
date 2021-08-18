@@ -61,21 +61,13 @@ class SuperResolution(BaseInference):
         pass
 
     def compute_output(self, output_list):
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        prediction = None
-        if loss_count == 1 and output_count == 1:
-            temp_output = self.model.lossList[0](output_list[0])
-            prediction = temp_output.cpu().detach().numpy()
-        elif loss_count > 1 and loss_count == output_count:
-            preds = []
-            for i in range(0, loss_count):
-                temp = self.model.lossList[i](output_list[i])
-                preds.append(temp)
-            prediction = torch.cat(preds, 1)
-            prediction = np.squeeze(prediction.cpu().detach().numpy())
+        output = self.common_output(output_list)
+        if isinstance(output, (list, tuple)):
+            prediction = torch.cat(output, 1)
         else:
-            print("sr compute output error!")
+            prediction = output
+        if prediction is not None:
+            prediction = np.squeeze(prediction.data.cpu().numpy())
         return prediction
 
 

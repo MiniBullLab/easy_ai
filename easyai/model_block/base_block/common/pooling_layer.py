@@ -154,3 +154,23 @@ class SequencePooling(BaseBlock):
     def forward(self, x):
         x = self.adaptive_pool(x)
         return x
+
+
+class MultiAvgPool2d(BaseBlock):
+
+    def __init__(self, layers, kernel_size, stride=None,
+                 padding=0, ceil_mode=False):
+        super().__init__(BlockType.MultiAvgPool2d)
+        self.layers = [int(x) for x in layers.split(',') if x.strip()]
+        self.avg_pool = nn.AvgPool2d(kernel_size, stride, padding, ceil_mode)
+
+    def forward(self, layer_outputs, base_outputs):
+        # print(self.layers)
+        embeddings = []
+        temp_layer_outputs = [layer_outputs[i] if i < 0 else base_outputs[i]
+                              for i in self.layers]
+        for feature in temp_layer_outputs:
+            temp_x = self.avg_pool(feature)
+            embeddings.append(temp_x)
+        return embeddings
+

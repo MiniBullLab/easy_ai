@@ -131,6 +131,41 @@ class BaseInference(BaseTask):
         shape = src_data.shape[:2]  # shape = [height, width]
         self.src_size = (shape[1], shape[0])
 
+    def common_output(self, output_list):
+        output = None
+        count = len(output_list)
+        loss_count = len(self.model.lossList)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            output = self.model.lossList[0](output_list[0])
+        elif loss_count == 1 and output_count > 1:
+            output = self.model.lossList[0](output_list)
+        elif loss_count > 1 and loss_count == output_count:
+            output = []
+            for i in range(0, count):
+                temp = self.model.lossList[i](output_list[i])
+                output.append(temp)
+        else:
+            EasyLogger.error("compute prediction error")
+        return output
+
+    def gan_output(self, output_list):
+        output = None
+        loss_count = len(self.model.g_loss_list)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            output = self.model.g_loss_list[0](output_list[0])
+        elif loss_count == 1 and output_count > 1:
+            output = self.model.g_loss_list[0](output_list)
+        elif loss_count > 1 and loss_count == output_count:
+            output = []
+            for k in range(0, loss_count):
+                result = self.model.g_loss_list[k](output_list[k])
+                output.append(result)
+        else:
+            EasyLogger.error("compute generator prediction error")
+        return output
+
     @property
     def device(self):
         return self.torchModelProcess.get_device()

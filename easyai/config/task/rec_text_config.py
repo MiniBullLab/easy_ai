@@ -102,7 +102,7 @@ class RecognizeTextConfig(CommonTrainConfig):
                                                         "image_size": self.data['image_size']}
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 2
+        self.train_data['dataloader']['batch_size'] = 32
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True

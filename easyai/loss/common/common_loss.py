@@ -71,8 +71,11 @@ class EmptyLoss(BaseLoss):
     def __init__(self):
         super().__init__(LossName.EmptyLoss)
 
-    def forward(self, input_data, target=None):
-        pass
+    def forward(self, input_data, batch_data=None):
+        if batch_data is not None:
+            return torch.Tensor([0])
+        else:
+            return input_data
 
 
 @REGISTERED_COMMON_LOSS.register_module(LossName.MeanSquaredErrorLoss)

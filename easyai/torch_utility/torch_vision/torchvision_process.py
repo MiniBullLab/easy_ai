@@ -5,6 +5,7 @@
 import torchvision.transforms as transforms
 from torchvision.transforms import Compose, CenterCrop
 from torchvision.transforms import ToTensor, Resize
+from PIL import Image
 
 
 class TorchVisionProcess():
@@ -22,6 +23,20 @@ class TorchVisionProcess():
         elif normalize_type == -2:
             transform = transforms.Compose([
                 transforms.ToTensor()
+            ])
+        return transform
+
+    def torch_resize(self, input_size, resize_type=-1):
+        transform = None
+        if resize_type == -1:
+            transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize(input_size, Image.ANTIALIAS)
+            ])
+        elif resize_type == -2:
+            transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.RandomCrop(input_size, padding=4)
             ])
         return transform
 

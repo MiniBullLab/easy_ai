@@ -48,22 +48,11 @@ class Polygon2d(BaseInference):
         return output, output_list
 
     def compute_output(self, output_list):
-        count = len(output_list)
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        prediction = None
-        if loss_count == 1 and output_count == 1:
-            prediction = self.model.lossList[0](output_list[0])
-        elif loss_count == 1 and output_count > 1:
-            prediction = self.model.lossList[0](output_list)
-        elif loss_count > 1 and loss_count == output_count:
-            preds = []
-            for i in range(0, count):
-                temp = self.model.lossList[i](output_list[i])
-                preds.append(temp)
-            prediction = torch.cat(preds, 1)
+        output = self.common_output(output_list)
+        if isinstance(output, (list, tuple)):
+            prediction = torch.cat(output, 1)
         else:
-            print("compute loss error")
+            prediction = output
         if prediction is not None:
             prediction = prediction.squeeze(0)
             prediction = prediction.data.cpu().numpy()

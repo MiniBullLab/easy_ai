@@ -7,12 +7,14 @@ from easyai.utility.logger import EasyLogger
 import os
 from easyai.tools.utility.copy_image import CopyImage
 from easyai.train_task import TrainTask
+from easyai.test_task import TestTask
 from easyai.name_manager.task_name import TaskName
 from easyai.tools.sample_tool.create_classify_sample import CreateClassifySample
 from easyai.tools.sample_tool.create_detection_sample import CreateDetectionSample
 from easyai.tools.sample_tool.create_segment_sample import CreateSegmentionSample
 from easyai.tools.sample_tool.create_rec_text_sample import CreateRecognizeTextSample
 from easyai.tools.sample_tool.sample_info_get import SampleInformation
+from easyai.tools.feature_save.one_class_feature_save import OneClassFeatureSave
 from easy_tools.model_train.arm_config import ARMConfig
 from easy_tools.model_train.segnet_process import SegNetProcess
 
@@ -135,6 +137,24 @@ class EasyAiModelTrain():
             save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "text_img")
             self.copy_process.copy(self.train_path, save_image_dir, '|')
             self.arm_config.create_textnet_config(input_name, output_name)
+        except Exception as err:
+            EasyLogger.error(traceback.format_exc())
+            EasyLogger.error(err)
+
+    def one_class_model_train(self, dir_name):
+        input_name = ['one_class_input']
+        output_name = ['one_class_output']
+        model_path = os.path.join(dir_name, "./data/OneClassNet.pt")
+        config_path = os.path.join(dir_name, "./data/OneClass.config")
+        try:
+            task = OneClassFeatureSave("OneClassNet", 0, config_path)
+            task.load_weights(model_path)
+            task.process_test(self.train_path)
+            test_task = TestTask(TaskName.OneClass, self.val_path)
+            test_task.set_convert_param(True, input_name, output_name)
+            test_task.test("OneClassNet", 0, model_path, config_path)
+            save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "one_class_img")
+            self.copy_process.copy(self.train_path, save_image_dir)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)

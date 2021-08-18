@@ -12,7 +12,8 @@ from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 
 __all__ = ['ResNet18', 'ResNet18V2',
-           'ResNet34', 'TextResNet34', 'ResNet50',
+           'ResNet34', 'TextResNet34',
+           'ResNet50', 'WideResnet50V2',
            'ResNet101', 'ResNet152']
 
 
@@ -21,7 +22,8 @@ class ResNet(BaseBackbone):
                  strides=(1, 2, 2, 2), dilations=(1, 1, 1, 1), use_short=(0, 0, 0, 0),
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU,
-                 block_flag=0, head_type=1, first_stride=2):
+                 block_flag=0, head_type=1,
+                 first_stride=2, width_group=64):
         super().__init__(data_channel)
         self.set_name(BackboneName.ResNet18)
         self.num_blocks = num_blocks
@@ -36,6 +38,7 @@ class ResNet(BaseBackbone):
         self.in_channels = self.first_output
         self.head_type = head_type
         self.first_stride = first_stride
+        self.width_group = width_group
 
         self.create_block_list()
 
@@ -109,16 +112,20 @@ class ResNet(BaseBackbone):
             expansion = 1
         elif block_flag == 1:
             expansion = 4
+        elif block_flag == 2:
+            expansion = 4
         down_layers = ResidualBlock(self.block_flag, self.in_channels, out_channels, stride,
                                     dilation=dilation, expansion=expansion,
                                     use_short=use_short,
+                                    base_width=self.width_group,
                                     bn_name=bn_name,
                                     activation_name=activation)
         name = "down_%s" % down_layers.get_name()
         temp_output_channel = out_channels * expansion
         self.add_block_list(name, down_layers, temp_output_channel)
         for i in range(num_block - 1):
-            layer = ResidualBlock(self.block_flag, temp_output_channel, out_channels, expansion=expansion,
+            layer = ResidualBlock(self.block_flag, temp_output_channel, out_channels,
+                                  expansion=expansion, base_width=self.width_group,
                                   bn_name=bn_name, activation_name=activation)
             temp_output_channel = out_channels * expansion
             self.add_block_list(layer.get_name(), layer, temp_output_channel)
@@ -194,6 +201,18 @@ class ResNet152(ResNet):
         self.set_name(BackboneName.ResNet152)
 
 
+@REGISTERED_CLS_BACKBONE.register_module(BackboneName.WideResnet50V2)
+class WideResnet50V2(ResNet):
+
+    def __init__(self, data_channel):
+        super().__init__(data_channel=data_channel,
+                         num_blocks=[3, 4, 6, 3],
+                         head_type=1,
+                         block_flag=2,
+                         width_group=64 * 2)
+        self.set_name(BackboneName.WideResnet50V2)
+
+
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.TextResNet34)
 class TextResNet34(ResNet):
 
@@ -206,4 +225,5 @@ class TextResNet34(ResNet):
                          head_type=2,
                          first_stride=1)
         self.set_name(BackboneName.TextResNet34)
+
 

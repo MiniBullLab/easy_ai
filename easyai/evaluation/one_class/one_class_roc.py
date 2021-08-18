@@ -40,6 +40,10 @@ class OneClassROC(BaseEvaluation):
         # True/False Positive Rates.
         fpr, tpr, _ = roc_curve(self.gt_labels, self.scores)
         roc_auc = auc(fpr, tpr)
+        if float(roc_auc) == float("nan") or \
+                float(roc_auc) == float("inf") or \
+                float(roc_auc) == float("-inf"):
+            return 0
         self.draw_roc(fpr, tpr, roc_auc)
         self.print_evaluation(roc_auc)
         return float(roc_auc)

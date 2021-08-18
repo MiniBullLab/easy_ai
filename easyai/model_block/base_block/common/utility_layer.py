@@ -101,7 +101,7 @@ class RouteLayer(BaseBlock):
         # print(self.layers)
         temp_layer_outputs = [layer_outputs[i] if i < 0 else base_outputs[i]
                               for i in self.layers]
-        x = torch.cat(temp_layer_outputs, 1)
+        x = torch.cat(temp_layer_outputs, dim=1)
         return x
 
 

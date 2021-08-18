@@ -10,6 +10,7 @@ class BackboneName():
     ResNet34 = "resnet34"
     TextResNet34 = "text_resnet34"
     ResNet50 = "resnet50"
+    WideResnet50V2 = "wide_resnet50_2"
     ResNet101 = "resnet101"
     ResNet152 = "resnet152"
     Darknet53 = "darknet53"
@@ -112,6 +113,10 @@ class BackboneName():
 
     HourGlassNet = "hourglassnet"
 
+    VisionResnet50 = "vision_resnet50"
+    VisionWideResnet50 = "vision_wide_resnet50"
+
+
 
 class GanBaseModelName():
 
@@ -127,6 +132,7 @@ class PointCloudBackboneName():
 
     # pc
     PointNet = "pointnet"
+    PointNetV2 = "pointnetv2"
     PointNet2 = "pointnet2"
 
 

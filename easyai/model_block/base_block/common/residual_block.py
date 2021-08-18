@@ -16,7 +16,8 @@ from easyai.model_block.utility.base_block import *
 class ResidualBlock(BaseBlock):
 
     def __init__(self, flag, in_channels, out_channels,
-                 stride=1, dilation=1, expansion=1, use_short=False,
+                 stride=1, dilation=1, expansion=1, groups=1,
+                 use_short=0, base_width=64,
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(BlockType.ResidualBlock)
@@ -54,10 +55,37 @@ class ResidualBlock(BaseBlock):
                                       stride=stride,
                                       padding=dilation,
                                       dilation=dilation,
+                                      groups=groups,
                                       bias=False,
                                       bnName=bn_name,
                                       activationName=activation_name),
                 ConvBNActivationBlock(in_channels=out_channels,
+                                      out_channels=out_channels * expansion,
+                                      kernel_size=1,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=ActivationType.Linear)
+            )
+        elif flag == 2:
+            width = int(out_channels * (base_width / 64.)) * groups
+            self.residual = nn.Sequential(
+                ConvBNActivationBlock(in_channels=in_channels,
+                                      out_channels=width,
+                                      kernel_size=1,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=activation_name),
+                ConvBNActivationBlock(in_channels=width,
+                                      out_channels=width,
+                                      kernel_size=3,
+                                      stride=stride,
+                                      padding=dilation,
+                                      dilation=dilation,
+                                      groups=groups,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=activation_name),
+                ConvBNActivationBlock(in_channels=width,
                                       out_channels=out_channels * expansion,
                                       kernel_size=1,
                                       bias=False,
@@ -98,7 +126,8 @@ class ResidualBlock(BaseBlock):
 
 class ResidualV2Block(BaseBlock):
 
-    def __init__(self, flag, in_channels, out_channels, stride=1, dilation=1, expansion=1,
+    def __init__(self, flag, in_channels, out_channels,
+                 stride=1, dilation=1, expansion=1,
                  bn_name=NormalizationType.BatchNormalize2d,
                  activation_name=ActivationType.ReLU):
         super().__init__(BlockType.ResidualV2Block)
@@ -150,7 +179,11 @@ class ResidualV2Block(BaseBlock):
             )
 
         self.shortcut = nn.Sequential()
-        if stride != 1 or in_channels != expansion * out_channels:
+        if isinstance(stride, (list, tuple)):
+            temp_stride = max(stride)
+        else:
+            temp_stride = stride
+        if temp_stride != 1 or in_channels != expansion * out_channels:
             self.shortcut = BNActivationConvBlock(in_channels=in_channels,
                                                   out_channels=out_channels * expansion,
                                                   kernel_size=1,
