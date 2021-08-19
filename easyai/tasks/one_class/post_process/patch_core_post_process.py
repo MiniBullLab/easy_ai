@@ -2,41 +2,42 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch
-import pickle
+import os
 import numpy as np
+import cv2
 from sklearn.random_projection import SparseRandomProjection
 from sklearn.neighbors import NearestNeighbors
 from easyai.tasks.one_class.post_process.kcenter_greedy import kCenterGreedy
-from easyai.tasks.one_class.post_process.KNN import KNN
 from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_POST_PROCESS.register_module(PostProcessName.PatchCorePostProcess)
 class PatchCorePostProcess(BasePostProcess):
 
     def __init__(self, save_path, threshold,
-                 sampling_ratio=0.01, neighbor_count=9):
+                 sampling_ratio=0.01, neighbor_count=9,
+                 output_channel=1536, method="KNN"):
         super().__init__()
         self.save_path = save_path
         self.threshold = threshold
         self.sampling_ratio = sampling_ratio
         self.neighbor_count = neighbor_count
-        self.method = ""
+        self.output_channel = output_channel
+        self.method = method
         self.embedding_list = []
         # Random projection
         # 'auto' => Johnson-Lindenstrauss lemma
-        self.randomprojector = SparseRandomProjection(n_components='auto',
-                                                      eps=0.9)
+        self.randomprojector = SparseRandomProjection(n_components='auto', eps=0.9)
 
     def reset(self):
         self.embedding_list = []
 
     def reshape_embedding(self, embedding):
         embedding_list = []
-        print("embedding shape: {}".format(embedding.shape))
+        EasyLogger.debug("embedding shape: {}".format(embedding.shape))
         for k in range(embedding.shape[0]):
             for i in range(embedding.shape[2]):
                 for j in range(embedding.shape[3]):
@@ -44,6 +45,7 @@ class PatchCorePostProcess(BasePostProcess):
         return embedding_list
 
     def add_embedding(self, prediction):
+        print("training: {}".format(prediction.shape))
         temp_embedding = self.reshape_embedding(np.array(prediction))  # n*h*w, c
         self.embedding_list.extend(temp_embedding)
 
@@ -51,28 +53,40 @@ class PatchCorePostProcess(BasePostProcess):
         total_embeddings = np.array(self.embedding_list)
         self.randomprojector.fit(total_embeddings)
         # Coreset Subsampling
-        selector = kCenterGreedy(total_embeddings, 0, 0)
-        selected_idx = selector.select_batch(model=self.randomprojector, already_selected=[],
-                                             N=int(total_embeddings.shape[0] * float(self.sampling_ratio)))
+        sampling_count = int(total_embeddings.shape[0] * float(self.sampling_ratio))
+        selector = kCenterGreedy(total_embeddings, 0)
+        selected_idx = selector.select_batch(model=self.randomprojector,
+                                             already_selected=[],
+                                             N=sampling_count)
         embedding_coreset = total_embeddings[selected_idx]
-        print('initial embedding size : ', total_embeddings.shape)
-        print('final embedding size : ', embedding_coreset.shape)
-        with open(self.save_path, 'wb') as f:
-            pickle.dump(embedding_coreset, f)
+        EasyLogger.debug('initial embedding size : {}'.format(total_embeddings.shape))
+        EasyLogger.debug('final embedding size : {}'.format(embedding_coreset.shape))
+        embedding_coreset.tofile(self.save_path)
 
     def __call__(self, prediction):
-        embedding_coreset = pickle.load(open(self.save_path, 'rb'))
+        if not os.path.exists(self.save_path):
+            EasyLogger.error("%s: embedding not exit!" % self.save_path)
+            return None, 0
+        embedding_data = np.fromfile(self.save_path, dtype=np.float32)
+        embedding_coreset = embedding_data.reshape(-1, self.output_channel)
         if prediction.ndim == 3:
-            prediction = np.expand_dims(prediction, 0)
-        embedding_test = np.array(self.reshape_embedding(np.array(prediction)))
+            prediction = np.expand_dims(prediction, axis=0)
+        embedding_test = np.array(self.reshape_embedding(np.array(prediction)),
+                                  dtype=np.float32)
         if self.method == "KNN":
-            knn = KNN(torch.from_numpy(embedding_coreset).cuda(), k=self.n_neighbors)
-            score_patches = knn(torch.from_numpy(embedding_test).cuda())[0].cpu().detach().numpy()
+            knn = cv2.ml.KNearest_create()
+            knn.setAlgorithmType(cv2.ml.KNEAREST_BRUTE_FORCE)
+            labels = [0 for _ in range(embedding_coreset.shape[0])]
+            labels = np.asarray(labels)
+            knn.train(embedding_coreset, cv2.ml.ROW_SAMPLE, labels)
+            result = knn.findNearest(embedding_test, k=self.neighbor_count)
+            score_patches = result[-1]
         else:
             nbrs = NearestNeighbors(n_neighbors=self.neighbor_count,
                                     algorithm='ball_tree',
                                     metric='minkowski', p=2).fit(embedding_coreset)
             score_patches, _ = nbrs.kneighbors(embedding_test)
+        # print(score_patches.shape)
         N_b = score_patches[np.argmax(score_patches[:, 0])]
         w = (1 - (np.max(np.exp(N_b)) / np.sum(np.exp(N_b))))
         score = w * max(score_patches[:, 0])  # Image-level score

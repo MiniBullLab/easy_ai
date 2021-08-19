@@ -94,7 +94,7 @@
     "max_epochs": 1,
     "model_type": 0,
     "post_process": {
-        "save_path": ".easy_log/embedding.pickle",
+        "save_path": ".easy_log/embedding.bin",
         "threshold": 1.8,
         "type": "PatchCorePostProcess"
     },
