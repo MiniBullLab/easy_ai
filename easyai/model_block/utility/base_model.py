@@ -16,3 +16,6 @@ class BaseModel(AbstractModel):
     @abc.abstractmethod
     def create_loss_list(self, input_dict=None):
         pass
+
+    def get_data_channel(self):
+        return self.data_channel

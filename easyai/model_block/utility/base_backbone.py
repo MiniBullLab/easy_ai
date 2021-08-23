@@ -13,3 +13,6 @@ class BaseBackbone(AbstractModel):
 
     def get_outchannel_list(self):
         return self.block_out_channels
+
+    def get_data_channel(self):
+        return self.data_channel

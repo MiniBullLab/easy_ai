@@ -61,6 +61,11 @@ class ClassifyConfig(CommonTrainConfig):
 
         self.post_process = {'type': 'MaxPostProcess'}
 
+        self.model_type = 0
+        self.model_config = {'type': 'classnet',
+                             'data_channel': self.data['data_channel'],
+                             'class_number': len(self.class_name)}
+
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}

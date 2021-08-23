@@ -44,6 +44,8 @@ class OneClassConfig(GanTrainConfig):
                      'std': (0.5, 0.5, 0.5)}
 
         self.model_type = 0
+        self.model_config = {'type': 'PatchCoreNet',
+                             'data_channel': self.data['data_channel']}
 
         self.post_process = {'type': 'PatchCorePostProcess',
                              'save_path': "./embedding.pickle",

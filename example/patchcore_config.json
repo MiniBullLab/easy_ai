@@ -53,6 +53,10 @@
         ]
     },
     "display": 1,
+    "evaluation": {
+        "save_dir": "./.easy_log",
+        "type": "OneClassROC"
+    },
     "freeze_bn_layer_name": "",
     "freeze_bn_type": 0,
     "freeze_layer_name": "",
@@ -92,6 +96,10 @@
     "latest_optimizer_name": "one_class_optimizer.pt",
     "latest_weights_name": "one_class_latest.pt",
     "max_epochs": 1,
+    "model_config": {
+        "data_channel": 3,
+        "type": "PatchCoreNet"
+    },
     "model_type": 0,
     "post_process": {
         "save_path": ".easy_log/embedding.bin",

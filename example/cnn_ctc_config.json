@@ -50,6 +50,11 @@
     },
     "max_epochs": 150,
     "model_type": 0,
+    "model_config": {
+        "data_channel": 3,
+        "class_number": 38,
+        "type": "CNNCTC"
+    },
     "optimizer_config": {
         "0": {
             "type": "Adam",
