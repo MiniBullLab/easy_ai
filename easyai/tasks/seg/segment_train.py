@@ -19,10 +19,6 @@ class SegmentionTrain(CommonTrain):
         self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
                              class_number=len(self.train_task_config.segment_class))
         self.set_model(gpu_id=gpu_id)
-        self.output_process = SegmentResultProcess(self.train_task_config.data['image_size'],
-                                                   self.train_task_config.data['resize_type'],
-                                                   self.train_task_config.post_process)
-
         self.segment_test = SegmentionTest(model_name, gpu_id, self.train_task_config)
 
     def train(self, train_path, val_path):
@@ -61,6 +57,33 @@ class SegmentionTrain(CommonTrain):
             self.optimizer.zero_grad()
         loss_info['all_loss'] = loss.item()
         return loss_info
+
+    def compute_loss(self, output_list, batch_data):
+        loss = 0
+        loss_count = len(self.model.lossList)
+        output_count = len(output_list)
+        loss_info = dict()
+        if loss_count == 1 and output_count == 1:
+            output = SegmentResultProcess.output_feature_map_resize(output_list[0],
+                                                                    batch_data)
+            loss = self.model.lossList[0](output, batch_data)
+            loss_info = self.model.lossList[0].print_loss_info()
+        elif loss_count == 1 and output_count > 1:
+            loss = self.model.lossList[0](output_list, batch_data)
+            loss_info = self.model.lossList[0].print_loss_info()
+        elif loss_count > 1 and loss_count == output_count:
+            loss = self.model.lossList[0](output_list[0], batch_data)
+            loss_info = self.model.lossList[0].print_loss_info()
+            for k in range(1, loss_count):
+                output = SegmentResultProcess.output_feature_map_resize(output_list[k],
+                                                                        batch_data)
+                loss += self.model.lossList[k](output, batch_data)
+                temp_info = self.model.lossList[k].print_loss_info()
+                for key, value in temp_info.items():
+                    loss_info[key] += value
+        else:
+            EasyLogger.error("compute loss error")
+        return loss, loss_info
 
     def test(self, val_path, epoch, save_model_path):
         if val_path is not None and os.path.exists(val_path):

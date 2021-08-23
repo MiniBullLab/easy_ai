@@ -61,6 +61,7 @@ class SuperResolutionConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "SuperResolutionDataSetCollate"}
 
+        self.evaluation = {"type": "SuperResolutionPSNR"}
         self.evaluation_result_name = 'sr_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
                                                    self.evaluation_result_name)

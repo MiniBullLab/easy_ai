@@ -5,7 +5,6 @@
 import os
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.det2d.detect2d import Detection2d
-from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -20,9 +19,6 @@ class Detection2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(5e-3)
-        self.evaluation_args = {"type": EvaluationName.DetectionMeanAp,
-                                'class_names': self.test_task_config.detect2d_class}
-        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
@@ -36,13 +32,12 @@ class Detection2dTest(BaseTest):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
         for i, batch_data in enumerate(self.dataloader):
-            prediction, output_list = self.inference.infer(batch_data)
+            result, output_list = self.inference.single_image_process(batch_data['src_size'][0].numpy(),
+                                                                      batch_data)
             loss_value = self.compute_loss(output_list, batch_data)
-            detection_objects = self.inference.result_process.post_process(prediction,
-                                                                           batch_data['src_size'][0].numpy())
             self.metirc_loss(i, loss_value)
             self.print_test_info(i, loss_value)
-            self.inference.save_result(batch_data['image_path'][0], detection_objects, 1)
+            self.inference.save_result(batch_data['image_path'][0], result, 1)
 
         mAP, aps = self.evaluation.eval(self.test_task_config.save_result_dir,
                                         self.val_path)

@@ -6,7 +6,6 @@ import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.seg.segment import Segmentation
 from easyai.tasks.seg.segment_result_process import SegmentResultProcess
-from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -20,12 +19,6 @@ class SegmentionTest(BaseTest):
         self.inference = Segmentation(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.output_process = SegmentResultProcess(self.test_task_config.data['image_size'],
-                                                   self.test_task_config.data['resize_type'],
-                                                   self.test_task_config.post_process)
-        self.evaluation_args = {"type": EvaluationName.SegmentionMetric,
-                                'num_class': len(self.test_task_config.segment_class)}
-        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
@@ -39,7 +32,7 @@ class SegmentionTest(BaseTest):
     def test(self, epoch=0):
         for i, batch_data in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(batch_data)
-            result, _ = self.output_process.post_process(prediction)
+            result, _ = self.inference.result_process.post_process(prediction)
             loss_value = self.compute_loss(output_list, batch_data)
             self.evaluation.numpy_eval(result, batch_data['label'][0].data.cpu().numpy())
             self.metirc_loss(i, loss_value)
@@ -56,15 +49,15 @@ class SegmentionTest(BaseTest):
         output_count = len(output_list)
         with torch.no_grad():
             if loss_count == 1 and output_count == 1:
-                output = self.output_process.output_feature_map_resize(output_list[0],
-                                                                       batch_data)
+                output = SegmentResultProcess.output_feature_map_resize(output_list[0],
+                                                                        batch_data)
                 loss = self.model.lossList[0](output, batch_data)
             elif loss_count == 1 and output_count > 1:
                 loss = self.model.lossList[0](output_list, batch_data)
             elif loss_count > 1 and loss_count == output_count:
                 for k in range(0, loss_count):
-                    output = self.output_process.output_feature_map_resize(output_list[k],
-                                                                           batch_data)
+                    output = SegmentResultProcess.output_feature_map_resize(output_list[k],
+                                                                            batch_data)
                     loss += self.model.lossList[k](output, batch_data)
             else:
                 EasyLogger.error("compute loss error")

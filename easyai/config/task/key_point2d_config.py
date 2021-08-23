@@ -86,6 +86,9 @@ class KeyPoint2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "KeyPoint2dDataSetCollate"}
 
+        self.evaluation = {"type": "KeyPointAccuracy",
+                           "points_count": self.points_count,
+                           "class_names": self.points_class}
         self.evaluation_result_name = 'key_points2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
                                                    self.evaluation_result_name)

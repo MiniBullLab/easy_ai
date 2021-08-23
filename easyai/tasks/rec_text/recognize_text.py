@@ -28,7 +28,7 @@ class RecognizeText(BaseInference):
         for i, batch_data in enumerate(dataloader):
             self.timer.tic()
             self.set_src_size(batch_data['src_image'])
-            text_objects = self.single_image_process(batch_data)
+            text_objects, _ = self.single_image_process(batch_data)
             EasyLogger.debug('Batch %d/%d Done. (%.3fs)' % (i, image_count,
                                                             self.timer.toc()))
             if is_show:
@@ -42,9 +42,9 @@ class RecognizeText(BaseInference):
             file.write("{} {} \n".format(filename_post, ocr_object[0].get_text()))
 
     def single_image_process(self, input_data):
-        prediction, _ = self.infer(input_data)
+        prediction, model_output = self.infer(input_data)
         result = self.result_process.post_process(prediction)
-        return result
+        return result, model_output
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

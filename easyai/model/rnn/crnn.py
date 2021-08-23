@@ -54,8 +54,8 @@ class CRNN(BaseClassifyModel):
         self.lossList = []
         loss_config = {'type': LossName.CTCLoss,
                        'blank_index': 0,
-                       'reduction': 'none',
-                       'use_focal': True}
+                       'reduction': 'mean',
+                       'use_focal': False}
         loss = self.loss_factory.get_loss(loss_config)
         self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)

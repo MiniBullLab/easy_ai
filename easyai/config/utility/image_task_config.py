@@ -17,15 +17,11 @@ class ImageTaskConfig(BaseConfig):
         self.data = dict()
         self.batch_data_process = None
         self.post_process = None
-
         self.save_result_path = None
 
+        # model
         self.model_type = 0
         self.model_config = None
-
-        # test
-        self.evaluation_result_name = None
-        self.evaluation_result_path = None
 
         self.get_base_default_value()
 

@@ -65,6 +65,8 @@ class OneClassConfig(GanTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
+        self.evaluation = {"type": "OneClassROC",
+                           'save_dir': self.root_save_dir}
         self.evaluation_result_name = 'one_class_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
                                                    self.evaluation_result_name)

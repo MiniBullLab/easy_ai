@@ -37,6 +37,9 @@ class CommonTrainConfig(ImageTaskConfig):
         self.freeze_bn_layer_name = None
 
         # test
+        self.evaluation = None
+        self.evaluation_result_name = None
+        self.evaluation_result_path = None
         self.val_data = {'dataloader': {}}
 
         if self.snapshot_dir is not None and not os.path.exists(self.snapshot_dir):
@@ -110,9 +113,13 @@ class CommonTrainConfig(ImageTaskConfig):
         config_dict['freeze_bn_layer_name'] = self.freeze_bn_layer_name
 
     def load_test_value(self, config_dict):
+        if config_dict.get('evaluation', None) is not None:
+            self.evaluation = config_dict['evaluation']
         if config_dict.get('val_data', dict()) is not None:
             self.val_data = config_dict['val_data']
 
     def save_test_value(self, config_dict):
+        if self.evaluation is not None:
+            config_dict['evaluation'] = self.evaluation
         if self.val_data is not None and len(self.val_data) > 0:
             config_dict['val_data'] = self.val_data

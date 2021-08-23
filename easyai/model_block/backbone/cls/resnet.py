@@ -12,7 +12,7 @@ from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
 
 
 __all__ = ['ResNet18', 'ResNet18V2',
-           'ResNet34', 'TextResNet34',
+           'ResNet34', 'TextResNet34', 'ResNet34V2',
            'ResNet50', 'WideResnet50V2',
            'ResNet101', 'ResNet152']
 
@@ -169,6 +169,18 @@ class ResNet34(ResNet):
                          num_blocks=[3, 4, 6, 3],
                          block_flag=0)
         self.set_name(BackboneName.ResNet34)
+
+
+@REGISTERED_CLS_BACKBONE.register_module(BackboneName.ResNet34V2)
+class ResNet34V2(ResNet):
+
+    def __init__(self, data_channel):
+        super().__init__(data_channel=data_channel,
+                         num_blocks=[3, 4, 6, 3],
+                         strides=(1, 2, 2, 2),
+                         block_flag=0,
+                         head_type=0)
+        self.set_name(BackboneName.ResNet34V2)
 
 
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.ResNet50)

@@ -53,7 +53,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         EasyLogger.debug(self.character_set)
         self.character_count = 38
 
-        self.data = {'image_size': (256, 32),   # W * H
+        self.data = {'image_size': (128, 32),   # W * H
                      'data_channel': 3,
                      'resize_type': 3,
                      'normalize_type': 2,
@@ -74,8 +74,6 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataset']['max_text_length'] = 32
         self.val_data['dataset']['language'] = ("english", )
         self.val_data['dataset']['is_augment'] = False
-        self.val_data['dataset']['transform_func'] = {"type": "ImageWidthSlide",
-                                                      "image_size": self.data['image_size']}
 
         self.val_data['dataloader']['type'] = "DataLoader"
         self.val_data['dataloader']['batch_size'] = 1
@@ -83,9 +81,10 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataloader']['num_workers'] = 0
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
-                                                     "padding_type": 0,
+                                                     "padding_type": 1,
                                                      "target_type": 0}
 
+        self.evaluation = {"type": "RecognizeTextMetric"}
         self.evaluation_result_name = 'rec_text_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
@@ -98,16 +97,14 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset']['max_text_length'] = 32
         self.train_data['dataset']['language'] = ("english",)
         self.train_data['dataset']['is_augment'] = True
-        self.train_data['dataset']['transform_func'] = {"type": "ImageWidthSlide",
-                                                        "image_size": self.data['image_size']}
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 32
+        self.train_data['dataloader']['batch_size'] = 64
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = True
         self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
-                                                       "padding_type": 0,
+                                                       "padding_type": 1,
                                                        "target_type": 0}
 
         self.log_name = "rec_text"

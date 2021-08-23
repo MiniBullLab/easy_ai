@@ -22,10 +22,6 @@ class PointCloudTaskConfig(BaseConfig):
 
         self.model_config = None
 
-        # test
-        self.evaluation_result_name = None
-        self.evaluation_result_path = None
-
         self.get_base_default_value()
 
     def load_config(self, config_path):
