@@ -12,7 +12,7 @@ from easyai.model_block.base_block.cls.xception_block import DoubleSeparableConv
 from easyai.model_block.base_block.cls.xception_block import XceptionSumBlock, XceptionConvBlock
 from easyai.model_block.base_block.cls.xception_block import BlockA, FCAttention
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['Xception65', 'XceptionA']
 

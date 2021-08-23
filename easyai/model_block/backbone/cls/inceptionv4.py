@@ -19,7 +19,7 @@ from easyai.model_block.base_block.cls.inception_block import ReductionA, Reduct
 from easyai.model_block.base_block.cls.inception_block import InceptionResNetA, InceptionResNetB, InceptionResNetC
 from easyai.model_block.base_block.cls.inception_block import InceptionResNetReductionA, InceptionResNetReductionB
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['InceptionV4', 'InceptionResNetV2']
 

@@ -5,8 +5,10 @@
 from easyai.name_manager.block_name import HeadType
 from easyai.model_block.base_block.common.upsample_layer import Upsample
 from easyai.model_block.utility.base_block import *
+from easyai.model_block.utility.block_registry import REGISTERED_MODEL_HEAD
 
 
+@REGISTERED_MODEL_HEAD.register_module(HeadType.PadimHead)
 class PadimHead(BaseBlock):
 
     def __init__(self, layers):
@@ -44,6 +46,7 @@ class PadimHead(BaseBlock):
         return x
 
 
+@REGISTERED_MODEL_HEAD.register_module(HeadType.PatchHead)
 class PatchHead(BaseBlock):
 
     def __init__(self):

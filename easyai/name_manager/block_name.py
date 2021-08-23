@@ -143,6 +143,7 @@ class TransformerType():
     TransformerEncoder = "TransformerEncoder"
     TransformerDecoder = "TransformerDecoder"
 
+
 class NeckType():
 
     DBFPNNeck = "DBFPN"

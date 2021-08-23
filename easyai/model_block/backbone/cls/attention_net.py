@@ -16,7 +16,7 @@ from easyai.model_block.base_block.cls.attention_net_block import AttentionModul
 from easyai.model_block.base_block.cls.attention_net_block import AttentionModule2
 from easyai.model_block.base_block.cls.attention_net_block import AttentionModule3
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['AttentionNet56', 'AttentionNet92']
 

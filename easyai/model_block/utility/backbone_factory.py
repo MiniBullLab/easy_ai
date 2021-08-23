@@ -7,11 +7,11 @@ from easyai.utility.logger import EasyLogger
 import os.path
 from easyai.model_block.backbone.common.my_backbone import MyBackbone
 from easyai.model_block.utility.model_parse import ModelParse
-from easyai.model_block.utility.backbone_registry import REGISTERED_VISION_BACKBONE
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
-from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_D_BACKBONE
-from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_G_BACKBONE
-from easyai.model_block.utility.backbone_registry import REGISTERED_PC_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_VISION_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_GAN_D_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_GAN_G_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_PC_CLS_BACKBONE
 from easyai.utility.registry import build_from_cfg
 
 __all__ = ["BackboneFactory"]

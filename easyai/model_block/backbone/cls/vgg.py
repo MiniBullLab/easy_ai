@@ -10,7 +10,7 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.common.utility_block import ConvDropBNActivationBlock
 from easyai.model_block.base_block.common.utility_block import ConvActivationBlock
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 
 __all__ = ['VGG11', 'VGG13', 'VGG16', 'VGG19', 'TextVGG']

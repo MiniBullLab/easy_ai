@@ -15,7 +15,7 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.cls.nasnet_block import NasNetBlockName
 from easyai.model_block.base_block.cls.nasnet_block import NormalCell, ReductionCell
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['NasNet']
 

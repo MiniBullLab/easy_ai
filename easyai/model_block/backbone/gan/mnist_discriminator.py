@@ -6,7 +6,7 @@ from easyai.name_manager.block_name import ActivationType
 from easyai.name_manager.backbone_name import GanBaseModelName
 from easyai.model_block.base_block.common.utility_block import FcActivationBlock
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_GAN_D_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_GAN_D_BACKBONE
 
 
 @REGISTERED_GAN_D_BACKBONE.register_module(GanBaseModelName.MNISTDiscriminator)

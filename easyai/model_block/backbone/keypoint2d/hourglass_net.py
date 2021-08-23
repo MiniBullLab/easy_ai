@@ -11,7 +11,7 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.common.residual_block import ResidualV2Block
 from easyai.model_block.base_block.keypoint2d.hourglass_block import HourglassBlock
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 
 @REGISTERED_CLS_BACKBONE.register_module(BackboneName.HourGlassNet)
