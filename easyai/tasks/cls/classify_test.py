@@ -42,12 +42,12 @@ class ClassifyTest(BaseTest):
 
     def save_test_value(self, epoch):
         # Write epoch results
-        top_k = self.evaluation_args['top_k']
-        if max(top_k) > 1:
+        k = self.evaluation.get_k()
+        if max(k) > 1:
             with open(self.test_task_config.evaluation_result_path, 'a') as file:
                 file.write("Epoch: {} | prec{}: {:.3f} | prec{}: {:.3f}\n".format(epoch,
-                                                                                  top_k[0],
-                                                                                  top_k[1],
+                                                                                  k[0],
+                                                                                  k[1],
                                                                                   self.evaluation.get_top1(),
                                                                                   self.evaluation.get_topK()))
         else:

@@ -21,6 +21,9 @@ class ClassifyAccuracy(BaseEvaluation):
         self.threshold = 0.5  # binary class threshold
         self.reset()
 
+    def get_k(self):
+        return self.param_top
+
     def torch_eval(self, output, target):
         precision = self.accuracy(output, target, self.param_top)
         batch_size = target.size(0)
