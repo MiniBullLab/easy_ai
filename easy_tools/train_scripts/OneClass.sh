@@ -10,7 +10,7 @@ function run_onnx_convert() {
     outNetName=OneClassNet
 
     inputColorFormat=1
-    outputShape=1,3,224,224
+    outputShape=1,3,128,128
     outputLayerName="o:one_class_output|ot:0,1,2,3|odf:fp32"
     inputDataFormat=0,0,0,0
 

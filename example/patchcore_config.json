@@ -36,8 +36,8 @@
     "data": {
         "data_channel": 3,
         "image_size": [
-            224,
-            224
+            128,
+            128
         ],
         "mean": [
             0.485,
@@ -120,8 +120,8 @@
         "dataset": {
             "data_channel": 3,
             "image_size": [
-                224,
-                224
+                128,
+                128
             ],
             "mean": [
                 0.485,
@@ -152,8 +152,8 @@
         "dataset": {
             "data_channel": 3,
             "image_size": [
-                224,
-                224
+                128,
+                128
             ],
             "mean": [
                 0.485,
