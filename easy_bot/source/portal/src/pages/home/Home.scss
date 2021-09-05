@@ -1,0 +1,265 @@
+
+$homePadLeft: 200px;
+$opendPaddingLeft: 40px;
+$showPaddingRight: 402px;
+.top-show {
+  width: 100%;
+  height: 346px;
+  // padding: 50px 0 0 $homePadLeft;
+  padding-top: 50px;
+  background-color: #232F3E;
+  border-top: 1px solid rgba($color: #ffffff, $alpha: 0.2);
+  // &.opened {
+  //   padding-left: $opendPaddingLeft;
+  // }
+  .intro {
+    margin: 0 auto;
+    width: 967px;
+    color: #ffffff;
+    .ml {
+      padding: 0 0 8px 0;
+    }
+    .big {
+      padding-right: $showPaddingRight;
+      font-size: 44px;
+      font-weight: bold;
+      letter-spacing: -1px;
+    }
+    .medium {
+      padding-right: $showPaddingRight;
+      font-size: 42px;
+      font-weight: normal;
+      letter-spacing: -1px;
+    }
+    .small {
+      padding-right: $showPaddingRight;
+      padding-top: 10px;
+      line-height: 1.6em;
+      font-size: 14px;
+    }
+  }
+}
+
+.content-area {
+  // padding: 15px 0 15px $homePadLeft;
+  width: 967px;
+  margin: 0 auto;
+  display: flex;
+  &.opened {
+    padding-left: $opendPaddingLeft;
+  }
+  .box-info {
+    background-color: #ffffff;
+    box-shadow: 0px 2px 2px #ccc;
+  }
+  .left-info {
+    display: inline-block;
+    padding: 10px 0 0 0;
+    width: 565px;
+    img {
+      cursor: pointer;
+    }
+    .title {
+      font-size: 28px;
+      letter-spacing: -1px;
+      line-height: 38px;
+      padding: 5px 0 10px 0;
+    }
+    .video {
+      background-color: #232F3E;
+      width: 565px;
+      // height: 236px;
+      .img-shadow {
+        padding: 15px 18px;
+        background-color: #fff;
+        box-shadow: 2px 2px 2px #ddd;
+      }
+    }
+    .features {
+      margin-top: 10px;
+      padding: 10px 0;
+      font-size: 14px;
+      .items {
+        display: flex;
+        padding:10px 20px;
+        .list-icon {
+          width: 24px;
+          height: 24px;
+          color: #ffffff;
+          text-align: center;
+          line-height: 24px;
+          border-radius: 100%;
+          background-color: #545B64;
+        }
+        .list-content {
+          padding-left: 10px;
+          flex:1;
+        }
+      }
+    }
+    .benifit {
+      margin-top: 10px;
+      margin-bottom: 30px;
+      .benifit-list {
+        padding: 20px 10px;
+        .items {
+          vertical-align: top;
+          display: inline-block;
+          width: 49%;
+          margin-bottom: 25px;
+          height: 130px;
+          padding: 5px 10px 5px 20px;
+          &:nth-child(odd)
+          {
+            // background:#ff0000;
+            border-right: 1px solid #eee;
+          }
+          .name {
+            padding: 10px 0;
+            font-size: 18px;
+          }
+          .content {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+  .right-card {
+    margin: -260px 0 0 70px;
+    width: 332px;
+    .home-card {
+      background-color: #ffffff;
+      box-shadow: 0px 1px 1px #ccc;
+      width: 332px;
+      margin-bottom: 20px;
+      &.start-item {
+        padding: 10px 15px;
+        .title {
+          font-weight: bold;
+          font-size: 18px;
+          padding: 15px 0px 10px 0;
+        }
+        .dest {
+          font-size: 14px;
+          padding: 3px 0;
+        }
+        .select {
+          width: 100%;
+          select {
+            width: 100%;
+            padding: 5px 4px;
+            border: 1px solid #ddd;
+          }
+        }
+        .next-button {
+          margin-top: 20px;
+          padding: 5px 0 15px 0;
+        }
+      }
+      &.info-item {
+        padding: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+
+  $homePadLeft: 0px;
+  $opendPaddingLeft: 0px;
+  $showPaddingRight: 0px;
+  .top-show {
+    width: 100%;
+    height: auto;
+    // padding: 50px 0 0 $homePadLeft;
+    padding: 20px 0 20px;
+    .intro {
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 10px;
+      .big {
+        font-size: 36px;
+        padding-right: $showPaddingRight;
+      }
+      .medium {
+        font-size: 28px;
+        padding-right: $showPaddingRight;
+      }
+      .small {
+        padding-right: $showPaddingRight;
+      }
+    }
+  }
+
+  .content-area {
+    // padding: 15px 0 15px $homePadLeft;
+    width: 100%;
+    padding: 0 10px;
+    margin: 0 auto;
+    display: block;
+    &.opened {
+      padding-left: $opendPaddingLeft;
+    }
+    .left-info {
+      display: block;
+      padding: 10px 0 0 0px;
+      width: 100%;
+      img {
+        cursor: pointer;
+      }
+      .video {
+        width: 100%;
+      }
+      .benifit {
+        .benifit-list {
+          .items {
+            width: 100%;
+            height: auto;
+            margin-bottom: 5px;
+            border-right: 0;
+            border-bottom: 1px solid #eee;
+            padding: 5px 10px 15px 10px;
+            &:nth-child(odd)
+            {
+              // background:#ff0000;
+              border-right: 0;
+            }
+          }
+          
+        }
+      }
+    }
+    .right-card {
+      margin: 0px 0 0 0px;
+      width: 100%;
+      .home-card {
+        width: 100%;
+        margin-bottom: 20px;
+        &.start-item {
+          padding: 10px 15px;
+          .title {
+            padding: 15px 0px 20px 0;
+          }
+          .select {
+            width: 100%;
+            select {
+              width: 100%;
+              padding: 5px 4px;
+              border: 1px solid #ddd;
+            }
+            
+          }
+          .next-button {
+            margin-top: 20px;
+            padding: 5px 0 15px 0;
+          }
+        }
+        &.info-item {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+}

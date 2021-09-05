@@ -1,0 +1,201 @@
+{
+  "title": "Machine Learning Bot",
+  "yes": "是",
+  "no": "否",
+  "signOut": "登出",
+  "reLogin": "重新登录",
+  "reLoignTips": "本次回话已过期。再次登录 Machine Learning Bot，请点击“重新登录”.",
+  "info": "信息",
+  "optional": "可选",
+  "loadMore": "加载更多",
+  "modelNameEmpty": "类别名称不能为空!",
+  "cloudWatch": "查看CloudWatch中的警报",
+  "imageSizeName": "IMAGE_SIZE",
+  "toGrayName": "TO_GRAY",
+  "languageName": "LANGUAGE",
+  "imageTips": "（最小值: 256, 最大值: 1024）",
+  "imageSizeErrorTips": "IMAGE_SIZE的值不在允许范围内",
+  "top": {
+    "account": "账户",
+    "ml": "机器学习"
+  },
+  "leftBar": {
+    "title": "Machine Learning Bot",
+    "taskList": "任务列表"
+  },
+  "breadCrumb": {
+    "home": "Machine Learning Bot",
+    "create": "创建任务",
+    "tasks": "任务列表"
+  },
+  "step": {
+    "oneTitle": "第一步",
+    "oneDesc": "选择功能",
+    "twoTitle": "第二步",
+    "twoDesc": "图像分类",
+    "threeTitle": "第三步",
+    "threeDesc": "检查并创建"
+  },
+  "home": {
+    "title": {
+      "createTitle": "使用 ML-Bot",
+      "quickStart": "快速上手",
+      "moreResouce": "更多资源",
+      "destinationType": "功能选择"
+    },
+    "priceCalc": "成本计算器"
+  },
+  "creation": {
+    "taskName": "任务名称",
+    "taskNameDesc": "任务名称的长度可以在3到20个字符之间，并且只能包含英文字符，数字和'-'，但不能以'-'开头或结尾, 同时不能与其他任务名称重复.",
+    "tips": {
+      "taskNameRequired": "任务名称必填",
+      "taskNameFormat": "任务名称格式不正确，请检查",
+      "epNotReady": "模型预测端点未准备好, 请重试."
+    },
+    "comp": {
+      "className": "类别名称"
+    },
+    "step1": {
+      "engineType": "选择 AI 功能",
+      "engineOptions": "功能选项",
+      "tips": {
+        "title": "目标检测",
+        "desc": "目标检查很不错",
+        "line1": "图像分类是主要领域，其中深度神经网络在医学中扮演着最重要的角色",
+        "line2": "图像分析。影像分类接受给定的输入图像，并生成输出分类，用于识别",
+        "line3": "无论疾病是否存在。"
+      }
+    },
+    "step2": {
+      "image": {
+        "title": "图像分类",
+        "desc": "通过三个步骤，您的输入图像进行分类。您可以导出 AI 模型，并将其用于移动设备或 浏览器。",
+        "advancedSetting": "高级选项",
+        "twoClassesTips": "最少需要2个类别",
+        "noSamplesTips": "前两个类别中应当包含样本信息",
+        "step1": {
+          "name": "第一步: 定义类别",
+          "className": "类别名称",
+          "enterName": "输入类别名称。最终结果将是类别中的一个",
+          "uploadImage": "上传图片",
+          "s3Location": "S3文件路径",
+          "s3Bucket": "S3存储桶",
+          "s3BucketDesc": "您希望 ML Bot 在其中存储访问日志的 Amazon S3 存储桶",
+          "chooseS3Bucket": "选择S3存储桶",
+          "holdToRecord": "按住以抓取图像",
+          "enableVideo": "启用视频",
+          "imageSamples": "图像样本",
+          "addAnotherClass": "添加另外一个类别"
+        },
+        "step2": {
+          "name": "第二步: 训练模型",
+          "time": "训练过程大约需要2分钟"
+        },
+        "step3": {
+          "chooseTestImage": "选择测试图片",
+          "name": "第三步: 预览并导出结果",
+          "desc": "模型训练完成，您可以预览结果。",
+          "upload": "上传测试图片",
+          "chooseS3": "选择导出模型的S3存储桶",
+          "ready": "模型训练完成后将会启用."
+        },
+        "step4": {
+          "name": "Step 4 (Optional): Setup this feature into your own Amazon Web Services Account Info",
+          "desc": "Click the button to deploy a cloudformation stack into your own Amazon Web Services account. You can upload images from S3 as input and output the result from your S3 bucket. All Amazon Web Services resources are already setup for you within the template.",
+          "expectMin": "30 mins expected"
+        },
+        "step5": {
+          "name": "Step 5 (Optional): Make API Call Info",
+          "desc": "By calling the API of this feature, you can don’t need to setup your own Amazon Web Services resources, you can simply call the API from your code. Please see the pricing model for the detailed information.",
+          "restApi": "Restful APIs",
+          "endPoint": "Endpoint",
+          "publicEndpoint": "This is a public endpoint provided by Amazon Web Services Solutions.",
+          "exploreMore": "Explore more Similar APIs (provided by Amazon Web Services Partners"
+        }
+      },
+      "object": {
+        "desc": "只需通过三个步骤，您就可以创建一个基于亚马逊云科技技术的目标检测任务并导出AI模型，可以在移动设备和浏览器中使用。",
+        "step1": {
+          "importData": "第一步: 从S3中导入数据",
+          "chooseSourceData": "选择数据源",
+          "s3Location": "S3文件路径",
+          "s3LocationDesc": "图片目标检测的训练数据源的S3路径"
+        },
+        "step3": {
+          "chooseTestImage": "选择测试图片"
+        }
+      },
+      "ner": {
+        "desc": "只需通过三个步骤，您就可以创建一个基于亚马逊云科技技术的命名实体识别任务并导出AI模型，可以在移动设备和浏览器中使用。",
+        "tips": {
+          "textRequired": "请输入文本."
+        },
+        "step1": {
+          "name": "步骤一: 上传训练源文件",
+          "selectSource": "源标记文本 (.TXT)",
+          "selectSourceDesc": "请输入在S3中标记文本的文件路径. "
+        },
+        "step3": {
+          "name": "步骤三: 测试并下载模型",
+          "choseTestText": "选择测试文本",
+          "inputTestText": "请输入测试文本",
+          "textareaPlaceholder": "请输入 ..."
+        }
+      }
+    }
+  },
+  "taskList": {
+    "title": "任务列表",
+    "stopTask": "停止",
+    "table": {
+      "name": "任务名称",
+      "taskType": "任务类型",
+      "runTime": "运行时间",
+      "status": "状态"
+    },
+    "tips": {
+      "confimStop": "您确定要停止任务 ",
+      "confirmDelete": "您确定您要删除任务 "
+    }
+  },
+  "bottom": {
+    "copy": "© 2008 - 2021, Amazon Web Services, Inc. 或其子公司。保留所有权利。",
+    "feedback": "反馈",
+    "privacy": "隐私政策",
+    "use": "使用条款"
+  },
+  "tips": {
+    "title": "提示",
+    "maxFileSize": "图片大小不能超过 2M",
+    "detect": "检测中... 请稍候"
+  },
+  "btn": {
+    "next": "下一步",
+    "prev": "上一步",
+    "cancel": "取消",
+    "confirm": "确认",
+    "copy": "复制",
+    "stop": "终止",
+    "createTask": "创建任务",
+    "taskAction": "操作",
+    "getStart": "立即开始",
+    "createNewTask": "创建新任务",
+    "viewDetail": " 查看细节",
+    "stopTask": "停止",
+    "deleteTask": "删除",
+    "startTraining": "开始训练模型",
+    "clickPredict": "点击开始预测",
+    "upload": "上传文件",
+    "enableVideo": "打开视频",
+    "downloadModel": "下载模型",
+    "launchStack": "在亚马逊云科技控制台创建解决方案",
+    "importData": "导入数据",
+    "downloadNERModel": "下载NER模型",
+    "runTestData": "运行测试",
+    "uploadFile": "拖动文件到此区域或者点击上传",
+    "backToList": "返回任务列表",
+    "reLogin": "重新登录",
+    "deployToSageMaker": "部署到SageMaker终端节点"
+  }
+}

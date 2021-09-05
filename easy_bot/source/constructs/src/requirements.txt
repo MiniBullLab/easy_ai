@@ -1,0 +1,2 @@
+requests==2.25.1
+pyjwt==2.0.1
