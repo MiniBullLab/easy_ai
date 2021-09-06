@@ -38,7 +38,28 @@ class Detect2dConfig(CommonTrainConfig):
         self.load_image_train_value(config_dict)
 
     def save_train_value(self, config_dict):
+        if self.train_data is not None and len(self.train_data) > 0:
+            if self.train_data.get('dataloader', None) is not None and \
+                    self.train_data['dataloader'].get('detect2d_class', None) is not None:
+                self.train_data['dataloader']['detect2d_class'] = self.detect2d_class
+            if self.train_data.get('dataset', None) is not None and \
+                    self.train_data['dataset'].get('detect2d_class', None) is not None:
+                self.train_data['dataset']['detect2d_class'] = self.detect2d_class
         self.save_image_train_value(config_dict)
+
+    def save_test_value(self, config_dict):
+        if self.evaluation is not None:
+            if self.evaluation.get('detect2d_class', None) is not None:
+                self.evaluation['detect2d_class'] = self.detect2d_class
+            config_dict['evaluation'] = self.evaluation
+        if self.val_data is not None and len(self.val_data) > 0:
+            if self.val_data.get('dataloader', None) is not None and \
+             self.val_data['dataloader'].get('detect2d_class', None) is not None:
+                self.val_data['dataloader']['detect2d_class'] = self.detect2d_class
+            if self.val_data.get('dataset', None) is not None and \
+               self.val_data['dataset'].get('detect2d_class', None) is not None:
+                self.val_data['dataset']['detect2d_class'] = self.detect2d_class
+            config_dict['val_data'] = self.val_data
 
     def get_data_default_value(self):
         self.data = {'image_size': (416, 416),  # W * H
@@ -74,7 +95,7 @@ class Detect2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['collate_fn'] = {"type": "Det2dDataSetCollate"}
 
         self.evaluation = {"type": "DetectionMeanAp",
-                           'class_names': self.detect2d_class}
+                           'detect2d_class': self.detect2d_class}
         self.evaluation_result_name = 'det2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 

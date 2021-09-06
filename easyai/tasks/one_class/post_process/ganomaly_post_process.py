@@ -18,4 +18,4 @@ class GanomalyPostProcess(BasePostProcess):
         output_count = prediction.size
         assert output_count == 1
         class_indices = (prediction >= self.threshold).astype(int)
-        return class_indices[0], prediction[0]
+        return class_indices, prediction

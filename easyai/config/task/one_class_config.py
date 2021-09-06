@@ -131,5 +131,4 @@ class OneClassConfig(GanTrainConfig):
         self.freeze_bn_type = 0
         self.freeze_bn_layer_name = ""
 
-        self.model_type = 0
 

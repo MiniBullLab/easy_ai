@@ -33,6 +33,7 @@ class Det2dTrainDataloader(DataLoader):
         self.balanced_sample = balanced_sample
         self.batch_size = batch_size
         self.image_size = tuple(image_size)
+        EasyLogger.debug("det2d class: {}".format(detect2d_class))
 
         if balanced_sample:
             create_sample = CreateDetectionSample()

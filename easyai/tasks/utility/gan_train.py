@@ -17,7 +17,6 @@ class GanTrain(BaseTrain):
 
         self.d_optimizer_list = []
         self.g_optimizer_list = []
-        self.total_batch_image = 0
         self.best_score = 0
         self.start_epoch = 0
 
@@ -67,7 +66,8 @@ class GanTrain(BaseTrain):
         self.g_loss_average.reset()
         self.model.train()
         self.timer.tic()
-        assert self.total_batch_image > 0
+        EasyLogger.info("Train image count is : %d" % self.total_batch_data)
+        assert self.total_batch_data > 0, EasyLogger.error("no train dataset")
 
     def save_train_model(self, epoch):
         self.train_logger.add_scalar("train epoch d loss",
