@@ -19,7 +19,7 @@ class PatchCorePostProcess(BasePostProcess):
 
     def __init__(self, save_path, threshold,
                  sampling_ratio=0.01, neighbor_count=9,
-                 output_channel=1536, method="KNN"):
+                 output_channel=1440, method="KNN"):
         super().__init__()
         self.save_path = save_path
         self.threshold = threshold
