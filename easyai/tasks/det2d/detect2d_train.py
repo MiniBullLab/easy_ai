@@ -66,6 +66,8 @@ class Detection2dTrain(CommonTrain):
                 self.detect_test.create_dataloader(val_path)
                 self.test_first = False
             if not self.detect_test.start_test():
+                self.torchModelProcess.save_best_model(1, save_model_path,
+                                                       self.train_task_config.best_weights_path)
                 EasyLogger.info("no test!")
                 return
             self.detect_test.load_weights(save_model_path)
@@ -74,5 +76,7 @@ class Detection2dTrain(CommonTrain):
             self.best_score = self.torchModelProcess.save_best_model(mAP, save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
+            self.torchModelProcess.save_best_model(1, save_model_path,
+                                                   self.train_task_config.best_weights_path)
             EasyLogger.warn("%s not exists!" % val_path)
             EasyLogger.info("no test!")
