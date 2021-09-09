@@ -29,7 +29,7 @@ class PatchCoreNet(BaseClassifyModel):
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
 
-        self.model_args['type'] = BackboneName.WideResnet50V2
+        self.model_args['type'] = BackboneName.Densenet161 # BackboneName.WideResnet50V2
 
         self.create_block_list()
 
@@ -40,7 +40,7 @@ class PatchCoreNet(BaseClassifyModel):
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
-        avgpool = MultiAvgPool2d('8,14', 3, 1, 1)
+        avgpool = MultiAvgPool2d('22,60', 3, 1, 1)
         self.add_block_list(avgpool.get_name(), avgpool, self.block_out_channels[-1])
 
         head = PatchHead()
