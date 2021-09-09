@@ -40,5 +40,6 @@ def main():
 
     print("End of game!!!")
 
+
 if __name__ == "__main__":
     main()
