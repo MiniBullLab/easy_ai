@@ -1,0 +1,159 @@
+{
+    "accumulated_batches": 1,
+    "amp_config": {
+        "enable_amp": false,
+        "keep_batchnorm_fp32": true,
+        "opt_level": "O1"
+    },
+    "base_lr": 0.001,
+    "best_weights_name": "seg_best.pt",
+    "clip_grad_config": {
+        "enable_clip": false,
+        "max_norm": 20
+    },
+    "data": {
+        "data_channel": 3,
+        "image_size": [
+            512,
+            448
+        ],
+        "mean": [
+            0,
+            0,
+            0
+        ],
+        "normalize_type": 1,
+        "resize_type": 2,
+        "std": [
+            1,
+            1,
+            1
+        ]
+    },
+    "display": 20,
+    "freeze_bn_layer_name": "route_0",
+    "freeze_bn_type": 0,
+    "freeze_layer_name": "down_invertedResidual_11",
+    "freeze_layer_type": 2,
+    "is_save_epoch_model": false,
+    "latest_optimizer_name": "seg_optimizer.pt",
+    "latest_weights_name": "seg_latest.pt",
+    "lr_scheduler_config": {
+        "type": "CosineLR",
+        "warmup_iters": 5,
+        "warmup_type": 2
+    },
+    "max_epochs": 100,
+    "model_type": 0,
+    "optimizer_config": {
+        "0": {
+            "alpha": 0.9,
+            "eps": 1e-08,
+            "type": "RMSprop",
+            "weight_decay": 0
+        }
+    },
+    "post_process": {
+        "threshold": 0.5,
+        "type": "MaskPostProcess"
+    },
+    "seg_label_type": 1,
+    "segment_class": [
+        [
+            "background",
+            "255"
+        ],
+        [
+            "lane",
+            "0"
+        ]
+    ],
+    "train_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "type": "SegmentDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "shuffle": true,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "class_names": [
+                [
+                    "background",
+                    "255"
+                ],
+                [
+                    "lane",
+                    "0"
+                ]
+            ],
+            "data_channel": 3,
+            "image_size": [
+                512,
+                448
+            ],
+            "is_augment": true,
+            "label_type": 1,
+            "mean": [
+                0,
+                0,
+                0
+            ],
+            "normalize_type": 1,
+            "resize_type": 2,
+            "std": [
+                1,
+                1,
+                1
+            ],
+            "type": "SegmentDataset"
+        }
+    },
+    "val_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "type": "SegmentDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "shuffle": false,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "class_names": [
+                [
+                    "background",
+                    "255"
+                ],
+                [
+                    "lane",
+                    "0"
+                ]
+            ],
+            "data_channel": 3,
+            "image_size": [
+                512,
+                448
+            ],
+            "is_augment": false,
+            "label_type": 1,
+            "mean": [
+                0,
+                0,
+                0
+            ],
+            "normalize_type": 1,
+            "resize_type": 2,
+            "std": [
+                1,
+                1,
+                1
+            ],
+            "type": "SegmentDataset"
+        }
+    }
+}
