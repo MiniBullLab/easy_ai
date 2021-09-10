@@ -22,7 +22,7 @@ function run_onnx_convert() {
     mkdir $outDir/dra_image_bin
 
     #amba
-    source /usr/local/amba-cv-tools-2.1.7-20190815.ubuntu-18.04/env/cv22.env
+    source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
 
     #cuda10
     export PATH=/usr/local/cuda/bin:$PATH
@@ -57,6 +57,7 @@ function run_onnx_convert() {
     cavalry_gen -d $outDir/out_parser/vas_output/ \
                 -f $outDir/cavalry/$outNetName.bin \
                 -p $outDir/ \
+                -V 2.1.7 \
                 -v > $outDir/cavalry/cavalry_info.txt
 
     rm -rf vas_output

@@ -91,6 +91,8 @@ class SegmentionTrain(CommonTrain):
                 self.segment_test.create_dataloader(val_path)
                 self.test_first = False
             if not self.segment_test.start_test():
+                self.torchModelProcess.save_best_model(1, save_model_path,
+                                                       self.train_task_config.best_weights_path)
                 EasyLogger.warn("no test!")
                 return
             self.segment_test.load_weights(save_model_path)

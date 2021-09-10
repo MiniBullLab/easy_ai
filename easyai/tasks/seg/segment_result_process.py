@@ -48,7 +48,8 @@ class SegmentResultProcess(TaskPostProcess):
             target = target.squeeze(1).long()
             batch_data['label'] = target
         elif h < ht and w < wt:  # upsample images
-            input_data = torch.nn.functional.upsample(input_data, size=(ht, wt), mode='bilinear')
+            input_data = torch.nn.functional.upsample(input_data, size=(ht, wt),
+                                                      mode='bilinear')
         elif h == ht and w == wt:
             pass
         else:
