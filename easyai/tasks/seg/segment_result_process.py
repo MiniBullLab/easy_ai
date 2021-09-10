@@ -36,7 +36,8 @@ class SegmentResultProcess(TaskPostProcess):
         result = result.astype(np.float32)
         return result
 
-    def output_feature_map_resize(self, input_data, batch_data):
+    @staticmethod
+    def output_feature_map_resize(input_data, batch_data):
         n, c, h, w = input_data.size()
         nt, ht, wt = batch_data['label'].size()
         # Handle inconsistent size between input and target
@@ -47,7 +48,8 @@ class SegmentResultProcess(TaskPostProcess):
             target = target.squeeze(1).long()
             batch_data['label'] = target
         elif h < ht and w < wt:  # upsample images
-            input_data = torch.nn.functional.upsample(input_data, size=(ht, wt), mode='bilinear')
+            input_data = torch.nn.functional.upsample(input_data, size=(ht, wt),
+                                                      mode='bilinear')
         elif h == ht and w == wt:
             pass
         else:

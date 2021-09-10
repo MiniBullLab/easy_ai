@@ -24,7 +24,6 @@ class BaseTest(BaseTask):
         self.dataloader_factory = DataloaderFactory()
         self.batch_data_process_factory = BatchDataProcessFactory()
         self.evaluation_factory = EvaluationFactory()
-        self.evaluation_args = None
         self.test_task_config = None
         self.dataloader = None
         self.batch_data_process_func = None
@@ -40,6 +39,7 @@ class BaseTest(BaseTask):
             self.test_task_config = config
         assert self.test_task_config is not None, \
             EasyLogger.error("set config fail！{}".format(config))
+        self.evaluation = self.evaluation_factory.get_evaluation(self.test_task_config.evaluation)
 
     def set_model(self, my_model=None):
         if my_model is None:
@@ -50,6 +50,10 @@ class BaseTest(BaseTask):
             self.device = my_model.device
 
     def start_test(self):
+        if self.evaluation is None:
+            EasyLogger.error("{} evaluation error!".format(
+                self.test_task_config.evaluation))
+            return False
         if self.evaluation is not None:
             self.evaluation.reset()
         self.epoch_loss_average.reset()

@@ -34,7 +34,6 @@ class DetectionSample(BaseDetectionSample):
             self.sample_count = self.get_sample_count()
             EasyLogger.warn("%s sample count: %d" % (self.train_path,
                                                      self.sample_count))
-            assert self.sample_count > 0
         except ValueError as err:
             EasyLogger.error(err)
         except TypeError as err:

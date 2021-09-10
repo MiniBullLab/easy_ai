@@ -9,7 +9,7 @@ from easyai.model_block.base_block.cls.hrnet_block import HRNetBlockName
 from easyai.model_block.base_block.cls.hrnet_block import BasicBlock, Bottleneck, TransitionBlock
 from easyai.model_block.base_block.cls.hrnet_block import HighResolutionBlock, ClassificationHeadBlock
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['HRnetW18Samll', 'HRnetW18SamllV2', 'HRnetW18',
            'HRnetW30', 'HRnetW32', 'HRnetW40', 'HRnetW44',

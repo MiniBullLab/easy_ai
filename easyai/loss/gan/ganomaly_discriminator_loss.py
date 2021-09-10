@@ -16,7 +16,7 @@ class GANomalyDiscriminatorLoss(BaseLoss):
 
     def forward(self, outputs, batch_data=None):
         if batch_data is not None:
-            device = outputs.device
+            device = outputs[0].device
             targets = batch_data['label'].to(device)
             real_data = outputs[0].view(-1, 1).squeeze(1)
             fake_data = outputs[1].view(-1, 1).squeeze(1)

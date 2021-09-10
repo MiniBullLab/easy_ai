@@ -19,8 +19,6 @@ class RecognizeTextTest(BaseTest):
         self.inference = RecognizeText(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
-        self.evaluation_args = {"type": EvaluationName.RecognizeTextMetric}
-        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)
@@ -32,9 +30,8 @@ class RecognizeTextTest(BaseTest):
     def test(self, epoch=0):
         try:
             for index, batch_data in enumerate(self.dataloader):
-                prediction, output_list = self.inference.infer(batch_data)
-                result = self.inference.result_process.post_process(prediction)
-                loss_value = self.compute_loss(output_list, batch_data)
+                result, model_output = self.inference.single_image_process(batch_data)
+                loss_value = self.compute_loss(model_output, batch_data)
                 self.evaluation.eval(result, batch_data['label'])
                 self.metirc_loss(index, loss_value)
                 self.print_test_info(index, loss_value)

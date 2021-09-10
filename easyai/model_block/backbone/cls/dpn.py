@@ -8,7 +8,7 @@ from easyai.name_manager.backbone_name import BackboneName
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.cls.dpn_block import Bottleneck
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['DPN26', 'DPN92']
 

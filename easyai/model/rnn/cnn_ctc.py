@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # Author:lipeijie
+"""
+Implementation of 'Scene Text Recognition with Sliding Convolutional Character Models'
+([pdf](https://arxiv.org/pdf/1709.01727))
+"""
 
 from easyai.name_manager.model_name import ModelName
 from easyai.name_manager.backbone_name import BackboneName
 from easyai.name_manager.block_name import NormalizationType, ActivationType
-from easyai.name_manager.block_name import LayerType, BlockType, NeckType
+from easyai.name_manager.block_name import LayerType, BlockType
 from easyai.name_manager.loss_name import LossName
 from easyai.model_block.head.cls.classify_head import ClassifyHead
 from easyai.model.utility.base_classify_model import *

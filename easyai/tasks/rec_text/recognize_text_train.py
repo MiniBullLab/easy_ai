@@ -82,6 +82,8 @@ class RecognizeTextTrain(CommonTrain):
                                                                      save_model_path,
                                                                      self.train_task_config.best_weights_path)
         else:
+            self.torchModelProcess.save_best_model(1, save_model_path,
+                                                   self.train_task_config.best_weights_path)
             EasyLogger.warn("%s not exists!" % val_path)
             EasyLogger.info("no test!")
 

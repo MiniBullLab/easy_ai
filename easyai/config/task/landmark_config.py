@@ -93,6 +93,8 @@ class LandmarkConfig(CommonTrainConfig):
         self.val_data['dataloader']['num_workers'] = 8
         self.val_data['dataloader']['drop_last'] = False
 
+        self.evaluation = {"type": "LandmarkAccuracy",
+                           "points_count": self.points_count}
         self.evaluation_result_name = 'landmark_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 

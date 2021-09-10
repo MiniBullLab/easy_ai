@@ -9,7 +9,7 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.common.utility_block import ConvBNBlock1d
 from easyai.model_block.base_block.pc_cls.pointnet_block import PointNetBlockName
 from easyai.model_block.base_block.pc_cls.pointnet_block import TransformBlock, MaxPool1dBlock
-from easyai.model_block.utility.backbone_registry import REGISTERED_PC_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_PC_CLS_BACKBONE
 
 
 __all__ = ['PointNet', 'PointNetV2']

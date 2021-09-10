@@ -52,8 +52,11 @@ class BaseInference(BaseTask):
             EasyLogger.error("create config fail! {}".format(config))
 
     def set_model_param(self, data_channel, **params):
-        if self.model_name is None and self.task_config.model_config is not None:
-            self.model_args = self.task_config.model_config
+        if self.model_name is None or len(self.model_name) == 0:
+            if self.task_config.model_config is not None:
+                self.model_args = self.task_config.model_config
+            else:
+                EasyLogger.error("{} : model config error!".format(self.model_args))
         else:
             if isinstance(self.model_name, (list, tuple)):
                 if len(self.model_name) > 0:

@@ -13,7 +13,7 @@ from easyai.name_manager.backbone_name import BackboneName
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.common.residual_block import InvertedResidualV2
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['MobileNetV3Large', 'MobileNetV3Small',
            "MobileNetV3LargeV05", "MobileNetV3SmallV05",

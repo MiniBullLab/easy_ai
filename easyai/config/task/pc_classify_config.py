@@ -63,6 +63,8 @@ class PointCloudClassifyConfig(PointCloudTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "ClassifyPointCloudDataSetCollate"}
 
+        self.evaluation = {"type": "ClassifyAccuracy",
+                           'top_k': (1,)}
         self.evaluation_result_name = 'cls_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 

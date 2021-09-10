@@ -44,6 +44,8 @@ class OneClassConfig(GanTrainConfig):
                      'std': (0.5, 0.5, 0.5)}
 
         self.model_type = 0
+        self.model_config = {'type': 'PatchCoreNet',
+                             'data_channel': self.data['data_channel']}
 
         self.post_process = {'type': 'PatchCorePostProcess',
                              'save_path': "./embedding.pickle",
@@ -65,6 +67,8 @@ class OneClassConfig(GanTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
+        self.evaluation = {"type": "OneClassROC",
+                           'save_dir': self.root_save_dir}
         self.evaluation_result_name = 'one_class_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
                                                    self.evaluation_result_name)
@@ -127,5 +131,4 @@ class OneClassConfig(GanTrainConfig):
         self.freeze_bn_type = 0
         self.freeze_bn_layer_name = ""
 
-        self.model_type = 0
 

@@ -5,8 +5,10 @@
 from easyai.name_manager.block_name import HeadType
 from easyai.model_block.base_block.common.upsample_layer import Upsample
 from easyai.model_block.utility.base_block import *
+from easyai.model_block.utility.block_registry import REGISTERED_MODEL_HEAD
 
 
+@REGISTERED_MODEL_HEAD.register_module(HeadType.PadimHead)
 class PadimHead(BaseBlock):
 
     def __init__(self, layers):
@@ -17,12 +19,13 @@ class PadimHead(BaseBlock):
 
     def embedding_concat(self, x, y):
         # from https://github.com/xiahaifeng1995/PaDiM-Anomaly-Detection-Localization-master
+        device = x.device
         B, C1, H1, W1 = x.size()
         _, C2, H2, W2 = y.size()
         s = int(H1 / H2)
         x = F.unfold(x, kernel_size=s, dilation=1, stride=s)
         x = x.view(B, C1, -1, H2, W2)
-        z = torch.zeros(B, C1 + C2, x.size(2), H2, W2)
+        z = torch.zeros(B, C1 + C2, x.size(2), H2, W2, device=device)
         for i in range(x.size(2)):
             z[:, :, i, :, :] = torch.cat((x[:, :, i, :, :], y), 1)
         z = z.view(B, -1, H2 * W2)
@@ -43,6 +46,7 @@ class PadimHead(BaseBlock):
         return x
 
 
+@REGISTERED_MODEL_HEAD.register_module(HeadType.PatchHead)
 class PatchHead(BaseBlock):
 
     def __init__(self):
@@ -51,12 +55,13 @@ class PatchHead(BaseBlock):
 
     def embedding_concat(self, x, y):
         # from https://github.com/xiahaifeng1995/PaDiM-Anomaly-Detection-Localization-master
+        device = x.device
         B, C1, H1, W1 = x.size()
         _, C2, H2, W2 = y.size()
         s = int(H1 / H2)
         x = F.unfold(x, kernel_size=s, dilation=1, stride=s)
         x = x.view(B, C1, -1, H2, W2)
-        z = torch.zeros(B, C1 + C2, x.size(2), H2, W2)
+        z = torch.zeros(B, C1 + C2, x.size(2), H2, W2, device=device)
         for i in range(x.size(2)):
             z[:, :, i, :, :] = torch.cat((x[:, :, i, :, :], y), 1)
         z = z.view(B, -1, H2 * W2)

@@ -37,7 +37,7 @@ class TestTask():
                 task = build_from_cfg(task_args, REGISTERED_TEST_TASK)
                 task.load_weights(weight_path)
                 task.process_test(self.val_path)
-                self.image_model_convert(task, task.model_args, weight_path)
+                self.image_model_convert(task, task.inference.model_args, weight_path)
             except Exception as err:
                 EasyLogger.error(traceback.format_exc())
                 EasyLogger.error(err)
@@ -49,14 +49,14 @@ class TestTask():
         self.convert_input_names = input_names
         self.convert_output_names = output_names
 
-    def image_model_convert(self, train_task, model_args, weight_path):
+    def image_model_convert(self, test_task, model_args, weight_path):
         if self.is_convert:
             from easyai.tools.model_tool.model_to_onnx import ModelConverter
-            EasyLogger.debug(train_task.train_task_config.data)
-            converter = ModelConverter(train_task.train_task_config.data['image_size'])
+            EasyLogger.debug(test_task.test_task_config.data)
+            converter = ModelConverter(test_task.test_task_config.data['image_size'])
             self.save_onnx_path = converter.convert_process(model_args,
                                                             weight_path,
-                                                            train_task.train_task_config.snapshot_dir,
+                                                            test_task.test_task_config.snapshot_dir,
                                                             self.convert_input_names,
                                                             self.convert_output_names)
 

@@ -61,6 +61,11 @@ class ClassifyConfig(CommonTrainConfig):
 
         self.post_process = {'type': 'MaxPostProcess'}
 
+        self.model_type = 0
+        self.model_config = {'type': 'classnet',
+                             'data_channel': self.data['data_channel'],
+                             'class_number': len(self.class_name)}
+
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}
@@ -75,6 +80,8 @@ class ClassifyConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "ClassifyDataSetCollate"}
 
+        self.evaluation = {"type": "ClassifyAccuracy",
+                           'top_k': (1,)}
         self.evaluation_result_name = 'cls_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 

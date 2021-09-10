@@ -4,8 +4,10 @@
 
 from easyai.name_manager.block_name import HeadType
 from easyai.model_block.utility.base_block import *
+from easyai.model_block.utility.block_registry import REGISTERED_MODEL_HEAD
 
 
+@REGISTERED_MODEL_HEAD.register_module(HeadType.MultiOutputHead)
 class MultiOutputHead(BaseBlock):
 
     def __init__(self, layers):

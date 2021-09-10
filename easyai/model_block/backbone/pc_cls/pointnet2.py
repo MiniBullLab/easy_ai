@@ -11,7 +11,7 @@ from easyai.model_block.base_block.pc_cls.pointnet2_block import PointNetSetAbst
 from easyai.model_block.base_block.pc_cls.pointnet2_block import PointNet2RouteBlock
 from easyai.model_block.base_block.pc_cls.pointnet2_block import PointNet2Block
 from easyai.model_block.base_block.pc_cls.pointnet_block import MaxPool1dBlock
-from easyai.model_block.utility.backbone_registry import REGISTERED_PC_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_PC_CLS_BACKBONE
 
 
 __all__ = ['PointNet2']

@@ -1,0 +1,176 @@
+{
+    "accumulated_batches": 1,
+    "base_lr": 0.0002,
+    "best_weights_name": "one_class_best.pt",
+    "d_lr_scheduler_config": {
+        "lr_stages": [
+            [
+                50,
+                1
+            ],
+            [
+                70,
+                0.1
+            ],
+            [
+                100,
+                0.01
+            ]
+        ],
+        "type": "MultiStageLR",
+        "warmup_iters": 1000,
+        "warmup_type": 0
+    },
+    "d_optimizer_config": {
+        "0": {
+            "betas": [
+                0.5,
+                0.999
+            ],
+            "eps": 1e-08,
+            "type": "Adam",
+            "weight_decay": 0
+        }
+    },
+    "d_skip_batch_backward": 1,
+    "data": {
+        "data_channel": 3,
+        "image_size": [
+            128,
+            128
+        ],
+        "mean": [
+            0.5,
+            0.5,
+            0.5
+        ],
+        "normalize_type": -1,
+        "resize_type": -1,
+        "std": [
+            0.5,
+            0.5,
+            0.5
+        ]
+    },
+    "display": 1,
+    "evaluation": {
+        "save_dir": "./.easy_log",
+        "type": "OneClassROC"
+    },
+    "freeze_bn_layer_name": "",
+    "freeze_bn_type": 0,
+    "freeze_layer_name": "",
+    "freeze_layer_type": 0,
+    "g_lr_scheduler_config": {
+        "lr_stages": [
+            [
+                50,
+                1
+            ],
+            [
+                70,
+                0.1
+            ],
+            [
+                100,
+                0.01
+            ]
+        ],
+        "type": "MultiStageLR",
+        "warmup_iters": 1000,
+        "warmup_type": 0
+    },
+    "g_optimizer_config": {
+        "0": {
+            "betas": [
+                0.5,
+                0.999
+            ],
+            "eps": 1e-08,
+            "type": "Adam",
+            "weight_decay": 0
+        }
+    },
+    "g_skip_batch_backward": 1,
+    "is_save_epoch_model": false,
+    "latest_optimizer_name": "one_class_optimizer.pt",
+    "latest_weights_name": "one_class_latest.pt",
+    "max_epochs": 100,
+    "model_config": {
+        "data_channel": 3,
+        "image_size": [
+            128,
+            128
+        ],
+        "type": "GANomaly"
+    },
+    "model_type": 1,
+    "post_process": {
+        "threshold": 0.0,
+        "type": "GanomalyPostProcess"
+    },
+    "train_data": {
+        "dataloader": {
+            "batch_size": 32,
+            "collate_fn": {
+                "type": "ClassifyDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "shuffle": true,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "image_size": [
+                128,
+                128
+            ],
+            "mean": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "normalize_type": -1,
+            "resize_type": -1,
+            "std": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "type": "OneClassDataset"
+        }
+    },
+    "val_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "type": "ClassifyDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "shuffle": false,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "image_size": [
+                128,
+                128
+            ],
+            "mean": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "normalize_type": -1,
+            "resize_type": -1,
+            "std": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "type": "OneClassDataset"
+        }
+    }
+}

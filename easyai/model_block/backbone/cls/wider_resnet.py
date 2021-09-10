@@ -9,7 +9,7 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.cls.wider_resnet_block import IdentityResidualBlock
 from functools import partial
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 __all__ = ['WiderResNet16', 'WiderResNet20', 'WiderResNet38',
            'WiderResNet16A2', 'WiderResNet20A2', 'WiderResNet38A2']

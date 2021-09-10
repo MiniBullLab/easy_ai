@@ -126,9 +126,9 @@ class OneClassTrain(GanTrain):
         if val_path is not None and os.path.exists(val_path) and \
                 epoch % 5 == 0:
             if self.test_first:
-                self.classify_test.create_dataloader(val_path)
+                self.one_class_test.create_dataloader(val_path)
                 self.test_first = False
-            if not self.classify_test.start_test():
+            if not self.one_class_test.start_test():
                 EasyLogger.info("no test!")
                 return
             self.one_class_test.load_weights(save_model_path)

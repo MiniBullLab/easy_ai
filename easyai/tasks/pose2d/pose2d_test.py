@@ -4,7 +4,6 @@
 
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.pose2d.pose2d import Pose2d
-from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
@@ -19,11 +18,6 @@ class Pose2dTest(BaseTest):
         self.set_test_config(self.inference.task_config)
         self.set_model()
         self.inference.result_process.set_threshold(1e-5)
-        self.evaluation_args = {"type": EvaluationName.Pose2dAccuracy,
-                                "points_count": self.test_task_config.points_count,
-                                "image_size": self.test_task_config.image_size}
-        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
-        self.point_threshold = 1e-5
 
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)

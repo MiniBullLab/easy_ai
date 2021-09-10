@@ -65,7 +65,7 @@ class Pose2dConfig(CommonTrainConfig):
                          [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
 
         self.post_process = {'type': 'HeatmapPostProcess',
-                             'input_size': self.image_size,
+                             'input_size': self.data['image_size'],
                              'threshold': 0.4}
 
     def get_test_default_value(self):
@@ -84,6 +84,9 @@ class Pose2dConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "Pose2dDataSetCollate"}
 
+        self.evaluation = {"type": "Pose2dAccuracy",
+                           "points_count": self.points_count,
+                           "image_size": self.data['image_size']}
         self.evaluation_result_name = 'pose2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir,
                                                    self.evaluation_result_name)

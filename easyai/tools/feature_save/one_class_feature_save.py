@@ -2,6 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
+from easyai.utility.logger import EasyLogger
+if EasyLogger.check_init():
+    log_file_path = EasyLogger.get_log_file_path("tools.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.one_class.one_class import OneClass
@@ -51,10 +56,14 @@ class OneClassFeatureSave(BaseTest):
 
 def main():
     EasyLogger.info("Test process start...")
-    options = TaskArgumentsParse.test_input_parse()
-    task = OneClassFeatureSave(options.model, 0, options.config_path)
-    task.load_weights(options.weights)
-    task.process_test(options.valPath)
+    try:
+        options = TaskArgumentsParse.test_input_parse()
+        task = OneClassFeatureSave(options.model, 0, options.config_path)
+        task.load_weights(options.weights)
+        task.process_test(options.valPath)
+    except Exception as err:
+        EasyLogger.error(traceback.format_exc())
+        EasyLogger.error(err)
     EasyLogger.info("Test process end!")
 
 

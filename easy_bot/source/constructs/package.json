@@ -1,0 +1,43 @@
+{
+  "name": "aws-ml-bot",
+  "version": "1.0.0",
+  "description": "Infrastructure for an HTTPS static site using S3 and CloudFront",
+  "scripts": {
+    "cleanup": "tsc --build .. --clean && rm -rf node_modules && rm -f package-lock.json",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk"
+  },
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com",
+    "organization": true
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "10.17.51",
+    "typescript": "3.9.7"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-certificatemanager": "1.111.0",
+    "@aws-cdk/aws-cloudfront": "1.111.0",
+    "@aws-cdk/aws-cloudfront-origins": "1.111.0",
+    "@aws-cdk/aws-dynamodb": "1.111.0",
+    "@aws-cdk/aws-ec2": "1.111.0",
+    "@aws-cdk/aws-ecr-assets": "1.111.0",
+    "@aws-cdk/aws-ecs": "1.111.0",
+    "@aws-cdk/aws-events": "1.111.0",
+    "@aws-cdk/aws-events-targets": "1.111.0",
+    "@aws-cdk/aws-iam": "1.111.0",
+    "@aws-cdk/aws-cognito": "1.111.0",
+    "@aws-cdk/aws-lambda": "1.111.0",
+    "@aws-cdk/aws-route53": "1.111.0",
+    "@aws-cdk/aws-route53-targets": "1.111.0",
+    "@aws-cdk/aws-s3": "1.111.0",
+    "@aws-cdk/aws-s3-deployment": "1.111.0",
+    "@aws-cdk/aws-efs": "1.111.0",
+    "@aws-cdk/aws-codebuild": "1.111.0",
+    "@aws-cdk/core": "1.111.0",
+    "aws-cdk": "1.111.0"
+  }
+}

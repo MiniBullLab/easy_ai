@@ -18,9 +18,9 @@ from easyai.utility.logger import EasyLogger
 @REGISTERED_EVALUATION.register_module(EvaluationName.DetectionMeanAp)
 class DetectionMeanAp(BaseEvaluation):
 
-    def __init__(self, class_names):
+    def __init__(self, detect2d_class):
         super().__init__()
-        self.class_names = class_names
+        self.class_names = detect2d_class
         self.dir_process = DirProcess()
         self.json_process = JsonProcess()
         self.AP_process = CalculateRectAP()

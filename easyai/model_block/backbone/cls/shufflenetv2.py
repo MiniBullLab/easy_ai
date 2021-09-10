@@ -11,7 +11,7 @@ from easyai.model_block.base_block.common.pooling_layer import MyMaxPool2d
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.cls.shufflenet_block import DownBlock, BasicBlock
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 
 __all__ = ['ShuffleNetV2V10', 'ShuffleNetV2V05']

@@ -9,7 +9,7 @@ from easyai.model_block.base_block.common.utility_layer import NormalizeLayer, A
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.cls.densenet_block import DenseBlock, TransitionBlock
 from easyai.model_block.utility.base_backbone import *
-from easyai.model_block.utility.backbone_registry import REGISTERED_CLS_BACKBONE
+from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 
 
 __all__ = ['Densenet121', 'Densenet169', 'Densenet201', 'Densenet161',
