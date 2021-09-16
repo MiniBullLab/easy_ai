@@ -27,7 +27,7 @@ class SegmentionTest(BaseTest):
             return
         score, loss_value = self.test(epoch)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
-        print("Mean IoU: {.5f}".format(score))
+        print("Mean IoU: {:.5f}".format(score))
 
     def test(self, epoch=0):
         for i, batch_data in enumerate(self.dataloader):
