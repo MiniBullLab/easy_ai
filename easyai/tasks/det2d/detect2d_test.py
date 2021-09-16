@@ -26,7 +26,7 @@ class Detection2dTest(BaseTest):
             EasyLogger.info("no test!")
             return
         mAP = self.test(epoch)
-        print("mAP: {.5f}".format(mAP))
+        print("mAP: {:.5f}".format(mAP))
 
     def test(self, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
