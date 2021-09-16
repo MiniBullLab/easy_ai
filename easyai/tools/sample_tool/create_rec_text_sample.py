@@ -12,6 +12,7 @@ from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
 from easyai.helper.image_process import ImageProcess
 from easyai.data_loader.common.polygon2d_dataset_process import Polygon2dDataSetProcess
+from easyai.data_loader.common.rec_text_process import RecTextProcess
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.utility.logger import EasyLogger
 
@@ -23,6 +24,7 @@ class CreateRecognizeTextSample():
         self.json_process = JsonProcess()
         self.image_process = ImageProcess()
         self.dataset_process = Polygon2dDataSetProcess(0, 0, 0, 0, 0)
+        self.text_process = RecTextProcess(True)
         self.annotation_name = "../Annotations"
         self.images_dir_name = "../JPEGImages"
         self.annotation_post = ".json"
@@ -30,7 +32,7 @@ class CreateRecognizeTextSample():
         self.expand_ratio = (1.0, 1.0)
 
     def create_train_and_test(self, input_dir, output_path, probability,
-                              language=("english",)):
+                              language=("english",), char_path=None):
         if len(language) > 0:
             self.image_save_dir = ("".join(language)).strip()
         if not os.path.exists(output_path):
@@ -49,6 +51,11 @@ class CreateRecognizeTextSample():
         save_train_file = open(save_train_path, "w", encoding='utf-8')
         save_test_file = open(save_val_path, "w", encoding='utf-8')
 
+        if char_path is not None:
+            char_list = self.text_process.read_character(char_path)
+        else:
+            char_list = []
+
         image_list = list(self.dir_process.getDirFiles(input_dir, "*.*"))
         random.shuffle(image_list)
         sample_index = 0
@@ -61,6 +68,10 @@ class CreateRecognizeTextSample():
             if (src_image is not None) and os.path.exists(json_path):
                 _, ocr_objects = self.json_process.parse_ocr_data(json_path)
                 for ocr in ocr_objects:
+                    text_data = ocr.get_text()
+                    if len(char_list) > 0 and \
+                            True in [c not in char_list for c in text_data.strip()]:
+                        continue
                     if ocr.language.strip() in language:
                         image = self.dataset_process.get_rotate_crop_image(src_image,
                                                                            ocr.get_polygon()[:],
@@ -70,10 +81,11 @@ class CreateRecognizeTextSample():
                             EasyLogger.warn("%s: small eara(%s)" % (image_path,
                                                                     ocr.get_text()))
                             continue
-                        if dst_img_height * 1.0 / dst_img_width >= 1.5:
+                        if dst_img_height * 1.0 / dst_img_width >= 2:
                             image = np.rot90(image)
-                            EasyLogger.warn("%s: %s(rotate 90)" % (image_path,
-                                                                   ocr.get_text()))
+                            EasyLogger.warn("%s: %.3f|%s(rotate 90)" % (image_path,
+                                                                        dst_img_height * 1.0 / dst_img_width,
+                                                                        ocr.get_text()))
                         if (sample_index + 1) % probability == 0:
                             self.write_data(image_path, image, ocr,
                                             sample_index, save_test_file)
@@ -117,7 +129,7 @@ def main():
     test.create_train_and_test(options.inputPath,
                                options.outputPath,
                                options.probability,
-                               ("english",))
+                               ("english",), "./easyai/config/character/temp_en.txt")
     print("End of game, have a nice day!")
 
 

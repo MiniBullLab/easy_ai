@@ -9,14 +9,13 @@ from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_CO
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_TRAIN_DATALOADER
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_VAL_DATALOADER
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATA_TRANSFORMS
-from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
 from easyai.utility.registry import build_from_cfg
 
 
 class DataloaderFactory():
 
     def __init__(self):
-        self.transforms_factory = DataTransformsFactory()
+        pass
 
     def get_train_dataloader(self, train_path, dataloader_config, dataset_config):
         result = None

@@ -111,6 +111,7 @@ class BackboneName():
     PeleeNet16 = "peleenet16"
     PeleeNetTransition24 = "peleenet_tran24"
     SlimNet = "slimnet"
+    LPRSmallNet = "lpr_small_net"
 
     HourGlassNet = "hourglassnet"
 

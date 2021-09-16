@@ -10,9 +10,9 @@ from easyai.data_loader.common.rec_text_process import RecTextProcess
 class RecTextDataSetProcess(Polygon2dDataSetProcess):
 
     def __init__(self, resize_type, normalize_type,
-                 mean=0, std=1, pad_color=0):
+                 mean=0, std=1, pad_color=0, use_space=False):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)
-        self.text_process = RecTextProcess()
+        self.text_process = RecTextProcess(use_space)
 
     def read_character(self, char_path):
         return self.text_process.read_character(char_path)

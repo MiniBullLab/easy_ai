@@ -10,7 +10,8 @@ from easyai.utility.logger import EasyLogger
 
 class RecTextProcess():
 
-    def __init__(self):
+    def __init__(self, use_space=False):
+        self.use_space = use_space
         self.text_dict = collections.OrderedDict()
         # for i, char in enumerate(string.printable[:-6]):
         #     # NOTE: 0 is reserved for 'blank' token required by CTCLoss
@@ -19,14 +20,15 @@ class RecTextProcess():
     def read_character(self, char_path):
         if not os.path.exists(char_path):
             EasyLogger.error("char_path(%s) not exists" % char_path)
-            return
+            return []
         character_list = []
         with open(char_path, "rb") as fin:
             lines = fin.readlines()
             for line in lines:
                 line = line.decode('utf-8').strip("\n").strip("\r\n")
                 character_list += list(line)
-        character_list += [' ']
+        if self.use_space:
+            character_list += [' ']
         self.text_dict = {}
         for i, char in enumerate(character_list):
             # NOTE: 0 is reserved for 'blank' token required by CTCLoss

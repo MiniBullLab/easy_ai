@@ -7,7 +7,7 @@
     },
     "base_lr": 0.001,
     "best_weights_name": "rec_text_best.pt",
-    "character_count": 38,
+    "character_count": 37,
     "character_set": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
     "clip_grad_config": {
         "enable_clip": false,
@@ -52,7 +52,7 @@
     "model_type": 0,
     "model_config": {
         "data_channel": 3,
-        "class_number": 38,
+        "class_number": 37,
         "type": "CNNCTC"
     },
     "optimizer_config": {

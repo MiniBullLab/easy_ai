@@ -29,6 +29,30 @@ class Polygon2dProcess():
         points = np.atleast_2d(_points)
         return np.squeeze((rotate_matrix @ (points.T - center.T) + center.T).T)
 
+    def original_coordinate_transformation(self, polygon):
+        """
+        调整坐标顺序为：
+          x1,y1    x2,y2
+          x4,y4    x3,y3
+        :param polygon:
+        :return:
+        """
+        assert len(polygon) == 4
+        x1, y1, x2, y2, x3, y3, x4, y4 = polygon.astype(float).reshape(-1)
+        # 判断x1和x3大小，x3调整为大的数
+        if x1 > x3:
+            x1, y1, x3, y3 = x3, y3, x1, y1
+        # 判断x2和x4大小，x4调整为大的数
+        if x2 > x4:
+            x2, y2, x4, y4 = x4, y4, x2, y2
+        # 判断y1和y2大小，y1调整为大的数
+        if y2 > y1:
+            x2, y2, x1, y1 = x1, y1, x2, y2
+        # 判断y3和y4大小，y4调整为大的数
+        if y3 > y4:
+            x3, y3, x4, y4 = x4, y4, x3, y3
+        return np.array([[x2, y2], [x3, y3], [x4, y4], [x1, y1]], dtype=np.float32)
+
     def clockwise_coordinate_transformation(self, polygon):
         assert len(polygon) > 2
         coords = list(polygon)

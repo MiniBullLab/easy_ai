@@ -65,6 +65,7 @@ class ModelName():
     CRNN = "CRNN"
     ACECRNN = "ACECRNN"
     CNNCTC = "CNNCTC"
+    LPRNet = "LPRNet"
     TextNet = "TextNet"
 
     # multi

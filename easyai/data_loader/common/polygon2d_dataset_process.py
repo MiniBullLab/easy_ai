@@ -28,8 +28,8 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
             # dst_img = self.get_roi_image(src_image, box)
             rotated_box = cv2.minAreaRect(temp_points)
             temp_points = cv2.boxPoints(rotated_box)
-        # else:
         points = self.polygon_process.clockwise_coordinate_transformation(temp_points)
+        points = self.polygon_process.original_coordinate_transformation(points)
         img_crop_width = int(
             max(np.linalg.norm(points[0] - points[1]),
                 np.linalg.norm(points[2] - points[3])))
@@ -55,7 +55,7 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
                                       borderValue=self.pad_color)
         return dst_img
 
-    def rotation90_image(self, image, ratio=1.5):
+    def rotation90_image(self, image, ratio=2.0):
         """
         anticlockwise rotate 90
         """

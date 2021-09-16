@@ -7,7 +7,7 @@
     },
     "base_lr": 0.001,
     "best_weights_name": "rec_text_best.pt",
-    "character_count": 37,
+    "character_count": 68,
     "character_set": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
     "clip_grad_config": {
         "enable_clip": false,
@@ -16,8 +16,8 @@
     "data": {
         "data_channel": 3,
         "image_size": [
-            128,
-            32
+            94,
+            24
         ],
         "mean": [
             0.5,
@@ -52,13 +52,16 @@
     "model_type": 0,
     "model_config": {
         "data_channel": 3,
-        "class_number": 37,
-        "type": "CRNN"
+        "class_number": 68,
+        "type": "LPRNet"
     },
     "optimizer_config": {
         "0": {
-            "type": "Adam",
-            "weight_decay": 0.0001
+            "type": "RMSprop",
+            "alpha": 0.9,
+            "eps": 1e-08,
+            "momentum": 0.9,
+            "weight_decay": 2e-5
         }
     },
     "post_process": {
@@ -81,14 +84,14 @@
             "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
             "data_channel": 3,
             "image_size": [
-                128,
-                32
+                94,
+                24
             ],
             "is_augment": true,
             "language": [
                 "english"
             ],
-            "max_text_length": 32,
+            "max_text_length": 8,
             "mean": [
                 0.5,
                 0.5,
@@ -121,14 +124,14 @@
             "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
             "data_channel": 3,
             "image_size": [
-                128,
-                32
+                94,
+                24
             ],
             "is_augment": false,
             "language": [
                 "english"
             ],
-            "max_text_length": 32,
+            "max_text_length": 8,
             "mean": [
                 0.5,
                 0.5,
