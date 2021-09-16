@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # Author:lipeijie
+"""
+LPRNet: License Plate Recognition via Deep Neural Networks
+"""
 
 from easyai.name_manager.model_name import ModelName
 from easyai.name_manager.loss_name import LossName
