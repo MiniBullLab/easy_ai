@@ -25,7 +25,7 @@ class ClassifyTest(BaseTest):
             return
         top1, loss_value = self.test(epoch)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
-        print("top1: {.5f}".format(top1))
+        print("top1: {:.5f}".format(top1))
 
     def test(self, epoch=0):
         for index, batch_data in enumerate(self.dataloader):

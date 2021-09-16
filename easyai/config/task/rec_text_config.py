@@ -51,7 +51,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
         self.character_set = os.path.join(dir_name, "temp_en.txt")
         EasyLogger.debug(self.character_set)
-        self.character_count = 38
+        self.character_count = 37
 
         self.data = {'image_size': (128, 32),   # W * H
                      'data_channel': 3,
@@ -127,7 +127,7 @@ class RecognizeTextConfig(CommonTrainConfig):
                                      'weight_decay': 1e-4}
                                  }
         self.lr_scheduler_config = {'type': 'CosineLR',
-                                    'warmup_type': 0,
+                                    'warmup_type': 2,
                                     'warmup_iters': 3}
         self.accumulated_batches = 1
         self.display = 20

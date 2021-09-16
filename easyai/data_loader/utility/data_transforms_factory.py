@@ -16,6 +16,8 @@ class DataTransformsFactory():
     def get_data_transform(self, data_transform_config):
         result = None
         EasyLogger.debug(data_transform_config)
+        if data_transform_config is None:
+            return result
         try:
             type_name = data_transform_config['type'].strip()
             if REGISTERED_DATA_TRANSFORMS.has_class(type_name):

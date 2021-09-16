@@ -59,7 +59,7 @@ class CrossEntropy2dLoss(BaseLoss):
                                        ignore_index=self.ignore_index)
             else:
                 loss = F.cross_entropy(input_data, targets,
-                                       reduction=self.reduction,
+                                       reduction='none',
                                        ignore_index=self.ignore_index)
                 loss = self.compute_loss_from_weight(loss, targets)
         else:
@@ -115,7 +115,7 @@ class BinaryCrossEntropy2dLoss(BaseLoss):
                                               reduction=self.reduction)
             else:
                 loss = F.binary_cross_entropy(input_data, targets,
-                                              reduction=self.reduction)
+                                              reduction='none')
                 loss = self.compute_loss_from_weight(loss, targets)
         else:
             loss = input_data

@@ -56,16 +56,19 @@ def image_dir_process(image_dir):
     image_index = 0
     for image_path in dir_process.getDirFiles(image_dir, "*.jpg"):
         path, image_name = os.path.split(image_path)
-        label_text = image_name.split("_", 1)[0]
+        # label_text = image_name.split("_", 1)[0]
+        label_text = image_name.split(".", 1)[0]
         if os.path.exists(image_path):
-            image = cv2.imdecode(np.fromfile(image_path, dtype=np.uint8), 1)
-            if (image_index + 1) % 8 == 0:
-                write_data(image_path, label_text.strip(), save_test_file)
+            re_image_path = os.path.join(path, "img_%05d" % image_index)
+            os.rename(image_path, re_image_path)
+            image = cv2.imdecode(np.fromfile(re_image_path, dtype=np.uint8), 1)
+            if (image_index + 1) % 10 == 0:
+                write_data(re_image_path, label_text.strip(), save_test_file)
             else:
-                write_data(image_path, label_text.strip(), save_train_file)
+                write_data(re_image_path, label_text.strip(), save_train_file)
             image_index += 1
 
 
 if __name__ == "__main__":
     # txt_process("/home/lpj/dataset/ocr/Synthetic_text/ImageSets/gt.txt")
-    image_dir_process("/home/lpj/Desktop/up/JPEGImages")
+    image_dir_process("/home/lpj/dataset/tests/lpr_test/JPEGImages")
