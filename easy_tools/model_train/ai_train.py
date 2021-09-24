@@ -76,7 +76,7 @@ class EasyAiModelTrain():
             EasyLogger.warn("classify class name empty!")
 
     def det2d_model_train(self, dir_name):
-        input_name = ['det_input']
+        input_name = ['data']
         output_name = ['det_output0', 'det_output1', 'det_output2']
         pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
         create_det2d_sample = CreateDetectionSample()
