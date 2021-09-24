@@ -6,7 +6,6 @@ import traceback
 from easyai.utility.logger import EasyLogger
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.rec_text.recognize_text import RecognizeText
-from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 
@@ -25,7 +24,9 @@ class RecognizeTextTest(BaseTest):
         if not self.start_test():
             EasyLogger.info("no test!")
             return
-        self.test(epoch)
+        accuracy, loss_value = self.test(epoch)
+        print("Val epoch loss: {}".format(loss_value))
+        print("top1: {:.5f}".format(accuracy))
 
     def test(self, epoch=0):
         try:

@@ -5,25 +5,25 @@
 import numpy as np
 from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
+from easyai.loss.common.center_loss import CenterLoss
 from easyai.loss.utility.loss_registry import REGISTERED_RNN_LOSS
 from easyai.utility.logger import EasyLogger
 
 
-@REGISTERED_RNN_LOSS.register_module(LossName.CTCLoss)
-class CTCLoss(BaseLoss):
+@REGISTERED_RNN_LOSS.register_module(LossName.CenterCTCLoss)
+class CenterCTCLoss(BaseLoss):
 
-    def __init__(self, blank_index, reduction='mean',
-                 use_weight=False, use_focal=False,
-                 alpha=0.99, gamma=1):
-        super().__init__(LossName.CTCLoss)
+    def __init__(self, class_number, blank_index, reduction='mean',
+                 use_weight=False, feature_dim=2, alpha=0.00001):
+        super().__init__(LossName.CenterCTCLoss)
         self.blank_index = blank_index
         self.reduction = reduction
         self.use_weight = use_weight
-        self.use_focal = use_focal
+        self.lr_center = 0.5
         self.alpha = alpha
-        self.gamma = gamma
         self.loss_func = torch.nn.CTCLoss(blank=blank_index,
                                           reduction=reduction)
+        self.center_loss = CenterLoss(class_number, feature_dim)
 
     def compute_weight(self, preds, target_lengths, device):
         len_index = torch.softmax(preds, -1).max(2)[1].transpose(0, 1) > 0
@@ -35,11 +35,13 @@ class CTCLoss(BaseLoss):
 
     def forward(self, input_data, batch_data=None):
         if batch_data is not None:
-            batch_size = input_data.size(0)
-            device = input_data.device
-            pred = input_data.permute(1, 0, 2)  # T * N * C
+            embedding = input_data[0]
+            batch_size = input_data[1].size(0)
+            device = input_data[1].device
+            pred = input_data[1].permute(1, 0, 2)  # T * N * C
             seq_len = pred.size(0)
             pred = pred.log_softmax(2).requires_grad_()
+            embedding = embedding.view(batch_size * seq_len, -1)
             targets = torch.full(size=(batch_size, seq_len),
                                  fill_value=self.blank_index,
                                  dtype=torch.long, device=device)
@@ -60,12 +62,14 @@ class CTCLoss(BaseLoss):
                 ctc_loss_weight = self.compute_weight(pred, target_lengths, device)
                 loss = ctc_loss * ctc_loss_weight
                 loss = loss.sum() / batch_size
-            elif self.use_focal and self.reduction == "none":
-                prob = torch.exp(-ctc_loss)
-                focal_loss = self.alpha * (1 - prob).pow(self.gamma) * ctc_loss
-                loss = focal_loss.sum() / batch_size
             else:
                 loss = ctc_loss
+
+            labels = batch_data['label'].to(device)
+            loss2 = self.center_loss(embedding, labels)
+
+            loss = loss + loss2 * self.alpha
+
             if loss.item() == float("inf") or loss.item() == float("nan"):
                 EasyLogger.error("{} {} {}".format(batch_data['label'],
                                                    pred.shape, target_lengths))

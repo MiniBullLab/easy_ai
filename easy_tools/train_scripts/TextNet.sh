@@ -36,14 +36,15 @@ function run_onnx_convert() {
     mv $modelDir/${modelName}.onnx $modelDir/${modelName}_raw.onnx
     mv $modelDir/${modelName}_modified.onnx $modelDir/${modelName}.onnx
 
-    ls $imageDir/*.* > $imageDir/img_list.txt
-    imgtobin.py -i $imageDir/img_list.txt \
-                -o $outDir/dra_image_bin \
-                -c $inputColorFormat \
-                -d 0,0,0,0 \
-                -s $outputShape
+#    ls $imageDir/*.* > $imageDir/img_list.txt
+#    imgtobin.py -i $imageDir/img_list.txt \
+#                -o $outDir/dra_image_bin \
+#                -c $inputColorFormat \
+#                -d 0,0,0,0 \
+#                -s $outputShape
+#    ls $outDir/dra_image_bin/*.bin > $outDir/dra_image_bin/dra_bin_list.txt
 
-    ls $outDir/dra_image_bin/*.bin > $outDir/dra_image_bin/dra_bin_list.txt
+    gen_image_list.py -f $imageDir -o $imageDir/img_list.txt -ns -e jpg -c 0 -d 0,0 -r 32,128 -bf $outDir/dra_image_bin -bo $outDir/dra_image_bin/dra_bin_list.txt
 
     onnxparser.py -m $modelDir/${modelName}.onnx \
                     -i $outDir/dra_image_bin/dra_bin_list.txt \
@@ -53,7 +54,8 @@ function run_onnx_convert() {
                     -im $mean -ic $scale \
                     -iq -idf $inputDataFormat \
                     -odst $outputLayerName \
-                    -c act-allow-fp16,coeff-force-fx16
+                    -c act-allow-fp16,coeff-force-fx16 \
+                    -dinf cerr
 
     cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 

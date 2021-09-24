@@ -68,10 +68,13 @@ class LPRNet(BaseClassifyModel):
         )
 
         self.container = nn.Sequential(
-            nn.Conv2d(in_channels=448 + self.class_num, out_channels=self.class_num, kernel_size=(1, 1), stride=(1, 1)),
-            # nn.BatchNorm2d(num_features=self.class_num),
+            nn.Conv2d(in_channels=448 + self.class_number,
+                      out_channels=self.class_number,
+                      kernel_size=(1, 1),
+                      stride=(1, 1)),
+            # nn.BatchNorm2d(num_features=self.class_number),
             # nn.ReLU(),
-            # nn.Conv2d(in_channels=self.class_num, out_channels=self.lpr_max_len+1, kernel_size=3, stride=2),
+            # nn.Conv2d(in_channels=self.class_number, out_channels=self.lpr_max_len+1, kernel_size=3, stride=2),
             # nn.ReLU(),
         )
 
@@ -108,5 +111,6 @@ class LPRNet(BaseClassifyModel):
         x = torch.cat(global_context, 1)
         x = self.container(x)
         logits = torch.mean(x, dim=2)
-        output.append(logits)
+        x = logits.permute((0, 2, 1))
+        output.append(x)
         return output

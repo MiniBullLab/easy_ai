@@ -39,7 +39,7 @@ class RecognizeText(BaseInference):
     def save_result(self, file_path, ocr_object):
         path, filename_post = os.path.split(file_path)
         with open(self.task_config.save_result_path, 'a') as file:
-            file.write("{} {} \n".format(filename_post, ocr_object[0].get_text()))
+            file.write("{}|{} \n".format(filename_post, ocr_object[0].get_text()))
 
     def single_image_process(self, input_data):
         prediction, model_output = self.infer(input_data)

@@ -20,6 +20,7 @@ class CTCPostProcess(BasePostProcess):
         if prediction.ndim == 2:
             prediction = np.expand_dims(prediction, 0)
         # print(prediction.shape)
+        blank_index = 0
         preds_idx = prediction.argmax(axis=2)
         preds_prob = prediction.max(axis=2)
         result_list = []
@@ -28,7 +29,7 @@ class CTCPostProcess(BasePostProcess):
             conf = []
             temp_object = OCRObject()
             for i, index in enumerate(word):
-                if word[i] != 0 and (not (i > 0 and word[i - 1] == word[i])):
+                if word[i] != blank_index and (not (i > 0 and word[i - 1] == word[i])):
                     result.append(character[int(index)])
                     conf.append(prob[i])
             temp_object.set_text(''.join(result))

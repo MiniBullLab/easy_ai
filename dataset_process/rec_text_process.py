@@ -59,7 +59,7 @@ def image_dir_process(image_dir):
         # label_text = image_name.split("_", 1)[0]
         label_text = image_name.split(".", 1)[0]
         if os.path.exists(image_path):
-            re_image_path = os.path.join(path, "img_%05d" % image_index)
+            re_image_path = os.path.join(path, "img_%05d.jpg" % image_index)
             os.rename(image_path, re_image_path)
             image = cv2.imdecode(np.fromfile(re_image_path, dtype=np.uint8), 1)
             if (image_index + 1) % 10 == 0:
@@ -71,4 +71,4 @@ def image_dir_process(image_dir):
 
 if __name__ == "__main__":
     # txt_process("/home/lpj/dataset/ocr/Synthetic_text/ImageSets/gt.txt")
-    image_dir_process("/home/lpj/dataset/tests/lpr_test/JPEGImages")
+    image_dir_process("/home/lpj/dataset/ocr/lpr_test/JPEGImages")

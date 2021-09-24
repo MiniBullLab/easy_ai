@@ -1,9 +1,12 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
 from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.utility.loss_registry import REGISTERED_CLS_LOSS
 
 
-class CenterLoss(nn.Module):
+class CenterLoss(BaseLoss):
     """Center loss.
 
     Reference:
@@ -14,8 +17,8 @@ class CenterLoss(nn.Module):
         feature_dim (int): feature dimension.
     """
 
-    def __init__(self, class_number=10, feature_dim=2):
-        super(CenterLoss, self).__init__()
+    def __init__(self, class_number, feature_dim=2):
+        super().__init__(LossName.CenterLoss)
         self.class_number = class_number
         self.feature_dim = feature_dim
         self.centers = nn.Parameter(torch.randn(self.num_classes, self.feat_dim))
@@ -32,7 +35,7 @@ class CenterLoss(nn.Module):
         batch_size = input_data.size(0)
         distmat = torch.pow(input_data, 2).sum(dim=1, keepdim=True).\
                       expand(batch_size, self.class_number) + \
-                  torch.pow(self.centers, 2).sum(dim=1, keepdim=True).\
+                  torch.pow(self.centers.to(device), 2).sum(dim=1, keepdim=True).\
                       expand(self.class_number, batch_size).t()
         distmat.addmm_(1, -2, input_data, self.centers.t().to(device))
 

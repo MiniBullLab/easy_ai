@@ -71,6 +71,8 @@ class RecognizeTextTrain(CommonTrain):
                 self.test_task.create_dataloader(val_path)
                 self.test_first = False
             if not self.test_task.start_test():
+                self.torchModelProcess.save_best_model(1, save_model_path,
+                                                       self.train_task_config.best_weights_path)
                 EasyLogger.info("no test!")
                 return
             self.test_task.load_weights(save_model_path)
