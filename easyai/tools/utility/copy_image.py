@@ -14,16 +14,22 @@ class CopyImage():
         self.images_dir_name = "../JPEGImages"
         self.dir_process = DirProcess()
 
-    def copy(self, train_path, image_save_dir, separator=None):
+    def copy(self, train_path, image_save_dir, separator=None, count=1):
         image_list = self.get_image_list(train_path, separator)
         if os.path.exists(image_save_dir):
             os.system('rm -rf ' + image_save_dir)
         os.makedirs(image_save_dir, exist_ok=True)
         if len(image_list) > 0:
-            image_path = image_list[0]
-            path, image_name = os.path.split(image_path)
-            save_path = os.path.join(image_save_dir, image_name)
-            shutil.copy(image_path, save_path)
+            index = 0
+            for i in range(len(image_list)):
+                image_path = image_list[i]
+                if os.path.exists(image_path):
+                    path, image_name = os.path.split(image_path)
+                    save_path = os.path.join(image_save_dir, image_name)
+                    shutil.copy(image_path, save_path)
+                    index += 1
+                if index == count:
+                    break
         else:
             EasyLogger.error("empty images")
 

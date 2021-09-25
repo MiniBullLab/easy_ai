@@ -17,6 +17,7 @@ class LossName():
     FocalBinaryLoss = "FocalBinaryLoss"
     OhemCrossEntropy2dLoss = "OhemCE2dLoss"
     OhemBinaryCrossEntropy2dLoss = "OhemBCELoss"
+    CenterCrossEntropy2dLoss = "CenterCELoss"
 
     # det2d
     Region2dLoss = "Region2dLoss"
@@ -52,6 +53,7 @@ class LossName():
 
     # rnn
     CTCLoss = "CTCLoss"
+    CenterCTCLoss = "CenterCTCLoss"
     TransformerLoss = "TransformerLoss"
     AggregationCrossEntropyLoss = "ACELoss"
     ACELabelSmoothingLoss = "ACELabelSmoothingLoss"

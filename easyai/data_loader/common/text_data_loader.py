@@ -58,14 +58,18 @@ class TextDataLoader(DataLoader):
         path, _ = os.path.split(input_path)
         images_dir = os.path.join(path, "../JPEGImages")
         for line_data in self.dirProcess.getFileData(input_path):
-            data_list = [x.strip() for x in line_data.split() if x.strip()]
-            if len(data_list) > 0:
-                image_path = os.path.join(images_dir, data_list[0])
+            data_list1 = [x.strip() for x in line_data.split() if x.strip()]
+            data_list2 = [x.strip() for x in line_data.split('|', 1) if x.strip()]
+            if len(data_list1) > 0 or len(data_list2) > 0:
+                image_path1 = os.path.join(images_dir, data_list1[0])
+                image_path2 = os.path.join(images_dir, data_list2[0])
                 # print(image_path)
-                if os.path.exists(image_path):
-                    result.append(image_path)
+                if os.path.exists(image_path1):
+                    result.append(image_path1)
+                elif os.path.exists(image_path2):
+                    result.append(image_path2)
                 else:
-                    EasyLogger.error("%s not exist" % image_path)
+                    EasyLogger.error("%s not exist" % image_path1)
             else:
                 EasyLogger.warn("% error" % line_data)
         return result

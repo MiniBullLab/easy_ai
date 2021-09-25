@@ -102,7 +102,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataloader']['batch_size'] = 64
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
-        self.train_data['dataloader']['drop_last'] = True
+        self.train_data['dataloader']['drop_last'] = False
         self.train_data['dataloader']['collate_fn'] = {"type": "RecTextDataSetCollate",
                                                        "padding_type": 1,
                                                        "target_type": 0}
@@ -116,7 +116,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 150
+        self.max_epochs = 200
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
@@ -138,4 +138,4 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.freeze_layer_type = 0
         self.freeze_layer_name = "baseNet_0"
         self.freeze_bn_type = 0
-        self.freeze_bn_layer_name = "route_0"
+        self.freeze_bn_layer_name = "baseNet_0"

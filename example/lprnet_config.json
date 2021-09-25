@@ -5,10 +5,10 @@
         "keep_batchnorm_fp32": true,
         "opt_level": "O1"
     },
-    "base_lr": 0.001,
+    "base_lr": 0.01,
     "best_weights_name": "rec_text_best.pt",
     "character_count": 68,
-    "character_set": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
+    "character_set": "/home/lpj/github/easy_ai/easyai/config/task/../character/chinese_lpr.txt",
     "clip_grad_config": {
         "enable_clip": false,
         "max_norm": 5
@@ -25,7 +25,7 @@
             0.5
         ],
         "normalize_type": 2,
-        "resize_type": 3,
+        "resize_type": 1,
         "std": [
             0.5,
             0.5,
@@ -46,22 +46,22 @@
     "lr_scheduler_config": {
         "type": "CosineLR",
         "warmup_iters": 3,
-        "warmup_type": 0
+        "warmup_type": 2
     },
     "max_epochs": 150,
-    "model_type": 0,
     "model_config": {
-        "data_channel": 3,
         "class_number": 68,
+        "data_channel": 3,
         "type": "LPRNet"
     },
+    "model_type": 0,
     "optimizer_config": {
         "0": {
-            "type": "RMSprop",
             "alpha": 0.9,
             "eps": 1e-08,
             "momentum": 0.9,
-            "weight_decay": 2e-5
+            "type": "RMSprop",
+            "weight_decay": 2e-05
         }
     },
     "post_process": {
@@ -71,7 +71,7 @@
         "dataloader": {
             "batch_size": 64,
             "collate_fn": {
-                "padding_type": 1,
+                "padding_type": 0,
                 "target_type": 0,
                 "type": "RecTextDataSetCollate"
             },
@@ -81,7 +81,7 @@
             "type": "DataLoader"
         },
         "dataset": {
-            "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
+            "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/chinese_lpr.txt",
             "data_channel": 3,
             "image_size": [
                 94,
@@ -98,7 +98,7 @@
                 0.5
             ],
             "normalize_type": 2,
-            "resize_type": 3,
+            "resize_type": 1,
             "std": [
                 0.5,
                 0.5,
@@ -111,7 +111,7 @@
         "dataloader": {
             "batch_size": 1,
             "collate_fn": {
-                "padding_type": 1,
+                "padding_type": 0,
                 "target_type": 0,
                 "type": "RecTextDataSetCollate"
             },
@@ -121,7 +121,7 @@
             "type": "DataLoader"
         },
         "dataset": {
-            "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
+            "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/chinese_lpr.txt",
             "data_channel": 3,
             "image_size": [
                 94,
@@ -138,7 +138,7 @@
                 0.5
             ],
             "normalize_type": 2,
-            "resize_type": 3,
+            "resize_type": 1,
             "std": [
                 0.5,
                 0.5,

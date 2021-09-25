@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import abc
 import sys
 import os
 import torch
 from easyai.tasks.utility.base_train import BaseTrain
 from easyai.helper.average_meter import AverageMeter
+from easyai.name_manager.loss_name import LossName
 from easyai.tasks.utility.base_task import DelayedKeyboardInterrupt
 from easyai.utility.logger import EasyLogger
 try:
@@ -87,6 +87,14 @@ class CommonTrain(BaseTrain):
         else:
             loss = loss / self.train_task_config.accumulated_batches
             loss.backward()
+        loss_count = len(self.model.lossList)
+        if loss_count == 1:
+            if self.model.lossList[0].get_name() == LossName.CenterCrossEntropy2dLoss or \
+                    self.model.lossList[0].get_name() == LossName.CenterCTCLoss:
+                lr = self.optimizer.param_groups[0]['lr']
+                for param in self.model.lossList[0].center_loss.parameters():
+                    # lr_center is learning rate for center loss, e.g. lr_center = 0.5
+                    param.grad.data *= (self.model.lossList[0].lr_center / (self.model.lossList[0].alpha * lr))
 
     def clip_grad(self):
         if self.train_task_config.clip_grad_config['enable_clip']:

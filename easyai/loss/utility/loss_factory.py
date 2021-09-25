@@ -129,6 +129,12 @@ class LossFactory():
             loss_config['threshold'] = float(loss_config.get("ignore_index", 0.7))
             loss_config['min_keep'] = int(loss_config.get("min_keep", int(32 // 1 * 640 * 352 // 16)))
             loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
+        elif input_name == LossName.CenterCrossEntropy2dLoss:
+            loss_config['class_number'] = int(loss_config['class_number'])
+            loss_config['feature_dim'] = int(loss_config.get('feature_dim', 2))
+            loss_config['alpha'] = int(loss_config.get('alpha', 1))
+            loss_config['reduction'] = loss_config.get("reduction", 'mean')
+            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_CLS_LOSS)
         return loss
 

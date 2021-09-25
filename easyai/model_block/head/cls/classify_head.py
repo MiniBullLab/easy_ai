@@ -25,3 +25,24 @@ class ClassifyHead(BaseBlock):
         x = self.drop(x)
         x = self.linear(x)
         return x
+
+
+@REGISTERED_MODEL_HEAD.register_module(HeadType.CenterClassifyHead)
+class CenterClassifyHead(BaseBlock):
+
+    def __init__(self, in_channels, out_channels, class_number):
+        super().__init__(HeadType.CenterClassifyHead)
+        self.fc = FcLayer(in_channels, out_channels)
+        self.act = ActivationLayer(ActivationType.ReLU)
+        self.drop = nn.Dropout(0.5)
+        self.linear = nn.Linear(out_channels, class_number)
+
+    def forward(self, x):
+        output = []
+        x = self.fc(x)
+        output.append(x)
+        x = self.act(x)
+        x = self.drop(x)
+        x = self.linear(x)
+        output.append(x)
+        return output

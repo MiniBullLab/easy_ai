@@ -121,6 +121,7 @@ class BaseInference(BaseTask):
                                      transform_func)
         self.batch_data_process_func = \
             self.batch_data_process_factory.build_process(self.task_config.batch_data_process)
+        EasyLogger.debug("data count: %d" % len(dataloader))
         return dataloader
 
     def get_point_cloud_data_lodaer(self, input_path):

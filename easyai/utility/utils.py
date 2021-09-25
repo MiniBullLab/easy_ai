@@ -1,16 +1,7 @@
-import random
-import os
-import cv2
-import numpy as np
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import xml.etree.ElementTree as ET
-from collections import OrderedDict
 import hashlib
 import logging
 import matplotlib.pyplot as plt
-from zipfile import ZipFile
 
 
 def calculate_md5(fname):
@@ -19,21 +10,6 @@ def calculate_md5(fname):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
-
-
-def setup_logging(log_file='log.txt'):
-    """Setup logging configuration
-    """
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - %(levelname)s - %(message)s",
-                        datefmt="%Y-%m-%d %H:%M:%S",
-                        filename=log_file,
-                        filemode='w')
-    console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(message)s')
-    console.setFormatter(formatter)
-    logging.getLogger('').addHandler(console)
 
 
 class vis_bn():
