@@ -153,6 +153,7 @@ class NeckType():
 class HeadType():
 
     ClassifyHead = "ClassifyHead"
+    CenterClassifyHead = "CenterClassifyHead"
     PatchHead = "PatchHead"
     PadimHead = "PadimHead"
 
