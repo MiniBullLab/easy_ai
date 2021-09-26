@@ -5,21 +5,22 @@ function run_onnx_convert() {
     set -v
     modelDir="./.easy_log/snapshot"
     imageDir="./.easy_log/text_img"
-    outDir="${root_path}/.easy_log/out"
+    outDir="${root_path}/.easy_log/textnet_out"
     modelName=TextNet
     outNetName=TextNet
 
-    inputColorFormat=1
-    outputShape=1,3,32,128
-    outputLayerName="o:text_output|ot:0,1,2,3|odf:fp32"
-    inputDataFormat=0,0,0,0
+#    inputColorFormat=1
+#    outputShape=1,3,32,128
 
-    mean=127.5,127.5,127.5
-    scale=127.5
+#    mean=127.5,127.5,127.5
+#    scale=127.5
+    inputLayerName="i:text_input=${outDir}/dra_image_bin/dra_bin_list.txt|is:1,3,32,128|idf:0,0,0,0|iq|im:127.5,127.5,127.5|ic:127.5"
+    outputLayerName="o:text_output|ot:0,1,2,3|odf:fp32"
 
     rm -rf $outDir
-    mkdir $outDir
-    mkdir $outDir/dra_image_bin
+    mkdir -m 755 $outDir
+    rm -rf $outDir/dra_image_bin
+    mkdir -m 755 -p $outDir/dra_image_bin
 
     #amba
     source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
@@ -44,33 +45,62 @@ function run_onnx_convert() {
 #                -s $outputShape
 #    ls $outDir/dra_image_bin/*.bin > $outDir/dra_image_bin/dra_bin_list.txt
 
-    gen_image_list.py -f $imageDir -o $imageDir/img_list.txt -ns -e jpg -c 0 -d 0,0 -r 32,128 -bf $outDir/dra_image_bin -bo $outDir/dra_image_bin/dra_bin_list.txt
+    gen_image_list.py -f $imageDir \
+                      -o $imageDir/img_list.txt \
+                      -ns -e png -c 0 -d 0,0 -r 32,128 \
+                      -bf $outDir/dra_image_bin \
+                      -bo $outDir/dra_image_bin/dra_bin_list.txt
 
+    rm -rf ${outDir}/out_parser
     onnxparser.py -m $modelDir/${modelName}.onnx \
-                    -i $outDir/dra_image_bin/dra_bin_list.txt \
-                    -o $outNetName \
-                    -of $outDir/out_parser \
-                    -is $outputShape \
-                    -im $mean -ic $scale \
-                    -iq -idf $inputDataFormat \
-                    -odst $outputLayerName \
-                    -c act-allow-fp16,coeff-force-fx16 \
-                    -dinf cerr
+                  -o $outNetName \
+                  -of ${outDir}/out_parser \
+                  -isrc ${inputLayerName} \
+                  -odst $outputLayerName \
+                  -c act-allow-fp16,coeff-force-fx16 \
+                  -dinf cerr
 
-    cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
+    # Vas Compiler
+    rm -rf ${outDir}/out_parser/vas_output
+    cd ${outDir}/out_parser
+    vas -auto -show-progress ${outNetName}.vas
+    cd -
+
+    # Run Ades
+    rm -rf ${outDir}/ades_output
+    mkdir -m 755 -p ${outDir}/ades_output
+    ades_autogen.py -v ${modelName}  \
+                    -p ${outDir}/out_parser \
+                    -l ${outDir}/ades_output  \
+                    -ib text_input=$(cat ${outDir}/dra_image_bin/dra_bin_list.txt | head -1)
+    cd ${outDir}/ades_output
+    ades ${modelName}_ades.cmd
+    cd -
+
+    # Run layer_compare.py
+    rm -rf ${outDir}/layer_compare
+    mkdir -m 755 -p ${outDir}/layer_compare
+    layer_compare.py onnx -m ${modelDir}/${modelName}.onnx \
+                          -isrc ${inputLayerName} \
+                          -c act-force-fx16,coeff-force-fx16 \
+                          -odst ${outputLayerName} \
+                          -n ${modelName} \
+                          -v ${outDir}/out_parser \
+                          -o ${outDir}/layer_compare/layer_compare \
+                          -d 3
+    mv lc_cnn_output preproc -t ${outDir}/layer_compare/
 
     rm -rf ${outDir}/cavalry
-    mkdir -p ${outDir}/cavalry
-
+    mkdir -m 755 -p ${outDir}/cavalry
     cavalry_gen -d $outDir/out_parser/vas_output/ \
                 -f $outDir/cavalry/$outNetName.bin \
                 -p $outDir/ \
                 -V 2.1.7 \
                 -v > $outDir/cavalry/cavalry_info.txt
-
-    rm -rf vas_output
+    echo  $(cat ${outDir}/dra_image_bin/dra_bin_list.txt | head -1) | xargs -n 1 echo | xargs -i cp -rf {} ${outDir}/cavalry/
 
     cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
+    rm -rf logs lc_cnn_output ades
 }
 
 function main() {

@@ -135,7 +135,7 @@ class EasyAiModelTrain():
             train_task.set_convert_param(True, input_name, output_name)
             train_task.train("TextNet", self.gpu_id, None, pretrain_model_path)
             save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "text_img")
-            self.copy_process.copy(self.train_path, save_image_dir, '|', 20)
+            self.copy_process.copy(self.val_path, save_image_dir, '|', 10)
             self.arm_config.create_textnet_config(input_name, output_name)
         except Exception as err:
             EasyLogger.error(traceback.format_exc())

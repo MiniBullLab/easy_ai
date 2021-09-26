@@ -62,8 +62,8 @@ class SampleInformation():
             _, boxes = self.json_process.parse_rect_data(label_path)
             temp_names = [box.name for box in boxes if box.name.strip()]
             all_names.extend(temp_names)
-        class_names = set(all_names)
-        return tuple(class_names)
+        class_names = list(set(all_names))
+        return sorted(class_names)
 
     def get_segment_class(self, train_path):
         all_names = []
@@ -74,5 +74,5 @@ class SampleInformation():
             file_name_post, polygon_list = self.json_process.parse_segment_data(label_path)
             temp_names = [polygon.name for polygon in polygon_list if polygon.name.strip()]
             all_names.extend(temp_names)
-        class_names = set(all_names)
-        return tuple(class_names)
+        class_names = list(set(all_names))
+        return sorted(class_names)
