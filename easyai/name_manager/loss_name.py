@@ -8,6 +8,7 @@ class LossName():
     # common
     EmptyLoss = "emptyLoss"
     MeanSquaredErrorLoss = "mseLoss"
+    CenterLoss = "CenterLoss"
 
     # cls
     CrossEntropy2dLoss = "crossEntropy2dLoss"
@@ -18,6 +19,7 @@ class LossName():
     OhemCrossEntropy2dLoss = "OhemCE2dLoss"
     OhemBinaryCrossEntropy2dLoss = "OhemBCELoss"
     CenterCrossEntropy2dLoss = "CenterCELoss"
+
 
     # det2d
     Region2dLoss = "Region2dLoss"

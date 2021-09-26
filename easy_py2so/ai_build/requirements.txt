@@ -14,7 +14,7 @@ matplotlib
 pandas
 tabulate
 pydot
-netron==5.0.0
+netron
 graphviz
 flashtorch
 pyclipper==1.1.0.post3
