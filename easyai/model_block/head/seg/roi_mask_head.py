@@ -2,10 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.name_manager import ActivationType
-from easyai.name_manager import HeadType
-from easyai.model_block.base_block.utility.utility_block import ConvActivationBlock
-from easyai.model_block.base_block.utility.pooling_layer import MultiROIPooling
+from easyai.name_manager.block_name import ActivationType
+from easyai.name_manager.block_name import HeadType
+from easyai.model_block.base_block.common.utility_block import ConvActivationBlock
+from easyai.model_block.base_block.common.pooling_layer import MultiROIPooling
+from easyai.model_block.utility.base_block import *
 
 
 class MultiROIMaskHead(BaseBlock):
