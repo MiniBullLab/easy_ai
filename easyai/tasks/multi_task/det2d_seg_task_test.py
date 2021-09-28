@@ -56,7 +56,7 @@ class Det2dSegTaskTest(BaseTest):
             path, filename_post = os.path.split(image_path[0])
             self.multi_task_inference.save_result(filename_post, detection_objects)
 
-        mAP, aps = self.det2d_evaluator.eval(self.test_task_config.save_result_dir, val_path)
+        mAP, aps = self.det2d_evaluator.eval(self.test_task_config.save_result_dir, self.val_path)
         score, class_score = self.seg_metric.get_score()
         self.save_test_value(epoch, mAP, aps, score, class_score)
         return mAP, score['Mean IoU']
