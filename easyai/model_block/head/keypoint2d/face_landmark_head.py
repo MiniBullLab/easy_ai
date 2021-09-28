@@ -3,9 +3,10 @@
 # Author:lipeijie
 
 
-from easyai.name_manager import HeadType
-from easyai.name_manager import ActivationType
-from easyai.model_block.base_block.utility.utility_block import FcActivationBlock
+from easyai.name_manager.block_name import HeadType
+from easyai.name_manager.block_name import ActivationType
+from easyai.model_block.base_block.common.utility_block import FcActivationBlock
+from easyai.model_block.utility.base_block import *
 
 
 class FaceLandmarkHead(BaseBlock):
