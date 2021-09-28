@@ -4,7 +4,7 @@
 
 #### easyai包打包
 1. ``` cp -r ../easyai . ```
-2. ``` python3 py2sec.py -d easyai -m __init__.py,setup.py```（该步骤执行时间会比较长几分钟）
+2. ``` python3 py2sec.py -d easyai -m __init__.py,setup.py,flops_counter.py```（该步骤执行时间会比较长几分钟）
 3. ``` cd result```
 4. ``` cp ../ai_build/* . ```（如果需要打包对应版本的库，可以将最外层中的requirements_xxx文件的文件名修改为requirements，替换当前requirements文件）。
 5. ``` python3 setup.py bdist_wheel```
