@@ -146,7 +146,7 @@ def check_prerequisites(
     """A decorator factory to check if prerequisites are satisfied.
 
     Args:
-        prerequisites (str of list[str]): Prerequisites to be checked.
+        prerequisites (ocr of list[ocr]): Prerequisites to be checked.
         checker (callable): The checker method that returns True if a
             prerequisite is meet, False otherwise.
         msg_tmpl (str): The message template with two variables.

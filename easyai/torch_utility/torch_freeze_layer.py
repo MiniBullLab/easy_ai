@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import re
-from easyai.base_name.block_name import BlockType
+from easyai.name_manager.block_name import BlockType
+from easyai.utility.logger import EasyLogger
 
 
 class TorchFreezeLayer():
@@ -42,7 +43,7 @@ class TorchFreezeLayer():
                     self.freeze_layer_from_name(block, layer_name)
                     break
         else:
-            print("freeze layer error")
+            EasyLogger.error("freeze layer error")
 
     def freeze_layers(self, model, layer_names):
         for key, block in model._modules.items():
@@ -68,6 +69,6 @@ class TorchFreezeLayer():
 
     def print_freeze_layer(self, model):
         for key, block in model._modules.items():
-            print(key)
+            EasyLogger.debug(key)
             for param in block.named_parameters():
-                print(param[0], param[1].requires_grad)
+                EasyLogger.debug("{} {}" .format(param[0], param[1].requires_grad))

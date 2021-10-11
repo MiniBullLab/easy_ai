@@ -2,18 +2,17 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.base_name.backbone_name import BackboneName
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
-from easyai.model.base_block.utility.upsample_layer import Upsample
-from easyai.model.base_block.utility.utility_layer import RouteLayer
-from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.base_block.utility.utility_block import ConvActivationBlock
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.upsample_layer import Upsample
+from easyai.model_block.base_block.common.utility_layer import RouteLayer
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.common.utility_block import ConvActivationBlock
 from easyai.model.utility.base_classify_model import *
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
 @REGISTERED_SEG_MODEL.register_module(ModelName.MobileV2FCN)
@@ -30,10 +29,9 @@ class MobileV2FCN(BaseClassifyModel):
         self.create_block_list()
 
     def create_block_list(self):
-        self.block_out_channels = []
-        self.index = 0
+        self.clear_list()
 
-        backbone = self.factory.get_backbone_model(self.model_args)
+        backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
@@ -69,12 +67,16 @@ class MobileV2FCN(BaseClassifyModel):
         layer10 = Upsample(scale_factor=4, mode='bilinear')
         self.add_block_list(layer10.get_name(), layer10, self.block_out_channels[-1])
 
-        self.create_loss()
+        self.create_loss_list()
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = CrossEntropy2d(ignore_index=250)
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type': LossName.CrossEntropy2dLoss,
+                       'weight_type': 0,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def make_layer(self, base_out_channels, conv_output_channel, scale_factor, route_layer_indexs):
@@ -128,7 +130,7 @@ class MobileV2FCN(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

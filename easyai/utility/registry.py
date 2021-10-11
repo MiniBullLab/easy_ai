@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import inspect
-from easyai.utility import misc
+import six
+from easyai.utility.logger import EasyLogger
 
 
 class Registry(object):
@@ -25,12 +26,29 @@ class Registry(object):
     def module_dict(self):
         return self._module_dict
 
+    def get_keys(self):
+        return self._module_dict.keys()
+
     def get(self, key):
         return self._module_dict.get(key, None)
 
     def has_class(self, key):
         result = key.strip() in self._module_dict
         return result
+
+    def add_module(self, module_class, cls_name=None):
+        if not inspect.isclass(module_class):
+            raise TypeError(
+                "module must be a class, but got {}".format(type(module_class))
+            )
+        if cls_name is None:
+            cls_name = module_class.__name__
+        if cls_name in self._module_dict:
+            raise KeyError(
+                "{} is already registered in {}".format(cls_name, self.name)
+            )
+        self._module_dict[cls_name] = module_class
+        # print(module_class, "register name: %s" % cls_name)
 
     def _register_module(self, module_class, cls_name=None):
         """Register a module.
@@ -44,12 +62,13 @@ class Registry(object):
             )
         if cls_name is None:
             cls_name = module_class.__name__
+        # print(self._module_dict)
         if cls_name in self._module_dict:
             raise KeyError(
                 "{} is already registered in {}".format(cls_name, self.name)
             )
         self._module_dict[cls_name] = module_class
-        # print(module_class, "register name: %s" % cls_name)
+        EasyLogger.debug("{} register name: {}".format(module_class, cls_name))
 
     def register_module(self, cls_name=None):
         def deco(cls):
@@ -71,7 +90,7 @@ def build_from_cfg(cfg, registry, default_args=None):
     assert isinstance(default_args, dict) or default_args is None
     args = cfg.copy()
     obj_type = args.pop("type")
-    if misc.is_str(obj_type):
+    if isinstance(obj_type, six.string_types):
         obj_cls = registry.get(obj_type)
         if obj_cls is None:
             raise KeyError(
@@ -81,7 +100,7 @@ def build_from_cfg(cfg, registry, default_args=None):
         obj_cls = obj_type
     else:
         raise TypeError(
-            "type must be a str or valid type, but got {}".format(type(obj_type))
+            "type must be a ocr or valid type, but got {}".format(type(obj_type))
         )
     if default_args is not None:
         for name, value in default_args.items():

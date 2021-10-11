@@ -2,16 +2,15 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.cls.ce2d_loss import CrossEntropy2d
-from easyai.model.base_block.utility.utility_layer import FcLayer, ActivationLayer
-from easyai.model.utility.base_classify_model import *
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
-from easyai.model.utility.registry import REGISTERED_CLS_MODEL
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.utility_layer import FcLayer, ActivationLayer
+from easyai.model.utility.base_classify_model import BaseClassifyModel
+from easyai.model.utility.model_registry import REGISTERED_CLS_MODEL
+from torch import nn
 
 
 @REGISTERED_CLS_MODEL.register_module(ModelName.VggNetCls)
@@ -25,7 +24,6 @@ class VggNetCls(BaseClassifyModel):
 
         self.model_args['type'] = BackboneName.Vgg19
 
-        self.factory = BackboneFactory()
         self.create_block_list()
 
     def create_block_list(self):
@@ -60,10 +58,14 @@ class VggNetCls(BaseClassifyModel):
 
         self.create_loss()
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = CrossEntropy2d(ignore_index=250)
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type': LossName.CrossEntropy2dLoss,
+                       'weight_type': 0,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def forward(self, x):
@@ -78,7 +80,7 @@ class VggNetCls(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif LayerType.ShortcutLayer in key:
                 x = block(layer_outputs)
-            elif LossType.CrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

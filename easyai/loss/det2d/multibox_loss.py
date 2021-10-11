@@ -1,31 +1,25 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-
+from easyai.name_manager.loss_name import LossName
 from easyai.loss.utility.base_loss import *
-from easyai.loss.utility.anchor_generator import SSDPriorBoxGenerator
-from easyai.loss.det2d.utility.det2d_gt_process import Det2dGroundTruthProcess
-from easyai.torch_utility.box_utility import torch_corners_box2d_ious, torch_box2d_rect_corner
+from easyai.loss.det2d.utility.base_multi_loss import BaseMultiLoss
+from easyai.loss.utility.box2d_process import torch_corners_box2d_ious, torch_box2d_rect_corner
+from easyai.loss.utility.loss_registry import REGISTERED_DET2D_LOSS
 
 
-class MultiBoxLoss(BaseLoss):
+@REGISTERED_DET2D_LOSS.register_module(LossName.MultiBoxLoss)
+class MultiBoxLoss(BaseMultiLoss):
 
     def __init__(self, class_number, iou_threshold, input_size,
-                 anchor_counts, anchor_sizes, aspect_ratio_list):
-        super().__init__(LossType.MultiBoxLoss)
-        self.class_number = class_number
+                 anchor_counts, aspect_ratios, min_sizes, max_sizes=None):
+        super().__init__(LossName.MultiBoxLoss, class_number, input_size,
+                         anchor_counts, aspect_ratios, min_sizes, max_sizes)
         self.iou_threshold = iou_threshold
-        self.input_size = input_size
-        self.anchor_counts = tuple(anchor_counts)
-        self.anchor_sizes = anchor_sizes
-        self.aspect_ratio_list = aspect_ratio_list
         self.variances = (0.1, 0.2)
 
-        self.ssd_priorbox = SSDPriorBoxGenerator()
-        self.gt_process = Det2dGroundTruthProcess()
-
-        self.info = {'loc_loss': 0.0, 'cls_loss': 0.0}
+        self.loss_info = {'loc_loss': 0.0, 'cls_loss': 0.0}
 
     def encode(self, gt_boxes, gt_labels, prior_boxes):
         cxcy = (gt_boxes[:, :2] + gt_boxes[:, 2:]) / 2 - prior_boxes[:, :2]  # [8732,2]
@@ -92,11 +86,11 @@ class MultiBoxLoss(BaseLoss):
         for index in range(len(gt_targets)):
             gt_data = gt_targets[index]
             gt_boxes = self.gt_process.scale_gt_box(gt_data, self.input_size[0], self.input_size[1])
-            gt_labels = gt_data[:, 0]
             if gt_data is None or len(gt_data) == 0:
                 loc = torch.zeros_like(prior_boxes)
                 cls_conf = torch.zeros((prior_boxes.size(0),)).long()
             else:
+                gt_labels = gt_data[:, 0]
                 temp_boxes = torch_box2d_rect_corner(prior_boxes)
                 iou = torch_corners_box2d_ious(gt_boxes, temp_boxes)
                 prior_box_iou, max_idx = iou.max(0, keepdim=False)  # [1,8732]
@@ -115,32 +109,9 @@ class MultiBoxLoss(BaseLoss):
 
         return torch.stack(target_boxes, 0), torch.stack(target_labels, 0)
 
-    def forward(self, prediction_list, targets=None):
-        y_locs = []
-        y_confs = []
-        anchor_boxes_list = []
-        for index, feature_index in enumerate(range(0, len(prediction_list), 2)):
-            y_loc = prediction_list[feature_index]
-            N, C, H, W = y_loc.size()
-            y_loc = y_loc.permute(0, 2, 3, 1).contiguous()
-            y_loc = y_loc.view(N, -1, 4)
-            y_locs.append(y_loc)
-
-            y_conf = prediction_list[feature_index+1]
-            y_conf = y_conf.permute(0, 2, 3, 1).contiguous()
-            y_conf = y_conf.view(N, -1, self.class_number)
-            y_confs.append(y_conf)
-
-            self.ssd_priorbox.set_anchor_param(self.anchor_counts[index],
-                                               (self.anchor_sizes[index], self.anchor_sizes[index+1]),
-                                               self.aspect_ratio_list[index])
-            anchors = self.ssd_priorbox((W, H), self.input_size)
-            anchor_boxes_list.append(anchors)
-        # loc_preds(tensor): predicted locations, sized [batch_size, 8732, 4]
-        # cls_preds(tensor): predicted class confidences, sized [batch_size, 8732, num_classes]
-        loc_preds = torch.cat(y_locs, 1)
-        cls_preds = torch.cat(y_confs, 1)
-        anchor_boxes = torch.cat(anchor_boxes_list, 0)
+    def forward(self, output_list, targets=None):
+        loc_preds, cls_preds, feature_sizes = self.reshape_box_outputs(output_list)
+        anchor_boxes = self.ssd_priorbox(self.input_size, feature_sizes)
         if targets is None:
             prior_boxes = anchor_boxes.unsqueeze(0).repeat(loc_preds.size(0), 1, 1).to(loc_preds.device)
             dets_loc, dets_cls = self.decode(loc_preds, cls_preds, prior_boxes)
@@ -178,7 +149,8 @@ class MultiBoxLoss(BaseLoss):
                 loc_loss = loc_loss / num_matched_boxes
                 cls_loss = cls_loss / num_matched_boxes
 
-            self.info['loc_loss'] = float(loc_loss.item())
-            self.info['cls_loss'] = float(cls_loss.item())
+            self.loss_info['loc_loss'] = float(loc_loss.item())
+            self.loss_info['cls_loss'] = float(cls_loss.item())
 
-            return loc_loss + cls_loss
+            all_loss = loc_loss + cls_loss
+            return all_loss

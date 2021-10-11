@@ -1,35 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-import os
-from optparse import OptionParser
 import pathlib
 import tensorflow as tf
 import tf2onnx
 from tf2onnx import loader, optimizer
 from tf2onnx.tfonnx import tf_optimize
-
-
-def parse_arguments():
-    parser = OptionParser()
-    parser.description = "This program is tensorflow convert to onnx"
-
-    parser.add_option("-w", "--pb", dest="pb_path",
-                      metavar="PATH", type="string", default=None,
-                      help="tensorflow pb path")
-
-    (options, args) = parser.parse_args()
-
-    if options.pb_path:
-        if not os.path.exists(options.pb_path):
-            parser.error("Could not find the onnx file")
-        else:
-            options.pb_path = os.path.normpath(options.pb_path)
-    else:
-        parser.error("'pb_path' option is required to run this program")
-
-    return options
 
 
 class TensorflowConvertOnnx():
@@ -69,15 +46,3 @@ class TensorflowConvertOnnx():
         for m in op:
             print(m.values())
         sess.close()
-
-
-def main():
-    print("process start...")
-    options = parse_arguments()
-    converter = TensorflowConvertOnnx(options.pb_path)
-    converter.convert_onnx()
-    print("process end!")
-
-
-if __name__ == "__main__":
-    main()

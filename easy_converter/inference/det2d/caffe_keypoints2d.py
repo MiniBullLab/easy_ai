@@ -12,7 +12,7 @@ from optparse import OptionParser
 
 def parse_arguments():
     parser = OptionParser()
-    parser.description = "This program is caffe key_point2d inference"
+    parser.description = "This program is caffe keypoint2d inference"
 
     parser.add_option("-i", "--image_dir", dest="image_dir",
                       type="string", default=None,

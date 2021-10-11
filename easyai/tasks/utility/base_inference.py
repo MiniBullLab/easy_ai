@@ -1,70 +1,175 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import abc
 from pathlib import Path
+import torch
 from easyai.helper.timer_process import TimerProcess
-from easyai.data_loader.utility.images_loader import ImagesLoader
-from easyai.data_loader.utility.video_loader import VideoLoader
-from easyai.data_loader.utility.text_data_loader import TextDataLoader
+from easyai.data_loader.common.images_loader import ImagesLoader
+from easyai.data_loader.common.video_loader import VideoLoader
+from easyai.data_loader.common.text_data_loader import TextDataLoader
+from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
+from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.visualization.utility.task_show_factory import TaskShowFactory
+from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
+from easyai.utility.logger import EasyLogger
 
 
 class BaseInference(BaseTask):
 
     def __init__(self, model_name, config_path, task_name):
-        super().__init__()
+        super().__init__(config_path)
         self.set_task_name(task_name)
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
-        self.config_path = config_path
+        self.show_factory = TaskShowFactory()
+        self.transform_factory = DataTransformsFactory()
+        self.batch_data_process_factory = BatchDataProcessFactory()
+        self.model_name = model_name
+        self.model_args = None
         self.model = None
+        self.task_config = None
+        self.batch_data_process_func = None
         self.src_size = (0, 0)
-        self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
-        self.model_args = {"type": model_name,
-                           "data_channel": self.task_config.data_channel
-                           }
+        self.result_show = self.show_factory.get_task_show(self.task_name)
+        self.set_task_config(config_path)
+
+    def set_task_config(self, config=None):
+        if config is None:
+            self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
+            self.task_config.save_config()
+        elif isinstance(config, str):
+            self.task_config = self.config_factory.get_config(self.task_name, self.config_path)
+            self.task_config.save_config()
+        elif isinstance(config, BaseConfig):
+            self.config_path = None
+            self.task_config = config
+        assert self.task_config is not None, \
+            EasyLogger.error("create config fail! {}".format(config))
+
+    def set_model_param(self, data_channel, **params):
+        if self.model_name is None or len(self.model_name) == 0:
+            if self.task_config.model_config is not None:
+                self.model_args = self.task_config.model_config
+            else:
+                EasyLogger.error("{} : model config error!".format(self.model_args))
+        else:
+            if isinstance(self.model_name, (list, tuple)):
+                if len(self.model_name) > 0:
+                    self.model_args = {"type": self.model_name[0]}
+                else:
+                    self.model_args = {"type": None}
+            elif isinstance(self.model_name, str):
+                self.model_args = {"type": self.model_name}
+            else:
+                pass
+            self.model_args["data_channel"] = data_channel
+            self.model_args.update(params)
+        EasyLogger.debug(self.model_args)
+
+    def set_model(self, my_model=None, gpu_id=0):
+        if my_model is None:
+            self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+        elif isinstance(my_model, torch.nn.Module):
+            self.model = my_model
+            self.model.eval()
+        assert self.model is not None, EasyLogger.error("create model fail!")
 
     @abc.abstractmethod
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         pass
 
     @abc.abstractmethod
-    def infer(self, input_data, threshold=0.0):
-        pass
-
-    @abc.abstractmethod
-    def postprocess(self, result):
+    def infer(self, input_data, net_type=0):
         pass
 
     def load_weights(self, weights_path):
-        self.torchModelProcess.loadLatestModelWeight(weights_path, self.model)
-        self.model = self.torchModelProcess.modelTestInit(self.model)
+        if isinstance(weights_path, (list, tuple)):
+            self.torchModelProcess.load_latest_model(weights_path[0], self.model)
+        else:
+            self.torchModelProcess.load_latest_model(weights_path, self.model)
+        self.model = self.torchModelProcess.model_test_init(self.model)
         self.model.eval()
 
     def get_image_data_lodaer(self, input_path):
         if not os.path.exists(input_path):
             return None
-        image_size = self.task_config.image_size
-        data_channel = self.task_config.data_channel
-        mean = self.task_config.data_mean
-        std = self.task_config.data_std
-        normalize_type = self.task_config.normalize_type
-        resize_type = self.task_config.resize_type
+        EasyLogger.debug(self.task_config.data)
+        image_size = tuple(self.task_config.data['image_size'])
+        data_channel = self.task_config.data['data_channel']
+        mean = self.task_config.data.get('mean', 1)
+        std = self.task_config.data.get('std', 0)
+        resize_type = self.task_config.data['resize_type']
+        normalize_type = self.task_config.data['normalize_type']
+        transform_args = self.task_config.data.get('transform_func', None)
+        transform_func = self.transform_factory.get_data_transform(transform_args)
         if Path(input_path).is_dir():
             dataloader = ImagesLoader(input_path, image_size, data_channel,
-                                      resize_type, normalize_type, mean, std)
+                                      resize_type, normalize_type, mean, std,
+                                      transform_func)
         elif Path(input_path).suffix in ['.txt', '.text']:
             dataloader = TextDataLoader(input_path, image_size, data_channel,
-                                        resize_type, normalize_type, mean, std)
+                                        resize_type, normalize_type, mean, std,
+                                        transform_func)
         else:
             dataloader = VideoLoader(input_path, image_size, data_channel,
-                                     resize_type, normalize_type, mean, std)
+                                     resize_type, normalize_type, mean, std,
+                                     transform_func)
+        self.batch_data_process_func = \
+            self.batch_data_process_factory.build_process(self.task_config.batch_data_process)
+        EasyLogger.debug("data count: %d" % len(dataloader))
         return dataloader
+
+    def get_point_cloud_data_lodaer(self, input_path):
+        pass
+
+    def batch_processing(self, batch_data):
+        if self.batch_data_process_func is not None:
+            self.batch_data_process_func(batch_data)
 
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]
         self.src_size = (shape[1], shape[0])
+
+    def common_output(self, output_list):
+        output = None
+        count = len(output_list)
+        loss_count = len(self.model.lossList)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            output = self.model.lossList[0](output_list[0])
+        elif loss_count == 1 and output_count > 1:
+            output = self.model.lossList[0](output_list)
+        elif loss_count > 1 and loss_count == output_count:
+            output = []
+            for i in range(0, count):
+                temp = self.model.lossList[i](output_list[i])
+                output.append(temp)
+        else:
+            EasyLogger.error("compute prediction error")
+        return output
+
+    def gan_output(self, output_list):
+        output = None
+        loss_count = len(self.model.g_loss_list)
+        output_count = len(output_list)
+        if loss_count == 1 and output_count == 1:
+            output = self.model.g_loss_list[0](output_list[0])
+        elif loss_count == 1 and output_count > 1:
+            output = self.model.g_loss_list[0](output_list)
+        elif loss_count > 1 and loss_count == output_count:
+            output = []
+            for k in range(0, loss_count):
+                result = self.model.g_loss_list[k](output_list[k])
+                output.append(result)
+        else:
+            EasyLogger.error("compute generator prediction error")
+        return output
+
+    @property
+    def device(self):
+        return self.torchModelProcess.get_device()

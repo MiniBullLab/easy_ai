@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.data_loader.det2d.det2d_data_augment import DetectionDataAugment
 from easyai.data_loader.seg.segment_data_augment import SegmentDataAugment
-from easyai.data_loader.utility.image_data_augment import ImageDataAugment
+from easyai.data_loader.augment.image_data_augment import ImageDataAugment
 
 
 class Det2dSegDataAugment():

@@ -1,47 +1,48 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.evaluation.calculate_mAp import CalculateMeanAp
-from easyai.data_loader.det2d.det2d_val_dataloader import get_detection_val_dataloader
 from easyai.tasks.det2d.detect2d import Detection2d
-from easyai.base_name.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.name_manager.task_name import TaskName
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Detect2d_Task)
 class Detection2dTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Detect2d_Task)
-        self.detect_inference = Detection2d(cfg_path, gpu_id, config_path)
-        self.evaluator = CalculateMeanAp(self.test_task_config.detect2d_class)
-        self.threshold_det = 5e-3
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.Detect2d_Task)
+        self.inference = Detection2d(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
+        self.inference.result_process.set_threshold(5e-3)
 
-    def load_weights(self, weights_path):
-        self.detect_inference.load_weights(weights_path)
+    def process_test(self, val_path, epoch=0):
+        self.create_dataloader(val_path)
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        mAP = self.test(epoch)
+        print("mAP: {:.5f}".format(mAP))
 
-    def test(self, val_path):
+    def test(self, epoch=0):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
+        for i, batch_data in enumerate(self.dataloader):
+            result, output_list = self.inference.single_image_process(batch_data['src_size'][0].numpy(),
+                                                                      batch_data)
+            loss_value = self.compute_loss(output_list, batch_data)
+            self.metirc_loss(i, loss_value)
+            self.print_test_info(i, loss_value)
+            self.inference.save_result(batch_data['image_path'][0], result, 1)
 
-        dataloader = get_detection_val_dataloader(val_path, self.test_task_config)
-        self.timer.tic()
-        for i, (image_path, src_image, input_image) in enumerate(dataloader):
-            print('%g/%g' % (i + 1, len(dataloader)), end=' ')
-
-            self.detect_inference.set_src_size(src_image.numpy()[0])
-
-            result = self.detect_inference.infer(input_image, self.threshold_det)
-            detection_objects = self.detect_inference.postprocess(result)
-
-            print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc(True)))
-            self.detect_inference.save_result(image_path[0], detection_objects, 1)
-
-        mAP, aps = self.evaluator.eval(self.test_task_config.save_result_dir, val_path)
-        return mAP, aps
+        mAP, aps = self.evaluation.eval(self.test_task_config.save_result_dir,
+                                        self.val_path)
+        self.save_test_value(epoch, mAP, aps)
+        return mAP
 
     def save_test_value(self, epoch, mAP, aps):
         # Write epoch results
@@ -51,3 +52,4 @@ class Detection2dTest(BaseTest):
             for i, ap in enumerate(aps):
                 file.write(self.test_task_config.detect2d_class[i] + ": {:.3f} ".format(ap))
             file.write("\n")
+

@@ -1,13 +1,13 @@
 keras==2.2.4
 tensorflow==1.14.0
 onnx==1.6.0
+onnxruntime==1.3.0
+onnxoptimizer>=0.2.5
 onnxmltools
 keras2onnx
 tf2onnx
-onnxruntime==1.3.0
-onnx-simplifier
 onnx-tf==1.5.0
-opencv-python 
+opencv-python
 matplotlib
 protobuf
 pandas
@@ -18,4 +18,3 @@ sklearn
 absl-py
 pathlib
 future
-cython

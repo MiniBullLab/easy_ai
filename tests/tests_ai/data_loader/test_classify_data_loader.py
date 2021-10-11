@@ -9,8 +9,8 @@ sys.path.insert(0, os.getcwd() + "/..")
 
 import json
 import numpy as np
-from easyai.data_loader.cls.classify_dataloader import get_classify_train_dataloader
-from easyai.data_loader.cls.classify_dataloader import get_classify_val_dataloader
+from easyai.data_loader.cls.classify_dataset import get_classify_train_dataloader
+from easyai.data_loader.cls.classify_dataset import get_classify_val_dataloader
 from easyai.visualization.task_show.classify_show import ClassifyShow
 from easyai.config.utility.config_factory import ConfigFactory
 

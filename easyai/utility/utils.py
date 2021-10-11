@@ -1,45 +1,15 @@
-import random
-import os
-import cv2
-import numpy as np
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import xml.etree.ElementTree as ET
-from collections import OrderedDict
+import hashlib
 import logging
 import matplotlib.pyplot as plt
 
-def xyxy2xywh(x):  # Convert bounding box format from [x1, y1, x2, y2] to [x, y, w, h]
-    y = torch.zeros(x.shape) if x.dtype is torch.float32 else np.zeros(x.shape)
-    y[:, 0] = (x[:, 0] + x[:, 2]) / 2
-    y[:, 1] = (x[:, 1] + x[:, 3]) / 2
-    y[:, 2] = x[:, 2] - x[:, 0]
-    y[:, 3] = x[:, 3] - x[:, 1]
-    return y
 
-def xywh2xyxy(x):  # Convert bounding box format from [x, y, w, h] to [x1, y1, x2, y2]
-    y = torch.zeros(x.shape) if x.dtype is torch.float32 else np.zeros(x.shape)
-    y[:, 0] = (x[:, 0] - x[:, 2] / 2)
-    y[:, 1] = (x[:, 1] - x[:, 3] / 2)
-    y[:, 2] = (x[:, 0] + x[:, 2] / 2)
-    y[:, 3] = (x[:, 1] + x[:, 3] / 2)
-    return y
-
-
-def setup_logging(log_file='log.txt'):
-    """Setup logging configuration
-    """
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - %(levelname)s - %(message)s",
-                        datefmt="%Y-%m-%d %H:%M:%S",
-                        filename=log_file,
-                        filemode='w')
-    console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(message)s')
-    console.setFormatter(formatter)
-    logging.getLogger('').addHandler(console)
+def calculate_md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
 class vis_bn():

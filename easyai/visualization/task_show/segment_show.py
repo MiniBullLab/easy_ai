@@ -1,25 +1,26 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import cv2
-from easyai.visualization.utility.image_drawing import ImageDrawing
+from easyai.name_manager.task_name import TaskName
+from easyai.visualization.utility.base_show import BaseShow
+from easyai.visualization.utility.show_registry import REGISTERED_TASK_SHOW
 
 
-class SegmentionShow():
+@REGISTERED_TASK_SHOW.register_module(TaskName.Segment_Task)
+class SegmentionShow(BaseShow):
 
     def __init__(self):
-        self.drawing = ImageDrawing()
+        super().__init__()
+        self.set_task_name(TaskName.Segment_Task)
 
     def show(self, src_image, result, class_name, scale=0.5):
-        segment_image = self.drawing.draw_segment_result(src_image, result,
+        image = src_image.copy()
+        segment_image = self.drawing.draw_segment_result(image, result,
                                                          class_name)
+        self.drawing.draw_image("image", segment_image, scale)
 
-        cv2.namedWindow("image", 0)
-        cv2.resizeWindow("image", int(segment_image.shape[1] * scale), int(segment_image.shape[0] * scale))
-        cv2.imshow('image', segment_image)
-
-        if cv2.waitKey() & 0xFF == 27:
-            return False
-        else:
+        if cv2.getWindowProperty('image', 1) < 0:
             return True
+        return self.wait_key()

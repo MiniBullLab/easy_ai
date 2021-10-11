@@ -1,54 +1,56 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.data_loader.cls.classify_dataloader import get_classify_val_dataloader
 from easyai.tasks.cls.classify import Classify
-from easyai.evaluation.classify_accuracy import ClassifyAccuracy
-from easyai.base_name.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.name_manager.task_name import TaskName
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Classify_Task)
 class ClassifyTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.Classify_Task)
-        self.classify_inference = Classify(cfg_path, gpu_id, config_path)
-        self.topK = (1,)
-        self.evaluation = ClassifyAccuracy(top_k=self.topK)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.Classify_Task)
+        self.inference = Classify(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
 
-    def load_weights(self, weights_path):
-        self.classify_inference.load_weights(weights_path)
+    def process_test(self, val_path, epoch=0):
+        self.create_dataloader(val_path)
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        top1, loss_value = self.test(epoch)
+        print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        print("top1: {:.5f}".format(top1))
 
-    def test(self, val_path):
-        dataloader = get_classify_val_dataloader(val_path, self.test_task_config)
-        self.evaluation.clean_data()
-        for index, (images, labels) in enumerate(dataloader):
-            output = self.classify_inference.infer(images)
-            self.evaluation.torch_eval(output.data, labels.to(output.device))
-        self.print_evaluation()
-        return self.evaluation.get_top1()
+    def test(self, epoch=0):
+        for index, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.inference.infer(batch_data)
+            loss_value = self.compute_loss(output_list, batch_data)
+            self.evaluation.torch_eval(prediction.data,
+                                       batch_data['label'].to(prediction.device))
+            self.metirc_loss(index, loss_value)
+            self.print_test_info(index, loss_value)
+        top1 = self.evaluation.get_top1()
+        self.save_test_value(epoch)
+        EasyLogger.info("Val epoch loss: {}".format(self.epoch_loss_average.avg))
+        return top1, self.epoch_loss_average.avg
 
     def save_test_value(self, epoch):
         # Write epoch results
-        if max(self.topK) > 1:
+        k = self.evaluation.get_k()
+        if max(k) > 1:
             with open(self.test_task_config.evaluation_result_path, 'a') as file:
                 file.write("Epoch: {} | prec{}: {:.3f} | prec{}: {:.3f}\n".format(epoch,
-                                                                                  self.topK[0],
-                                                                                  self.topK[1],
+                                                                                  k[0],
+                                                                                  k[1],
                                                                                   self.evaluation.get_top1(),
                                                                                   self.evaluation.get_topK()))
         else:
             with open(self.test_task_config.evaluation_result_path, 'a') as file:
                 file.write("Epoch: {} | prec1: {:.3f}\n".format(epoch, self.evaluation.get_top1()))
 
-    def print_evaluation(self):
-        if max(self.topK) > 1:
-            print('prec{}: {} \t prec{}: {}\t'.format(self.topK[0],
-                                                      self.topK[1],
-                                                      self.evaluation.get_top1(),
-                                                      self.evaluation.get_topK()))
-        else:
-            print('prec1: {} \t'.format(self.evaluation.get_top1()))

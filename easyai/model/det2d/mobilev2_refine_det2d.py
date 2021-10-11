@@ -1,0 +1,138 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
+from easyai.name_manager import ModelName
+from easyai.name_manager import BackboneName
+from easyai.name_manager import NormalizationType, ActivationType
+from easyai.name_manager import LayerType, BlockType, HeadType
+from easyai.name_manager import LossName
+from easyai.model_block.base_block.utility.utility_layer import RouteLayer
+from easyai.model_block.base_block.utility.fpn_block import FPNV2Block
+from easyai.model_block.base_block import ConvBNActivationBlock
+from easyai.model_block.head.det2d import SSDBoxHead, MultiSSDBoxHead, ARMBoxHead
+from easyai.model.utility.base_det_model import *
+
+
+class MobileV2RefineDet2d(BaseDetectionModel):
+
+    def __init__(self, data_channel=3, class_number=1):
+        super().__init__(data_channel, class_number)
+        self.set_name(ModelName.MobileV2RefineDet2d)
+        self.bn_name = NormalizationType.BatchNormalize2d
+        self.activation_name = ActivationType.ReLU
+        self.feature_out_channels = 64
+
+        self.model_args['type'] = BackboneName.MobileNetV2_0_5
+
+        self.anchor_sizes = "10,10|24,26|33,68|" \
+                            "61,131|70,36|117,78|" \
+                            "128,209|277,107|311,251"
+        self.loss_config = {"type": LossName.YoloV3Loss,
+                            "anchor_sizes": self.anchor_sizes,
+                            "class_number": class_number,
+                            "anchor_mask": "6,7,8",
+                            "reduction": 32,
+                            "coord_weight": 3.0,
+                            "noobject_weight": 1.0,
+                            "object_weight": 1.0,
+                            "class_weight": 1.0,
+                            "iou_threshold": 0.5}
+
+        self.create_block_list()
+
+    def create_block_list(self):
+        self.clear_list()
+        self.create_loss_list()
+
+        backbone = self.backbone_factory.get_backbone_model(self.model_args)
+        base_out_channels = backbone.get_outchannel_list()
+        self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
+
+        layer1 = ConvBNActivationBlock(in_channels=base_out_channels[-1],
+                                       out_channels=self.feature_out_channels,
+                                       kernel_size=1,
+                                       stride=1,
+                                       padding=0,
+                                       bnName=self.bn_name,
+                                       activationName=self.activation_name)
+        self.add_block_list(layer1.get_name(), layer1, self.feature_out_channels)
+
+        layer2 = ConvBNActivationBlock(in_channels=self.feature_out_channels,
+                                       out_channels=self.feature_out_channels,
+                                       kernel_size=3,
+                                       stride=2,
+                                       padding=1,
+                                       bnName=self.bn_name,
+                                       activationName=self.activation_name)
+        self.add_block_list(layer2.get_name(), layer2, self.feature_out_channels)
+
+        temp_layers = [6, 13, 17, -1]
+        temp_layer_outputs = [self.block_out_channels[i] if i < 0 else base_out_channels[i]
+                              for i in temp_layers]
+        temp_str = ",".join('%s' % index for index in temp_layers)
+        arm_head = ARMBoxHead(temp_str, temp_layer_outputs, [9, 3, 3, 3], 2)
+        self.add_block_list(arm_head.get_name(), arm_head, temp_layer_outputs[-1])
+
+        down_layers = [6, 13, 17]
+        down_layer_outputs = [self.block_out_channels[i] if i < 0 else base_out_channels[i]
+                              for i in down_layers]
+        temp_str = ",".join('%s' % index for index in down_layers)
+        fpn_layer = FPNV2Block(temp_str, down_layer_outputs, self.feature_out_channels)
+        self.add_block_list(fpn_layer.get_name(), fpn_layer, self.feature_out_channels)
+
+        input_channels = [self.feature_out_channels] * 3
+        anchor_numbers = [9, 3, 3]
+        odm_head3 = MultiSSDBoxHead(input_channels, anchor_numbers,
+                                    self.class_number, is_gaussian=True)
+        self.add_block_list(odm_head3.get_name(), odm_head3, self.class_number)
+
+        route5 = RouteLayer("-4")
+        output_channel5 = route5.get_output_channel(base_out_channels, self.block_out_channels)
+        self.add_block_list(route5.get_name(), route5, output_channel5)
+
+        layer3 = ConvBNActivationBlock(in_channels=self.feature_out_channels,
+                                       out_channels=self.feature_out_channels,
+                                       kernel_size=1,
+                                       stride=1,
+                                       padding=0,
+                                       bnName=self.bn_name,
+                                       activationName=self.activation_name)
+        self.add_block_list(layer3.get_name(), layer3, self.feature_out_channels)
+
+        odm_head4 = SSDBoxHead(self.feature_out_channels, 3, self.class_number,
+                               is_gaussian=True)
+        self.add_block_list(odm_head4.get_name(), odm_head4, self.class_number)
+
+    def create_loss_list(self, input_dict=None):
+        self.lossList = []
+
+    def forward(self, x):
+        base_outputs = list()
+        layer_outputs = list()
+        multi_output = list()
+        output = list()
+        for key, block in self._modules.items():
+            if BlockType.BaseNet in key:
+                base_outputs = block(x)
+                x = base_outputs[-1]
+            elif LayerType.RouteLayer in key:
+                x = block(layer_outputs, base_outputs)
+            elif LayerType.ShortcutLayer in key:
+                x = block(layer_outputs)
+            elif HeadType.ARMBoxHead in key:
+                x = block(layer_outputs, base_outputs)
+                multi_output.extend(x)
+            elif HeadType.MultiSSDBoxHead in key:
+                x = block(x)
+                multi_output.extend(x)
+            elif HeadType.SSDBoxHead in key:
+                x = block(x)
+                multi_output.extend(x)
+            elif self.loss_factory.has_loss(key):
+                pass
+            else:
+                x = block(x)
+            # print(key, x.shape)
+            layer_outputs.append(x)
+        return output

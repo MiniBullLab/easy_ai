@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:
 
-from easyai.helper.dataType import *
+from easyai.helper.data_structure import *
 import xml.dom
 import xml.dom.minidom
 import xml.etree.ElementTree as ElementTree
@@ -102,7 +102,7 @@ class XMLProcess():
             nodeObject = doc.createElement("rectObject")
             nodeObjectName = doc.createElement("name")
             nodeObjectName.appendChild(doc.createTextNode(str(box.name)))
-            nodeObjectPose = doc.createElement("pose")
+            nodeObjectPose = doc.createElement("pose2d")
             nodeObjectPose.appendChild(doc.createTextNode(str("Unspecified")))
             nodeObjectTruncated = doc.createElement("truncated")
             nodeObjectTruncated.appendChild(doc.createTextNode(str(0)))

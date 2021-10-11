@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import netron
 from easyai.torch_utility.torch_onnx.torch_to_onnx import TorchConvertOnnx
@@ -13,7 +13,7 @@ class ModelShow():
         self.converter.set_save_dir(save_dir)
 
     def show_from_onnx(self, onnx_path):
-        netron.start(onnx_path, port=9999, host='localhost')
+        netron.start(onnx_path, address=('localhost', 9999))
 
     def set_input(self, input_torch):
         self.converter.set_input(input_torch)

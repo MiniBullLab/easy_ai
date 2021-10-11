@@ -1,25 +1,20 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-import cv2
+from easyai.name_manager.task_name import TaskName
+from easyai.visualization.utility.base_show import BaseShow
+from easyai.visualization.utility.show_registry import REGISTERED_TASK_SHOW
 
 
-class SuperResolutionShow():
+@REGISTERED_TASK_SHOW.register_module(TaskName.SuperResolution_Task)
+class SuperResolutionShow(BaseShow):
 
     def __init__(self):
-        pass
+        super().__init__()
+        self.set_task_name(TaskName.SuperResolution_Task)
 
     def show(self, src_image, sr_image, scale=0.5):
-        cv2.namedWindow("src_image", 0)
-        cv2.resizeWindow("src_image", int(src_image.shape[1] * scale), int(src_image.shape[0] * scale))
-        cv2.imshow('src_image', src_image)
-
-        cv2.namedWindow("sr_image", 0)
-        cv2.resizeWindow("sr_image", int(sr_image.shape[1] * scale), int(sr_image.shape[0] * scale))
-        cv2.imshow('sr_image', sr_image)
-
-        if cv2.waitKey() & 0xFF == 27:
-            return False
-        else:
-            return True
+        self.drawing.draw_image("src_image", src_image, scale)
+        self.drawing.draw_image("sr_image", sr_image, scale)
+        return self.wait_key()

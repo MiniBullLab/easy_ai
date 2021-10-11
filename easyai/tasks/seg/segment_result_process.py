@@ -1,56 +1,58 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
 import torch
 import numpy as np
-from easyai.data_loader.utility.image_dataset_process import ImageDataSetProcess
+from easyai.tasks.utility.task_result_process import TaskPostProcess
 
 
-class SegmentResultProcess():
+class SegmentResultProcess(TaskPostProcess):
 
-    def __init__(self):
-        self.dataset_process = ImageDataSetProcess()
+    def __init__(self, image_size, resize_type, post_process_args):
+        super().__init__()
+        self.image_size = image_size
+        self.resize_type = resize_type
+        self.process_func = self.build_post_process(post_process_args)
 
-    def get_segmentation_result(self, prediction, threshold=0):
-        result = None
-        if prediction.ndim == 2:
-            result = (prediction >= threshold).astype(int)
-            # print(set(list(result.flatten())))
-        elif prediction.ndim == 3:
-            result = np.argmax(prediction, axis=0)
-        elif prediction.ndim == 4:
-            result = np.argmax(prediction, axis=1)
-        return result
+    def post_process(self, prediction, src_size=(0, 0)):
+        if prediction is None:
+            return None, None
+        result = self.process_func(prediction)
+        if src_size[0] == 0 or src_size[1] == 0:
+            seg_image = None
+        else:
+            seg_image = self.resize_segmention_result(src_size,
+                                                      self.image_size,
+                                                      self.resize_type,
+                                                      result)
+        return result, seg_image
 
     def resize_segmention_result(self, src_size, image_size,
-                                 segmention_result):
-        ratio, pad = self.dataset_process.get_square_size(src_size,
-                                                          image_size)
-        start_h = pad[1] // 2
-        stop_h = image_size[1] - (pad[1] - (pad[1] // 2))
-        start_w = pad[0] // 2
-        stop_w = image_size[0] - (pad[0] - (pad[0] // 2))
-        result = segmention_result[start_h:stop_h, start_w:stop_w]
+                                 resize_type, segmention_result):
+        result = self.dataset_process.inv_resize(src_size, image_size,
+                                                 resize_type, segmention_result)
         result = result.astype(np.float32)
-        result = self.dataset_process.cv_image_resize(result, src_size)
         return result
 
-    def output_feature_map_resize(self, input_data, target):
+    @staticmethod
+    def output_feature_map_resize(input_data, batch_data):
         n, c, h, w = input_data.size()
-        nt, ht, wt = target.size()
+        nt, ht, wt = batch_data['label'].size()
         # Handle inconsistent size between input and target
         if h > ht and w > wt:  # upsample labels
-            target = target.type(input_data.dtype)
+            target = batch_data['label'].type(input_data.dtype)
             target = target.unsqueeze(1)
             target = torch.nn.functional.upsample(target, size=(h, w), mode='nearest')
             target = target.squeeze(1).long()
+            batch_data['label'] = target
         elif h < ht and w < wt:  # upsample images
-            input_data = torch.nn.functional.upsample(input_data, size=(ht, wt), mode='bilinear')
+            input_data = torch.nn.functional.upsample(input_data, size=(ht, wt),
+                                                      mode='bilinear')
         elif h == ht and w == wt:
             pass
         else:
-            print("input_data: (%d,%d) and target: (%d,%d) error "
-                  % (h, w, ht, wt))
+            EasyLogger.error("input_data: (%d,%d) and target: (%d,%d) error " % (h, w, ht, wt))
             raise Exception("segment_data_resize error")
-        return input_data, target
+        return input_data

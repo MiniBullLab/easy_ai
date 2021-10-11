@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os.path
 import numpy as np
-from easyai.helper import DirProcess
+from easyai.data_loader.utility.base_sample import BaseSample
 
 
-class SuperResolutionSample():
+class SuperResolutionSample(BaseSample):
 
     def __init__(self, train_path):
+        super().__init__()
         self.train_path = train_path
         self.is_shuffled = False
         self.shuffled_vector = []
         self.lr_and_hr_list = []
         self.sample_count = 0
-        self.dirProcess = DirProcess()
 
     def read_sample(self):
         self.lr_and_hr_list = self.get_lr_and_hr_list(self.train_path)

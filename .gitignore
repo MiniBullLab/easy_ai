@@ -1,9 +1,15 @@
-*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
 *.user
 *.workspace
 *.log
 .idea/
 .vscode/
 log/
+.easy_log/
+easyai.egg-info/
 build/
 result/
+cdk.out/
+node_modules/

@@ -5,15 +5,15 @@
 U-Net: Convolutional Networks for Biomedical Image Segmentation
 """
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.cls.bce_loss import BinaryCrossEntropy2d
-from easyai.model.base_block.seg.unet_blcok import UNetBlockName
-from easyai.model.base_block.seg.unet_blcok import DoubleConv2d, DownBlock, UpBlock
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.seg.unet_blcok import UNetBlockName
+from easyai.model_block.base_block.seg.unet_blcok import DoubleConv2d, DownBlock, UpBlock
 from easyai.model.utility.base_classify_model import *
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
 @REGISTERED_SEG_MODEL.register_module(ModelName.UNetSeg)
@@ -42,12 +42,16 @@ class UNetSeg(BaseClassifyModel):
         conv = nn.Conv2d(64, self.class_number, kernel_size=1)
         self.add_block_list(LayerType.Convolutional, conv, self.class_number)
 
-        self.create_loss()
+        self.create_loss_list()
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = BinaryCrossEntropy2d()
-        self.add_block_list(LossType.CrossEntropy2d, loss, self.block_out_channels[-1])
+        loss_config = {'type': LossName.CrossEntropy2dLoss,
+                       'weight_type': 0,
+                       'reduction': 'mean',
+                       'ignore_index': 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def down_layers(self):
@@ -121,9 +125,7 @@ class UNetSeg(BaseClassifyModel):
             if UNetBlockName.UpBlock in key:
                 x = block(layer_outputs[-1], layer_outputs[index])
                 index -= 1
-            elif LossType.CrossEntropy2d in key:
-                output.append(x)
-            elif LossType.BinaryCrossEntropy2d in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             else:
                 x = block(x)

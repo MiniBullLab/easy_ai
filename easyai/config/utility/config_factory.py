@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.config.utility.registry import REGISTERED_TASK_CONFIG
+from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
 from easyai.utility.registry import build_from_cfg
+from easyai.utility.logger import EasyLogger
 
 
 class ConfigFactory():
@@ -19,9 +20,8 @@ class ConfigFactory():
             result = build_from_cfg(config_args, REGISTERED_TASK_CONFIG)
             result.load_config(config_path)
         else:
-            print("%s task not exits" % task_name)
+            EasyLogger.info("%s task config not exits" % task_name)
         return result
 
     def save(self, task_config):
-        pass
-        # task_config.save_config()
+        task_config.save_config()

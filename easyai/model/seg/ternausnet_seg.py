@@ -8,10 +8,10 @@
         ArXiv e-prints:1801.05746 (2018).
 """
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.model.base_block.utility.utility_block import ConvActivationBlock
-from easyai.model.base_block.seg.ternausnet_block import DecoderBlock, DecoderBlockLinkNet
+from easyai.name_manager import ModelName
+from easyai.name_manager import NormalizationType, ActivationType
+from easyai.model_block.base_block import ConvActivationBlock
+from easyai.model_block.base_block.seg.ternausnet_block import DecoderBlock, DecoderBlockLinkNet
 from easyai.model.utility.base_classify_model import *
 import torchvision
 
@@ -86,7 +86,7 @@ class UNet11(BaseClassifyModel):
 
         self.final = nn.Conv2d(self.num_filters, self.class_number, kernel_size=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     def forward(self, x):
@@ -186,7 +186,7 @@ class UNet16(BaseClassifyModel):
                                         activationName=self.activation_name)
         self.final = nn.Conv2d(self.num_filters, self.class_number, kernel_size=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     def forward(self, x):
@@ -274,7 +274,7 @@ class AlbuNet(BaseClassifyModel):
                                         activationName=self.activation_name)
         self.final = nn.Conv2d(self.num_filters, self.class_number, kernel_size=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     def forward(self, x):
@@ -341,7 +341,7 @@ class LinkNet34(BaseClassifyModel):
         self.finalrelu2 = nn.ReLU(inplace=True)
         self.finalconv3 = nn.Conv2d(32, self.class_number, 2, padding=1)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         pass
 
     # noinspection PyCallingNonCallable

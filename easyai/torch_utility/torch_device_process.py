@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import torch
 from easyai.utility.env import set_random_seed
+from easyai.utility.logger import EasyLogger
 
 
 class TorchDeviceProcess():
@@ -29,11 +30,11 @@ class TorchDeviceProcess():
             if id >= 0 and id < count:
                 os.environ["CUDA_VISIBLE_DEVICES"] = str(id)
             else:
-                print("GPU %d error" % id)
+                EasyLogger.error("GPU %d error" % id)
             self.device = torch.device("cuda")
         else:
             self.device = torch.device("cpu")
-        print("Using device: \"{}\"".format(self.device))
+        EasyLogger.debug("Using device: \"{}\"".format(self.device))
 
     def getCUDACount(self):
         count = -1

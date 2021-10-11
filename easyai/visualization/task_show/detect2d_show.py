@@ -1,22 +1,24 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import cv2
-from easyai.visualization.utility.image_drawing import ImageDrawing
+from easyai.name_manager.task_name import TaskName
+from easyai.visualization.utility.base_show import BaseShow
+from easyai.visualization.utility.show_registry import REGISTERED_TASK_SHOW
 
 
-class DetectionShow():
+@REGISTERED_TASK_SHOW.register_module(TaskName.Detect2d_Task)
+class DetectionShow(BaseShow):
 
     def __init__(self):
-        self.drawing = ImageDrawing()
+        super().__init__()
+        self.set_task_name(TaskName.Detect2d_Task)
 
     def show(self, src_image, detection_objects):
-        self.drawing.drawDetectObjects(src_image, detection_objects)
-        cv2.namedWindow("image", 0)
-        cv2.resizeWindow("image", int(src_image.shape[1] * 0.8), int(src_image.shape[0] * 0.8))
-        cv2.imshow("image", src_image)
-        if cv2.waitKey() & 0xff == ord('q'):  # 按q退出
-            return False
-        else:
+        image = src_image.copy()
+        self.drawing.draw_detect_objects(image, detection_objects)
+        self.drawing.draw_image("image", image, 0.8)
+        if cv2.getWindowProperty('image', 1) < 0:
             return True
+        return self.wait_key()

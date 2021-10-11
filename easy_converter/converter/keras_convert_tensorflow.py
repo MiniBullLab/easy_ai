@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
@@ -9,9 +9,9 @@ from pathlib import Path
 from absl import app
 from absl import flags
 from absl import logging
+import keras
 from keras import backend as K
 from keras.models import model_from_json, model_from_yaml
-from easy_converter.keras_models.utility.keras_model_factory import KerasModelFactory
 
 K.set_learning_phase(0)
 FLAGS = flags.FLAGS
@@ -63,8 +63,6 @@ class KerasConvertTensorflow():
         self.output_model = str(temp_output_path)
         self.input_model = h5_model_path
         self.input_model_name = model_name
-
-        self.keras_model_factory = KerasModelFactory()
 
     def keras_convert_tensorflow(self):
         # If output_model path is relative and in cwd, make it absolute from root
@@ -144,7 +142,8 @@ class KerasConvertTensorflow():
             raise FileNotFoundError(
                 'Model file `{}` does not exist.'.format(input_model_path))
         try:
-            model = self.keras_model_factory.load_model(input_model_path, self.input_model_name)
+            model = keras.models.load_model(input_model_path)
+            print(self.input_model_name)
             return model
         except FileNotFoundError as err:
             logging.error('Input mode file (%s) does not exist.', self.input_model)

@@ -8,20 +8,18 @@ booktitle = {arXiv preprint arXiv:1903.11816},
 year = {2019}
 """
 
-from easyai.base_name.model_name import ModelName
-from easyai.base_name.backbone_name import BackboneName
-from easyai.base_name.block_name import NormalizationType, ActivationType
-from easyai.base_name.block_name import LayerType, BlockType
-from easyai.base_name.loss_name import LossType
-from easyai.loss.seg.encnet_loss import EncNetLoss
-from easyai.model.base_block.utility.upsample_layer import Upsample
-from easyai.model.base_block.utility.utility_layer import RouteLayer
-from easyai.model.base_block.utility.utility_block import ConvBNActivationBlock
-from easyai.model.base_block.seg.encnet_block import EncNetBlockName
-from easyai.model.base_block.seg.encnet_block import JPUBlock, EncBlock, FCNHeadBlock
-from easyai.model.backbone.utility.backbone_factory import BackboneFactory
+from easyai.name_manager.model_name import ModelName
+from easyai.name_manager.backbone_name import BackboneName
+from easyai.name_manager.block_name import NormalizationType, ActivationType
+from easyai.name_manager.block_name import LayerType, BlockType
+from easyai.name_manager.loss_name import LossName
+from easyai.model_block.base_block.common.upsample_layer import Upsample
+from easyai.model_block.base_block.common.utility_layer import RouteLayer
+from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
+from easyai.model_block.base_block.seg.encnet_block import EncNetBlockName
+from easyai.model_block.base_block.seg.encnet_block import JPUBlock, EncBlock, FCNHeadBlock
 from easyai.model.utility.base_classify_model import *
-from easyai.model.utility.registry import REGISTERED_SEG_MODEL
+from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 
 
 @REGISTERED_SEG_MODEL.register_module(ModelName.EncNetSeg)
@@ -39,13 +37,12 @@ class EncNetSeg(BaseClassifyModel):
 
         self.model_args['type'] = BackboneName.ResNet50
 
-        self.factory = BackboneFactory()
         self.create_block_list()
 
     def create_block_list(self):
         self.clear_list()
 
-        backbone = self.factory.get_backbone_model(self.model_args)
+        backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
@@ -56,7 +53,7 @@ class EncNetSeg(BaseClassifyModel):
 
         self.enc_head(2048, base_out_channels)
 
-        self.create_loss()
+        self.create_loss_list()
 
         if self.is_aux:
             route = RouteLayer('14')
@@ -141,11 +138,14 @@ class EncNetSeg(BaseClassifyModel):
         up = Upsample(scale_factor=8, mode='bilinear')
         self.add_block_list(up.get_name(), up, self.class_number)
 
-    def create_loss(self, input_dict=None):
+    def create_loss_list(self, input_dict=None):
         self.lossList = []
-        loss = EncNetLoss(self.class_number, se_loss=self.is_se_loss,
-                          aux=self.is_aux, ignore_index=250)
-        self.add_block_list(LossType.EncNetLoss, loss, self.block_out_channels[-1])
+        loss_config = {"type": LossName.EncNetLoss,
+                       "se_loss": self.is_se_loss,
+                       "aux": self.is_aux,
+                       "ignore_index": 250}
+        loss = self.loss_factory.get_loss(loss_config)
+        self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)
 
     def forward(self, x):
@@ -164,7 +164,7 @@ class EncNetSeg(BaseClassifyModel):
                 x = block(layer_outputs, base_outputs)
             elif EncNetBlockName.EncBlock in key:
                 x, se_loss = block(x)
-            elif LossType.EncNetLoss in key:
+            elif self.loss_factory.has_loss(key):
                 output.append(x)
             elif EncNetBlockName.FCNHeadBlock in key:
                 x = block(x)

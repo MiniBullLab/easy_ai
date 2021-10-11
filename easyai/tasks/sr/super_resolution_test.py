@@ -1,48 +1,41 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from math import log10
-import torch
 from easyai.tasks.utility.base_test import BaseTest
-from easyai.data_loader.sr.super_resolution_dataloader import get_sr_val_dataloader
 from easyai.tasks.sr.super_resolution import SuperResolution
-from easyai.helper.average_meter import AverageMeter
-from easyai.base_name.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_TEST_TASK
+from easyai.name_manager.task_name import TaskName
+from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TEST_TASK.register_module(TaskName.SuperResolution_Task)
 class SuperResolutionTest(BaseTest):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(config_path, TaskName.SuperResolution_Task)
-        self.sr_inference = SuperResolution(cfg_path, gpu_id, config_path)
-        self.model = self.sr_inference.model
-        self.device = self.sr_inference.device
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(TaskName.SuperResolution_Task)
+        self.sr_inference = SuperResolution(model_name, gpu_id, config_path)
+        self.set_test_config(self.inference.task_config)
+        self.set_model()
 
-        self.epoch_loss_average = AverageMeter()
-        self.epoch_avg_psnr = AverageMeter()
+    def process_test(self, val_path, epoch=0):
+        self.create_dataloader(val_path)
+        if not self.start_test():
+            EasyLogger.info("no test!")
+            return
+        self.test(epoch)
 
-    def load_weights(self, weights_path):
-        self.sr_inference.load_weights(weights_path)
+    def test(self, epoch=0):
+        for i, batch_data in enumerate(self.dataloader):
+            prediction, output_list = self.sr_inference.infer(batch_data)
+            loss_value = self.compute_loss(output_list, batch_data)
+            self.evaluation.eval(loss_value)
+            self.metirc_loss(i, loss_value)
 
-    def test(self, val_path):
-        dataloader = get_sr_val_dataloader(val_path, self.test_task_config)
-        print("Eval data num: {}".format(len(dataloader)))
-        self.timer.tic()
-        self.epoch_avg_psnr.reset()
-        self.epoch_loss_average.reset()
-        for i, (images, sr_targets) in enumerate(dataloader):
-            prediction, output_list = self.sr_inference.infer(images)
-            loss = self.compute_loss(output_list, sr_targets)
-            self.compute_metric(loss)
-            self.metirc_loss(i, loss)
-
-        score = self.epoch_avg_psnr.avg
-        average_loss = self.epoch_loss_average.avg
-        self.print_evaluation(score)
-        return score, average_loss
+        score = self.evaluation.get_score()
+        self.save_test_value(epoch, score)
+        print("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
+        return score, self.epoch_loss_average.avg
 
     def save_test_value(self, epoch, score):
         # write epoch results
@@ -50,31 +43,3 @@ class SuperResolutionTest(BaseTest):
             file.write("Epoch: {} | psnr: {:.5f} | ".format(epoch, score))
             file.write("\n")
 
-    def compute_loss(self, output_list, targets):
-        loss = 0
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        targets = targets.to(self.device)
-        with torch.no_grad():
-            if loss_count == 1 and output_count == 1:
-                loss = self.model.lossList[0](output_list[0], targets)
-            elif loss_count > 1 and loss_count == output_count:
-                for k in range(0, loss_count):
-                    loss += self.model.lossList[k](output_list[k], targets)
-            else:
-                print("compute loss error")
-        return loss
-
-    def metirc_loss(self, step, loss):
-        loss_value = loss.data.cpu().squeeze()
-        self.epoch_loss_average.update(loss_value)
-        print("Val Batch {} loss: {} | Time: {.7f}".format(step,
-                                                           loss_value,
-                                                           self.timer.toc(True)))
-
-    def compute_metric(self, loss):
-        psnr = 10 * log10(1 / loss.item())
-        self.epoch_avg_psnr.update(psnr, 1)
-
-    def print_evaluation(self, score):
-        print("Average psnr: {.5f}".format(score))

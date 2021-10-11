@@ -1,25 +1,24 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 import numpy as np
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.base_name.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.name_manager.task_name import TaskName
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.SuperResolution_Task)
 class SuperResolution(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.SuperResolution_Task)
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.SuperResolution_Task)
+        self.set_model_param(data_channel=self.task_config.data['data_channel'],
+                             upscale_factor=self.task_config.upscale_factor)
+        self.set_model(gpu_id=gpu_id)
 
-        self.model_args['upscale_factor'] = self.task_config.upscale_factor
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.getDevice()
-
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         pass
         # for i, (oriImg, imgs) in enumerate(dataloader):
         #     img_pil = Image.fromarray(cv2.cvtColor(oriImg, cv2.COLOR_BGR2RGB))
@@ -51,31 +50,24 @@ class SuperResolution(BaseInference):
         #     if cv2.waitKey() & 0xFF == 27:
         #         break
 
-    def infer(self, input_data, threshold=0.0):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             prediction = self.compute_output(output_list[:])
         return prediction, output_list
 
-    def postprocess(self, result):
+    def postprocess(self, result, threshold=None):
         pass
 
     def compute_output(self, output_list):
-        loss_count = len(self.model.lossList)
-        output_count = len(output_list)
-        prediction = None
-        if loss_count == 1 and output_count == 1:
-            temp_output = self.model.lossList[0](output_list[0])
-            prediction = temp_output.cpu().detach().numpy()
-        elif loss_count > 1 and loss_count == output_count:
-            preds = []
-            for i in range(0, loss_count):
-                temp = self.model.lossList[i](output_list[i])
-                preds.append(temp)
-            prediction = torch.cat(preds, 1)
-            prediction = np.squeeze(prediction.cpu().detach().numpy())
+        output = self.common_output(output_list)
+        if isinstance(output, (list, tuple)):
+            prediction = torch.cat(output, 1)
         else:
-            print("sr compute output error!")
+            prediction = output
+        if prediction is not None:
+            prediction = np.squeeze(prediction.data.cpu().numpy())
         return prediction
 
 

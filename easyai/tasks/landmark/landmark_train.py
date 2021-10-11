@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
+import os
+from easyai.tasks.utility.common_train import CommonTrain
+from easyai.name_manager.task_name import TaskName
+from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
+
+
+@REGISTERED_TRAIN_TASK.register_module(TaskName.Landmark)
+class LandmarkTrain(CommonTrain):
+
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Landmark)
+        self.set_model_param(data_channel=self.train_task_config.data['data_channel'],
+                             points_count=self.train_task_config.points_count)
+        self.set_model(gpu_id=gpu_id)
+        self.landmark_test = None
+
+    def train(self, train_path, val_path):
+        self.create_dataloader(train_path)
+        self.build_lr_scheduler()
+        self.load_latest_param(self.train_task_config.latest_weights_path)
+        self.start_train()
+        for epoch in range(self.start_epoch, self.train_task_config.max_epochs):
+            self.optimizer.zero_grad()
+            self.train_epoch(epoch, self.lr_scheduler, self.dataloader)
+            self.train_logger.epoch_train_loss_log(epoch)
+            save_model_path = self.save_train_model(epoch)
+            self.test(val_path, epoch, save_model_path)
+
+    def train_epoch(self, epoch, lr_scheduler, dataloader):
+        for temp_index, (images, targets) in enumerate(dataloader):
+            current_iter = epoch * self.total_batch_data + temp_index
+            lr = lr_scheduler.get_lr(epoch, current_iter)
+            lr_scheduler.adjust_learning_rate(self.optimizer, lr)
+            loss_info = self.compute_backward((images, targets), temp_index)
+            self.update_logger(temp_index, self.total_images, epoch, loss_info)
+
+    def compute_backward(self, batch_data, setp_index):
+        # Compute loss, compute gradient, update parameters
+        input_datas = batch_data[0].to(self.device)
+        output_list = self.model(input_datas.to(self.device))
+        loss, loss_info = self.compute_loss(output_list, batch_data[1])
+
+        self.loss_backward(loss)
+
+        # accumulate gradient for x batches before optimizing
+        if ((setp_index + 1) % self.train_task_config.accumulated_batches == 0) \
+                or (setp_index == self.total_batch_data - 1):
+            self.clip_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
+        loss_info['all_loss'] = loss.item()
+        return loss_info
+
+    def test(self, val_path, epoch, save_model_path):
+        pass

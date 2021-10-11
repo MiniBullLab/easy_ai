@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os.path
 import numpy as np
-from easyai.helper import DirProcess
+from easyai.data_loader.utility.base_sample import BaseSample
+from easyai.utility.logger import EasyLogger
 
 
-class SegmentSample():
+class SegmentSample(BaseSample):
 
     def __init__(self, train_path):
+        super().__init__()
         self.train_path = train_path
         self.is_shuffled = False
         self.shuffled_vector = []
@@ -18,11 +20,18 @@ class SegmentSample():
         self.images_dir_name = "../JPEGImages"
         self.label_dir_name = "../SegmentLabel"
         self.annotation_post = ".png"
-        self.dirProcess = DirProcess()
 
     def read_sample(self):
-        self.image_and_label_list = self.get_image_and_label_list(self.train_path)
-        self.sample_count = self.get_sample_count()
+        try:
+            self.image_and_label_list = self.get_image_and_label_list(self.train_path)
+            self.sample_count = self.get_sample_count()
+            EasyLogger.warn("%s sample count: %d" % (self.train_path,
+                                                     self.sample_count))
+            assert self.sample_count > 0
+        except ValueError as err:
+            EasyLogger.error(err)
+        except TypeError as err:
+            EasyLogger.error(err)
 
     def get_sample_path(self, index):
         if self.is_shuffled:
@@ -56,5 +65,5 @@ class SegmentSample():
                     os.path.exists(image_path):
                 result.append((image_path, label_path))
             else:
-                print("%s or %s not exist" % (label_path, image_path))
+                EasyLogger.error("%s or %s not exist" % (label_path, image_path))
         return result

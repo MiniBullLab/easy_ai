@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 
 import numpy as np
@@ -13,26 +13,17 @@ class SegmentDatasetProcess(TaskDataSetProcess):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)
         self.label_pad_color = 250
 
-    def normalize_dataset(self, src_image):
-        image = self.dataset_process.normalize(input_data=src_image,
-                                               normalize_type=self.normalize_type,
-                                               mean=self.mean,
-                                               std=self.std)
-        image = self.dataset_process.numpy_transpose(image)
-        return image
-
     def resize_dataset(self, src_image, image_size, label):
-        src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
-        ratio, pad_size = self.dataset_process.get_square_size(src_size, image_size)
-        image = self.dataset_process.image_resize_square(src_image, ratio, pad_size,
-                                                         pad_color=self.pad_color)
-        target = self.resize_lable(label, ratio, pad_size)
+        assert src_image.shape[:2] == label.shape[:2]
+        image = self.resize_image(src_image, image_size)
+        target = self.resize_lable(label, image_size)
         return image, target
 
-    def resize_lable(self, label, ratio, pad_size):
-        target = self.dataset_process.image_resize_square(label, ratio, pad_size,
-                                                          self.label_pad_color)
-        target = np.array(target, dtype=np.uint8)
+    def resize_lable(self, label, dst_size):
+        target = self.dataset_process.resize(label, dst_size, self.resize_type,
+                                             pad_color=self.label_pad_color)
+        if target is not None:
+            target = np.array(target, dtype=np.uint8)
         return target
 
     def change_label(self, label, number_class):

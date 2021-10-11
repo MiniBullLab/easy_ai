@@ -1,59 +1,62 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import os
 import torch
 from easyai.tasks.utility.base_inference import BaseInference
-from easyai.visualization.task_show.classify_show import ClassifyShow
-from easyai.base_name.task_name import TaskName
-from easyai.tasks.utility.registry import REGISTERED_INFERENCE_TASK
+from easyai.tasks.cls.classify_result_process import ClassifyResultProcess
+from easyai.name_manager.task_name import TaskName
+from easyai.tasks.utility.task_registry import REGISTERED_INFERENCE_TASK
+from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_INFERENCE_TASK.register_module(TaskName.Classify_Task)
 class Classify(BaseInference):
 
-    def __init__(self, cfg_path, gpu_id, config_path=None):
-        super().__init__(cfg_path, config_path, TaskName.Classify_Task)
-        self.model_args['class_number'] = len(self.task_config.class_name)
-        self.model = self.torchModelProcess.initModel(self.model_args, gpu_id)
-        self.device = self.torchModelProcess.getDevice()
-        self.result_show = ClassifyShow()
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Classify_Task)
+        self.set_model_param(data_channel=self.task_config.data['data_channel'],
+                             class_number=len(self.task_config.class_name))
+        self.set_model(gpu_id=gpu_id)
+        self.result_process = ClassifyResultProcess(self.task_config.post_process)
 
-    def process(self, input_path, is_show=False):
+    def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         dataloader = self.get_image_data_lodaer(input_path)
-        for index, (file_path, src_image, image) in enumerate(dataloader):
+        for index, batch_data in enumerate(dataloader):
             self.timer.tic()
-            prediction = self.infer(image)
-            result = self.postprocess(prediction)
-            print('Batch %d... Done. (%.3fs)' % (index, self.timer.toc()))
+            prediction, _ = self.infer(batch_data)
+            class_index, class_confidence = self.result_process.post_process(prediction)
+            EasyLogger.info('Batch %d Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
-                if not self.result_show.show(src_image,
-                                             result,
+                if not self.result_show.show(batch_data['src_image'],
+                                             class_index[0].cpu().numpy(),
                                              self.task_config.class_name):
                     break
             else:
-                self.save_result(file_path, result)
+                output_count = prediction.size(1)
+                if output_count == 1:
+                    batch_size = prediction.size(0)
+                    class_index = torch.ones(batch_size)
+                self.save_result(batch_data['file_path'], class_index,
+                                 class_confidence)
 
-    def save_result(self, file_path, class_index):
+    def save_result(self, file_path, class_index, class_confidence):
         path, filename_post = os.path.split(file_path)
         with open(self.task_config.save_result_path, 'a') as file:
-            file.write("{} {}\n".format(filename_post, class_index[0].cpu().numpy()))
+            file.write("{} {} {:.5f}\n".format(filename_post,
+                                               class_index[0].cpu().numpy(),
+                                               class_confidence[0][0].cpu().numpy()))
 
-    def infer(self, input_data, threshold=0.0):
+    def infer(self, input_data, net_type=0):
         with torch.no_grad():
-            output_list = self.model(input_data.to(self.device))
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
             output = self.compute_output(output_list)
-        return output
-
-    def postprocess(self, result):
-        class_indices = torch.argmax(result, dim=1)
-        return class_indices
+        return output, output_list
 
     def compute_output(self, output_list):
-        output = None
-        if len(output_list) == 1:
-            output = self.model.lossList[0](output_list[0])
+        output = self.common_output(output_list)
         return output
 

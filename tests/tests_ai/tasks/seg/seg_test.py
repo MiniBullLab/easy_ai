@@ -3,11 +3,8 @@
 # Author:
 
 from easyai.helper.arguments_parse import TaskArgumentsParse
-from easyai.tasks.cls.classify_test import ClassifyTest
-from easyai.tasks.det2d.detect2d_test import Detection2dTest
 from easyai.tasks.seg.segment_test import SegmentionTest
-from easyai.tasks.multi_task.det2d_seg_task_test import Det2dSegTaskTest
-from easyai.base_name.task_name import TaskName
+from easyai.name_manager import TaskName
 
 
 class TestTask():

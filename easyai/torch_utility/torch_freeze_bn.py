@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import re
-import torch
-import torch.nn as nn
-from easyai.base_name.block_name import BlockType
+from easyai.name_manager.block_name import BlockType
+from easyai.utility.logger import EasyLogger
 
 
 class TorchFreezeNormalization():
@@ -44,7 +43,7 @@ class TorchFreezeNormalization():
                     self.freeze_layer_from_name(block, layer_name)
                     break
         else:
-            print("freeze normalization error")
+            EasyLogger.error("freeze normalization error")
 
     def freeze_layers(self, model, layer_names):
         for key, block in model._modules.items():
@@ -66,6 +65,17 @@ class TorchFreezeNormalization():
                 break
 
     def freeze_bn(self, model):
-        for m in model.modules():
-            if isinstance(m, nn.BatchNorm2d):
-                m.eval()
+        model.apply(self.set_bn_eval)
+        # for name, module in model.named_children():
+        #     classname = model.__class__.__name__
+        #     if classname.find('BatchNorm') != -1:
+        #         module.eval()
+        #         print('freeze bn: ', name)
+        #     else:
+        #         self.freeze_bn(module)
+
+    def set_bn_eval(self, m):
+        classname = m.__class__.__name__
+        if classname.find('BatchNorm') != -1:
+            m.eval()
+            # m.eval().half()

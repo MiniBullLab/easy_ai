@@ -1,0 +1,147 @@
+{
+    "accumulated_batches": 1,
+    "amp_config": {
+        "enable_amp": false,
+        "keep_batchnorm_fp32": true,
+        "opt_level": "O1"
+    },
+    "base_lr": 0.001,
+    "best_weights_name": "rec_text_best.pt",
+    "character_count": 37,
+    "character_set": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
+    "clip_grad_config": {
+        "enable_clip": false,
+        "max_norm": 5
+    },
+    "data": {
+        "data_channel": 3,
+        "image_size": [
+            128,
+            32
+        ],
+        "mean": [
+            0.5,
+            0.5,
+            0.5
+        ],
+        "normalize_type": 2,
+        "resize_type": 3,
+        "std": [
+            0.5,
+            0.5,
+            0.5
+        ]
+    },
+    "display": 20,
+    "evaluation": {
+        "type": "RecognizeTextMetric"
+    },
+    "freeze_bn_layer_name": "route_0",
+    "freeze_bn_type": 0,
+    "freeze_layer_name": "baseNet_0",
+    "freeze_layer_type": 0,
+    "is_save_epoch_model": false,
+    "latest_optimizer_name": "rec_text_optimizer.pt",
+    "latest_weights_name": "rec_text_latest.pt",
+    "lr_scheduler_config": {
+        "type": "CosineLR",
+        "warmup_iters": 3,
+        "warmup_type": 0
+    },
+    "max_epochs": 150,
+    "model_type": 0,
+    "model_config": {
+        "data_channel": 3,
+        "class_number": 37,
+        "type": "CRNN"
+    },
+    "optimizer_config": {
+        "0": {
+            "type": "Adam",
+            "weight_decay": 0.0001
+        }
+    },
+    "post_process": {
+        "type": "CTCPostProcess"
+    },
+    "train_data": {
+        "dataloader": {
+            "batch_size": 64,
+            "collate_fn": {
+                "padding_type": 1,
+                "target_type": 0,
+                "type": "RecTextDataSetCollate"
+            },
+            "drop_last": true,
+            "num_workers": 0,
+            "shuffle": true,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
+            "data_channel": 3,
+            "image_size": [
+                128,
+                32
+            ],
+            "is_augment": true,
+            "language": [
+                "english"
+            ],
+            "max_text_length": 32,
+            "mean": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "normalize_type": 2,
+            "resize_type": 3,
+            "std": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "type": "RecTextDataSet"
+        }
+    },
+    "val_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "padding_type": 1,
+                "target_type": 0,
+                "type": "RecTextDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 0,
+            "shuffle": false,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "char_path": "/home/lpj/github/easy_ai/easyai/config/task/../character/temp_en.txt",
+            "data_channel": 3,
+            "image_size": [
+                128,
+                32
+            ],
+            "is_augment": false,
+            "language": [
+                "english"
+            ],
+            "max_text_length": 32,
+            "mean": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "normalize_type": 2,
+            "resize_type": 3,
+            "std": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "type": "RecTextDataSet"
+        }
+    }
+}

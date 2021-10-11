@@ -1,25 +1,22 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import numpy as np
-from easyai.helper.dataType import Rect2D
-from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
+from easyai.data_loader.common.box2d_dataset_process import Box2dDataSetProcess
 
 
-class DetectionDataSetProcess(TaskDataSetProcess):
+class DetectionDataSetProcess(Box2dDataSetProcess):
 
     def __init__(self, resize_type, normalize_type,
                  mean=0, std=1, pad_color=0):
         super().__init__(resize_type, normalize_type, mean, std, pad_color)
 
-    def normalize_image(self, src_image):
-        image = self.dataset_process.normalize(input_data=src_image,
-                                               normalize_type=self.normalize_type,
-                                               mean=self.mean,
-                                               std=self.std)
-        image = self.dataset_process.numpy_transpose(image)
-        return image
+    def resize_dataset(self, src_image, image_size, boxes, class_name):
+        src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
+        image = self.resize_image(src_image, image_size)
+        labels = self.resize_box(boxes, class_name, src_size, image_size)
+        return image, labels
 
     def normalize_labels(self, labels, image_size):
         result = np.zeros((len(labels), 5), dtype=np.float32)
@@ -32,34 +29,6 @@ class DetectionDataSetProcess(TaskDataSetProcess):
             height = rect.height() / image_size[1]
             result[index, :] = np.array([class_id, x, y, width, height])
         return result
-
-    def resize_dataset(self, src_image, image_size, boxes, class_name):
-        src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
-        ratio, pad_size = self.dataset_process.get_square_size(src_size, image_size)
-        image = self.dataset_process.image_resize_square(src_image, ratio, pad_size,
-                                                         pad_color=self.pad_color)
-        labels = self.resize_labels(boxes, class_name, ratio, pad_size)
-        return image, labels
-
-    def resize_src_image(self, src_image, image_size):
-        src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
-        ratio, pad_size = self.dataset_process.get_square_size(src_size, image_size)
-        image = self.dataset_process.image_resize_square(src_image, ratio, pad_size,
-                                                         pad_color=self.pad_color)
-        return image
-
-    def resize_labels(self, boxes, class_name, ratio, pad_size):
-        labels = []
-        for box in boxes:
-            if box.name in class_name:
-                rect = Rect2D()
-                rect.class_id = class_name.index(box.name)
-                rect.min_corner.x = ratio * box.min_corner.x + pad_size[0] // 2
-                rect.min_corner.y = ratio * box.min_corner.y + pad_size[1] // 2
-                rect.max_corner.x = ratio * box.max_corner.x + pad_size[0] // 2
-                rect.max_corner.y = ratio * box.max_corner.y + pad_size[1] // 2
-                labels.append(rect)
-        return labels
 
     def change_outside_labels(self, labels):
         delete_index = []

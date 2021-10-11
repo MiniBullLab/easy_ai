@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
-from easyai.evaluation.calculate_mAp import CalculateMeanAp
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
-from easyai.config.utility.config_factory import ConfigFactory
-from easyai.base_name.task_name import TaskName
-from easyai.tools.utility.registry import REGISTERED_OFFLINE_EVALUATION
+from easyai.name_manager.evaluation_name import EvaluationName
+from easyai.name_manager.task_name import TaskName
+from easyai.tools.utility.tools_registry import REGISTERED_OFFLINE_EVALUATION
 
 
 @REGISTERED_OFFLINE_EVALUATION.register_module(TaskName.Detect2d_Task)
@@ -16,7 +15,9 @@ class OfflineDet2dEvaluation(BaseOfflineEvaluation):
     def __init__(self, detect2d_class):
         super().__init__()
         self.detect2d_class = detect2d_class
-        self.evaluator = CalculateMeanAp(detect2d_class)
+        self.evaluation_args = {"type": EvaluationName.DetectionMeanAp,
+                                'class_names': self.test_task_config.detect2d_class}
+        self.evaluation = self.evaluation_factory.get_evaluation(self.evaluation_args)
 
     def process(self, test_path, target_path):
         mAP, aps = self.evaluator.result_eval(test_path, target_path)
@@ -35,6 +36,7 @@ class OfflineDet2dEvaluation(BaseOfflineEvaluation):
 
 def main():
     print("start...")
+    from easyai.config.utility.config_factory import ConfigFactory
     options = ToolArgumentsParse.test_path_parse()
     config_factory = ConfigFactory()
     task_config = config_factory.get_config(TaskName.Detect2d_Task, config_path=options.config_path)

@@ -2,14 +2,14 @@
 # -*- coding:utf-8 -*-
 # Author: lipeijie
 
+from easyai.utility.logger import EasyLogger
+log_file_path = EasyLogger.get_log_file_path("ai_runtime.log")
+EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
+
 import os
 import inspect
 from optparse import OptionParser
-from easyai.tools.utility.copy_image import CopyImage
-from easyai.train_task import TrainTask
-from easyai.base_name.task_name import TaskName
-from easyai.config.utility.image_task_config import ImageTaskConfig
-from easyai.tools.sample.detection_sample_process import DetectionSampleProcess
+from easy_tools.model_train.ai_train import EasyAiModelTrain
 
 
 def parse_arguments():
@@ -32,58 +32,43 @@ def parse_arguments():
                       metavar="PATH", type="string", default="./val.txt",
                       help="path to data config file")
 
-    parser.add_option("-c", "--config", dest="config_path",
-                      metavar="PATH", type="string", default=None,
-                      help="config path")
-
     (options, args) = parser.parse_args()
 
-    if options.trainPath:
-        if not os.path.exists(options.trainPath):
-            parser.error("Could not find the input train file")
-        else:
-            options.input_path = os.path.normpath(options.trainPath)
-    else:
-        parser.error("'trainPath' option is required to run this program")
+    EasyLogger.debug(options)
+
+    # if options.trainPath:
+    #     if not os.path.exists(options.trainPath):
+    #         parser.error("Could not find the input train file")
+    #     else:
+    #         options.input_path = os.path.normpath(options.trainPath)
+    # else:
+    #     parser.error("'trainPath' option is required to run this program")
 
     return options
 
 
 def train_main():
-    print("process start...")
+    EasyLogger.info("easyai process start...")
     options = parse_arguments()
-    copy_process = CopyImage()
-    config = ImageTaskConfig()
     current_path = inspect.getfile(inspect.currentframe())
     dir_name = os.path.dirname(current_path)
-    if options.task_name.strip() == "ClassNet":
-        pretrain_model_path = os.path.join(dir_name, "./data/classnet.pt")
-        train_task = TrainTask(TaskName.Classify_Task, options.trainPath, options.valPath, True)
-        train_task.train('classnet', options.gpu_id, options.config_path, pretrain_model_path)
-        save_image_dir = os.path.join(config.root_save_dir, "cls_img")
-        copy_process.copy(options.trainPath, save_image_dir)
-    elif options.task_name.strip() == "DeNET":
-        pretrain_model_path = os.path.join(dir_name, "./data/detnet.pt")
-        sample_process = DetectionSampleProcess()
-        class_names = sample_process.create_class_names(options.trainPath)
-        if len(class_names) > 0:
-            train_task = TrainTask(TaskName.Detect2d_Task, options.trainPath, options.valPath, True)
-            train_task.train("detnet", options.gpu_id, options.config_path, pretrain_model_path)
-            # easy_model_convert(options.task_name, train_task.save_onnx_path)
-            save_image_dir = os.path.join(config.root_save_dir, "det_img")
-            copy_process.copy(options.trainPath, save_image_dir)
-        else:
-            print("class name empty!")
-    elif options.task_name.strip() == "SegNET":
-        pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
-        cfg_path = os.path.join(dir_name, "./data/segnet.cfg")
-        train_task = TrainTask(TaskName.Segment_Task, options.trainPath, options.valPath, True)
-        train_task.train(cfg_path, options.gpu_id, options.config_path, pretrain_model_path)
-        save_image_dir = os.path.join(config.root_save_dir, "seg_img")
-        copy_process.copy(options.trainPath, save_image_dir)
+    train_process = EasyAiModelTrain(options.trainPath, options.valPath, options.gpu_id)
+
+    if options.task_name.strip() == "NG_OK":
+        train_process.binary_classidy_model_train(dir_name)
+    elif options.task_name.strip() == "ClassNet":
+        train_process.classify_model_train(dir_name)
+    elif options.task_name.strip() == "DeNet":
+        train_process.det2d_model_train(dir_name)
+    elif options.task_name.strip() == "SegNet":
+        train_process.segment_model_train(dir_name)
+    elif options.task_name.strip() == "TextNet":
+        train_process.rec_text_model_train(dir_name)
+    elif options.task_name.strip() == "OneClass":
+        train_process.one_class_model_train(dir_name)
     else:
-        print("input task error!")
-    print("process end!")
+        EasyLogger.error("input task error!")
+    EasyLogger.info("easyai process end!")
 
 
 if __name__ == "__main__":
