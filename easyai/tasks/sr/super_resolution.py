@@ -49,6 +49,9 @@ class SuperResolution(BaseInference):
         #
         #     if cv2.waitKey() & 0xFF == 27:
         #         break
+    
+    def single_image_process(self, input_data):
+        pass
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

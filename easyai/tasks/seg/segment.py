@@ -29,14 +29,10 @@ class Segmentation(BaseInference):
     def process(self, input_path, data_type=1, is_show=False):
         os.system('rm -rf ' + self.task_config.save_result_path)
         os.makedirs(self.task_config.save_result_path, exist_ok=True)
-
         dataloader = self.get_image_data_lodaer(input_path)
         for index, batch_data in enumerate(dataloader):
             self.timer.tic()
-            self.set_src_size(batch_data['src_image'])
-            prediction, _ = self.infer(batch_data)
-            _, seg_image = self.result_process.post_process(prediction,
-                                                            self.src_size)
+            prediction, seg_image = self.single_image_process(batch_data)
             EasyLogger.info('Batch %d Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(batch_data['src_image'], seg_image,
@@ -59,6 +55,14 @@ class Segmentation(BaseInference):
             filename, post = os.path.splitext(filename_post)
             save_result_path = os.path.join(self.task_config.save_result_path, "%s.txt" % filename)
             np.savetxt(save_result_path, prediction, fmt='%0.8f')
+
+    def single_image_process(self, input_data):
+        if input_data.get('src_image', None) is not None:
+            self.set_src_size(input_data['src_image'])
+        prediction, _ = self.infer(input_data)
+        _, seg_image = self.result_process.post_process(prediction,
+                                                        self.src_size)
+        return prediction, seg_image
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

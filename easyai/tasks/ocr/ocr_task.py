@@ -50,6 +50,9 @@ class OCRTask(BaseInference):
             if not self.result_show.show(batch_data['src_image'], ocr_result):
                 break
 
+    def single_image_process(self, input_data):
+        pass
+
     def infer(self, input_data, net_type=0):
         pass
 

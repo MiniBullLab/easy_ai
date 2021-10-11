@@ -47,6 +47,9 @@ class OneClass(BaseInference):
                                                class_index,
                                                class_confidence))
 
+    def single_image_process(self, input_data):
+        pass
+
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
             image_data = input_data['image'].to(self.device)

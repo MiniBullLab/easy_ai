@@ -53,6 +53,9 @@ class Det2dSegTask(BaseInference):
             with open(temp_save_path, 'a') as file:
                 file.write("{} {} {} {} {} {}\n".format(filename, confidence, x1, y1, x2, y2))
 
+    def single_image_process(self, input_data):
+        pass
+
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
             output_list = self.model(input_data.to(self.device))

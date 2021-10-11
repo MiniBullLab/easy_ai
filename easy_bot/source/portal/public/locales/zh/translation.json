@@ -1,5 +1,5 @@
 {
-  "title": "Machine Learning Bot",
+  "title": "Easy Bot",
   "yes": "是",
   "no": "否",
   "signOut": "登出",
@@ -20,11 +20,11 @@
     "ml": "机器学习"
   },
   "leftBar": {
-    "title": "Machine Learning Bot",
+    "title": "Easy Bot",
     "taskList": "任务列表"
   },
   "breadCrumb": {
-    "home": "Machine Learning Bot",
+    "home": "Easy Bot",
     "create": "创建任务",
     "tasks": "任务列表"
   },

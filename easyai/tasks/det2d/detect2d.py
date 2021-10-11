@@ -28,8 +28,7 @@ class Detection2d(BaseInference):
         dataloader = self.get_image_data_lodaer(input_path)
         for i, batch_data in enumerate(dataloader):
             self.timer.tic()
-            self.set_src_size(batch_data['src_image'])
-            result, _ = self.single_image_process(self.src_size, batch_data)
+            result, _ = self.single_image_process(batch_data)
             EasyLogger.info('Batch %d Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(batch_data['src_image'], result):
@@ -37,10 +36,14 @@ class Detection2d(BaseInference):
             else:
                 self.save_result(batch_data['file_path'], result, 0)
 
-    def single_image_process(self, src_size, input_data):
+    def single_image_process(self, input_data):
+        if input_data.get('src_size', None) is not None:
+            self.src_size = input_data['src_size'][0].numpy()
+        elif input_data.get('src_image', None) is not None:
+            self.set_src_size(input_data['src_image'])
         prediction, model_output = self.infer(input_data)
         detection_objects = self.result_process.post_process(prediction,
-                                                             src_size)
+                                                             self.src_size)
         return detection_objects, model_output
 
     def save_result(self, file_path, detection_objects, flag=0):

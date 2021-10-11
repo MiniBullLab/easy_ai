@@ -76,7 +76,7 @@ const TopBar: React.FC = () => {
           alt="Machine Learning Bot"
           src={Logo}
         />{" "}
-        <span className="name">Machine Learning Bot</span>
+        <span className="name">Easy Bot</span>
       </div>
       <div className="options">
         {/* <div className="item">Language</div> */}

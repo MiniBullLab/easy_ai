@@ -32,10 +32,6 @@ class PointCloudClassify(BaseInference):
             if is_show:
                 break
             else:
-                output_count = prediction.size(1)
-                if output_count == 1:
-                    batch_size = prediction.size(0)
-                    class_index = torch.ones(batch_size)
                 self.save_result(batch_data['file_path'], class_index,
                                  class_confidence)
 
@@ -43,8 +39,11 @@ class PointCloudClassify(BaseInference):
         path, filename_post = os.path.split(file_path)
         with open(self.task_config.save_result_path, 'a') as file:
             file.write("{} {} {:.5f}\n".format(filename_post,
-                                               class_index[0].cpu().numpy(),
-                                               class_confidence[0][0].cpu().numpy()))
+                                               class_index,
+                                               class_confidence))
+
+    def single_image_process(self, input_data):
+        pass
 
     def infer(self, input_data, net_type=0):
         with torch.no_grad():

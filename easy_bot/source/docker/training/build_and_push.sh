@@ -21,7 +21,7 @@ if [[ $region =~ ^cn.* ]]
 then
     fullname="${account}.dkr.ecr.${region}.amazonaws.com.cn/${image}:${tag}"
     registry_id="727897471807"
-    registry_uri="${registry_id}.dkr.ecr.cn-north-1.amazonaws.com.cn"
+    registry_uri="${registry_id}.dkr.ecr.cn-northwest-1.amazonaws.com.cn"
 else
     fullname="${account}.dkr.ecr.${region}.amazonaws.com/${image}:${tag}"
     registry_id="763104351884"

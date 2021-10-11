@@ -37,6 +37,9 @@ class KeyPoint2d(BaseInference):
                                          result_objects, self.task_config.skeleton):
                 break
 
+    def single_image_process(self, input_data):
+        pass
+
     def infer(self, input_data, net_type=0):
         with torch.no_grad():
             image_data = input_data['image'].to(self.device)
