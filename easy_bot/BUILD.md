@@ -108,3 +108,8 @@ cdk deploy ml-bot  -c Partition=aws-cn  --parameters Domain=aws1.singray-ai.com 
 cd ../docker/training or cd ../docker/inference
 bash build_and_push.sh ml-bot-training cn-northwest-1 v1.1.2
 ```
+之后每次更新只需要通过运行
+```
+bash build_and_push.sh ml-bot-training cn-northwest-1 v1.1.2
+```
+来进行更新。
