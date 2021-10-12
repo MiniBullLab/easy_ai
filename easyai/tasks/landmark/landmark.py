@@ -27,8 +27,7 @@ class Landmark(BaseInference):
         for i, batch_data in enumerate(dataloader):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
-            self.set_src_size(batch_data['src_image'])
-            objects_pose = self.single_image_process(self.src_size, batch_data)
+            objects_pose = self.single_image_process(batch_data)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(batch_data['src_image'],
@@ -37,7 +36,8 @@ class Landmark(BaseInference):
             else:
                 pass
 
-    def single_image_process(self, src_size, input_data):
+    def single_image_process(self, input_data):
+        self.set_src_size(input_data['src_image'])
         prediction, _ = self.infer(input_data)
         _, pose = self.result_process.post_process(prediction, src_size)
         return pose

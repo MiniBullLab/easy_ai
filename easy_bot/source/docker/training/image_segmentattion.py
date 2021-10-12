@@ -81,17 +81,16 @@ def train():
     val_path = os.path.join(data_dir, "ImageSets/val.txt")
     tools_dir = "/usr/local/lib/python3.6/dist-packages/easy_tools"
     train_process = EasyAiModelTrain(train_path, val_path, 0)
-    train_process.classify_model_train(tools_dir)
+    train_process.segment_model_train(tools_dir)
 
     # Create archive file for uploading to s3 bucket
     model_path = os.path.join(model_dir, "model.tar.gz")
     print("Creating compressed tar archive {}".format(model_path))
 
     tar = tarfile.open(model_path, "w:gz")
-    for name in ["/opt/ml/code/.easy_log/snapshot/cls_best.pt",
-                 "/opt/ml/code/.easy_log/snapshot/classnet.onnx",
-                 "/opt/ml/code/.easy_log/config/classify_config.json",
-                 "/opt/ml/code/.easy_log/cls_evaluation.txt"]:
+    for name in ["/opt/ml/code/.easy_log/snapshot/seg_best.pt",
+                 "/opt/ml/code/.easy_log/snapshot/segnet.onnx",
+                 "/opt/ml/code/.easy_log/seg_evaluation.txt"]:
         basename = os.path.basename(name)
         tar.add(name, arcname=basename)
     tar.close()

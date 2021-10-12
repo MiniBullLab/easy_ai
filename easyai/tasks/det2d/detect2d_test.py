@@ -32,8 +32,7 @@ class Detection2dTest(BaseTest):
         os.system('rm -rf ' + self.test_task_config.save_result_dir)
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
         for i, batch_data in enumerate(self.dataloader):
-            result, output_list = self.inference.single_image_process(batch_data['src_size'][0].numpy(),
-                                                                      batch_data)
+            result, output_list = self.inference.single_image_process(batch_data)
             loss_value = self.compute_loss(output_list, batch_data)
             self.metirc_loss(i, loss_value)
             self.print_test_info(i, loss_value)

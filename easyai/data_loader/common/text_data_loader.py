@@ -23,14 +23,12 @@ class TextDataLoader(DataLoader):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
         self.resize_type = resize_type
-        self.image_process = ImageProcess()
         self.dirProcess = DirProcess()
         self.dataset_process = TaskDataSetProcess(resize_type, normalize_type,
                                                   mean, std,
                                                   pad_color=self.get_pad_color())
         self.files = self.get_image_list(input_path)
         self.count = len(self.files)
-        self.image_pad_color = (0, 0, 0)
 
     def __iter__(self):
         self.index = -1

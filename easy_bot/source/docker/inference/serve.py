@@ -4,7 +4,6 @@ import os
 import signal
 import subprocess
 import sys
-import mxnet as mx
 import boto3
 
 model_bucket = os.environ.get("MODEL_BUCKET")
@@ -39,6 +38,7 @@ cpu_count = multiprocessing.cpu_count()
 model_server_timeout = os.environ.get('MODEL_SERVER_TIMEOUT', 60)
 model_server_workers = int(os.environ.get('MODEL_SERVER_WORKERS', cpu_count))
 
+
 def sigterm_handler(nginx_pid, gunicorn_pid):
     try:
         os.kill(nginx_pid, signal.SIGQUIT)
@@ -50,6 +50,7 @@ def sigterm_handler(nginx_pid, gunicorn_pid):
         pass
 
     sys.exit(0)
+
 
 def start_server():
     print('Starting the inference server with {} workers.'.format(model_server_workers))
@@ -79,6 +80,7 @@ def start_server():
     print('Inference server exiting')
 
 # The main routine just invokes the start function.
+
 
 if __name__ == '__main__':
     start_server()

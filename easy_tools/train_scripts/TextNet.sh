@@ -100,7 +100,7 @@ function run_onnx_convert() {
     echo  $(cat ${outDir}/dra_image_bin/dra_bin_list.txt | head -1) | xargs -n 1 echo | xargs -i cp -rf {} ${outDir}/cavalry/
 
     cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
-    rm -rf logs lc_cnn_output ades
+    rm -rf logs lc_cnn_output lc_onnx_output ades
 }
 
 function main() {

@@ -1,12 +1,12 @@
 export const TOP_TITLE_INFO = {
-  en_title: "Machine Learning Bot",
-  zh_title: "Machine Learning Bot",
+  en_title: "Easy Bot",
+  zh_title: "Easy Bot",
   en_subTitle: "Customize deep learning models faster and easier",
   zh_subTitle: "快速定制机器学习模型",
   en_desc:
-    "Machine Learning Bot is a solution for automating the process in customizing and managing machine learning models. It accelerates the model design process, and provides a set of model design interfaces for data annotation, training and interactive model evaluation.",
+    "Easy Bot is a solution for automating the process in customizing and managing machine learning models. It accelerates the model design process, and provides a set of model design interfaces for data annotation, training and interactive model evaluation.",
   zh_desc:
-    "Machine Learning Bot 是一个通过自动化繁琐流程并帮助用户快速搭建机器学习模型的解决方案。用户可以快速定制多种机器学习模型，并随时交互式验证它们。",
+    "Easy Bot 是一个通过自动化繁琐流程并帮助用户快速搭建机器学习模型的解决方案。用户可以快速定制多种机器学习模型，并随时交互式验证它们。",
 };
 
 export const HOW_IT_WORKS = {
@@ -37,9 +37,9 @@ export const BENIFITS_AND_FEATURES = {
       en_title: "ML Capabilities",
       zh_title: "多种机器学习建模能力",
       en_content:
-        "Machine Learning Bot provides many machine learning capabilities. Customers can always upgrade this ML Bot to get the latest AI features.",
+        "Easy Bot provides many machine learning capabilities. Customers can always upgrade this ML Bot to get the latest AI features.",
       zh_content:
-        "Machine Learning Bot 提供了多种机器学习能力。客户可以随时升级此 Machine Learning Bot 以获得最新的 AI 功能。",
+        "Easy Bot 提供了多种机器学习能力。客户可以随时升级此 Machine Learning Bot 以获得最新的 AI 功能。",
     },
     {
       en_title: "Friendly user interface",
