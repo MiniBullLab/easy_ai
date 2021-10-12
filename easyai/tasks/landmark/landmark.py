@@ -39,7 +39,7 @@ class Landmark(BaseInference):
     def single_image_process(self, input_data):
         self.set_src_size(input_data['src_image'])
         prediction, _ = self.infer(input_data)
-        _, pose = self.result_process.post_process(prediction, src_size)
+        _, pose = self.result_process.post_process(prediction, self.src_size)
         return pose
 
     def infer(self, input_data, net_type=0):
