@@ -1,6 +1,13 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author: lipeijie
 # import os
 # import sys
 # sys.path.insert(0, os.getcwd() + "/..")
+from easyai.utility.logger import EasyLogger
+if EasyLogger.check_init():
+    log_file_path = EasyLogger.get_log_file_path("tools.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
 import torch
 from easyai.model_block.utility.backbone_factory import BackboneFactory
 from easyai.model.utility.model_factory import ModelFactory

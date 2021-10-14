@@ -1,14 +1,14 @@
 import os
 import io
-import json
 import time
 import ast
 
 import cv2
-import math
 import warnings
 import numpy as np
 
+import codecs
+import json
 import traceback
 from easyai.utility.logger import EasyLogger
 if EasyLogger.check_init():
@@ -79,6 +79,12 @@ class ScoringService(object):
     @classmethod
     def image_classification_predict(cls, input_np):
         tic = time.time()
+        if os.path.exists("/opt/ml/model/classify_config.json"):
+            with codecs.open("/opt/ml/model/classify_config.json", 'r', encoding='utf-8') as f:
+                config_dict = json.load(f)
+        else:
+            EasyLogger.error("/opt/ml/model/classify_config.json not exits")
+            return None
         try:
             inference_task = BotInference("classify", 1)
             inference_task.build_task("classnet", 0,
@@ -89,7 +95,8 @@ class ScoringService(object):
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
             return None
-        results = [{"Class": inference_task.task_config.class_name[class_index],
+
+        results = [{"Class": config_dict['class_name'][class_index],
                     "Probability": class_confidence}]
         print("results={}".format(str(results)))
         output_dict = {"ClassIndex": class_index, "Results": results}
@@ -108,6 +115,12 @@ class ScoringService(object):
 
     @classmethod
     def object_detection_predict(cls, input_np):
+        if os.path.exists("/opt/ml/model/detection2d_config.json"):
+            with codecs.open("/opt/ml/model/detection2d_config.json", 'r', encoding='utf-8') as f:
+                config_dict = json.load(f)
+        else:
+            EasyLogger.error("/opt/ml/model/detection2d_config.json not exits")
+            return None
         try:
             inference_task = BotInference("detect2d", 1)
             inference_task.build_task("denet", 0,
@@ -128,21 +141,22 @@ class ScoringService(object):
                              int(object.max_corner.x),
                              int(object.max_corner.y)]
             points_result.append(corner_points)
-            id_result.append(object.classIndex)
-            score_result.append(object.classConfidence)
+            id_result.append(int(object.classIndex))
+            score_result.append(float(object.classConfidence))
 
         result_dict = {"Result":
                            {"class_IDs": id_result,
-                            "classes": inference_task.task_config.detect2d_class,
+                            "classes": config_dict['detect2d_class'],
                             "threshold": 0.5,
                             "scores": score_result,
                             "bounding_boxs": points_result
                             },
-                       "height": input_np[0],
-                       "width": input_np[1]
+                       "height": input_np.shape[0],
+                       "width": input_np.shape[1]
                        }
-
-        return json.dumps(result_dict)
+        result_str = json.dumps(result_dict)
+        print("object detection success")
+        return result_str
 
     @classmethod
     def segment_predict(cls, input_np):
