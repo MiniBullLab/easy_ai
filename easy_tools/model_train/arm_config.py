@@ -27,9 +27,9 @@ class ARMConfig():
                             objects_name, image_width=416, image_height=416,
                             threshold=0.1):
         save_path = "denet.json"
-        anchors = [9, 8.57, 12.43, 26.71, 19.71, 14.43, 26.36,
-                   58.52, 36, 25.55, 64.42, 42.9, 96.44, 79, 158,
-                   115, 218.65, 192.9]
+        anchors = [10, 10, 24, 26, 33, 68,
+                   61, 131, 70, 36, 117, 78,
+                   128, 209, 277, 107, 311, 251]
         save_data = dict()
         for index, temp_name in enumerate(output_name, 1):
             output_layer = "output_layer_%d" % index
