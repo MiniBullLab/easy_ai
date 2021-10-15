@@ -20,6 +20,8 @@ class ActivationType():
     PaddleHardSigmoid = "paddle_hard_sigmoid"
     HardSwish = "hard_swish"
 
+    SiLU = "silu"
+
 
 class NormalizationType():
 
