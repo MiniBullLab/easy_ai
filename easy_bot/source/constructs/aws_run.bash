@@ -1,4 +1,5 @@
 sudo rm -rf cdk.out
+npm install
 npm run build
 
 cdk bootstrap aws://335688940458/cn-northwest-1
