@@ -18,19 +18,7 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
         self.polygon_process = Polygon2dProcess()
 
     def get_rotate_crop_image(self, src_image, polygon, expand_ratio):
-        assert len(polygon) >= 4, EasyLogger.error(polygon)
-        temp_points = np.array([[p.x, p.y] for p in polygon], dtype=np.float32)
-        if len(polygon) > 4:
-            # x_min = temp_points[:, 0].min()
-            # x_max = temp_points[:, 0].max()
-            # y_min = temp_points[:, 1].min()
-            # y_max = temp_points[:, 1].max()
-            # box = Rect2D(x_min, y_min, x_max, y_max)
-            # dst_img = self.get_roi_image(src_image, box)
-            rotated_box = cv2.minAreaRect(temp_points)
-            temp_points = cv2.boxPoints(rotated_box)
-        points = self.polygon_process.clockwise_coordinate_transformation(temp_points)
-        points = self.polygon_process.original_coordinate_transformation(points)
+        points = self.get_four_points(polygon)
         img_crop_width = int(
             max(np.linalg.norm(points[0] - points[1]),
                 np.linalg.norm(points[2] - points[3])))
@@ -55,6 +43,22 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
                                       flags=cv2.INTER_CUBIC,
                                       borderValue=self.pad_color)
         return dst_img
+
+    def get_four_points(self, polygon):
+        assert len(polygon) >= 4, EasyLogger.error(polygon)
+        temp_points = np.array([[p.x, p.y] for p in polygon], dtype=np.float32)
+        if len(polygon) > 4:
+            # x_min = temp_points[:, 0].min()
+            # x_max = temp_points[:, 0].max()
+            # y_min = temp_points[:, 1].min()
+            # y_max = temp_points[:, 1].max()
+            # box = Rect2D(x_min, y_min, x_max, y_max)
+            # dst_img = self.get_roi_image(src_image, box)
+            rotated_box = cv2.minAreaRect(temp_points)
+            temp_points = cv2.boxPoints(rotated_box)
+        points = self.polygon_process.clockwise_coordinate_transformation(temp_points)
+        points = self.polygon_process.original_coordinate_transformation(points)
+        return points
 
     def rotation90_image(self, image, ratio=2.0):
         """

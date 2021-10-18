@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import numpy as np
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.ocr.ocr_sample import OCRSample
 from easyai.data_loader.ocr.ocr_dataset_process import OCRDataSetProcess
@@ -34,13 +35,14 @@ class DetOCRDataSet(TorchDataLoader):
     def __getitem__(self, index):
         img_path, ocr_objects = self.ocr_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
+        src_size = np.array([src_image.shape[1], src_image.shape[0]])  # [width, height]
         if self.is_augment:
             image, labels = self.dataset_augment.augment(src_image, ocr_objects)
         else:
-            image, labels = self.dataset_process.resize_dataset(src_image, self.image_size,
-                                                                ocr_objects)
+            image = self.dataset_process.resize_image(src_image, self.image_size)
+            labels = ocr_objects
         image, labels = self.dataset_process.normalize_dataset(image, labels)
-        result_data = {'image': image}
+        result_data = {'image': image, "src_size": src_size}
         result_data.update(labels)
         return result_data
 

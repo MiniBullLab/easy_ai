@@ -32,12 +32,12 @@ class OCRDataSetProcess(Polygon2dDataSetProcess):
         return image, labels
 
     def normalize_dataset(self, image, ocr_objects):
-        labels = dict()
         text_polys = []
         texts = []
         image = self.dataset_process.normalize_image(image)
         for ocr in ocr_objects:
-            text_polys.append(np.array([[p.x, p.y] for p in ocr.get_polygon()]))
+            points = self.get_four_points(ocr.get_polygon())
+            text_polys.append(points)
             texts.append(ocr.get_text())
         result = {'texts': texts,
                   'text_polys': text_polys}

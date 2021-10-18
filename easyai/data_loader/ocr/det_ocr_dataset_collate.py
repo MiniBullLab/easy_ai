@@ -57,7 +57,16 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
                            'shrink_map': shrink_map,
                            'shrink_mask': shrink_mask}
         elif self.target_type == 1:
-            pass
+            bacth_texts = []
+            batch_text_polys = []
+            src_size_list = []
+            for all_data in batch_list:
+                bacth_texts.append(all_data['texts'])
+                batch_text_polys.append(all_data['text_polys'])
+                src_size_list.append(all_data['src_size'])
+            target_data = {'texts': bacth_texts,
+                           'text_polys': batch_text_polys,
+                           'src_size': src_size_list}
         return target_data
 
 
