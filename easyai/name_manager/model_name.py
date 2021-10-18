@@ -45,6 +45,7 @@ class ModelName():
     YoloV3Det2d = "yolov3"
     MobileV2RefineDet2d = "mbv2Refine"
     DetNet = "denet"
+    YoloV5sDet2d = "yolov5s"
 
     # keypoint2d
     KeyPointRCNN = "KeyPointRCNN"

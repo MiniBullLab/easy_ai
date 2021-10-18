@@ -11,6 +11,7 @@ class Yolov5BlockName():
     FocusBlock = "focusBlock"
     BottleNeck = "bottleNeck"
     C3Block = "C3Block"
+    SpatialPyramidPoolingWithConv = "SPPBlockWithConv"
 
 class Contract(nn.Module):
     # Contract width-height into channels, i.e. x(1,64,80,80) to x(1,256,40,40)
@@ -30,16 +31,16 @@ class FocusBlock(BaseBlock):
     # Focus wh information into c-space
     def __init__(self, in_channels, out_channels, kernel_size=1, stride=1,
                  padding=0, groups=1, bnName=NormalizationType.BatchNormalize2d,
-                 activationName=ActivationType.SiLU):  # ch_in, ch_out, kernel, stride, padding, groups
+                 activationName=ActivationType.Swish):  # ch_in, ch_out, kernel, stride, padding, groups
         super().__init__(Yolov5BlockName.FocusBlock)
         self.conv = ConvBNActivationBlock(in_channels=in_channels * 4,
-                                           out_channels=out_channels,
-                                           kernel_size=kernel_size,
-                                           stride=stride,
-                                           padding=padding,
-                                           groups=groups,
-                                           bnName=bnName,
-                                           activationName=activationName)
+                                          out_channels=out_channels,
+                                          kernel_size=kernel_size,
+                                          stride=stride,
+                                          padding=padding,
+                                          groups=groups,
+                                          bnName=bnName,
+                                          activationName=activationName)
         self.contract = Contract(gain=2)
 
     def forward(self, x):  # x(b,c,w,h) -> y(b,4c,w/2,h/2)
@@ -50,7 +51,7 @@ class FocusBlock(BaseBlock):
 class BottleNeck(BaseBlock):
     # Standard bottleneck
     def __init__(self, in_channels, out_channels, shortcut=True, groups=1,
-                 bnName=NormalizationType.BatchNormalize2d, activationName=ActivationType.SiLU,
+                 bnName=NormalizationType.BatchNormalize2d, activationName=ActivationType.Swish,
                  expansion=0.5):  # ch_in, ch_out, shortcut, groups, expansion
         super().__init__(Yolov5BlockName.BottleNeck)
         channels_ = int(out_channels * expansion)  # hidden channels
@@ -77,7 +78,7 @@ class BottleNeck(BaseBlock):
 class C3Block(BaseBlock):
     # CSP Bottleneck with 3 convolutions
     def __init__(self, in_channels, out_channels, number=1, shortcut=True, groups=1,
-                 bnName=NormalizationType.BatchNormalize2d, activationName=ActivationType.SiLU,
+                 bnName=NormalizationType.BatchNormalize2d, activationName=ActivationType.Swish,
                  expansion=0.5):  # ch_in, ch_out, number, shortcut, groups, expansion
         super().__init__(Yolov5BlockName.C3Block)
         channels_ = int(out_channels * expansion)  # hidden channels
@@ -101,3 +102,30 @@ class C3Block(BaseBlock):
 
     def forward(self, x):
         return self.conv2(torch.cat((self.m_conv(self.conv1(x)), self.conv1(x)), dim=1))
+
+# spp block for yolov5(not the same as SpatialPyramidPooling)
+class SpatialPyramidPoolingWithConv(BaseBlock):
+    # Spatial Pyramid Pooling (SPP) layer https://arxiv.org/abs/1406.4729
+    def __init__(self, in_channels, out_channels, pool_sizes=(5, 9, 13),
+                 bnName=NormalizationType.BatchNormalize2d, activationName=ActivationType.Swish):
+        super().__init__(Yolov5BlockName.SpatialPyramidPoolingWithConv)
+        channels_ = in_channels // 2  # hidden channels
+        self.conv1 = ConvBNActivationBlock(in_channels=in_channels,
+                                           out_channels=channels_,
+                                           kernel_size=1,
+                                           stride=1,
+                                           padding=0,
+                                           bnName=bnName,
+                                           activationName=activationName)
+        self.conv2 = ConvBNActivationBlock(in_channels=channels_ * (len(pool_sizes) + 1),
+                                           out_channels=out_channels,
+                                           kernel_size=1,
+                                           stride=1,
+                                           padding=0,
+                                           bnName=bnName,
+                                           activationName=activationName)
+        self.maxpools = nn.ModuleList([nn.MaxPool2d(kernel_size=x, stride=1, padding=x // 2) for x in pool_sizes])
+
+    def forward(self, x):
+        x = self.conv1(x)
+        return self.conv2(torch.cat([x] + [m(x) for m in self.maxpools], 1))

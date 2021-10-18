@@ -118,6 +118,11 @@ class BackboneName():
     VisionResnet50 = "vision_resnet50"
     VisionWideResnet50 = "vision_wide_resnet50"
 
+    Yolov5Net = "yolov5Net"
+    Yolov5s_Backbone = "yolov5s_bockbone"
+    Yolov5m_Backbone = "yolov5m_bockbone"
+    Yolov5l_Backbone = "yolov5l_bockbone"
+    Yolov5x_Backbone = "yolov5x_bockbone"
 
 
 class GanBaseModelName():

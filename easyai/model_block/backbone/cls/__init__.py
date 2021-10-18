@@ -28,5 +28,6 @@ from . import xception
 from . import xception1
 from . import peleenet
 from . import slimnet
+from . import yolov5_backbone
 
 

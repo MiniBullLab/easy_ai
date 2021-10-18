@@ -60,13 +60,6 @@ class HardSwish(BaseBlock):
     def forward(self, x):
         return x * (self.relu6(x + 3)) / 6
 
-class SiLU(BaseBlock):  # export-friendly version of nn.SiLU()
-    def __init__(self, inplace=True):
-        super().__init__(ActivationType.SiLU)
-
-    def forward(self, x):
-        return x * torch.sigmoid(x)
-
 
 class ActivationFunction():
 
@@ -100,7 +93,5 @@ class ActivationFunction():
             return HardSwish(inplace=inplace)
         elif name == ActivationType.Mish:
             return MishActivation()
-        elif name == ActivationType.SiLU:
-            return SiLU()
         else:
             print("%s activation function error!" % name)
