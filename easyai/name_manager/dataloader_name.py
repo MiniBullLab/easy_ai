@@ -17,6 +17,7 @@ class DatasetName():
     RecTextDataSet = "RecTextDataSet"
     RecTextOCRDataSet = "RecTextOCRDataSet"
     SuperResolutionDataset = "SuperResolutionDataset"
+    DetOCRDataSet = "DetOCRDataSet"
 
     ClassifyPointCloudDataSet = "ClassifyPointCloudDataSet"
 
@@ -30,6 +31,7 @@ class DatasetCollateName():
     RecTextDataSetCollate = "RecTextDataSetCollate"
     SuperResolutionDataSetCollate = "SuperResolutionDataSetCollate"
     SegmentDataSetCollate = "SegmentDataSetCollate"
+    DetOCRDataSetCollate = "DetOCRDataSetCollate"
 
     ClassifyPointCloudDataSetCollate = "ClassifyPointCloudDataSetCollate"
 

@@ -35,14 +35,16 @@ class ARMConfig():
             output_layer = "output_layer_%d" % index
             save_data[output_layer] = temp_name
         save_data['objects_name'] = objects_name
+        objects_color = dict()
         for temp_name in objects_name:
-            save_data[temp_name] = [random.randint(0, 255),
-                                    random.randint(0, 255),
-                                    random.randint(0, 255)]
+            objects_color[temp_name] = [random.randint(0, 255),
+                                        random.randint(0, 255),
+                                        random.randint(0, 255)]
         save_data['image_width'] = image_width
         save_data['image_height'] = image_height
         save_data['threshold'] = threshold
         save_data['anchors'] = anchors
+        save_data['objects_color'] = objects_color
         with codecs.open(save_path, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, sort_keys=True, indent=4, ensure_ascii=False)
 

@@ -4,6 +4,7 @@
 
 import cv2
 import numpy as np
+from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 from easyai.data_loader.common.polygon2d_process import Polygon2dProcess
@@ -64,5 +65,41 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
         if dst_img_height * 1.0 / dst_img_width >= ratio:
             dst_img = np.rot90(image)
         return dst_img
+
+    def polygon_area(self, polygon):
+        return cv2.contourArea(polygon)
+        # edge = 0
+        # for i in range(polygon.shape[0]):
+        #     next_index = (i + 1) % polygon.shape[0]
+        #     edge += (polygon[next_index, 0] - polygon[i, 0]) * (polygon[next_index, 1] - polygon[i, 1])
+        #
+        # return edge / 2.
+
+    def resize_polygon(self, polygon, src_size, dst_size):
+        result = []
+        if self.resize_type == 0:
+            result = polygon[:]
+        elif self.resize_type == 1:
+            ratio_w = float(dst_size[0]) / src_size[0]
+            ratio_h = float(dst_size[1]) / src_size[1]
+            for point in polygon:
+                x = ratio_w * point.x
+                y = ratio_h * point.y
+                result.append(Point2d(x, y))
+        elif self.resize_type == 2:
+            ratio, pad_size = self.dataset_process.get_square_size(src_size, dst_size)
+            for point in polygon:
+                x = ratio * point.x + pad_size[0] // 2
+                y = ratio * point.y + pad_size[1] // 2
+                result.append(Point2d(x, y))
+        elif self.resize_type == 4:
+            resize_w, resize_h = self.dataset_process.get_short_size(src_size, dst_size)
+            ratio_w = float(resize_w) / src_size[0]
+            ratio_h = float(resize_h) / src_size[1]
+            for point in polygon:
+                x = ratio_w * point.x
+                y = ratio_h * point.y
+                result.append(Point2d(x, y))
+        return result
 
 
