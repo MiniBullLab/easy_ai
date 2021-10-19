@@ -36,11 +36,11 @@ class DetOCRDataSet(TorchDataLoader):
         img_path, ocr_objects = self.ocr_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
         src_size = np.array([src_image.shape[1], src_image.shape[0]])  # [width, height]
+        labels = self.dataset_process.filter_polygon(ocr_objects)
         if self.is_augment:
-            image, labels = self.dataset_augment.augment(src_image, ocr_objects)
+            image, labels = self.dataset_augment.augment(src_image, labels)
         else:
             image = self.dataset_process.resize_image(src_image, self.image_size)
-            labels = ocr_objects
         image, labels = self.dataset_process.normalize_dataset(image, labels)
         result_data = {'image': image, "src_size": src_size}
         result_data.update(labels)

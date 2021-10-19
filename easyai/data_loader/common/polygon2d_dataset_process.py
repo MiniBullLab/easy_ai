@@ -71,7 +71,8 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
         return dst_img
 
     def polygon_area(self, polygon):
-        return cv2.contourArea(polygon)
+        temp_points = np.array([[p.x, p.y] for p in polygon], dtype=np.float32)
+        return cv2.contourArea(temp_points)
         # edge = 0
         # for i in range(polygon.shape[0]):
         #     next_index = (i + 1) % polygon.shape[0]

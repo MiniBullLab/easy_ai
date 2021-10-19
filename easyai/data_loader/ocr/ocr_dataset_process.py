@@ -17,6 +17,14 @@ class OCRDataSetProcess(Polygon2dDataSetProcess):
     def read_character(self, char_path):
         return self.text_process.read_character(char_path)
 
+    def filter_polygon(self, ocr_objects, min_area=5):
+        labels = []
+        for ocr in ocr_objects:
+            area = self.polygon_area(ocr.get_polygon())
+            if area > min_area:
+                labels.append(ocr)
+        return labels
+
     def resize_dataset(self, src_image, image_size, ocr_objects):
         labels = []
         src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
