@@ -107,7 +107,6 @@ class RecognizeTextConfig(CommonTrainConfig):
                                                        "padding_type": 1,
                                                        "target_type": 0}
 
-        self.log_name = "rec_text"
         self.is_save_epoch_model = False
         self.latest_weights_name = 'rec_text_latest.pt'
         self.best_weights_name = 'rec_text_best.pt'

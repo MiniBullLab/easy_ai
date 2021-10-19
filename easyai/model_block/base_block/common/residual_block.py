@@ -2,9 +2,11 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from torchvision.ops import DeformConv2d
 from easyai.name_manager.block_name import ActivationType, NormalizationType
 from easyai.name_manager.block_name import BlockType, LayerType
 from easyai.model_block.base_block.common.utility_layer import EmptyLayer
+from easyai.model_block.base_block.common.utility_layer import NormalizeLayer
 from easyai.model_block.base_block.common.activation_function import ActivationFunction
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock
 from easyai.model_block.base_block.common.utility_block import ConvBNACTWithPoolBlock
@@ -196,6 +198,114 @@ class ResidualV2Block(BaseBlock):
         residual = self.residual(x)
         shortcut = self.shortcut(x)
         out = residual + shortcut
+        return out
+
+
+class DeformableResidualBlock(BaseBlock):
+
+    def __init__(self, flag, in_channels, out_channels,
+                 stride=1, dilation=1, expansion=1, groups=1,
+                 use_short=0, base_width=64, deformable_groups=1,
+                 bn_name=NormalizationType.BatchNormalize2d,
+                 activation_name=ActivationType.ReLU):
+        super().__init__(BlockType.DeformableResidualBlock)
+        self.residual = nn.Sequential()
+        if flag == 0:
+            self.residual = nn.Sequential(
+                ConvBNActivationBlock(in_channels=in_channels,
+                                      out_channels=out_channels,
+                                      kernel_size=3,
+                                      stride=stride,
+                                      padding=dilation,
+                                      dilation=dilation,
+                                      bnName=bn_name,
+                                      activationName=activation_name),
+                nn.Conv2d(out_channels, deformable_groups * 18, kernel_size=3, padding=1),
+                DeformConv2d(out_channels, out_channels * expansion,
+                             kernel_size=3, padding=1, bias=False),
+                NormalizeLayer(bn_name, out_channels * expansion)
+            )
+        elif flag == 1:
+            self.residual = nn.Sequential(
+                ConvBNActivationBlock(in_channels=in_channels,
+                                      out_channels=out_channels,
+                                      kernel_size=1,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=activation_name),
+                nn.Conv2d(out_channels,
+                          deformable_groups * 18,
+                          kernel_size=3,
+                          stride=stride,
+                          padding=dilation,
+                          dilation=dilation,
+                          groups=groups),
+                DeformConv2d(out_channels, out_channels,
+                             kernel_size=3, padding=1, bias=False),
+                NormalizeLayer(bn_name, out_channels),
+                ActivationFunction.get_function(activation_name),
+                ConvBNActivationBlock(in_channels=out_channels,
+                                      out_channels=out_channels * expansion,
+                                      kernel_size=1,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=ActivationType.Linear)
+            )
+        elif flag == 2:
+            width = int(out_channels * (base_width / 64.)) * groups
+            self.residual = nn.Sequential(
+                ConvBNActivationBlock(in_channels=in_channels,
+                                      out_channels=width,
+                                      kernel_size=1,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=activation_name),
+                ConvBNActivationBlock(in_channels=width,
+                                      out_channels=width,
+                                      kernel_size=3,
+                                      stride=stride,
+                                      padding=dilation,
+                                      dilation=dilation,
+                                      groups=groups,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=activation_name),
+                ConvBNActivationBlock(in_channels=width,
+                                      out_channels=out_channels * expansion,
+                                      kernel_size=1,
+                                      bias=False,
+                                      bnName=bn_name,
+                                      activationName=ActivationType.Linear)
+            )
+
+        self.shortcut = nn.Sequential()
+        if isinstance(stride, (list, tuple)):
+            temp_stride = max(stride)
+        else:
+            temp_stride = stride
+        if use_short > 0 or temp_stride != 1 or in_channels != expansion * out_channels:
+            if use_short == 2:
+                self.shortcut = ConvBNACTWithPoolBlock(in_channels=in_channels,
+                                                       out_channels=out_channels * expansion,
+                                                       stride=stride,
+                                                       kernel_size=1,
+                                                       padding=0,
+                                                       bnName=bn_name,
+                                                       activationName=ActivationType.Linear)
+            else:
+                self.shortcut = ConvBNActivationBlock(in_channels=in_channels,
+                                                      out_channels=out_channels * expansion,
+                                                      kernel_size=1,
+                                                      stride=stride,
+                                                      bnName=bn_name,
+                                                      activationName=ActivationType.Linear)
+        self.activation = ActivationFunction.get_function(activation_name)
+
+    def forward(self, x):
+        residual = self.residual(x)
+        shortcut = self.shortcut(x)
+        out = residual + shortcut
+        out = self.activation(out)
         return out
 
 

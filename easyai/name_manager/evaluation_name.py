@@ -14,3 +14,4 @@ class EvaluationName():
     OneClassROC = "OneClassROC"
     SegmentionMetric = "SegmentionMetric"
     SuperResolutionPSNR = "SuperResolutionPSNR"
+    OCRDetectionMetric = "OCRDetectionMetric"

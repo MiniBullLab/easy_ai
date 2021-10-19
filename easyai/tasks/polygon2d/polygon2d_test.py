@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import torch
 from easyai.tasks.utility.base_test import BaseTest
 from easyai.tasks.polygon2d.polygon2d import Polygon2d
 from easyai.name_manager.task_name import TaskName
@@ -26,27 +25,28 @@ class Polygon2dTest(BaseTest):
             return
         score, loss_value = self.test(epoch)
         print("Val epoch loss: {}".format(self.epoch_loss_average.avg))
-        print("Mean IoU: {:.5f}".format(score))
+        print("hmean: {:.5f}".format(score))
 
     def test(self, epoch=0):
         for i, batch_data in enumerate(self.dataloader):
             prediction, output_list = self.inference.infer(batch_data)
-            result, _ = self.inference.result_process.post_process(prediction)
+            result = self.inference.result_process.post_process(prediction,
+                                                                batch_data['src_size'][0])
             loss_value = self.compute_loss(output_list, batch_data)
-            self.evaluation.numpy_eval(result, batch_data['label'][0].data.cpu().numpy())
+            self.evaluation.eval(result, batch_data['polygons'][0])
             self.metirc_loss(i, loss_value)
             self.print_test_info(i, loss_value)
 
-        score, class_score = self.evaluation.get_score()
-        self.save_test_value(epoch, score, class_score)
+        score = self.evaluation.get_score()
+        self.save_test_value(epoch, score)
         EasyLogger.info("Val epoch loss: {:.7f}".format(self.epoch_loss_average.avg))
-        return score['Mean IoU'], self.epoch_loss_average.avg
+        return score['hmean'], self.epoch_loss_average.avg
 
-    def save_test_value(self, epoch, score, class_score):
+    def save_test_value(self, epoch, score):
         # write epoch results
         with open(self.test_task_config.evaluation_result_path, 'a') as file:
-            file.write("Epoch: {} | mIoU: {:.3f} | ".format(epoch, score['Mean IoU']))
-            for i, iou in class_score.items():
-                file.write(self.test_task_config.segment_class[i][0] + ": {:.3f} ".format(iou))
+            file.write("Epoch: {} |".format(epoch))
+            for k, v in score.items():
+                file.write("{}:{:.3f} |".format(k, v))
             file.write("\n")
 

@@ -17,9 +17,10 @@ from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 @REGISTERED_POST_PROCESS.register_module(PostProcessName.DBPostProcess)
 class DBPostProcess(BasePostProcess):
 
-    def __init__(self, threshold=0.3, unclip_ratio=1.5):
+    def __init__(self, threshold=0.6, db_threshold=0.3, unclip_ratio=1.5):
         super().__init__()
         self.threshold = threshold
+        self.db_threshold = db_threshold
         self.bbox_scale_ratio = unclip_ratio
         self.shortest_length = 5
         self.min_size = 3
@@ -30,7 +31,7 @@ class DBPostProcess(BasePostProcess):
         h, w = instance_score.shape[:2]
         width, height = src_size
         available_region = np.zeros_like(instance_score, dtype=np.float32)
-        np.putmask(available_region, instance_score > 0.01, instance_score)
+        np.putmask(available_region, instance_score > self.db_threshold, instance_score)
         mask_region = (available_region > 0).astype(np.uint8) * 255
         structure_element = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
         refined_mask_region = cv2.morphologyEx(mask_region, cv2.MORPH_CLOSE, structure_element)
@@ -67,7 +68,8 @@ class DBPostProcess(BasePostProcess):
                 temp_point = Point2d(temp_value[0], temp_value[1])
                 polygon_object.add_point(temp_point)
             polygon_object.object_confidence = socre
-            result.append(polygon_object)
+            if socre >= self.threshold:
+                result.append(polygon_object)
         return result
 
     def get_min_area_bbox(self, _image, _contour, _scale_ratio=1.0):

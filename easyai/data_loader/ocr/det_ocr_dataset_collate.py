@@ -65,7 +65,7 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
                 batch_text_polys.append(all_data['text_polys'])
                 src_size_list.append(all_data['src_size'])
             target_data = {'texts': bacth_texts,
-                           'text_polys': batch_text_polys,
+                           'polygons': batch_text_polys,
                            'src_size': src_size_list}
         return target_data
 

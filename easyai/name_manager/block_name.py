@@ -106,6 +106,8 @@ class BlockType():
     InvertedResidual = "invertedResidual"
     InvertedResidualV2 = "invertedResidualV2"
 
+    DeformableResidualBlock = "DeformableResidualBlock"
+
     FPNBlock = "FPNBlock"
     FPNV2Block = "FPNV2Block"
 
