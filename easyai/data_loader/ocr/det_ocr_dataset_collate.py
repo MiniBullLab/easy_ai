@@ -65,16 +65,25 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
                            'shrink_map': shrink_map,
                            'shrink_mask': shrink_mask}
         elif self.target_type == 1:
+            shrink_map = []
+            shrink_mask = []
             bacth_texts = []
             batch_text_polys = []
             src_size_list = []
             for all_data in batch_list:
+                temp2 = self.shrink_map(all_data)
+                shrink_map.append(torch.from_numpy(temp2['shrink_map']))
+                shrink_mask.append(torch.from_numpy(temp2['shrink_mask']))
                 bacth_texts.append(all_data['texts'])
                 batch_text_polys.append(all_data['text_polys'])
                 src_size_list.append(all_data['src_size'])
+            shrink_map = torch.stack(shrink_map)
+            shrink_mask = torch.stack(shrink_mask)
             target_data = {'texts': bacth_texts,
                            'polygons': batch_text_polys,
-                           'src_size': src_size_list}
+                           'src_size': src_size_list,
+                           'shrink_map': shrink_map,
+                           'shrink_mask': shrink_mask}
         return target_data
 
 

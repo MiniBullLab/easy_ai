@@ -1,0 +1,1 @@
+ python3 easyai/inference_task.py -t polygon2d -i /home/lpj/dataset/tests/ocr_test -w /home/lpj/dataset/dbnet.pt -s

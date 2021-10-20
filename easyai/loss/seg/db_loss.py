@@ -120,18 +120,18 @@ class DBLoss(BaseLoss):
         if batch_data is not None:
             device = input_data.device
             shrink_maps = input_data[:, 0, :, :]
-            threshold_maps = input_data[:, 1, :, :]
-            binary_maps = input_data[:, 2, :, :]
-
             loss_shrink_maps = self.bce_loss(shrink_maps,
                                              batch_data['shrink_map'].to(device),
                                              batch_data['shrink_mask'].to(device))
-            loss_threshold_maps = self.l1_loss(threshold_maps,
-                                               batch_data['threshold_map'].to(device),
-                                               batch_data['threshold_mask'].to(device))
-            self.loss_info = dict(loss_shrink_maps=loss_shrink_maps,
-                                  loss_threshold_maps=loss_threshold_maps)
+
             if input_data.size()[1] > 2:
+                threshold_maps = input_data[:, 1, :, :]
+                loss_threshold_maps = self.l1_loss(threshold_maps,
+                                                   batch_data['threshold_map'].to(device),
+                                                   batch_data['threshold_mask'].to(device))
+                self.loss_info = dict(loss_shrink_maps=loss_shrink_maps,
+                                      loss_threshold_maps=loss_threshold_maps)
+                binary_maps = input_data[:, 2, :, :]
                 loss_binary_maps = self.dice_loss(binary_maps,
                                                   batch_data['shrink_map'].to(device),
                                                   batch_data['shrink_mask'].to(device))
