@@ -68,6 +68,13 @@ class Polygon2dTrain(CommonTrain):
                 EasyLogger.info("no test!")
                 return
             self.polygon2d_test.load_weights(save_model_path)
+            score, average_loss = self.polygon2d_test.test(epoch)
+
+            self.train_logger.epoch_eval_loss_log(epoch, average_loss)
+            # save best model
+            self.best_score = self.torchModelProcess.save_best_model(score,
+                                                                     save_model_path,
+                                                                     self.train_task_config.best_weights_path)
         else:
             self.torchModelProcess.save_best_model(1, save_model_path,
                                                    self.train_task_config.best_weights_path)

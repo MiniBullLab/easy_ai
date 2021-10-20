@@ -7,6 +7,7 @@ from easyai.data_loader.utility.base_dataset_collate import BaseDatasetCollate
 from easyai.name_manager.dataloader_name import DatasetCollateName
 from easyai.data_loader.ocr.make_border_map import MakeBorderMap
 from easyai.data_loader.ocr.make_shrink_map import MakeShrinkMap
+from easyai.torch_utility.torch_vision.torchvision_visualizer import TorchVisionVisualizer
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET_COLLATE
 
 
@@ -18,6 +19,8 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
         self.target_type = target_type
         self.border_map = MakeBorderMap()
         self.shrink_map = MakeShrinkMap()
+        self.visualizer = TorchVisionVisualizer()
+        self.number = 0
 
     def __call__(self, batch_list):
         result_data = self.build_images(batch_list)
@@ -52,6 +55,11 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
             threshold_mask = torch.stack(threshold_mask)
             shrink_map = torch.stack(shrink_map)
             shrink_mask = torch.stack(shrink_mask)
+            # self.visualizer.save_current_images(threshold_map, "canvas_%d.png" % self.number)
+            # self.visualizer.save_current_images(threshold_mask, "mask_%d.png" % self.number)
+            # self.visualizer.save_current_images(shrink_map, "shrink_map_%d.png" % self.number)
+            # self.visualizer.save_current_images(shrink_mask, "shrink_mask_%d.png" % self.number)
+            # self.number += 1
             target_data = {'threshold_map': threshold_map,
                            'threshold_mask': threshold_mask,
                            'shrink_map': shrink_map,

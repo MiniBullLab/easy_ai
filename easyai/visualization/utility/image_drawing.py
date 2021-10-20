@@ -100,7 +100,7 @@ class ImageDrawing():
                 y = int(point.y)
                 point_list.append([x, y])
             cv2.polylines(src_image, np.array([point_list], np.int32),
-                          True, (0, 0, 225), 2)
+                          True, (0, 0, 225), 3, 0)
 
     def draw_ocr_result(self, src_image, result):
         random.seed(0)
@@ -130,4 +130,7 @@ class ImageDrawing():
         img_show.paste(img_left, (0, 0, w, h))
         img_show.paste(img_right, (w, 0, w * 2, h))
         return np.array(img_show)
+
+    def save_image(self, image, save_path):
+        cv2.imwrite(save_path, image)
 

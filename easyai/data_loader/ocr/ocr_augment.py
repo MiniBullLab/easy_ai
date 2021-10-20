@@ -8,13 +8,14 @@ import imgaug.augmenters as iaa
 from easyai.helper.data_structure import Point2d
 from easyai.data_loader.augment.image_data_augment import ImageDataAugment
 from easyai.data_loader.augment.east_random_crop import EastRandomCropData
+from easyai.utility.logger import EasyLogger
 
 
 class OCRDataAugment():
 
     def __init__(self, image_size):
         self.is_augment_hsv = False
-        self.is_augment_affine = False
+        self.is_augment_others = True
         self.is_crop = True
         self.image_size = image_size
         self.image_augment = ImageDataAugment()
@@ -22,11 +23,15 @@ class OCRDataAugment():
 
     def augment(self, image_rgb, ocr_objects):
         image = image_rgb[:]
+        labels = ocr_objects[:]
         if self.is_augment_hsv:
             image = self.image_augment.augment_hsv(image_rgb)
-        image, labels = self.other_augment(image, ocr_objects)
+        if self.is_augment_others:
+            image, labels = self.other_augment(image, ocr_objects)
         if self.is_crop:
-            image, labels = self.random_crop.ocr_crop(image, ocr_objects)
+            image, labels = self.random_crop.ocr_crop(image, labels)
+            # EasyLogger.debug("train image size(W, H): %d, %d" % (image.shape[1],
+            #                                                      image.shape[0]))
         return image, labels
 
     def label_affine(self, points, matrix, image_size):
@@ -54,7 +59,7 @@ class OCRDataAugment():
         shape = image_rgb.shape
         fliplr_augment = iaa.Fliplr(p=0.5)
         affine_augment = iaa.Affine(rotate=[-10, 10])
-        resize_augment = iaa.Resize(size=[0.3, 3])
+        resize_augment = iaa.Resize(size=[0.5, 3.0])
         aug = fliplr_augment.to_deterministic()
         image = aug.augment_image(image_rgb)
         for ocr in ocr_objects:

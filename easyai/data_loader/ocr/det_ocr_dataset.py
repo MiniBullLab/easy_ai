@@ -9,6 +9,7 @@ from easyai.data_loader.ocr.ocr_dataset_process import OCRDataSetProcess
 from easyai.data_loader.ocr.ocr_augment import OCRDataAugment
 from easyai.name_manager.dataloader_name import DatasetName
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
+from easyai.visualization.utility.image_drawing import ImageDrawing
 from easyai.utility.logger import EasyLogger
 
 
@@ -32,6 +33,9 @@ class DetOCRDataSet(TorchDataLoader):
 
         self.dataset_augment = OCRDataAugment(self.image_size)
 
+        self.number = 0
+        self.drawing = ImageDrawing()
+
     def __getitem__(self, index):
         img_path, ocr_objects = self.ocr_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
@@ -39,6 +43,10 @@ class DetOCRDataSet(TorchDataLoader):
         labels = self.dataset_process.filter_polygon(ocr_objects)
         if self.is_augment:
             image, labels = self.dataset_augment.augment(src_image, labels)
+            # print(img_path)
+            # self.drawing.draw_polygon2d_result(image, labels)
+            # self.drawing.save_image(image, "img_%d.png" % self.number)
+            # self.number += 1
         else:
             image = self.dataset_process.resize_image(src_image, self.image_size)
         image, labels = self.dataset_process.normalize_dataset(image, labels)
@@ -47,5 +55,5 @@ class DetOCRDataSet(TorchDataLoader):
         return result_data
 
     def __len__(self):
-        return self.text_sample.get_sample_count()
+        return self.ocr_sample.get_sample_count()
 

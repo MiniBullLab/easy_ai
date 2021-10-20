@@ -42,7 +42,7 @@ class OCRDataSetProcess(Polygon2dDataSetProcess):
     def normalize_dataset(self, image, ocr_objects):
         text_polys = []
         texts = []
-        image = self.dataset_process.normalize_image(image)
+        image = self.normalize_image(image)
         for ocr in ocr_objects:
             points = self.get_four_points(ocr.get_polygon())
             text_polys.append(points)

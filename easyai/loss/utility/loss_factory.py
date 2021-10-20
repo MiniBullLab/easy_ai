@@ -233,8 +233,10 @@ class LossFactory():
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
             loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         elif input_name == LossName.DBLoss:
+            loss_config['alpha'] = loss_config.get('alpha', 1.0)
+            loss_config['beta'] = loss_config.get('beta', 10.0)
+            loss_config['ohem_ratio'] = loss_config.get('ohem_ratio', 3)
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
-            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
         return loss
 

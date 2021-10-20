@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
 from easyai.utility.logger import EasyLogger
 if EasyLogger.check_init():
     log_file_path = EasyLogger.get_log_file_path("inference.log")
@@ -30,14 +31,15 @@ class InferenceTask():
         EasyLogger.debug(weight_path)
         if self.task_name is not None and \
                 REGISTERED_INFERENCE_TASK.has_class(self.task_name):
-            # try:
-            task = build_from_cfg(task_args, REGISTERED_INFERENCE_TASK)
-            task.load_weights(weight_path)
-            task.process(self.input_path, self.data_type, self.is_show)
-            # except Exception as err:
-            #     EasyLogger.error(err)
+            try:
+                task = build_from_cfg(task_args, REGISTERED_INFERENCE_TASK)
+                task.load_weights(weight_path)
+                task.process(self.input_path, self.data_type, self.is_show)
+            except Exception as err:
+                EasyLogger.error(traceback.format_exc())
+                EasyLogger.error(err)
         else:
-            EasyLogger.info("This task(%s) not exits!" % self.task_name)
+            EasyLogger.error("This task(%s) not exits!" % self.task_name)
 
 
 def main():

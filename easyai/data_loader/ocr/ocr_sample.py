@@ -34,7 +34,7 @@ class OCRSample(BaseDetectionSample):
             _, ocr_objects = self.json_process.parse_ocr_data(label_path)
             filter_objects = []
             for ocr in ocr_objects:
-                if not self.language.strip():
+                if not self.language:
                     filter_objects.append(ocr)
                 elif ocr.language.strip() in self.language:
                     filter_objects.append(ocr)

@@ -96,7 +96,8 @@ class MaskL1Loss(nn.Module):
 @REGISTERED_SEG_LOSS.register_module(LossName.DBLoss)
 class DBLoss(BaseLoss):
 
-    def __init__(self, alpha=1.0, beta=10, ohem_ratio=3, reduction='mean', eps=1e-6):
+    def __init__(self, alpha=1.0, beta=10, ohem_ratio=3,
+                 reduction='mean', eps=1e-6):
         """
         Implement PSE Loss.
         :param alpha: binary_map loss 前面的系数
@@ -117,22 +118,23 @@ class DBLoss(BaseLoss):
     def forward(self, input_data, batch_data=None):
         input_data = input_data.float()
         if batch_data is not None:
+            device = input_data.device
             shrink_maps = input_data[:, 0, :, :]
             threshold_maps = input_data[:, 1, :, :]
             binary_maps = input_data[:, 2, :, :]
 
             loss_shrink_maps = self.bce_loss(shrink_maps,
-                                             batch_data['shrink_map'],
-                                             batch_data['shrink_mask'])
+                                             batch_data['shrink_map'].to(device),
+                                             batch_data['shrink_mask'].to(device))
             loss_threshold_maps = self.l1_loss(threshold_maps,
-                                               batch_data['threshold_map'],
-                                               batch_data['threshold_mask'])
+                                               batch_data['threshold_map'].to(device),
+                                               batch_data['threshold_mask'].to(device))
             self.loss_info = dict(loss_shrink_maps=loss_shrink_maps,
                                   loss_threshold_maps=loss_threshold_maps)
             if input_data.size()[1] > 2:
                 loss_binary_maps = self.dice_loss(binary_maps,
-                                                  batch_data['shrink_map'],
-                                                  batch_data['shrink_mask'])
+                                                  batch_data['shrink_map'].to(device),
+                                                  batch_data['shrink_mask'].to(device))
                 self.loss_info['loss_binary_maps'] = loss_binary_maps
                 loss = self.alpha * loss_shrink_maps + self.beta * loss_threshold_maps + loss_binary_maps
             else:

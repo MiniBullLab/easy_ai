@@ -41,7 +41,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.save_image_train_value(config_dict)
 
     def get_data_default_value(self):
-        self.data = {'image_size': (736, 736),  # W * H
+        self.data = {'image_size': (640, 640),  # W * H
                      'data_channel': 3,
                      'resize_type': 4,
                      'normalize_type': -1,
@@ -53,6 +53,11 @@ class Polygon2dConfig(CommonTrainConfig):
                              'threshold': 0.6,
                              'db_threshold': 0.3,
                              'unclip_ratio': 1.5}
+
+        self.model_type = 0
+        self.model_config = {'type': 'dbnet',
+                             'data_channel': self.data['data_channel'],
+                             'class_number': len(self.detect2d_class)}
 
         self.save_result_name = "polygon2d_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
@@ -88,7 +93,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.train_data['dataset']['is_augment'] = True
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 64
+        self.train_data['dataloader']['batch_size'] = 16
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 0
         self.train_data['dataloader']['drop_last'] = False
