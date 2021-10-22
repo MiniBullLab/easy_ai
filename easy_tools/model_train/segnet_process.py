@@ -16,10 +16,10 @@ from easyai.utility.logger import EasyLogger
 class SegNetProcess():
 
     def __init__(self):
-        self.images_dir_name = "../JPEGImages"
-        self.annotation_dir_name = "../Annotations"
+        self.images_dir_name = "JPEGImages"
+        self.annotation_dir_name = "Annotations"
         self.annotation_post = ".json"
-        self.save_label_dir = "../SegmentLabel"
+        self.save_label_dir = "SegmentLabel"
         self.segment_post = ".png"
         self.dir_process = DirProcess()
         self.image_process = ImageProcess()
