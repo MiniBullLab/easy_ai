@@ -5,6 +5,7 @@
 import os
 import numpy as np
 import cv2
+import hnswlib
 from sklearn.random_projection import SparseRandomProjection
 from sklearn.neighbors import NearestNeighbors
 from easyai.tasks.one_class.post_process.kcenter_greedy import kCenterGreedy
@@ -81,12 +82,20 @@ class PatchCorePostProcess(BasePostProcess):
             knn.train(embedding_coreset, cv2.ml.ROW_SAMPLE, labels)
             result = knn.findNearest(embedding_test, k=self.neighbor_count)
             score_patches = result[-1]
+        elif self.method == "ANN":
+            # Declaring index，声明索引类型，如：l2, cosine or ip
+            nbrs = hnswlib.Index(space='l2', dim=len(embedding_coreset[0]))
+            # 初始化索引，元素的最大数需要是已知的
+            nbrs.init_index(max_elements=len(embedding_coreset), ef_construction=self.neighbor_count * 10, M=M)
+            # Element insertion，插入数据
+            int_labels = nbrs.add_items(embedding_coreset, np.arange(len(embedding_coreset)))
+            nbrs.set_ef(self.neighbor_count * 10)
+            _, score_patches = nbrs.knn_query(embedding_test, self.neighbor_count)
         else:
             nbrs = NearestNeighbors(n_neighbors=self.neighbor_count,
                                     algorithm='ball_tree',
                                     metric='minkowski', p=2).fit(embedding_coreset)
             score_patches, _ = nbrs.kneighbors(embedding_test)
-        # print(score_patches.shape)
         N_b = score_patches[np.argmax(score_patches[:, 0])]
         w = (1 - (np.max(np.exp(N_b)) / np.sum(np.exp(N_b))))
         score = w * max(score_patches[:, 0])  # Image-level score

@@ -22,3 +22,4 @@ pyclipper==1.1.0.post3
 shapely==1.7.0
 python-Levenshtein>=0.12.0
 lmdb>=0.98
+hnswlib
