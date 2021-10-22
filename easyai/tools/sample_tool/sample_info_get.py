@@ -5,8 +5,10 @@
 import os
 from easyai.helper import DirProcess
 from easyai.helper.json_process import JsonProcess
+from easyai.visualization.utility.color_define import SegmentColorDefine
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.name_manager.task_name import TaskName
+from easyai.utility.logger import EasyLogger
 
 
 class SampleInformation():
@@ -18,21 +20,36 @@ class SampleInformation():
         self.images_dir_name = "JPEGImages"
         self.annotation_post = "*.json"
 
-    def create_class_names(self, train_path, task_name):
+    def create_class_names(self, train_path, task_name, config_path=None):
         result = None
         if task_name.strip() == TaskName.Classify_Task:
-            train_task_config = self.config_factory.get_config(task_name)
+            train_task_config = self.config_factory.get_config(task_name, config_path)
             train_task_config.class_name = self.get_classify_class(train_path)
             train_task_config.save_config()
             result = train_task_config.class_name
         elif task_name.strip() == TaskName.Detect2d_Task:
-            train_task_config = self.config_factory.get_config(task_name)
+            train_task_config = self.config_factory.get_config(task_name, config_path)
             train_task_config.detect2d_class = self.get_detection_class(train_path)
             train_task_config.save_config()
             result = train_task_config.detect2d_class
         elif task_name.strip() == TaskName.Segment_Task:
-            train_task_config = self.config_factory.get_config(task_name)
-            result = self.get_detection_class(train_path)
+            train_task_config = self.config_factory.get_config(task_name, config_path)
+            segment_class = self.get_segment_class(train_path)
+            segment_class.insert(0, 'background')
+            all_count = len(SegmentColorDefine.colors)
+            if len(SegmentColorDefine.colors) >= len(segment_class):
+                segment_class_list = []
+                for index, class_name in enumerate(segment_class):
+                    color = SegmentColorDefine.colors[index]
+                    segment_class_list.append((class_name, color))
+                train_task_config.segment_class = segment_class_list
+                train_task_config.seg_label_type = 2
+                train_task_config.save_config()
+                result = train_task_config.segment_class
+            else:
+                EasyLogger.error("segment class count(%d) > %d" % (len(segment_class),
+                                                                   all_count))
+                result = None
         assert result is not None
         return result
 

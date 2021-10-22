@@ -94,6 +94,7 @@ class OCRDetectionMetric(BaseEvaluation):
         return inter_area / union_area
 
     def get_intersection(self, det_points, gt_points):
+        # print("metric:", det_points, gt_points)
         return Polygon(det_points).intersection(Polygon(gt_points)).area
 
     def get_union(self, det_points, gt_points):

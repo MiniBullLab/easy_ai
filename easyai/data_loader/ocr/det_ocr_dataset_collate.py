@@ -40,21 +40,21 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
     def build_targets(self, batch_list):
         target_data = dict()
         if self.target_type == 0:
-            threshold_map = []
-            threshold_mask = []
             shrink_map = []
             shrink_mask = []
+            threshold_map = []
+            threshold_mask = []
             for all_data in batch_list:
-                temp1 = self.border_map(all_data)
-                temp2 = self.shrink_map(all_data)
-                threshold_map.append(torch.from_numpy(temp1['threshold_map']))
-                threshold_mask.append(torch.from_numpy(temp1['threshold_mask']))
-                shrink_map.append(torch.from_numpy(temp2['shrink_map']))
-                shrink_mask.append(torch.from_numpy(temp2['shrink_mask']))
-            threshold_map = torch.stack(threshold_map)
-            threshold_mask = torch.stack(threshold_mask)
+                temp1 = self.shrink_map(all_data)
+                temp2 = self.border_map(all_data)
+                shrink_map.append(torch.from_numpy(temp1['shrink_map']))
+                shrink_mask.append(torch.from_numpy(temp1['shrink_mask']))
+                threshold_map.append(torch.from_numpy(temp2['threshold_map']))
+                threshold_mask.append(torch.from_numpy(temp2['threshold_mask']))
             shrink_map = torch.stack(shrink_map)
             shrink_mask = torch.stack(shrink_mask)
+            threshold_map = torch.stack(threshold_map)
+            threshold_mask = torch.stack(threshold_mask)
             # self.visualizer.save_current_images(threshold_map, "canvas_%d.png" % self.number)
             # self.visualizer.save_current_images(threshold_mask, "mask_%d.png" % self.number)
             # self.visualizer.save_current_images(shrink_map, "shrink_map_%d.png" % self.number)
@@ -67,20 +67,20 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
         elif self.target_type == 1:
             shrink_map = []
             shrink_mask = []
-            bacth_texts = []
-            batch_text_polys = []
+            batch_polygons = []
             src_size_list = []
             for all_data in batch_list:
                 temp2 = self.shrink_map(all_data)
                 shrink_map.append(torch.from_numpy(temp2['shrink_map']))
                 shrink_mask.append(torch.from_numpy(temp2['shrink_mask']))
-                bacth_texts.append(all_data['texts'])
-                batch_text_polys.append(all_data['text_polys'])
+                batch_polygons.append(all_data['polygons'])
                 src_size_list.append(all_data['src_size'])
             shrink_map = torch.stack(shrink_map)
             shrink_mask = torch.stack(shrink_mask)
-            target_data = {'texts': bacth_texts,
-                           'polygons': batch_text_polys,
+            # self.visualizer.save_current_images(shrink_map, "shrink_map_%d.png" % self.number)
+            # self.visualizer.save_current_images(shrink_mask, "shrink_mask_%d.png" % self.number)
+            # self.number += 1
+            target_data = {'polygons': batch_polygons,
                            'src_size': src_size_list,
                            'shrink_map': shrink_map,
                            'shrink_mask': shrink_mask}

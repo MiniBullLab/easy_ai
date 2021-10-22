@@ -47,5 +47,6 @@ class TorchDeviceProcess():
         if TorchDeviceProcess.first_run:
             torch.cuda.empty_cache()
             t = time.time()
+            seed = int(t)
             set_random_seed(0, TorchDeviceProcess.hasCUDA())
             TorchDeviceProcess.first_run = False

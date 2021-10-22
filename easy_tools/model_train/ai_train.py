@@ -104,7 +104,7 @@ class EasyAiModelTrain():
         output_name = ['seg_output']
         try:
             segnet_process = SegNetProcess()
-            segnet_process.png_process(self.train_path)
+            segnet_process.label_process(self.train_path)
             pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
             create_seg_sample = CreateSegmentionSample()
             create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)

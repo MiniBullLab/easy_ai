@@ -68,7 +68,10 @@ class DBPostProcess(BasePostProcess):
                 temp_point = Point2d(temp_value[0], temp_value[1])
                 polygon_object.add_point(temp_point)
             polygon_object.object_confidence = socre
-            if socre >= self.threshold:
+            temp_points = np.array([[p.x, p.y] for p in polygon_object.get_polygon()],
+                                   dtype=np.float32)
+            temp_polygon = Polygon(temp_points)
+            if temp_polygon.area >= 1 and socre >= self.threshold:
                 result.append(polygon_object)
         return result
 

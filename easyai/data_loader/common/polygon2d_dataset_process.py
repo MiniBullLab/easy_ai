@@ -4,6 +4,7 @@
 
 import cv2
 import numpy as np
+from shapely.geometry import Polygon
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
@@ -72,7 +73,9 @@ class Polygon2dDataSetProcess(TaskDataSetProcess):
 
     def polygon_area(self, polygon):
         temp_points = np.array([[p.x, p.y] for p in polygon], dtype=np.float32)
-        return cv2.contourArea(temp_points)
+        temp_polygon = Polygon(temp_points)
+        return temp_polygon.area
+        # return cv2.contourArea(temp_points)
         # edge = 0
         # for i in range(polygon.shape[0]):
         #     next_index = (i + 1) % polygon.shape[0]

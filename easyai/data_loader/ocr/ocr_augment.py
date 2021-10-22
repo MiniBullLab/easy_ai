@@ -15,7 +15,7 @@ class OCRDataAugment():
 
     def __init__(self, image_size):
         self.is_augment_hsv = False
-        self.is_augment_others = True
+        self.is_augment_others = False
         self.is_crop = True
         self.image_size = image_size
         self.image_augment = ImageDataAugment()
@@ -24,6 +24,7 @@ class OCRDataAugment():
     def augment(self, image_rgb, ocr_objects):
         image = image_rgb[:]
         labels = ocr_objects[:]
+        src_size = (image_rgb.shape[1], image_rgb.shape[0])
         if self.is_augment_hsv:
             image = self.image_augment.augment_hsv(image_rgb)
         if self.is_augment_others:
@@ -75,6 +76,8 @@ class OCRDataAugment():
             temp_poly = np.array([[p.x, p.y] for p in ocr.get_polygon()])
             ocr.clear_polygon()
             for point in self.may_augment_poly(aug, shape, temp_poly):
+                point.x = min(max(0, point.x), image.shape[1] - 1)
+                point.y = min(max(0, point.y), image.shape[0] - 1)
                 ocr.add_point(point)
         aug = resize_augment.to_deterministic()
         image = aug.augment_image(image)
@@ -91,3 +94,4 @@ class OCRDataAugment():
             [imgaug.KeypointsOnImage(keypoints, shape=img_shape)])[0].keypoints
         poly = [Point2d(p.x, p.y) for p in keypoints]
         return poly
+

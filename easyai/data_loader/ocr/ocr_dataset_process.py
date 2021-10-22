@@ -21,8 +21,9 @@ class OCRDataSetProcess(Polygon2dDataSetProcess):
         labels = []
         for ocr in ocr_objects:
             area = self.polygon_area(ocr.get_polygon())
-            if area > min_area:
-                labels.append(ocr)
+            if area >= min_area:
+                temp_copy = ocr.copy()
+                labels.append(temp_copy)
         return labels
 
     def resize_dataset(self, src_image, image_size, ocr_objects):
@@ -39,16 +40,13 @@ class OCRDataSetProcess(Polygon2dDataSetProcess):
             labels.append(temp_ocr)
         return image, labels
 
-    def normalize_dataset(self, image, ocr_objects):
+    def normalize_labels(self, ocr_objects):
         text_polys = []
         texts = []
-        image = self.normalize_image(image)
         for ocr in ocr_objects:
             points = self.get_four_points(ocr.get_polygon())
             text_polys.append(points)
             texts.append(ocr.get_text())
-        result = {'texts': texts,
-                  'text_polys': text_polys}
-        return image, result
+        return text_polys, texts
 
 
