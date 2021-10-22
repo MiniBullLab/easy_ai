@@ -49,24 +49,26 @@ class SegNetProcess():
 
     def label_process(self, data_path):
         temp_path, _ = os.path.split(data_path)
-        labels_dir = os.path.join(temp_path, self.save_label_dir)
-        annotation_dir = os.path.join(temp_path, self.annotation_dir_name)
+        root_path, _ = os.path.split(temp_path)
+        labels_dir = os.path.join(root_path, self.save_label_dir)
+        annotation_dir = os.path.join(root_path, self.annotation_dir_name)
         if not os.path.exists(labels_dir):
             if os.path.exists(annotation_dir):
                 class_names = self.sample_process.create_class_names(data_path,
-                                                                     TaskName.Detect2d_Task)
+                                                                     TaskName.Segment_Task)
                 if class_names is not None and len(class_names) > 0:
                     self.convert_label.convert_segment_label(temp_path, -2, class_names)
                 else:
                     EasyLogger.error("input segnet datset error!")
             else:
-                EasyLogger.error("input segnet datset error!")
+                EasyLogger.error("%s not exists!" % annotation_dir)
         else:
             self.png_process(data_path)
 
     def png_process(self, data_path):
         temp_path, _ = os.path.split(data_path)
-        labels_dir = os.path.join(temp_path, self.save_label_dir)
+        root_path, _ = os.path.split(temp_path)
+        labels_dir = os.path.join(root_path, self.save_label_dir)
         for label_path in self.dir_process.getDirFiles(labels_dir, "*.*"):
             path, filename_and_post = os.path.split(label_path)
             filename, post = os.path.splitext(filename_and_post)
