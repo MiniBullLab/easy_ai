@@ -86,7 +86,7 @@ class PatchCorePostProcess(BasePostProcess):
             # Declaring index，声明索引类型，如：l2, cosine or ip
             nbrs = hnswlib.Index(space='l2', dim=len(embedding_coreset[0]))
             # 初始化索引，元素的最大数需要是已知的
-            nbrs.init_index(max_elements=len(embedding_coreset), ef_construction=self.neighbor_count * 10, M=M)
+            nbrs.init_index(max_elements=len(embedding_coreset), ef_construction=self.neighbor_count * 10, M=16)
             # Element insertion，插入数据
             int_labels = nbrs.add_items(embedding_coreset, np.arange(len(embedding_coreset)))
             nbrs.set_ef(self.neighbor_count * 10)
