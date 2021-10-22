@@ -50,7 +50,7 @@
         "warmup_iters": 5,
         "warmup_type": 2
     },
-    "max_epochs": 100,
+    "max_epochs": 1000,
     "model_config": {
         "class_number": 1,
         "data_channel": 3,
@@ -121,8 +121,8 @@
         "dataset": {
             "data_channel": 3,
             "image_size": [
-                640,
-                640
+                736,
+                736
             ],
             "is_augment": false,
             "language": [
