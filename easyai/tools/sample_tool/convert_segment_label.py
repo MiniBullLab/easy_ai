@@ -89,7 +89,7 @@ class ConvertSegmentionLable():
         if label_type == -1:  # gray
             mask = self.fill_gray_label(image_data.shape[:2], polygon_list, class_list)
         elif label_type == -2:  # rgb
-            mask = self.fill_color_label(image_data.shape[:2], polygon_list, class_list)
+            mask = self.fill_color_label(image_data.shape, polygon_list, class_list)
         return mask
 
     def merge_segment_label(self, mask, volid_label, valid_label):
