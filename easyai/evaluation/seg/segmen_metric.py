@@ -12,9 +12,9 @@ from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 @REGISTERED_EVALUATION.register_module(EvaluationName.SegmentionMetric)
 class SegmentionMetric(BaseEvaluation):
 
-    def __init__(self, num_class):
+    def __init__(self, segment_class):
         super().__init__()
-        self.number_class = num_class
+        self.number_class = segment_class
         self.confusion_matrix = np.zeros((self.number_class, self.number_class))
 
     def reset(self):

@@ -42,7 +42,32 @@ class SegmentionConfig(CommonTrainConfig):
         self.load_image_train_value(config_dict)
 
     def save_train_value(self, config_dict):
+        if self.train_data is not None and len(self.train_data) > 0:
+            if self.train_data.get('dataloader', None) is not None and \
+                    self.train_data['dataloader'].get('segment_class', None) is not None:
+                self.train_data['dataloader']['segment_class'] = self.segment_class
+                self.train_data['dataloader']['label_type'] = self.seg_label_type
+            if self.train_data.get('dataset', None) is not None and \
+                    self.train_data['dataset'].get('segment_class', None) is not None:
+                self.train_data['dataset']['segment_class'] = self.segment_class
+                self.train_data['dataset']['label_type'] = self.seg_label_type
         self.save_image_train_value(config_dict)
+
+    def save_test_value(self, config_dict):
+        if self.evaluation is not None:
+            if self.evaluation.get('segment_class', None) is not None:
+                self.evaluation['segment_class'] = self.segment_class
+            config_dict['evaluation'] = self.evaluation
+        if self.val_data is not None and len(self.val_data) > 0:
+            if self.val_data.get('dataloader', None) is not None and \
+             self.val_data['dataloader'].get('segment_class', None) is not None:
+                self.val_data['dataloader']['segment_class'] = self.segment_class
+                self.val_data['dataloader']['label_type'] = self.seg_label_type
+            if self.val_data.get('dataset', None) is not None and \
+               self.val_data['dataset'].get('segment_class', None) is not None:
+                self.val_data['dataset']['segment_class'] = self.segment_class
+                self.val_data['dataset']['label_type'] = self.seg_label_type
+            config_dict['val_data'] = self.val_data
 
     def get_data_default_value(self):
         self.data = {'image_size': (512, 448),  # W * H
@@ -64,7 +89,7 @@ class SegmentionConfig(CommonTrainConfig):
                          'dataloader': {}}
         self.val_data['dataset']['type'] = "SegmentDataset"
         self.val_data['dataset'].update(self.data)
-        self.val_data['dataset']['class_names'] = self.segment_class
+        self.val_data['dataset']['segment_class'] = self.segment_class
         self.val_data['dataset']['label_type'] = self.seg_label_type
         self.val_data['dataset']['is_augment'] = False
 
@@ -76,7 +101,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.val_data['dataloader']['collate_fn'] = {"type": "SegmentDataSetCollate"}
 
         self.evaluation = {"type": "SegmentionMetric",
-                           'num_class': len(self.segment_class)}
+                           'segment_class': len(self.segment_class)}
         self.evaluation_result_name = 'seg_evaluation.txt'
         self.evaluation_result_path = os.path.join(EasyLogger.ROOT_DIR,
                                                    self.evaluation_result_name)
@@ -86,7 +111,7 @@ class SegmentionConfig(CommonTrainConfig):
                            'dataloader': {}}
         self.train_data['dataset']['type'] = "SegmentDataset"
         self.train_data['dataset'].update(self.data)
-        self.train_data['dataset']['class_names'] = self.segment_class
+        self.train_data['dataset']['segment_class'] = self.segment_class
         self.train_data['dataset']['label_type'] = self.seg_label_type
         self.train_data['dataset']['is_augment'] = True
 

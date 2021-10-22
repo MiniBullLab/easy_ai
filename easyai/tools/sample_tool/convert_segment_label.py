@@ -2,6 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
+if EasyLogger.check_init():
+    log_file_path = EasyLogger.get_log_file_path("tools.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
 import os
 import sys
 sys.path.insert(0, os.getcwd() + "/..")
@@ -37,7 +41,7 @@ class ConvertSegmentionLable():
                 os.makedirs(output_dir)
             for label_path in self.dirProcess.getDirFiles(label_dir, "*.*"):
                 _, file_name_and_post = os.path.split(label_path)
-                # print(label_path)
+                EasyLogger.debug(label_path)
                 mask = self.process_segment_label(label_path, label_type, class_list)
                 if mask is not None:
                     save_path = os.path.join(output_dir, file_name_and_post)
@@ -47,10 +51,10 @@ class ConvertSegmentionLable():
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             annotation_dir = os.path.join(label_dir, self.annotation_dir_name)
-            for label_path in self.dirProcess.getDirFiles(annotation_dir, "*.*"):
+            for label_path in self.dirProcess.getDirFiles(annotation_dir, "*.json"):
                 _, file_name_post = os.path.split(label_path)
                 file_name, post = os.path.splitext(file_name_post)
-                # print(label_path)
+                EasyLogger.debug(label_path)
                 mask = self.convert_json_to_segment_label(label_path, label_type, class_list)
                 if mask is not None:
                     save_name_and_post = file_name + self.segment_post

@@ -41,7 +41,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.save_image_train_value(config_dict)
 
     def get_data_default_value(self):
-        self.data = {'image_size': (736, 736),  # W * H
+        self.data = {'image_size': (640, 640),  # W * H
                      'data_channel': 3,
                      'resize_type': 4,
                      'normalize_type': -1,
@@ -50,8 +50,14 @@ class Polygon2dConfig(CommonTrainConfig):
 
         self.detect2d_class = ("others", )
         self.post_process = {'type': 'DBPostProcess',
-                             'threshold': 0.3,
+                             'threshold': 0.6,
+                             'db_threshold': 0.3,
                              'unclip_ratio': 1.5}
+
+        self.model_type = 0
+        self.model_config = {'type': 'dbnet',
+                             'data_channel': self.data['data_channel'],
+                             'class_number': len(self.detect2d_class)}
 
         self.save_result_name = "polygon2d_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
@@ -59,12 +65,40 @@ class Polygon2dConfig(CommonTrainConfig):
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}
+        self.val_data['dataset']['type'] = "DetOCRDataSet"
+        self.val_data['dataset'].update(self.data)
+        self.val_data['dataset']['language'] = ("english",)
+        self.val_data['dataset']['is_augment'] = False
+
+        self.val_data['dataloader']['type'] = "DataLoader"
+        self.val_data['dataloader']['batch_size'] = 1
+        self.val_data['dataloader']['shuffle'] = False
+        self.val_data['dataloader']['num_workers'] = 0
+        self.val_data['dataloader']['drop_last'] = False
+        self.val_data['dataloader']['collate_fn'] = {"type": "DetOCRDataSetCollate",
+                                                     "target_type": 1}
+
+        self.evaluation = {"type": "OCRDetectionMetric",
+                           "iou_constraint": 0.5}
         self.evaluation_result_name = 'polygon2d_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
         self.train_data = {'dataset': {},
                            'dataloader': {}}
+
+        self.train_data['dataset']['type'] = "DetOCRDataSet"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['language'] = ("english",)
+        self.train_data['dataset']['is_augment'] = True
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 16
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 0
+        self.train_data['dataloader']['drop_last'] = False
+        self.train_data['dataloader']['collate_fn'] = {"type": "DetOCRDataSetCollate",
+                                                       "target_type": 0}
 
         self.is_save_epoch_model = False
         self.latest_weights_name = 'polygon2d_latest.pt'
@@ -86,8 +120,7 @@ class Polygon2dConfig(CommonTrainConfig):
                                      'weight_decay': 1e-4}
                                  }
 
-        self.lr_scheduler_config = {'type': 'MultiStageLR',
-                                    'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
+        self.lr_scheduler_config = {'type': 'CosineLR',
                                     'warmup_type': 2,
                                     'warmup_iters': 5}
         self.accumulated_batches = 1

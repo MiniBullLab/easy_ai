@@ -118,7 +118,7 @@ def CCPD_process(data_dir):
             information = file_name_and_post.split('-')
             print(information)
             file_name = information[0]
-            file_name = "%d_%s" % (index, file_name)
+            file_name = "%d_%s.jpg" % (index, file_name)
             image_dir = os.path.join(path, "../JPEGImages")
             if not os.path.exists(image_dir):
                 os.mkdir(image_dir)

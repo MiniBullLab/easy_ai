@@ -26,7 +26,7 @@ class Polygon2d(BaseInference):
         for i, batch_data in enumerate(dataloader):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
-            objects_result = self.single_image_process(self.src_size, batch_data)
+            objects_result = self.single_image_process(batch_data)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(batch_data['src_image'], objects_result):

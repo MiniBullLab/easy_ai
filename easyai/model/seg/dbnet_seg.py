@@ -23,7 +23,7 @@ from easyai.model.utility.model_registry import REGISTERED_SEG_MODEL
 class DBNet(BaseClassifyModel):
 
     def __init__(self, data_channel=3, class_number=1):
-        super().__init__(data_channel, class_number)
+        super().__init__(data_channel, 1)
         self.set_name(ModelName.DBNet)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.ReLU
@@ -55,8 +55,7 @@ class DBNet(BaseClassifyModel):
     def create_loss_list(self, input_dict=None):
         self.lossList = []
         loss_config = {'type': LossName.DBLoss,
-                       'reduction': 'mean',
-                       'ignore_index': 250}
+                       'reduction': 'mean'}
         loss = self.loss_factory.get_loss(loss_config)
         self.add_block_list(loss.get_name(), loss, self.block_out_channels[-1])
         self.lossList.append(loss)

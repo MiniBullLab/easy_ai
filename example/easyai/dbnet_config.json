@@ -1,0 +1,146 @@
+{
+    "accumulated_batches": 1,
+    "amp_config": {
+        "enable_amp": false,
+        "keep_batchnorm_fp32": true,
+        "opt_level": "O1"
+    },
+    "base_lr": 0.001,
+    "best_weights_name": "polygon2d_best.pt",
+    "clip_grad_config": {
+        "enable_clip": false,
+        "max_norm": 20
+    },
+    "data": {
+        "data_channel": 3,
+        "image_size": [
+            640,
+            640
+        ],
+        "mean": [
+            0.485,
+            0.456,
+            0.406
+        ],
+        "normalize_type": -1,
+        "resize_type": 4,
+        "std": [
+            0.229,
+            0.224,
+            0.225
+        ]
+    },
+    "detect2d_class": [
+        "others"
+    ],
+    "display": 20,
+    "evaluation": {
+        "iou_constraint": 0.5,
+        "type": "OCRDetectionMetric"
+    },
+    "freeze_bn_layer_name": "route_0",
+    "freeze_bn_type": 0,
+    "freeze_layer_name": "baseNet_0",
+    "freeze_layer_type": 0,
+    "is_save_epoch_model": false,
+    "latest_optimizer_name": "polygon2d_optimizer.pt",
+    "latest_weights_name": "polygon2d_latest.pt",
+    "lr_scheduler_config": {
+        "type": "CosineLR",
+        "warmup_iters": 5,
+        "warmup_type": 2
+    },
+    "max_epochs": 100,
+    "model_config": {
+        "class_number": 1,
+        "data_channel": 3,
+        "type": "dbnet"
+    },
+    "model_type": 0,
+    "optimizer_config": {
+        "0": {
+            "type": "Adam",
+            "weight_decay": 0.0001
+        }
+    },
+    "post_process": {
+        "db_threshold": 0.3,
+        "threshold": 0.6,
+        "type": "DBPostProcess",
+        "unclip_ratio": 1.5
+    },
+    "train_data": {
+        "dataloader": {
+            "batch_size": 16,
+            "collate_fn": {
+                "target_type": 0,
+                "type": "DetOCRDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 0,
+            "shuffle": true,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "image_size": [
+                640,
+                640
+            ],
+            "is_augment": true,
+            "language": [
+                "english"
+            ],
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "normalize_type": -1,
+            "resize_type": 4,
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ],
+            "type": "DetOCRDataSet"
+        }
+    },
+    "val_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "target_type": 1,
+                "type": "DetOCRDataSetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 0,
+            "shuffle": false,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "image_size": [
+                640,
+                640
+            ],
+            "is_augment": false,
+            "language": [
+                "english"
+            ],
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "normalize_type": -1,
+            "resize_type": 4,
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ],
+            "type": "DetOCRDataSet"
+        }
+    }
+}

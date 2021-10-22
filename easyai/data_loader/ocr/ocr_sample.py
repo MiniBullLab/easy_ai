@@ -7,7 +7,7 @@ from easyai.data_loader.utility.base_detection_sample import BaseDetectionSample
 
 class OCRSample(BaseDetectionSample):
 
-    def __init__(self, train_path, language):
+    def __init__(self, train_path, language=""):
         super().__init__()
         self.train_path = train_path
         self.language = language
@@ -22,8 +22,8 @@ class OCRSample(BaseDetectionSample):
 
     def get_sample_path(self, index):
         temp_index = index % self.sample_count
-        img_path, ocr_object = self.image_and_ocr_list[temp_index]
-        return img_path, ocr_object
+        img_path, ocr_objects = self.image_and_ocr_list[temp_index]
+        return img_path, ocr_objects
 
     def get_sample_count(self):
         return len(self.image_and_ocr_list)
@@ -32,5 +32,11 @@ class OCRSample(BaseDetectionSample):
         result = []
         for image_path, label_path in image_and_label_list:
             _, ocr_objects = self.json_process.parse_ocr_data(label_path)
-            result.append((image_path, ocr_objects))
+            filter_objects = []
+            for ocr in ocr_objects:
+                if not self.language:
+                    filter_objects.append(ocr)
+                elif ocr.language.strip() in self.language:
+                    filter_objects.append(ocr)
+            result.append((image_path, filter_objects))
         return result
