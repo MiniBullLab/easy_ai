@@ -2,12 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
+from easyai.utility.logger import EasyLogger
 import os
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.cls.classify_test import ClassifyTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
-from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Classify_Task)
@@ -33,6 +34,7 @@ class ClassifyTrain(CommonTrain):
                 save_model_path = self.save_train_model(epoch)
                 self.test(val_path, epoch, save_model_path)
         except RuntimeError as e:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(e)
         finally:
             self.train_logger.close()
