@@ -8,3 +8,4 @@ RUN mkdir /easy_http
 WORKDIR /easy_http
 
 EXPOSE 8000
+EXPOSE 5000
