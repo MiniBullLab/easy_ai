@@ -115,6 +115,9 @@ class Polygon2dConfig(CommonTrainConfig):
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
+        self.sparse_config = {'enable_sparse': False,
+                              'sparse_lr': 0.00001}
+
         self.base_lr = 0.001
         self.optimizer_config = {0: {'type': 'Adam',
                                      'weight_decay': 1e-4}

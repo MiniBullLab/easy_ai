@@ -16,6 +16,7 @@ class CommonTrainConfig(ImageTaskConfig):
         self.max_epochs = 0
         self.base_lr = 0.0
         self.amp_config = None
+        self.sparse_config = None
         self.optimizer_config = None
         self.lr_scheduler_config = None
 
@@ -62,6 +63,8 @@ class CommonTrainConfig(ImageTaskConfig):
             self.base_lr = float(config_dict['base_lr'])
         if config_dict.get('amp_config', None) is not None:
             self.amp_config = config_dict['amp_config']
+        if config_dict.get('sparse_config', None) is not None:
+            self.sparse_config = config_dict['sparse_config']
         if config_dict.get('optimizer_config', None) is not None:
             optimizer_dict = config_dict['optimizer_config']
             self.optimizer_config = {}
@@ -97,6 +100,8 @@ class CommonTrainConfig(ImageTaskConfig):
         config_dict['base_lr'] = self.base_lr
         if self.amp_config is not None:
             config_dict['amp_config'] = self.amp_config
+        if self.sparse_config is not None:
+            config_dict['sparse_config'] = self.sparse_config
         if self.optimizer_config is not None:
             config_dict['optimizer_config'] = self.optimizer_config
         if self.lr_scheduler_config is not None:

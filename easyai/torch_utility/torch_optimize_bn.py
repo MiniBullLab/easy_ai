@@ -1,15 +1,28 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:
+# Author:lipeijie
 
 import torch
 import torch.nn as nn
+from easyai.utility.logger import EasyLogger
 
 
-class TorchFusionBN():
+class TorchOptimizeBN():
 
-    def __init__(self):
-        pass
+    def __init__(self, optimize_type=0):
+        self.optimize_type = optimize_type
+
+    def update_front_layer(self, model, sr_lr, layer_name):
+        for key, block in model._modules.items():
+            self.update_bn(block, sr_lr)
+            if layer_name == key:
+                break
+
+    def update_bn(self, model, sr_lr):
+        for m in model.modules():
+            if isinstance(m, nn.BatchNorm2d):
+                if hasattr(m.weight, 'data'):
+                    m.weight.grad.data.add_(sr_lr * torch.sign(m.weight.data))
 
     def fuse_bn_recursively(self, model):
         for module_name in model._modules:

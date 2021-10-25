@@ -128,10 +128,11 @@ class ConvertSegmentionLable():
         for class_name, value in class_list:
             if class_name.strip() == "background":
                 continue
+            gray_value = int(value.strip())
             for polygon_object in polygon_list:
                 if class_name.strip() == polygon_object.name:
                     contours = np.array([[p.x, p.y] for p in polygon_object.get_polygon()])
-                    cv2.fillPoly(result, [contours], value)
+                    cv2.fillPoly(result, [contours], gray_value)
         return result
 
     def fill_color_label(self, shape, polygon_list, class_list):
@@ -139,10 +140,11 @@ class ConvertSegmentionLable():
         for class_name, value in class_list:
             if class_name.strip() == "background":
                 continue
+            value_list = [int(x) for x in value.split(',') if x.strip()]
             for polygon_object in polygon_list:
                 if class_name.strip() == polygon_object.name:
                     contours = np.array([[p.x, p.y] for p in polygon_object.get_polygon()])
-                    cv2.fillPoly(result, [contours], value)
+                    cv2.fillPoly(result, [contours], value_list)
         return result
 
 

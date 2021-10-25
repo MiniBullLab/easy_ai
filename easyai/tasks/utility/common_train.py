@@ -96,6 +96,10 @@ class CommonTrain(BaseTrain):
                     # lr_center is learning rate for center loss, e.g. lr_center = 0.5
                     param.grad.data *= (self.model.lossList[0].lr_center / (self.model.lossList[0].alpha * lr))
 
+        if self.train_task_config.sparse_config.get('enable_sparse', None):
+            sparse_lr = self.train_task_config.sparse_config['sparse_lr']
+            self.optimize_bn.update_bn(self.model, sparse_lr)
+
     def clip_grad(self):
         if self.train_task_config.clip_grad_config['enable_clip']:
             # self.print_grad_norm()

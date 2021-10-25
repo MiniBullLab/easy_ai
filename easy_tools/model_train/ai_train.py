@@ -50,7 +50,7 @@ class EasyAiModelTrain():
                 EasyLogger.error(traceback.format_exc())
                 EasyLogger.error(err)
         else:
-            EasyLogger.warn("binary classify class name error!")
+            EasyLogger.warn("{}: binary classify class name error!".format(class_names))
 
     def classify_model_train(self, dir_name):
         input_name = ['cls_input']
@@ -102,25 +102,28 @@ class EasyAiModelTrain():
     def segment_model_train(self, dir_name):
         input_name = ['seg_input']
         output_name = ['seg_output']
-        try:
-            segnet_process = SegNetProcess()
-            segnet_process.label_process(self.train_path)
-            pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
-            create_seg_sample = CreateSegmentionSample()
-            create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
+        pretrain_model_path = os.path.join(dir_name, "./data/segnet.pt")
+        segnet_process = SegNetProcess()
+        class_names = segnet_process.label_process(self.train_path)
+        create_seg_sample = CreateSegmentionSample()
+        create_seg_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
 
-            segnet_process.resize_process(self.train_path)
-            segnet_process.resize_process(self.val_path)
+        segnet_process.resize_process(self.train_path)
+        segnet_process.resize_process(self.val_path)
 
-            train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
-            train_task.set_convert_param(True, input_name, output_name)
-            train_task.train("segnet", self.gpu_id, None, pretrain_model_path)
-            save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "seg_img")
-            self.copy_process.copy(self.train_path, save_image_dir)
-            self.arm_config.create_segnet_config(input_name, output_name)
-        except Exception as err:
-            EasyLogger.error(traceback.format_exc())
-            EasyLogger.error(err)
+        if len(class_names) == 1:
+            try:
+                train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
+                train_task.set_convert_param(True, input_name, output_name)
+                train_task.train("segnet", self.gpu_id, None, pretrain_model_path)
+                save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "seg_img")
+                self.copy_process.copy(self.train_path, save_image_dir)
+                self.arm_config.create_segnet_config(input_name, output_name)
+            except Exception as err:
+                EasyLogger.error(traceback.format_exc())
+                EasyLogger.error(err)
+        else:
+            EasyLogger.warn("{}: segment class name error!".format(class_names))
 
     def rec_text_model_train(self, dir_name):
         input_name = ['text_input']
