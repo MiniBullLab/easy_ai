@@ -49,4 +49,18 @@ class OCRDataSetProcess(Polygon2dDataSetProcess):
             texts.append(ocr.get_text())
         return text_polys, texts
 
+    def validate_polygons(self, polygons, image_size):
+        '''
+        polygons (numpy.array, required): of shape (num_instances, num_points, 2)
+        '''
+        if len(polygons) == 0:
+            return polygons
+        for polygon in polygons:
+            polygon[:, 0] = np.clip(polygon[:, 0], 0, image_size[0] - 1)
+            polygon[:, 1] = np.clip(polygon[:, 1], 0, image_size[1] - 1)
+
+        for i in range(len(polygons)):
+            polygons[i] = polygons[i][::-1, :]
+        return polygons
+
 

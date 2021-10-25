@@ -35,7 +35,6 @@ class SampleInformation():
         elif task_name.strip() == TaskName.Segment_Task:
             train_task_config = self.config_factory.get_config(task_name, config_path)
             segment_class = self.get_segment_class(train_path)
-            segment_class.insert(0, 'background')
             all_count = len(SegmentColorDefine.colors)
             if len(SegmentColorDefine.colors) >= len(segment_class):
                 segment_class_list = []
