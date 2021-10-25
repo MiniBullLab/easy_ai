@@ -3,8 +3,9 @@ import random
 
 class SegmentColorDefine():
 
-    colors = [(255, 255, 255),
-              (0, 0, 0),
+    background = (255, 255, 255)
+
+    colors = [(0, 0, 0),
               (255, 0, 0),
               (0, 255, 0),
               (0, 0, 255),

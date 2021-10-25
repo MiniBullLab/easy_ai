@@ -4,6 +4,8 @@
 
 import numpy as np
 import cv2
+from shapely.geometry import Polygon
+import pyclipper
 
 __all__ = ['MakeShrinkMap']
 
@@ -20,8 +22,6 @@ def shrink_polygon_py(polygon, shrink_ratio):
 
 
 def shrink_polygon_pyclipper(polygon, shrink_ratio):
-    from shapely.geometry import Polygon
-    import pyclipper
     polygon_shape = Polygon(polygon)
     distance = polygon_shape.area * (1 - np.power(shrink_ratio, 2)) / polygon_shape.length
     subject = [tuple(l) for l in polygon]
@@ -51,7 +51,6 @@ class MakeShrinkMap():
         image = data['image']
         text_polys = data['text_polys']
         h, w = image.shape[-2:]
-        text_polys = self.validate_polygons(text_polys, h, w)
         gt = np.zeros((h, w), dtype=np.float32)
         mask = np.ones((h, w), dtype=np.float32)
         for i in range(len(text_polys)):
@@ -71,25 +70,8 @@ class MakeShrinkMap():
         data['shrink_mask'] = mask
         return data
 
-    def validate_polygons(self, polygons, h, w):
-        '''
-        polygons (numpy.array, required): of shape (num_instances, num_points, 2)
-        '''
-        if len(polygons) == 0:
-            return polygons
-        for polygon in polygons:
-            polygon[:, 0] = np.clip(polygon[:, 0], 0, w - 1)
-            polygon[:, 1] = np.clip(polygon[:, 1], 0, h - 1)
-
-        for i in range(len(polygons)):
-            polygons[i] = polygons[i][::-1, :]
-        return polygons
-
 
 if __name__ == '__main__':
-    from shapely.geometry import Polygon
-    import pyclipper
-
     polygon = np.array([[0, 0], [100, 10], [100, 100], [10, 90]])
     a = shrink_polygon_py(polygon, 0.4)
     print(a)

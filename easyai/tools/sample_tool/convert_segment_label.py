@@ -14,6 +14,7 @@ import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper import ImageProcess
 from easyai.helper.json_process import JsonProcess
+from easyai.visualization.utility.color_define import SegmentColorDefine
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.name_manager.task_name import TaskName
@@ -123,7 +124,7 @@ class ConvertSegmentionLable():
         return result
 
     def fill_gray_label(self, shape, polygon_list, class_list):
-        result = np.full(shape, 255, dtype=np.uint8)
+        result = np.full(shape, SegmentColorDefine.background[0], dtype=np.uint8)
         for class_name, value in class_list:
             if class_name.strip() == "background":
                 continue
@@ -134,7 +135,7 @@ class ConvertSegmentionLable():
         return result
 
     def fill_color_label(self, shape, polygon_list, class_list):
-        result = np.full(shape, (255, 255, 255), dtype=np.uint8)
+        result = np.full(shape, SegmentColorDefine.background, dtype=np.uint8)
         for class_name, value in class_list:
             if class_name.strip() == "background":
                 continue

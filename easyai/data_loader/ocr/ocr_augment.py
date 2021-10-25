@@ -85,6 +85,8 @@ class OCRDataAugment():
             temp_poly = np.array([[p.x, p.y] for p in ocr.get_polygon()])
             ocr.clear_polygon()
             for point in self.may_augment_poly(aug, shape, temp_poly):
+                point.x = min(max(0, point.x), image.shape[1] - 1)
+                point.y = min(max(0, point.y), image.shape[0] - 1)
                 ocr.add_point(point)
         return image, labels
 

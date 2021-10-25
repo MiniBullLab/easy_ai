@@ -59,6 +59,7 @@ class DetOCRDataSet(TorchDataLoader):
             # self.number += 1
         image = self.dataset_process.normalize_image(image)
         text_polys, _ = self.dataset_process.normalize_labels(labels)
+        text_polys = self.dataset_process.validate_polygons(text_polys, self.image_size)
         src_polys, _ = self.dataset_process.normalize_labels(ocr_objects)
         result_data = {'image': image, "src_size": src_size,
                        'text_polys': text_polys, 'polygons': src_polys}

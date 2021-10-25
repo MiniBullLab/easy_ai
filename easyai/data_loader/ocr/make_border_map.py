@@ -9,10 +9,10 @@ __all__ = ['MakeBorderMap']
 
 
 class MakeBorderMap():
-    def __init__(self, shrink_ratio=0.4, thresh_min=0.3, thresh_max=0.7):
+    def __init__(self, shrink_ratio=0.4, threshold_min=0.3, threshold_max=0.7):
         self.shrink_ratio = shrink_ratio
-        self.thresh_min = thresh_min
-        self.thresh_max = thresh_max
+        self.thresh_min = threshold_min
+        self.thresh_max = threshold_max
 
     def __call__(self, data: dict) -> dict:
         im = data['image']

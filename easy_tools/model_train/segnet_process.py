@@ -52,12 +52,14 @@ class SegNetProcess():
         root_path, _ = os.path.split(temp_path)
         labels_dir = os.path.join(root_path, self.save_label_dir)
         annotation_dir = os.path.join(root_path, self.annotation_dir_name)
-        images_dir = os.path.join(root_path, self.images_dir_name, file_name)
+        images_dir = os.path.join(root_path, self.images_dir_name)
         if not os.path.exists(labels_dir):
             if os.path.exists(annotation_dir) and os.path.exists(images_dir):
-                class_names = self.sample_process.create_class_names(images_dir,
+                temp_path = os.path.join(images_dir, file_name)
+                class_names = self.sample_process.create_class_names(temp_path,
                                                                      TaskName.Segment_Task)
                 if class_names is not None and len(class_names) > 0:
+
                     self.convert_label.convert_segment_label(images_dir, -2, class_names)
                 else:
                     EasyLogger.error("input segnet datset error!")
