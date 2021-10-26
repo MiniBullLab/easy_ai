@@ -51,7 +51,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.detect2d_class = ("others", )
         self.post_process = {'type': 'DBPostProcess',
                              'threshold': 0.6,
-                             'db_threshold': 0.3,
+                             'mask_threshold': 0.3,
                              'unclip_ratio': 1.5}
 
         self.model_type = 0
@@ -114,6 +114,9 @@ class Polygon2dConfig(CommonTrainConfig):
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
+
+        self.sparse_config = {'enable_sparse': False,
+                              'sparse_lr': 0.00001}
 
         self.base_lr = 0.001
         self.optimizer_config = {0: {'type': 'Adam',

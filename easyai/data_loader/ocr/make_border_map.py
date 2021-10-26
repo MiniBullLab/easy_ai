@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# Author:lipeijie
+
 import cv2
 import numpy as np
-
 np.seterr(divide='ignore', invalid='ignore')
 import pyclipper
 from shapely.geometry import Polygon
@@ -13,6 +16,7 @@ class MakeBorderMap():
         self.shrink_ratio = shrink_ratio
         self.thresh_min = threshold_min
         self.thresh_max = threshold_max
+        self.number = 0
 
     def __call__(self, data: dict) -> dict:
         im = data['image']
@@ -24,6 +28,10 @@ class MakeBorderMap():
         for i in range(len(text_polys)):
             self.draw_border_map(text_polys[i], canvas, mask=mask)
         canvas = canvas * (self.thresh_max - self.thresh_min) + self.thresh_min
+
+        # cv2.imwrite("img_map_%d.png" % self.number, canvas * 255)
+        # cv2.imwrite("img_mask_%d.png" % self.number, mask * 255)
+        # self.number += 1
 
         data['threshold_map'] = canvas
         data['threshold_mask'] = mask

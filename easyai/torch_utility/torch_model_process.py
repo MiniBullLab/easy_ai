@@ -58,18 +58,13 @@ class TorchModelProcess():
         count = self.torchDeviceProcess.getCUDACount()
         checkpoint = None
         if os.path.exists(weight_path):
-            try:
-                if count > 1:
-                    checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                    state = self.convert_state_dict(checkpoint[dict_name])
-                    model.load_state_dict(state)
-                else:
-                    checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                    model.load_state_dict(checkpoint[dict_name])
-            except Exception as err:
-                # os.remove(weight_path)
-                checkpoint = None
-                EasyLogger.warn(err)
+            if count > 1:
+                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
+                state = self.convert_state_dict(checkpoint[dict_name])
+                model.load_state_dict(state)
+            else:
+                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
+                model.load_state_dict(checkpoint[dict_name])
         else:
             EasyLogger.error("Latest model %s exists" % weight_path)
         result = self.get_latest_model_value(checkpoint)

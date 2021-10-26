@@ -64,10 +64,14 @@
         }
     },
     "post_process": {
-        "db_threshold": 0.3,
+        "mask_threshold": 0.3,
         "threshold": 0.6,
         "type": "DBPostProcess",
         "unclip_ratio": 1.5
+    },
+    "sparse_config": {
+        "enable_sparse": false,
+        "sparse_lr": 1e-05
     },
     "train_data": {
         "dataloader": {

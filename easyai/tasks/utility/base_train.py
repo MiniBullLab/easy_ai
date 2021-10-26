@@ -11,6 +11,7 @@ from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
 from easyai.solver.utility.freeze_process import FreezePorcess
+from easyai.torch_utility.torch_optimize_bn import TorchOptimizeBN
 from easyai.torch_utility.train_log import TrainLogger
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -44,6 +45,8 @@ class BaseTrain(BaseTask):
                                              self.train_task_config.max_epochs)
         self.train_logger = TrainLogger(self.train_task_config.log_name,
                                         EasyLogger.ROOT_DIR)
+
+        self.optimize_bn = TorchOptimizeBN()
 
     def set_train_config(self, config=None):
         if config is None:

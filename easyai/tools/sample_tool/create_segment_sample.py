@@ -48,9 +48,9 @@ class CreateSegmentionSample():
             label_path = os.path.join(annotations_dir, seg_label_name)
             if (image is not None) and os.path.exists(label_path):
                 if (imageIndex + 1) % probability == 0:
-                    save_train_file_path.write("%s\n" % file_name_and_post)
-                else:
                     save_test_file_path.write("%s\n" % file_name_and_post)
+                else:
+                    save_train_file_path.write("%s\n" % file_name_and_post)
         save_train_file_path.close()
         save_test_file_path.close()
 

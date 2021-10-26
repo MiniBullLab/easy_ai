@@ -46,6 +46,7 @@ class MakeShrinkMap():
         self.shrink_func = shrink_func_dict[shrink_type]
         self.min_text_size = min_text_size
         self.shrink_ratio = shrink_ratio
+        self.number = 0
 
     def __call__(self, data: dict) -> dict:
         image = data['image']
@@ -58,14 +59,19 @@ class MakeShrinkMap():
             height = max(polygon[:, 1]) - min(polygon[:, 1])
             width = max(polygon[:, 0]) - min(polygon[:, 0])
             if min(height, width) < self.min_text_size:
+                # print("min size")
                 cv2.fillPoly(mask, polygon.astype(np.int32)[np.newaxis, :, :], 0)
             else:
                 shrinked = self.shrink_func(polygon, self.shrink_ratio)
                 if shrinked.size == 0:
+                    # print("shrinked.size==0")
                     cv2.fillPoly(mask, polygon.astype(np.int32)[np.newaxis, :, :], 0)
                     continue
                 cv2.fillPoly(gt, [shrinked.astype(np.int32)], 1)
 
+        # cv2.imwrite("img_map_%d.png" % self.number, gt * 255)
+        # cv2.imwrite("img_mask_%d.png" % self.number, mask * 255)
+        # self.number += 1
         data['shrink_map'] = gt
         data['shrink_mask'] = mask
         return data
