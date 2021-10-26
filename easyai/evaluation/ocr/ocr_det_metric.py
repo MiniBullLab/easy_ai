@@ -6,8 +6,6 @@ import numpy as np
 from shapely.geometry import Polygon
 from easyai.utility.logger import EasyLogger
 from easyai.evaluation.utility.base_evaluation import BaseEvaluation
-from easyai.helper.average_meter import AverageMeter
-from easyai.helper.data_structure import OCRObject
 from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 

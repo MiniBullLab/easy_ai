@@ -51,7 +51,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.detect2d_class = ("others", )
         self.post_process = {'type': 'DBPostProcess',
                              'threshold': 0.6,
-                             'db_threshold': 0.3,
+                             'mask_threshold': 0.3,
                              'unclip_ratio': 1.5}
 
         self.model_type = 0

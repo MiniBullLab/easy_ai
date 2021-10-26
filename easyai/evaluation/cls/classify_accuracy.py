@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import torch
 import numpy as np
 from easyai.helper.average_meter import AverageMeter
 from easyai.evaluation.utility.base_evaluation import BaseEvaluation
@@ -74,7 +75,7 @@ class ClassifyAccuracy(BaseEvaluation):
             _, pred = output.topk(maxk, 1, True, True)
             pred = pred.t()
         else:
-            pred = (output >= self.threshold).astype(int)
+            pred = (output >= self.threshold).to(torch.int32)
 
         correct = pred.eq(target.view(1, -1).expand_as(pred))
 

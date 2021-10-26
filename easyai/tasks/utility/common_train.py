@@ -22,7 +22,7 @@ class CommonTrain(BaseTrain):
         super().__init__(model_name, config_path, task_name)
         self.optimizer = None
         self.lr_scheduler = None
-        self.best_score = 0
+        self.best_score = -1
         self.start_epoch = 0
         self.test_first = True
         self.loss_info_average = dict()
@@ -36,10 +36,16 @@ class CommonTrain(BaseTrain):
 
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path is not None and os.path.exists(latest_weights_path):
-            self.start_epoch, self.best_score = \
-                self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
-            EasyLogger.debug("Latest value: {} {}".format(self.start_epoch,
-                                                          self.best_score))
+            try:
+                self.start_epoch, self.best_score = \
+                    self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
+                EasyLogger.debug("Latest value: {} {}".format(self.start_epoch,
+                                                              self.best_score))
+            except Exception as err:
+                # os.remove(weight_path)
+                self.torchModelProcess.load_pretain_model(latest_weights_path, self.model)
+                EasyLogger.warn(err)
+
         self.model = self.torchModelProcess.model_train_init(self.model)
         self.build_optimizer()
 
