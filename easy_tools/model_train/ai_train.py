@@ -111,7 +111,7 @@ class EasyAiModelTrain():
         segnet_process.resize_process(self.train_path)
         segnet_process.resize_process(self.val_path)
 
-        if len(class_names) == 1:
+        if len(class_names) == 2:
             try:
                 train_task = TrainTask(TaskName.Segment_Task, self.train_path, self.val_path)
                 train_task.set_convert_param(True, input_name, output_name)

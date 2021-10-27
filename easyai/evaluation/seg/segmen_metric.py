@@ -14,7 +14,7 @@ class SegmentionMetric(BaseEvaluation):
 
     def __init__(self, segment_class):
         super().__init__()
-        self.number_class = segment_class
+        self.number_class = len(segment_class)
         self.confusion_matrix = np.zeros((self.number_class, self.number_class))
 
     def reset(self):
