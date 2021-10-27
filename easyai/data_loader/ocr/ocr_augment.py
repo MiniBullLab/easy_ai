@@ -15,7 +15,7 @@ class OCRDataAugment():
 
     def __init__(self, image_size):
         self.is_augment_hsv = False
-        self.is_augment_others = False
+        self.is_augment_others = True
         self.is_crop = True
         self.image_size = image_size
         self.image_augment = ImageDataAugment()

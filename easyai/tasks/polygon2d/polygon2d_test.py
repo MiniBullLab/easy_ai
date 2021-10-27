@@ -8,6 +8,8 @@ from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TEST_TASK
 from easyai.utility.logger import EasyLogger
 
+from easyai.visualization.utility.image_drawing import ImageDrawing
+
 
 @REGISTERED_TEST_TASK.register_module(TaskName.Polygon2d_Task)
 class Polygon2dTest(BaseTest):
@@ -17,6 +19,9 @@ class Polygon2dTest(BaseTest):
         self.inference = Polygon2d(model_name, gpu_id, config_path)
         self.set_test_config(self.inference.task_config)
         self.set_model()
+
+        self.number = 0
+        self.drawing = ImageDrawing()
 
     def process_test(self, val_path, epoch=0):
         self.create_dataloader(val_path)

@@ -40,8 +40,13 @@ class SampleInformation():
                 segment_class_list = []
                 for index, class_name in enumerate(segment_class):
                     color = SegmentColorDefine.colors[index]
-                    color_str = ','.join(color)
+                    color_list = [str(i) for i in color]
+                    color_str = ','.join(color_list)
                     segment_class_list.append((class_name, color_str))
+                color = SegmentColorDefine.background
+                color_list = [str(i) for i in color]
+                color_str = ','.join(color_list)
+                segment_class_list.append(('background', color_str))
                 train_task_config.segment_class = segment_class_list
                 train_task_config.seg_label_type = 2
                 train_task_config.save_config()

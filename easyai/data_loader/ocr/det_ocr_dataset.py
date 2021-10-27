@@ -38,7 +38,7 @@ class DetOCRDataSet(TorchDataLoader):
 
     def __getitem__(self, index):
         img_path, ocr_objects = self.ocr_sample.get_sample_path(index)
-        _, src_image = self.read_src_image(img_path)
+        cv_image, src_image = self.read_src_image(img_path)
         src_size = np.array([src_image.shape[1], src_image.shape[0]])  # [width, height]
         ocr_objects = self.dataset_process.filter_polygon(ocr_objects)
         if self.is_augment:
@@ -59,8 +59,8 @@ class DetOCRDataSet(TorchDataLoader):
             # self.number += 1
         image = self.dataset_process.normalize_image(image)
         text_polys, _ = self.dataset_process.normalize_labels(labels)
-        text_polys = self.dataset_process.validate_polygons(text_polys, self.image_size)
         src_polys, _ = self.dataset_process.normalize_labels(ocr_objects)
+        text_polys = self.dataset_process.validate_polygons(text_polys, self.image_size)
         result_data = {'image': image, "src_size": src_size,
                        'text_polys': text_polys, 'polygons': src_polys}
         return result_data

@@ -62,16 +62,13 @@ class DetOCRDataSetCollate(BaseDatasetCollate):
             batch_polygons = []
             src_size_list = []
             for all_data in batch_list:
-                temp2 = self.shrink_map(all_data)
-                shrink_map.append(torch.from_numpy(temp2['shrink_map']))
-                shrink_mask.append(torch.from_numpy(temp2['shrink_mask']))
+                temp = self.shrink_map(all_data)
+                shrink_map.append(torch.from_numpy(temp['shrink_map']))
+                shrink_mask.append(torch.from_numpy(temp['shrink_mask']))
                 batch_polygons.append(all_data['polygons'])
                 src_size_list.append(all_data['src_size'])
             shrink_map = torch.stack(shrink_map)
             shrink_mask = torch.stack(shrink_mask)
-            # self.visualizer.save_current_images(shrink_map, "shrink_map_%d.png" % self.number)
-            # self.visualizer.save_current_images(shrink_mask, "shrink_mask_%d.png" % self.number)
-            # self.number += 1
             target_data = {'polygons': batch_polygons,
                            'src_size': src_size_list,
                            'shrink_map': shrink_map,

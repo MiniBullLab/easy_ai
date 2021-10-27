@@ -1,2 +1,2 @@
-from . import offline_test
+from .eval_tool import offline_test
 

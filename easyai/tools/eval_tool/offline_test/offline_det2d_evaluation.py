@@ -3,7 +3,7 @@
 # Author:lipeijie
 
 from easyai.helper.arguments_parse import ToolArgumentsParse
-from easyai.tools.offline_test.base_offline_evaluation import BaseOfflineEvaluation
+from easyai.tools.eval_tool.offline_test.base_offline_evaluation import BaseOfflineEvaluation
 from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.name_manager.task_name import TaskName
 from easyai.tools.utility.tools_registry import REGISTERED_OFFLINE_EVALUATION

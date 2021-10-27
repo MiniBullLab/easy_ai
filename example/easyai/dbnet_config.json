@@ -50,7 +50,7 @@
         "warmup_iters": 5,
         "warmup_type": 2
     },
-    "max_epochs": 1000,
+    "max_epochs": 500,
     "model_config": {
         "class_number": 1,
         "data_channel": 3,

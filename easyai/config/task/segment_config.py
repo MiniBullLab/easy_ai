@@ -101,7 +101,7 @@ class SegmentionConfig(CommonTrainConfig):
         self.val_data['dataloader']['collate_fn'] = {"type": "SegmentDataSetCollate"}
 
         self.evaluation = {"type": "SegmentionMetric",
-                           'segment_class': len(self.segment_class)}
+                           'segment_class': self.segment_class}
         self.evaluation_result_name = 'seg_evaluation.txt'
         self.evaluation_result_path = os.path.join(EasyLogger.ROOT_DIR,
                                                    self.evaluation_result_name)

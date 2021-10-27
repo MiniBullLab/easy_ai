@@ -116,13 +116,16 @@ class CommonTrain(BaseTrain):
             else:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm)
 
-    def L2_regularization(self, loss, lambda_alpha=0.0002):
-        l2_alpha = 0.0
+    def regularization_loss(self, loss, l2_alpha=0.0002):
         if self.model is not None:
+            # l2_alpha = 0.0
+            # for name, param in self.model.named_parameters():
+            #     if "alpha" in name:
+            #         l2_alpha += torch.pow(param, 2)
+            # loss += lambda_alpha * l2_alpha
             for name, param in self.model.named_parameters():
-                if "alpha" in name:
-                    l2_alpha += torch.pow(param, 2)
-            loss += lambda_alpha * l2_alpha
+                if name.split('.')[-1] == "weight":
+                    loss += l2_alpha * param.norm()
         else:
             EasyLogger.error("model not exists")
 

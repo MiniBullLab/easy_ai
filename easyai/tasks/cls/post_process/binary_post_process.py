@@ -18,5 +18,7 @@ class BinaryPostProcess(BasePostProcess):
     def __call__(self, prediction):
         output_count = prediction.size(1)
         assert output_count == 1
-        class_indices = (prediction >= self.threshold).to(torch.int32)
+        class_indices = (prediction >= self.threshold).to(torch.int32).squeeze(dim=1)
+        #     batch_size = prediction.size(0)
+        #     class_index = torch.ones(batch_size)
         return class_indices, prediction
