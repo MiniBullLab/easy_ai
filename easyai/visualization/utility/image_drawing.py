@@ -91,7 +91,7 @@ class ImageDrawing():
             for point in key_points:
                 cv2.circle(src_image, (int(point.x), int(point.y)), 5, (0, 255, 225), 2)
 
-    def draw_polygon2d_result(self, src_image, result):
+    def draw_polygon2d_result(self, src_image, result, color=(0, 0, 225)):
         for result_object in result:
             polygon = result_object.get_polygon()
             point_list = []
@@ -100,7 +100,7 @@ class ImageDrawing():
                 y = int(point.y)
                 point_list.append([x, y])
             cv2.polylines(src_image, np.array([point_list], np.int32),
-                          True, (0, 0, 225), 3, 0)
+                          True, color, 3, 0)
 
     def draw_ocr_result(self, src_image, result):
         random.seed(0)

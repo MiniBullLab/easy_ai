@@ -49,6 +49,7 @@ class MakeShrinkMap():
         self.number = 0
 
     def __call__(self, data: dict) -> dict:
+        result = []
         image = data['image']
         text_polys = data['text_polys']
         h, w = image.shape[-2:]
@@ -66,12 +67,14 @@ class MakeShrinkMap():
                 if shrinked.size == 0:
                     # print("shrinked.size==0")
                     cv2.fillPoly(mask, polygon.astype(np.int32)[np.newaxis, :, :], 0)
-                    continue
-                cv2.fillPoly(gt, [shrinked.astype(np.int32)], 1)
+                else:
+                    result.append(polygon)
+                    cv2.fillPoly(gt, [shrinked.astype(np.int32)], 1)
 
         # cv2.imwrite("img_map_%d.png" % self.number, gt * 255)
         # cv2.imwrite("img_mask_%d.png" % self.number, mask * 255)
         # self.number += 1
+        data['text_polys'] = result
         data['shrink_map'] = gt
         data['shrink_mask'] = mask
         return data

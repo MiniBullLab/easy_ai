@@ -5,7 +5,6 @@
 import cv2
 import numpy as np
 import pyclipper
-from pyclipper import PyclipperOffset
 from shapely.geometry import Polygon
 from easyai.helper.data_structure import Point2d
 from easyai.helper.data_structure import Polygon2dObject
@@ -23,7 +22,7 @@ class DBPostProcess(BasePostProcess):
         self.mask_threshold = mask_threshold
         self.unclip_ratio = unclip_ratio
         self.max_candidates = 1000
-        self.min_size = 3
+        self.min_size = 5
         self.is_output_polygon = False
 
     def __call__(self, predict_score, src_size):

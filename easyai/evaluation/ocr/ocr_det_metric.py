@@ -2,9 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
 import numpy as np
 from shapely.geometry import Polygon
-from easyai.utility.logger import EasyLogger
 from easyai.evaluation.utility.base_evaluation import BaseEvaluation
 from easyai.name_manager.evaluation_name import EvaluationName
 from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
@@ -24,6 +24,7 @@ class OCRDetectionMetric(BaseEvaluation):
         self.all_gt_count = 0
         self.all_det_count = 0
         self.all_matched_count = 0
+        EasyLogger.debug("reset")
 
     def eval(self, result, targets):
         det_matched = 0
@@ -64,13 +65,13 @@ class OCRDetectionMetric(BaseEvaluation):
 
     def get_score(self):
         if self.all_gt_count == 0:
-            recall = 0
+            recall = 0.0
         else:
             recall = float(self.all_matched_count) / self.all_gt_count
         if self.all_det_count == 0:
-            precision = 0
+            precision = 0.0
         else:
-            precision = self.all_matched_count / self.all_det_count
+            precision = float(self.all_matched_count) / self.all_det_count
 
         if (recall + precision) == 0:
             hmean = 0
