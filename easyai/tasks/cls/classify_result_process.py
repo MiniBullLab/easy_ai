@@ -17,9 +17,5 @@ class ClassifyResultProcess(TaskPostProcess):
         if prediction is None:
             return None
         class_index, class_confidence = self.process_func(prediction)
-        # output_count = prediction.size(1)
-        # if output_count == 1:
-        #     batch_size = prediction.size(0)
-        #     class_index = torch.ones(batch_size)
         return class_index[0].cpu().numpy(), \
                class_confidence[0][0].cpu().numpy()
