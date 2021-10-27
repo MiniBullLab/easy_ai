@@ -69,7 +69,8 @@ class SegNetProcess():
                 EasyLogger.error("%s or %s not exists!" % (annotation_dir, images_dir))
         else:
             self.png_process(data_path)
-            class_names = ('fg', '0')
+            class_names = (('fg', '0'),
+                           ('background', '255'))
         return class_names
 
     def png_process(self, data_path):
