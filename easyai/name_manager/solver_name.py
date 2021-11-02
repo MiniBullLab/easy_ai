@@ -14,6 +14,8 @@ class OptimizerName():
     Rprop = "Rprop"
     RMSprop = "RMSprop"
 
+    LARCOptimizer = "LARCOptimizer"
+
 
 class LrSechedulerName():
 

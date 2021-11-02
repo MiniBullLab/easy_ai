@@ -161,3 +161,19 @@ class EasyAiModelTrain():
         except Exception as err:
             EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
+
+    def ocr_denet_model_train(self, dir_name):
+        input_name = ['ocr_denet_input']
+        output_name = ['ocr_denet_output']
+        pretrain_model_path = os.path.join(dir_name, "./data/ocr_denet.pt")
+        create_sample = CreateDetectionSample()
+        create_sample.create_train_and_test(self.images_dir, self.dataset_path, 10)
+        try:
+            train_task = TrainTask(TaskName.Polygon2d_Task, self.train_path, self.val_path)
+            train_task.set_convert_param(True, input_name, output_name)
+            train_task.train("OCRDeNet", self.gpu_id, None, pretrain_model_path)
+            save_image_dir = os.path.join(EasyLogger.ROOT_DIR, "ocr_det_img")
+            self.copy_process.copy(self.train_path, save_image_dir)
+        except Exception as err:
+            EasyLogger.error(traceback.format_exc())
+            EasyLogger.error(err)

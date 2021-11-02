@@ -4,22 +4,23 @@ root_path=$(pwd)
 function run_onnx_convert() {
     set -v
     modelDir="./.easy_log/snapshot"
-    imageDir="./.easy_log/one_class_img"
+    imageDir="./.easy_log/ocr_det_img"
     outDir="${root_path}/.easy_log/out"
-    modelName=OneClassNet
-    outNetName=OneClassNet
+    modelName=OCRDeNet
+    outNetName=OCRDeNet
 
     inputColorFormat=1
-    outputShape=1,3,128,128
-    outputLayerName="o:one_class_output|ot:0,1,2,3|odf:fp32"
+    outputShape=1,3,640,640
+    outputLayerName="o:ocr_denet_output|ot:0,1,2,3|odf:fp32"
     inputDataFormat=0,0,0,0
 
     mean=123.675,116.28,103.53
-    scale=57.63
+    scale=58.395,57.12,57.375
 
     rm -rf $outDir
-    mkdir $outDir
-    mkdir $outDir/dra_image_bin
+    mkdir -m 755 $outDir
+    rm -rf $outDir/dra_image_bin
+    mkdir -m 755 -p $outDir/dra_image_bin
 
     #amba
     source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
@@ -29,6 +30,7 @@ function run_onnx_convert() {
     export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
     #caffe
+    export LD_LIBRARY_PATH=/opt/caffe/lib:$LD_LIBRARY_PATH
     export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
 
     ls $imageDir/*.* > $imageDir/img_list.txt
@@ -47,7 +49,9 @@ function run_onnx_convert() {
                     -is $outputShape \
                     -im $mean -ic $scale \
                     -iq -idf $inputDataFormat \
-                    -odst $outputLayerName
+                    -odst $outputLayerName \
+                    -c act-allow-fp16,coeff-force-fx16
+                    -dinf cerr
 
     cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 
@@ -69,19 +73,20 @@ function main() {
     if [ -n "$1" ]; then
         dataset_train_path=$1
     else
-        dataset_train_path=/easy_ai/ImageSets/train.txt
+        dataset_train_path=/easy_data/ImageSets/train.txt
     fi
 
     if [ -n "$2" ]; then
         dataset_val_path=$2
     else
-        dataset_val_path=/easy_ai/ImageSets/val.txt
+        dataset_val_path=/easy_data/ImageSets/val.txt
     fi
     echo ${dataset_train_path}
     echo ${dataset_val_path}
 
-    rm -rf ./.easy_log/one_class*
-    CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task OneClass --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
+    rm -rf ./.easy_log/polygon2d*
+    CUDA_VISIBLE_DEVICES=0 python3 -m easy_tools.easy_ai --task OCRDenet --gpu 0 --trainPath ${dataset_train_path} --valPath ${dataset_val_path}
+
     if [ $? -ne 0 ]; then
           echo "Failed to start easy_ai"
           exit -1

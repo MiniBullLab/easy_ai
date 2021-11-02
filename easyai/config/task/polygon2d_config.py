@@ -50,7 +50,7 @@ class Polygon2dConfig(CommonTrainConfig):
 
         self.detect2d_class = ("others", )
         self.post_process = {'type': 'DBPostProcess',
-                             'threshold': 0.6,
+                             'threshold': 0.7,
                              'mask_threshold': 0.3,
                              'unclip_ratio': 1.5}
 
@@ -109,7 +109,7 @@ class Polygon2dConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 100
+        self.max_epochs = 500
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',

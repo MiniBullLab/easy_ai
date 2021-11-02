@@ -1,4 +1,5 @@
-torchvision==0.2.2
+torch==1.6.0
+torchvision==0.7.0
 numpy==1.16.6
 scipy>=1.4.1
 tensorboard==1.14.0
@@ -21,3 +22,4 @@ pyclipper==1.1.0.post3
 shapely==1.7.0
 python-Levenshtein>=0.12.0
 lmdb>=0.98
+imgaug
