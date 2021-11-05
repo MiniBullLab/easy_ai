@@ -10,12 +10,12 @@ function run_onnx_convert() {
     outNetName=OCRDeNet
 
     inputColorFormat=1
-    outputShape=1,3,640,640
+    outputShape=1,3,480,480
     outputLayerName="o:ocr_denet_output|ot:0,1,2,3|odf:fp32"
     inputDataFormat=0,0,0,0
 
-    mean=123.675,116.28,103.53
-    scale=58.395,57.12,57.375
+    mean=0.0
+    scale=255.0
 
     rm -rf $outDir
     mkdir -m 755 $outDir
@@ -32,6 +32,10 @@ function run_onnx_convert() {
     #caffe
     export LD_LIBRARY_PATH=/opt/caffe/lib:$LD_LIBRARY_PATH
     export PYTHONPATH=/opt/caffe/python:$PYTHONPATH
+
+    graph_surgery.py onnx -m $modelDir/${modelName}.onnx  -t Default
+    mv $modelDir/${modelName}.onnx $modelDir/${modelName}_raw.onnx
+    mv $modelDir/${modelName}_modified.onnx $modelDir/${modelName}.onnx
 
     ls $imageDir/*.* > $imageDir/img_list.txt
     imgtobin.py -i $imageDir/img_list.txt \
@@ -51,7 +55,6 @@ function run_onnx_convert() {
                     -iq -idf $inputDataFormat \
                     -odst $outputLayerName \
                     -c act-allow-fp16,coeff-force-fx16
-                    -dinf cerr
 
     cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 

@@ -41,10 +41,10 @@ class Polygon2dConfig(CommonTrainConfig):
         self.save_image_train_value(config_dict)
 
     def get_data_default_value(self):
-        self.data = {'image_size': (640, 640),  # W * H
+        self.data = {'image_size': (480, 480),  # W * H
                      'data_channel': 3,
-                     'resize_type': 4,
-                     'normalize_type': -1,
+                     'resize_type': 1,
+                     'normalize_type': 1,
                      'mean': (0.485, 0.456, 0.406),
                      'std': (0.229, 0.224, 0.225)}
 
@@ -67,7 +67,7 @@ class Polygon2dConfig(CommonTrainConfig):
                          'dataloader': {}}
         self.val_data['dataset']['type'] = "DetOCRDataSet"
         self.val_data['dataset'].update(self.data)
-        self.val_data['dataset']['language'] = ("english",)
+        self.val_data['dataset']['language'] = ("chinese",)
         self.val_data['dataset']['is_augment'] = False
 
         self.val_data['dataloader']['type'] = "DataLoader"
@@ -89,7 +89,7 @@ class Polygon2dConfig(CommonTrainConfig):
 
         self.train_data['dataset']['type'] = "DetOCRDataSet"
         self.train_data['dataset'].update(self.data)
-        self.train_data['dataset']['language'] = ("english",)
+        self.train_data['dataset']['language'] = ("chinese",)
         self.train_data['dataset']['is_augment'] = True
 
         self.train_data['dataloader']['type'] = "DataLoader"

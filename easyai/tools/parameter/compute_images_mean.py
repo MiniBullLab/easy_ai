@@ -46,7 +46,7 @@ def main(options_param):
     config_factory = ConfigFactory()
     task_config = config_factory.get_config(options_param.task_name,
                                             config_path=options_param.config_path)
-    test = ComputeImagesMean(image_size=task_config.image_size)
+    test = ComputeImagesMean(image_size=task_config.data['image_size'].image_size)
     mean, std = test.compute(options_param.inputPath)
     print(mean, std)
     print("End of game, have a nice day!")
