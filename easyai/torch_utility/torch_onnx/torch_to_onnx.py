@@ -40,7 +40,7 @@ class TorchConvertOnnx():
         self.model_process = TorchModelProcess()
         self.input_x = torch.ones(1, channel, width, height)
         self.save_dir = "."
-        self.opset = 9
+        self.opset = 11
         self.input_names = None
         self.output_names = None
 
