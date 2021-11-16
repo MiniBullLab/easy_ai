@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 from easyai.utility.registry import build_from_cfg
+from easyai.name_manager.solver_name import OptimizerName
 from easyai.solver.utility.registry import REGISTERED_OPTIMIZER
 
 
@@ -21,12 +22,23 @@ class OptimizerProcess():
         return config_args
 
     def get_optimizer(self, config, model):
-        config_args = config.copy()
-        params = filter(lambda p: p.requires_grad, model.parameters())
-        config_args['params'] = params
-        config_args['lr'] = self.base_lr
-        self.optimizer = build_from_cfg(config_args, REGISTERED_OPTIMIZER)
-        # self.print_param()
+        optimizer_type = config['type']
+        if optimizer_type.strip() == OptimizerName.LARCOptimizer:
+            config_args = config.copy()
+            optimizer_args = config_args.pop('optimizer_args')
+            params = filter(lambda p: p.requires_grad, model.parameters())
+            optimizer_args['params'] = params
+            optimizer_args['lr'] = self.base_lr
+            optim = build_from_cfg(optimizer_args, REGISTERED_OPTIMIZER)
+            config_args['optimizer'] = optim
+            self.optimizer = build_from_cfg(config_args, REGISTERED_OPTIMIZER)
+        else:
+            config_args = config.copy()
+            params = filter(lambda p: p.requires_grad, model.parameters())
+            config_args['params'] = params
+            config_args['lr'] = self.base_lr
+            self.optimizer = build_from_cfg(config_args, REGISTERED_OPTIMIZER)
+            # self.print_param()
         return self.optimizer
 
     def bias_not_weight_decay(self, config, model):

@@ -50,7 +50,7 @@ class TorchModelProcess():
                     EasyLogger.debug("{} {}".format(k, v.shape))
                 model_dict.update(new_pretrained_dict)
                 model.load_state_dict(model_dict)
-                EasyLogger.warn("Load pretrained parameters(%s) success" % weight_path)
+                EasyLogger.info("Load pretrained parameters(%s) success" % weight_path)
             else:
                 EasyLogger.warn("pretrained model %s not exist" % weight_path)
 

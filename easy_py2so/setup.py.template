@@ -1,3 +1,4 @@
+import traceback
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Build import cythonize
@@ -11,7 +12,11 @@ for full_filename in full_filenames:
     extention.cython_c_in_temp = True
     extentions.append(extention)
 
-setup(
-    cmdclass={'build_ext': build_ext},
-    ext_modules = cythonize(extentions, nthreads=%s, build_dir="tmp_build", compiler_directives={"language_level": %s})
-)
+try:
+    setup(
+        cmdclass={'build_ext': build_ext},
+        ext_modules = cythonize(extentions, nthreads=%s, build_dir="tmp_build", compiler_directives={"language_level": %s})
+    )
+except Exception as e:
+    print(traceback.format_exc())
+    print(e)

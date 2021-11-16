@@ -46,6 +46,8 @@ class ModelName():
     MobileV2RefineDet2d = "mbv2Refine"
     DetNet = "denet"
 
+    OCRDetNet = "OCRDeNet"
+
     # keypoint2d
     KeyPointRCNN = "KeyPointRCNN"
     MobilePose = "MobilePose"

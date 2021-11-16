@@ -107,13 +107,13 @@ function main() {
     if [ -n "$1" ]; then
         dataset_train_path=$1
     else
-        dataset_train_path=/easy_ai/ImageSets/train.txt
+        dataset_train_path=/easy_data/ImageSets/train.txt
     fi
 
     if [ -n "$2" ]; then
         dataset_val_path=$2
     else
-        dataset_val_path=/easy_ai/ImageSets/val.txt
+        dataset_val_path=/easy_data/ImageSets/val.txt
     fi
     echo ${dataset_train_path}
     echo ${dataset_val_path}

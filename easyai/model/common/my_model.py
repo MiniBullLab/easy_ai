@@ -54,7 +54,7 @@ class MyModel(BaseModel):
         result = None
         backbone_args = self.model_defines[0]
         if backbone_args["type"] == BlockType.BaseNet:
-            input_name = backbone_args.pop["name"]
+            input_name = backbone_args.pop("name")
             self.model_defines.pop(0)
             input_name = input_name.strip()
             if input_name.endswith("cfg"):

@@ -66,6 +66,8 @@ def train_main():
         train_process.rec_text_model_train(dir_name)
     elif options.task_name.strip() == "OneClass":
         train_process.one_class_model_train(dir_name)
+    elif options.task_name.strip() == "OCRDenet":
+        train_process.ocr_denet_model_train(dir_name)
     else:
         EasyLogger.error("input task error!")
     EasyLogger.info("easyai process end!")
