@@ -128,10 +128,13 @@ class Detect2dConfig(CommonTrainConfig):
                                      'momentum': 0.9,
                                      'weight_decay': 5e-4}
                                  }
-        self.lr_scheduler_config = {'type': 'MultiStageLR',
-                                    'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
+        self.lr_scheduler_config = {'type': 'CosineLR',
                                     'warmup_type': 2,
                                     'warmup_iters': 5}
+        # self.lr_scheduler_config = {'type': 'MultiStageLR',
+        #                             'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
+        #                             'warmup_type': 2,
+        #                             'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
 

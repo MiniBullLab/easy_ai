@@ -23,7 +23,7 @@ function run_onnx_convert() {
     mkdir -m 755 -p $outDir/dra_image_bin
 
     #amba
-    source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
+    source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv25.env
 
     #cuda10
     export PATH=/usr/local/cuda/bin:$PATH
@@ -47,7 +47,7 @@ function run_onnx_convert() {
 
     gen_image_list.py -f $imageDir \
                       -o $imageDir/img_list.txt \
-                      -ns -e png -c 0 -d 0,0 -r 32,128 \
+                      -ns -e jpg -c 0 -d 0,0 -r 32,128 \
                       -bf $outDir/dra_image_bin \
                       -bo $outDir/dra_image_bin/dra_bin_list.txt
 

@@ -8,6 +8,7 @@ from easyai.helper.data_structure import Polygon2dObject
 from easyai.tasks.utility.task_result_process import TaskPostProcess
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
 from easyai.utility.registry import build_from_cfg
+from easyai.utility.logger import EasyLogger
 
 
 class Polygon2dResultProcess(TaskPostProcess):
@@ -16,6 +17,7 @@ class Polygon2dResultProcess(TaskPostProcess):
         super().__init__()
         self.image_size = image_size
         self.post_process_args = post_process_args
+        EasyLogger.info(self.post_process_args)
         self.process_func = self.build_post_process(post_process_args)
 
     def post_process(self, prediction, src_size):

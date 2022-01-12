@@ -42,8 +42,8 @@ class CRNN(BaseClassifyModel):
         seq_layer = Im2SeqBlock(self.block_out_channels[-1])
         self.add_block_list(seq_layer.get_name(), seq_layer, seq_layer.out_channels)
 
-        neck = EncoderRNNBlock(self.block_out_channels[-1], 256)
-        self.add_block_list(neck.get_name(), neck, neck.out_channels)
+        # neck = EncoderRNNBlock(self.block_out_channels[-1], 256)
+        # self.add_block_list(neck.get_name(), neck, neck.out_channels)
 
         layer = nn.Linear(self.block_out_channels[-1], self.class_number)
         self.add_block_list(LayerType.FcLinear, layer, self.class_number)

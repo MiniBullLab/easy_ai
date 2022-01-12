@@ -5,7 +5,7 @@
         "keep_batchnorm_fp32": true,
         "opt_level": "O1"
     },
-    "base_lr": 0.0002,
+    "base_lr": 0.0005,
     "best_weights_name": "det2d_best.pt",
     "clip_grad_config": {
         "enable_clip": false,
@@ -43,27 +43,13 @@
     "freeze_bn_layer_name": "route_0",
     "freeze_bn_type": 0,
     "freeze_layer_name": "baseNet_0",
-    "freeze_layer_type": 1,
+    "freeze_layer_type": 0,
     "is_save_epoch_model": false,
     "latest_optimizer_name": "det2d_optimizer.pt",
     "latest_weights_name": "det2d_latest.pt",
     "lr_scheduler_config": {
-        "lr_stages": [
-            [
-                50,
-                1
-            ],
-            [
-                70,
-                0.1
-            ],
-            [
-                100,
-                0.01
-            ]
-        ],
-        "type": "MultiStageLR",
-        "warmup_iters": 5,
+        "type": "CosineLR",
+        "warmup_iters": 3,
         "warmup_type": 2
     },
     "max_epochs": 100,
@@ -83,7 +69,7 @@
     "train_data": {
         "dataloader": {
             "balanced_sample": false,
-            "batch_size": 4,
+            "batch_size": 32,
             "data_channel": 3,
             "detect2d_class": [
                 "car"

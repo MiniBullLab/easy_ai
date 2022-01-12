@@ -11,8 +11,8 @@ from easyai.utility.logger import EasyLogger
 
 class JsonProcess():
 
-    MIN_WIDTH = 0
-    MIN_HEIGHT = 0
+    MIN_WIDTH = 10
+    MIN_HEIGHT = 10
 
     def __init__(self):
         pass
