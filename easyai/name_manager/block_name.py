@@ -162,6 +162,7 @@ class HeadType():
     SSDBoxHead = "ssdBox"
     MultiSSDBoxHead = "multiSSDBox"
     ARMBoxHead = "ARMBox"
+    YoloBoxHead = "yoloBox"
 
     MultiRPNHead = "multiRPN"
     MultiROIBoxHead = "multiROIBox"
@@ -177,6 +178,9 @@ class HeadType():
 
     TextAttentionHead = "TextAttentionHead"
     Seq2SeqHead = "Seq2SeqHead"
+
+    # reid
+    FairMOTHead = "FairMOTHead"
 
 
 class STNType():

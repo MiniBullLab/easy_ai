@@ -112,12 +112,19 @@ class BackboneName():
     PeleeNetTransition24 = "peleenet_tran24"
     SlimNet = "slimnet"
     LPRSmallNet = "lpr_small_net"
+    DeepSortBackbone = "deepsort_backbone"
 
     HourGlassNet = "hourglassnet"
 
+    # common
     VisionResnet50 = "vision_resnet50"
     VisionWideResnet50 = "vision_wide_resnet50"
 
+    # det2d
+    Yolov5s_Backbone = "yolov5s_bockbone"
+    Yolov5m_Backbone = "yolov5m_bockbone"
+    Yolov5l_Backbone = "yolov5l_bockbone"
+    Yolov5x_Backbone = "yolov5x_bockbone"
 
 
 class GanBaseModelName():

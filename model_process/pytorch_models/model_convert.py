@@ -10,38 +10,47 @@ from easyai.model.utility.model_factory import ModelFactory
 
 def main(cfgPath, modelPath, savePath):
     model_factory = ModelFactory()
-    model_config = {"type": 'LPRNet'}
+    model_config = {"type": "yolov5s",
+                    "data_channel": 3,
+                    "class_number": 1}
     model = model_factory.get_model(model_config)
     model_dict = model.state_dict()
     # obj_text = codecs.open('/home/lpj/Downloads/dict.json', 'r', encoding='utf-8').read()
     # b_new = json.loads(obj_text)
 
-    modelCvt = torch.load('/home/lpj/dataset/LPRNet_model.pth', map_location='cpu')
-    # print(modelCvt.dtype)
-    # if isinstance(modelCvt, dict):
-    #     modelCvt = modelCvt['model']
+    modelCvt = torch.load('/home/lpj/yolov5s_car.pt',
+                          map_location='cpu')
+    if isinstance(modelCvt, dict):
+        modelCvt = modelCvt['model']
     # modelCvt = np.load('/home/lpj/Downloads/obilenetv3_dict.npy', allow_pickle=True)
     vs = []
 
     for i, (k, v) in enumerate(modelCvt.items()):
-        print(k)
-        vs.append(np.array(v))
+        if "anchor" in k:
+            continue
+        print(k, v.shape)
+        vs.append(v)
     print(len(vs))
 
     vs_ = []
+    index = 0
     for j, (k_, v_) in enumerate(model.state_dict().items()):
-        vs_.append(v_)
+        # if "num_batches_tracked" in k_:
+        #     continue
+        print(k_, v_.shape)
+        if j == len(vs):
+            break
+        v_.copy_(vs[index])
+        # vs_.append(v_)
+        index += 1
     print(len(vs_))
-        # if j < 21:
-        #     print(j, k_, vs[j].shape, v_.shape)
-        #     v_.copy_(vs[j])
 
-    model_dict.update(modelCvt.items())
-    model.load_state_dict(model_dict)
+    # model_dict.update(modelCvt.items())
+    # model.load_state_dict(model_dict)
     checkpoint = {'epoch': 0,
                   'best_value': 0,
                   'model': model.state_dict()}
-    torch.save(checkpoint, "/home/lpj/dataset/LPRNet_model.pt")
+    torch.save(checkpoint, "/home/lpj/new_yolov5s_car.pt")
 
     print("End of game!!!")
 

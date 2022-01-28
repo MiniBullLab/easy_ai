@@ -22,12 +22,20 @@ class ImageDrawing():
         cv2.resizeWindow(widnow_name, int(image.shape[1] * scale), int(image.shape[0] * scale))
         cv2.imshow(widnow_name, image)
 
+    def draw_rect2d(self, src_image, boxes):
+        for box in boxes:
+            point1 = (int(box.min_corner.x), int(box.min_corner.y))
+            point2 = (int(box.max_corner.x), int(box.max_corner.y))
+            cv2.rectangle(src_image, point1, point2, (0, 0, 255), 2)
+
     def draw_detect_objects(self, src_image, result_objects):
         for object in result_objects:
             point1 = (int(object.min_corner.x), int(object.min_corner.y))
             point2 = (int(object.max_corner.x), int(object.max_corner.y))
-            index = object.classIndex
+            index = object.classIndex % len(ColorDefine.colors)
             cv2.rectangle(src_image, point1, point2, ColorDefine.colors[index], 2)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(src_image, object.name, point1, font, 0.5, (0, 0, 255), 1)
 
     def draw_segment_result(self, src_image, result, class_list):
         r = result.copy()

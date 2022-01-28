@@ -1,0 +1,1 @@
+python3 easy_tracking/tasks/det2d_multi_tracking.py -i /home/lpj/Desktop/MOT16-11-raw -m yolov5s -m DeepSortNet -w /home/lpj/dataset/yolov5s_person.pt -w /home/lpj/dataset/deep_sort.pt -c /home/lpj/github/easy_ai/example/easyai/yolov5s_config.json -s

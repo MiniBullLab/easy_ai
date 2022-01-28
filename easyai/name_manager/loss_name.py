@@ -28,6 +28,7 @@ class LossName():
     RefineMultiBoxLoss = "RefineMultiBoxLoss"
     RPNLoss = "RPNLoss"
     FastRCNNLoss = "FastRCNNLoss"
+    YoloV5Loss = "YoloV5Loss"
 
     # det3d
 

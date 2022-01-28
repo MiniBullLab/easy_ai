@@ -23,7 +23,7 @@ class ModelNetShow():
         self.show_process = ModelShow()
 
     def model_show(self, model_name):
-        input_x = torch.randn(1, 3, 32, 128)
+        input_x = torch.randn(1, 3, 416, 416)
         self.show_process.set_input(input_x)
         model_config = {"type": model_name}
         model = self.model_factory.get_model(model_config)

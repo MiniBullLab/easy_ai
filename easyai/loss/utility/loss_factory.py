@@ -207,6 +207,13 @@ class LossFactory():
             loss_config['bg_iou_threshold'] = float(loss_config['bg_iou_threshold'])
             loss_config['per_image_sample'] = int(loss_config['per_image_sample'])
             loss_config['positive_fraction'] = float(loss_config['positive_fraction'])
+        elif input_name == LossName.YoloV5Loss:
+            loss_config['class_number'] = int(loss_config['class_number'])
+            loss_config['anchor_count'] = int(loss_config['anchor_count'])
+            loss_config['anchor_sizes'] = loss_config['anchor_sizes']
+            loss_config['box_weight'] = float(loss_config['box_weight'])
+            loss_config['object_weight'] = float(loss_config['object_weight'])
+            loss_config['class_weight'] = float(loss_config['class_weight'])
         loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
         return loss
 

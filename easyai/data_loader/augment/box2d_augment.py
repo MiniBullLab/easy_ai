@@ -62,14 +62,20 @@ class Box2dAugment():
 
     def box_lr_flip(self, box, image_size):
         # left-right flip
-        temp = box.min_corner.x
-        box.min_corner.x = image_size[0] - box.max_corner.x
-        box.max_corner.x = image_size[0] - temp
-        return box
+        result = box.copy()
+        x, y = box.center()
+        width = box.width()
+        x = image_size[0] - x
+        result.min_corner.x = x - width / 2
+        result.max_corner.x = x + width / 2
+        return result
 
     def box_up_flip(self, box, image_size):
         # up-down flip
-        temp = box.min_corner.y
-        box.min_corner.y = image_size[1] - box.max_corner.y
-        box.max_corner.y = image_size[1] - temp
-        return box
+        result = box.copy()
+        x, y = box.center()
+        height = box.height()
+        y = image_size[1] - y
+        result.min_corner.y = y - height / 2
+        result.max_corner.y = y + height / 2
+        return result

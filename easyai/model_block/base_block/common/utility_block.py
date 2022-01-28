@@ -54,6 +54,7 @@ class ConvActivationBlock(BaseBlock):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
                  dilation=1, groups=1, bias=True, activationName=ActivationType.ReLU):
         super().__init__(BlockType.ConvActivationBlock)
+        self.activation_name = activationName
         conv = nn.Conv2d(in_channels, out_channels, kernel_size,
                          stride, padding, dilation, groups, bias=bias)
         activation = ActivationFunction.get_function(activationName)
@@ -73,6 +74,8 @@ class ConvBNActivationBlock(BaseBlock):
                  dilation=1, groups=1, bias=False, bnName=NormalizationType.BatchNormalize2d,
                  activationName=ActivationType.ReLU):
         super().__init__(BlockType.ConvBNActivationBlock)
+        self.bn_name = bnName
+        self.activation_name = activationName
         conv = nn.Conv2d(in_channels, out_channels, kernel_size,
                          stride, padding, dilation, groups, bias=bias)
         bn = NormalizationFunction.get_function(bnName, out_channels)
@@ -86,6 +89,9 @@ class ConvBNActivationBlock(BaseBlock):
     def forward(self, x):
         x = self.block(x)
         return x
+
+    # def forward_fuse(self, x):
+    #     return self.activation(self.conv(x))
 
 
 class ConvDropBNActivationBlock(BaseBlock):

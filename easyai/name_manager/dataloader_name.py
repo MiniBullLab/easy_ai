@@ -7,6 +7,7 @@ class DatasetName():
 
     ClassifyDataSet = "ClassifyDataSet"
     Det2dDataset = "Det2dDataset"
+    MosaicDet2dDataset = "MosaicDet2dDataset"
     Det2dSegDataset = "Det2dSegDataset"
     GenImageDataset = "GenImageDataset"
     KeyPoint2dDataset = "KeyPoint2dDataset"
@@ -26,6 +27,7 @@ class DatasetCollateName():
 
     ClassifyDataSetCollate = "ClassifyDataSetCollate"
     Det2dDataSetCollate = "Det2dDataSetCollate"
+    MosaicDataSetCollate = "MosaicDataSetCollate"
     KeyPoint2dDataSetCollate = "KeyPoint2dDataSetCollate"
     Pose2dDataSetCollate = "Pose2dDataSetCollate"
     RecTextDataSetCollate = "RecTextDataSetCollate"

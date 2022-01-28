@@ -243,3 +243,29 @@ class DetectionKeyPoint(KeyPoint2D):
         self.objectConfidence = 0
 
 
+class ReIDObject2d(DetectionObject):
+
+    def __init__(self):
+        super().__init__()
+        self.reid = None
+
+    def copy_object2d(self, detection_object):
+        self.classIndex = detection_object.classIndex
+        self.classConfidence = detection_object.classConfidence
+        self.objectConfidence = detection_object.objectConfidence
+        self.name = detection_object.name
+        self.class_id = detection_object.class_id
+        self.difficult = detection_object.difficult
+        self.min_corner = detection_object.min_corner
+        self.max_corner = detection_object.max_corner
+
+
+class TrackObject2d(DetectionObject):
+
+    def __init__(self):
+        super().__init__()
+        track_id = -1
+        current_frame = -1
+
+
+
