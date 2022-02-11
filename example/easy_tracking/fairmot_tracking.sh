@@ -1,0 +1,1 @@
+python3 easy_tracking/tasks/det2d_multi_tracking.py -i /home/lpj/dataset/tests/test_video/MOT16-10-raw.mp4 -m FairMOTNet -w /home/lpj/model_zoom/fairmot_person.pt -s

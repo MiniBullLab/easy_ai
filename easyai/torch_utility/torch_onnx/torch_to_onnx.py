@@ -71,6 +71,6 @@ class TorchConvertOnnx():
         # self.optimize_bn.fuse(model)
         save_onnx_path = os.path.join(self.save_dir, "%s.onnx" % model.get_name())
         onnx.export(model, self.input_x, save_onnx_path,
-                    export_params=True, verbose=False,
+                    export_params=True, verbose=False, opset_version=12,
                     input_names=self.input_names, output_names=self.output_names)
         return save_onnx_path

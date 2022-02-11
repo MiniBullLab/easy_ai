@@ -35,8 +35,8 @@ class FairMOTPostProcess():
         hm = output_list[0].sigmoid_()
         id_feature = output_list[1]
         id_feature = F.normalize(id_feature, dim=1)
-        wh = output_list[2]
-        reg = output_list[3]
+        reg = output_list[2]
+        wh = output_list[3]
         dets, inds = self.mot_decode(hm, wh, reg=reg, ltrb=self.ltrb, K=self.K)
         id_feature = self._tranpose_and_gather_feat(id_feature, inds)
         id_feature = id_feature.squeeze(0)
@@ -60,7 +60,7 @@ class FairMOTPostProcess():
             temp.min_corner.y = det[1]
             temp.max_corner.x = det[2]
             temp.max_corner.y = det[3]
-            temp.classConfidence = det[5]
+            temp.classConfidence = det[4]
             temp.reid = id_feature[index]
             result.append(temp)
         return result
@@ -75,6 +75,7 @@ class FairMOTPostProcess():
         scores, inds, clses, ys, xs = self._topk(heat, K=K)
         if reg is not None:
             reg = self._tranpose_and_gather_feat(reg, inds)
+            # print(reg.shape)
             reg = reg.view(batch, K, 2)
             xs = xs.view(batch, K, 1) + reg[:, :, 0:1]
             ys = ys.view(batch, K, 1) + reg[:, :, 1:2]

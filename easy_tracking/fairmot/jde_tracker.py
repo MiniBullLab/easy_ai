@@ -3,6 +3,7 @@ from easy_tracking.fairmot.basetrack import TrackState
 from easy_tracking.fairmot.stracker import STrack
 from easy_tracking.fairmot import matching
 from easy_tracking.fairmot.kalman_filter import KalmanFilter
+from easyai.helper import TrackObject2d
 
 
 class JDETracker():
@@ -20,6 +21,7 @@ class JDETracker():
         self.kalman_filter = KalmanFilter()
 
     def process(self, reid_objects, image_size):
+        result = []
         self.frame_id += 1
         activated_starcks = []
         refind_stracks = []
@@ -132,7 +134,21 @@ class JDETracker():
         # logger.debug('Lost: {}'.format([track.track_id for track in lost_stracks]))
         # logger.debug('Removed: {}'.format([track.track_id for track in removed_stracks]))
 
-        return output_stracks
+        for t in output_stracks:
+            tlwh = t.tlwh
+            tid = t.track_id
+            vertical = tlwh[2] / tlwh[3] > 1.6
+            if tlwh[2] * tlwh[3] > 1 and not vertical:
+                temp = TrackObject2d()
+                temp.track_id = tid
+                temp.min_corner.x = tlwh[0]
+                temp.min_corner.y = tlwh[1]
+                temp.max_corner.x = tlwh[0] + tlwh[2]
+                temp.max_corner.y = tlwh[1] + tlwh[3]
+                temp.classConfidence = 0.0
+                result.append(temp)
+
+        return result
 
     def joint_stracks(self, tlista, tlistb):
         exists = {}

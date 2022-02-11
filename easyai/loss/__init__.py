@@ -7,6 +7,7 @@ from . import gan
 from . import sr
 from . import keypoint2d
 from . import rnn
+from . import reid
 
 from . import pc_cls
 

@@ -10,18 +10,19 @@ from easyai.model.utility.model_factory import ModelFactory
 
 def main(cfgPath, modelPath, savePath):
     model_factory = ModelFactory()
-    model_config = {"type": "yolov5s",
+    model_config = {"type": "FairMOTNet",
                     "data_channel": 3,
-                    "class_number": 1}
+                    "class_number": 1,
+                    "reid": 64}
     model = model_factory.get_model(model_config)
     model_dict = model.state_dict()
     # obj_text = codecs.open('/home/lpj/Downloads/dict.json', 'r', encoding='utf-8').read()
     # b_new = json.loads(obj_text)
 
-    modelCvt = torch.load('/home/lpj/yolov5s_car.pt',
+    modelCvt = torch.load('/home/lpj/github/FairMOT/models/fairmot_lite.pth',
                           map_location='cpu')
     if isinstance(modelCvt, dict):
-        modelCvt = modelCvt['model']
+        modelCvt = modelCvt['state_dict']
     # modelCvt = np.load('/home/lpj/Downloads/obilenetv3_dict.npy', allow_pickle=True)
     vs = []
 
@@ -50,7 +51,7 @@ def main(cfgPath, modelPath, savePath):
     checkpoint = {'epoch': 0,
                   'best_value': 0,
                   'model': model.state_dict()}
-    torch.save(checkpoint, "/home/lpj/new_yolov5s_car.pt")
+    torch.save(checkpoint, "/home/lpj/fairmot_person.pt")
 
     print("End of game!!!")
 

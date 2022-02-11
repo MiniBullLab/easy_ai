@@ -126,6 +126,8 @@ class BackboneName():
     Yolov5l_Backbone = "yolov5l_bockbone"
     Yolov5x_Backbone = "yolov5x_bockbone"
 
+    Yolov5s_Old_Backbone = "yolov5s_old_bockbone"
+
 
 class GanBaseModelName():
 

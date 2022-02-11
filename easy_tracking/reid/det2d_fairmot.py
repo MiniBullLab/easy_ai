@@ -20,7 +20,7 @@ class Det2dFairMOT():
                            "reid": 64}
         self.model_process = TorchModelProcess()
         self.model = self.model_process.create_model(self.model_args, gpu_id)
-        self.model_process.load_latest_model(weights_path, self.model)
+        self.model_process.load_latest_model(weights_path[0], self.model)
         self.model = self.model_process.model_test_init(self.model)
         self.model.eval()
         self.device = self.model_process.get_device()

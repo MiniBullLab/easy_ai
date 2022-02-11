@@ -5,6 +5,8 @@ from .nn_matching import NearestNeighborDistanceMetric
 from .detection import Detection
 from .tracker import Tracker
 
+from easyai.helper import TrackObject2d
+
 
 __all__ = ['DeepSort']
 
@@ -22,6 +24,7 @@ class DeepSort():
                                max_age=max_age, n_init=n_init)
 
     def process(self, reid_objects, image_size):
+        result = []
         self.image_size = image_size
         xywhs = np.zeros((len(reid_objects), 4), dtype=np.float32)
         confs = np.zeros(len(reid_objects))
@@ -37,7 +40,17 @@ class DeepSort():
             features.append(temp_object.reid)
         features = np.array(features)
         outputs = self.update(xywhs, confs, clss, features)
-        return outputs
+        for output in outputs:
+            temp = TrackObject2d()
+            temp.track_id = int(output[4])
+            temp.min_corner.x = output[0]
+            temp.min_corner.y = output[1]
+            temp.max_corner.x = output[2]
+            temp.max_corner.y = output[3]
+            temp.classIndex = int(output[5])
+            temp.classConfidence = output[6]
+            result.append(temp)
+        return result
 
     def update(self, bbox_xywh, confidences, classes, features):
         bbox_tlwh = self._xywh_to_tlwh(bbox_xywh)

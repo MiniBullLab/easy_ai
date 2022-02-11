@@ -12,4 +12,6 @@ REGISTERED_GAN_G_LOSS = Registry("gan_g_loss")
 
 REGISTERED_RNN_LOSS = Registry("rnn_loss")
 
+REGISTERED_REID_LOSS = Registry("reid_loss")
+
 REGISTERED_PC_LOSS = Registry("pc_loss")
