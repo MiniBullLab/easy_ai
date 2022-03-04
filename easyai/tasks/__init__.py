@@ -11,6 +11,7 @@ from . import landmark
 from . import polygon2d
 from . import rec_text
 from . import ocr
+from . import reid
 from . import multi_task
 
 from . import pc_cls

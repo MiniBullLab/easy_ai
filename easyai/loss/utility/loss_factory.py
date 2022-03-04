@@ -11,6 +11,7 @@ from easyai.loss.utility.loss_registry import REGISTERED_GAN_D_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_GAN_G_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_KEYPOINT2D_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_RNN_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_REID_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_PC_LOSS
 from easyai.utility.registry import build_from_cfg
 from easyai.utility.logger import EasyLogger
@@ -37,6 +38,8 @@ class LossFactory():
             result = self.get_keypoint2d_loss(loss_args)
         elif REGISTERED_RNN_LOSS.has_class(input_name):
             result = self.get_rnn_loss(loss_args)
+        elif REGISTERED_REID_LOSS.has_class(input_name):
+            result = self.get_reid_loss(loss_args)
         elif REGISTERED_PC_LOSS.has_class(input_name):
             result = self.get_pc_loss(loss_args)
         else:
@@ -76,6 +79,10 @@ class LossFactory():
                 return True
 
         for loss_name in REGISTERED_RNN_LOSS.get_keys():
+            if loss_name in key:
+                return True
+
+        for loss_name in REGISTERED_REID_LOSS.get_keys():
             if loss_name in key:
                 return True
 
@@ -286,6 +293,15 @@ class LossFactory():
         elif input_name == LossName.ACELabelSmoothingLoss:
             loss_config['alpha'] = float(loss_config.get('alpha', 0.1))
         loss = build_from_cfg(loss_config, REGISTERED_RNN_LOSS)
+        return loss
+
+    def get_reid_loss(self, loss_config):
+        input_name = loss_config['type'].strip()
+        if input_name == LossName.FairMotLoss:
+            loss_config['class_number'] = int(loss_config['class_number'])
+            loss_config['reid'] = int(loss_config['reid'])
+            loss_config['max_id'] = int(loss_config['max_id'])
+        loss = build_from_cfg(loss_config, REGISTERED_REID_LOSS)
         return loss
 
     def get_pc_loss(self, loss_config):

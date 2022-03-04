@@ -3,7 +3,9 @@
 # Author:lipeijie
 
 import torch
+from easyai.name_manager.task_name import TaskName
 from easyai.torch_utility.torch_model_process import TorchModelProcess
+from easyai.config.utility.base_config import BaseConfig
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.data_loader.common.numpy_data_geter import NumpyDataGeter
 from easy_tracking.fairmot.fairmot_post_process import FairMOTPostProcess
@@ -13,7 +15,9 @@ from easyai.utility.logger import EasyLogger
 class Det2dFairMOT():
 
     def __init__(self, model_name, gpu_id, weights_path, config_path):
+        self.config_factory = ConfigFactory()
         self.config_path = config_path
+        self.task_config = None
         self.model_args = {"type": model_name[0],
                            "data_channel": 3,
                            "class_number": 1,
@@ -39,3 +43,26 @@ class Det2dFairMOT():
             output_list = self.model(img_batch)
             result = self.post_process(output_list, src_size)
         return result
+
+    def set_task_config(self, config=None):
+        if config is None:
+            self.task_config = self.config_factory.get_config(TaskName.DET2D_REID_TASK,
+                                                              self.config_path)
+            self.task_config.save_config()
+        elif isinstance(config, str):
+            self.task_config = self.config_factory.get_config(TaskName.DET2D_REID_TASK,
+                                                              self.config_path)
+            self.task_config.save_config()
+        elif isinstance(config, BaseConfig):
+            self.config_path = None
+            self.task_config = config
+        assert self.task_config is not None, \
+            EasyLogger.error("create config fail! {}".format(config))
+
+    def set_model(self, my_model=None, gpu_id=0):
+        if my_model is None:
+            self.model = self.model_process.create_model(self.model_args, gpu_id)
+        elif isinstance(my_model, torch.nn.Module):
+            self.model = my_model
+            self.model.eval()
+        assert self.model is not None, EasyLogger.error("create model fail!")

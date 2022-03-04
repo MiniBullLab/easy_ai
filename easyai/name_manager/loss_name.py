@@ -61,6 +61,9 @@ class LossName():
     AggregationCrossEntropyLoss = "ACELoss"
     ACELabelSmoothingLoss = "ACELabelSmoothingLoss"
 
+    # reid
+    FairMotLoss = "FairMotLoss"
+
     # pc
     PointNetClsLoss = "pointClsNetLoss"
     PointNetSegLoss = "pointSegNetLoss"

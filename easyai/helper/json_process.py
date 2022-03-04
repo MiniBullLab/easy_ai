@@ -28,6 +28,7 @@ class JsonProcess():
         rect_objects_list = objects_dict['rectObject']
         boxes = []
         for rect_dict in rect_objects_list:
+            id = rect_dict.get("id", -1)
             class_name = rect_dict['class']
             xmin = rect_dict['minX']
             ymin = rect_dict['minY']
@@ -39,6 +40,7 @@ class JsonProcess():
             box.max_corner.x = xmax
             box.max_corner.y = ymax
             box.name = class_name
+            box.objectId = id
             if box.width() >= JsonProcess.MIN_WIDTH \
                     and box.height() >= JsonProcess.MIN_HEIGHT:
                 boxes.append(box)

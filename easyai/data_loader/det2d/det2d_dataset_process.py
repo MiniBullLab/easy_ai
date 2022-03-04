@@ -30,6 +30,19 @@ class DetectionDataSetProcess(Box2dDataSetProcess):
             result[index, :] = np.array([class_id, x, y, width, height])
         return result
 
+    def normalize_tracking_labels(self, labels, image_size):
+        result = np.zeros((len(labels), 6), dtype=np.float32)
+        for index, rect in enumerate(labels):
+            id = rect.objectId
+            class_id = rect.class_id
+            x, y = rect.center()
+            x /= image_size[0]
+            y /= image_size[1]
+            width = rect.width() / image_size[0]
+            height = rect.height() / image_size[1]
+            result[index, :] = np.array([class_id, id, x, y, width, height])
+        return result
+
     def change_outside_labels(self, labels):
         delete_index = []
         # reject warped points outside of image (0.999 for the image boundary)

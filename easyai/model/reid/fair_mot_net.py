@@ -27,7 +27,10 @@ class FairMOTNet(BaseReIDModel):
 
         self.model_args['type'] = BackboneName.Yolov5s_Old_Backbone
 
-        self.loss_config = {"type": LossName.EmptyLoss}
+        self.loss_config = {"type": LossName.FairMotLoss,
+                            "class_number": class_number,
+                            "reid": reid,
+                            "max_id": 5985}
 
         self.create_block_list()
 

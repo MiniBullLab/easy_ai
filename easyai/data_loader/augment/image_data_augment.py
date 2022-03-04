@@ -16,8 +16,8 @@ class ImageDataAugment():
         self.dataset_process = ImageDataSetProcess()
         self.border_value = (0.0, 0.0, 0.0)
 
-    def augment_affine(self, src_image, degrees=(-15, 15),
-                       translate=(0.0, 0.0), scale=(1.0, 1.0), shear=(-3, 3)):
+    def augment_affine(self, src_image, degrees=(-5, 5),
+                       translate=(0.1, 0.1), scale=(0.5, 1.2), shear=(-3, 3)):
         image_size = (src_image.shape[1], src_image.shape[0])
         matrix, degree = self.dataset_process.affine_matrix(image_size,
                                                             degrees=degrees,
