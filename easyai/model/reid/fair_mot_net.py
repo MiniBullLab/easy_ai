@@ -19,18 +19,23 @@ from easyai.model.utility.model_registry import REGISTERED_REID_MODEL
 @REGISTERED_REID_MODEL.register_module(ModelName.FairMOTNet)
 class FairMOTNet(BaseReIDModel):
 
-    def __init__(self, data_channel=3, class_number=1, reid=64):
-        super().__init__(data_channel, class_number, reid)
+    def __init__(self, data_channel=3, class_number=1,
+                 reid=64, max_id=-1,
+                 backbone_name=BackboneName.Yolov5s_Old_Backbone):
+        super().__init__(data_channel, class_number, reid, max_id)
         self.set_name(ModelName.FairMOTNet)
         self.bn_name = NormalizationType.BatchNormalize2d
         self.activation_name = ActivationType.Swish
 
-        self.model_args['type'] = BackboneName.Yolov5s_Old_Backbone
+        self.model_args['type'] = backbone_name
 
-        self.loss_config = {"type": LossName.FairMotLoss,
-                            "class_number": class_number,
-                            "reid": reid,
-                            "max_id": 5985}
+        if max_id > 0:
+            self.loss_config = {"type": LossName.FairMotLoss,
+                                "class_number": class_number,
+                                "reid": reid,
+                                "max_id": max_id}
+        else:
+            self.loss_config = {"type": LossName.EmptyLoss}
 
         self.create_block_list()
 

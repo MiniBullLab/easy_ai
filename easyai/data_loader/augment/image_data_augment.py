@@ -40,20 +40,22 @@ class ImageDataAugment():
         return image, matrix
 
     def augment_lr_flip(self, src_image):
-        image = src_image[:]
-        is_lr = False
         if random.random() > 0.5:
-            image = np.fliplr(image)
+            image = cv2.flip(src_image, 1)
             is_lr = True
+        else:
+            image = src_image[:]
+            is_lr = False
         return image, is_lr
 
     def augment_up_flip(self, src_image):
         # random up-down flip
-        image = src_image[:]
-        is_up = False
         if random.random() > 0.5:
-            image = np.flipud(image)
+            image = cv2.flip(src_image, 0)
             is_up = True
+        else:
+            image = src_image[:]
+            is_up = False
         return image, is_up
 
     def augment_hsv(self, rgb_image):

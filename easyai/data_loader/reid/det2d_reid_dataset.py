@@ -25,9 +25,9 @@ class Det2dReidDataset(TorchDataLoader):
         self.detect2d_class = detect2d_class
         EasyLogger.debug("det2d class: {}".format(detect2d_class))
         self.detection_sample = DetectionSample(data_path,
-                                                detect2d_class,
-                                                False)
-        self.detection_sample.read_sample()
+                                                detect2d_class)
+        self.detection_sample.read_tracking_sample()
+
         self.dataset_process = DetectionDataSetProcess(resize_type, normalize_type,
                                                        mean, std, self.get_pad_color())
         self.is_augment = is_augment
@@ -41,12 +41,18 @@ class Det2dReidDataset(TorchDataLoader):
         img_path, label_path = self.detection_sample.get_sample_path(index)
         _, src_image = self.read_src_image(img_path)
         boxes = self.detection_sample.get_sample_boxes(label_path)
+
         image, labels = self.dataset_process.resize_dataset(src_image,
                                                             self.image_size,
                                                             boxes,
                                                             self.detect2d_class)
         if self.is_augment:
             image, labels = self.dataset_augment.augment(image, labels)
+        # print(img_path, len(labels))
+        # self.drawing.draw_tracking_objects(image, labels)
+        # self.drawing.save_image(image, "img_%d.png" % self.number)
+        # self.number += 1
+
         src_size = np.array([src_image.shape[1], src_image.shape[0]])  # [width, height]
         image = self.dataset_process.normalize_image(image)
         labels = self.dataset_process.normalize_tracking_labels(labels, self.image_size)

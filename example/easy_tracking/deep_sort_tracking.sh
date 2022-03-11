@@ -1,1 +1,1 @@
-python3 easy_tracking/tasks/det2d_multi_tracking.py -i /home/lpj/Desktop/MOT16-11-raw -m yolov5s -m DeepSortNet -w /home/lpj/dataset/yolov5s_person.pt -w /home/lpj/dataset/deep_sort.pt -c /home/lpj/github/easy_ai/example/easyai/yolov5s_config.json -s
+python3 easy_tracking/det2d_multi_tracking.py -r det2d_classify_reid -t DeepSort -i /home/lpj/dataset/tests/test_video/MOT16-11-raw.mp4  -w /home/lpj/model_zoom/pytorch_model/yolov5s_person.pt -w /home/lpj/model_zoom/pytorch_model/deep_sort.pt -c /home/lpj/github/easy_ai/example/easy_tracking/deep_sort_reid_config.json -s

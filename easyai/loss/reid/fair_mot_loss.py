@@ -40,9 +40,9 @@ class RegL1Loss(nn.Module):
 
 
 @REGISTERED_REID_LOSS.register_module(LossName.FairMotLoss)
-class FairMotLoss(torch.nn.Module):
+class FairMotLoss(BaseLoss):
     def __init__(self, class_number, reid, max_id):
-        super().__init__()
+        super().__init__(LossName.FairMotLoss)
         self.class_number = class_number
         self.emb_dim = reid
         self.max_id = max_id
@@ -51,9 +51,8 @@ class FairMotLoss(torch.nn.Module):
         self.classifier = nn.Linear(self.emb_dim, self.max_id)
         self.IDLoss = nn.CrossEntropyLoss(ignore_index=-1)
         self.emb_scale = math.sqrt(2) * math.log(self.max_id - 1)
-        self.s_det = nn.Parameter(-1.85 * torch.ones(1))
-        self.s_id = nn.Parameter(-1.05 * torch.ones(1))
         self.max_objs = 500
+        self.hm_weight = 1
         self.wh_weight = 0.5
         self.off_weight = 1
         self.id_weight = 1
@@ -96,6 +95,7 @@ class FairMotLoss(torch.nn.Module):
                 if h > 0 and w > 0:
                     radius = self.gaussian_radius((math.ceil(h), math.ceil(w)))
                     radius = max(0, int(radius))
+                    # print("radius:", radius)
                     ct = np.array([bbox[0], bbox[1]], dtype=np.float32)
                     ct_int = ct.astype(np.int32)
                     self.draw_umich_gaussian(hm[cls_id], ct_int, radius)
@@ -107,25 +107,35 @@ class FairMotLoss(torch.nn.Module):
                     ids[k] = label[1]
 
             hm_list.append(torch.from_numpy(hm))
+
+            # import matplotlib
+            # matplotlib.use('Agg')
+            # import matplotlib.pyplot as plt
+            # plt.figure(figsize=(50, 50))
+            # plt.imshow(hm[0])
+            # plt.axis('off')
+            # plt.savefig('test.jpg')
+
             reg_mask_list.append(torch.from_numpy(reg_mask))
             ind_list.append(torch.from_numpy(ind))
             wh_list.append(torch.from_numpy(wh))
             reg_list.append(torch.from_numpy(reg))
             ids_list.append(torch.from_numpy(ids))
 
-        ret = {'hm': torch.stack(hm_list, dim=0).to(device),
-               'reg_mask': torch.stack(reg_mask_list, dim=0).to(device),
-               'ind': torch.stack(ind_list, dim=0).to(device),
-               'wh': torch.stack(wh_list, dim=0).to(device),
-               'reg': torch.stack(reg_list, dim=0).to(device),
-               'ids': torch.stack(ids_list, dim=0).to(device)}
+        ret = {'hm': torch.stack(hm_list, dim=0).to(device, non_blocking=True),
+               'reg_mask': torch.stack(reg_mask_list, dim=0).to(device, non_blocking=True),
+               'ind': torch.stack(ind_list, dim=0).to(device, non_blocking=True),
+               'wh': torch.stack(wh_list, dim=0).to(device, non_blocking=True),
+               'reg': torch.stack(reg_list, dim=0).to(device, non_blocking=True),
+               'ids': torch.stack(ids_list, dim=0).to(device, non_blocking=True)}
         return ret
 
-    def forward(self, outputs, batch_data):
+    def forward(self, outputs, batch_data=None):
         if batch_data is None:
-            return outputs
+            return outputs[:]
         else:
             batch_size, _, height, width = outputs[0].size()
+            # print(height, width)
             device = outputs[0].device
             targets = self.build_targets(width, height, device, batch_data)
             hm_output = torch.clamp(outputs[0].sigmoid_(), min=1e-4, max=1 - 1e-4)
@@ -152,7 +162,7 @@ class FairMotLoss(torch.nn.Module):
             self.loss_info['off_loss'] = off_loss.item()
             self.loss_info['id_loss'] = id_loss.item()
 
-            return loss
+            return loss.mean()
 
     def _neg_loss(self, pred, gt):
         ''' Modified focal loss. Exactly the same as CornerNet.

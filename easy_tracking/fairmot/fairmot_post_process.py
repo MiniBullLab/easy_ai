@@ -8,18 +8,21 @@ from torch import nn
 import torch.nn.functional as F
 from easyai.helper.data_structure import ReIDObject2d
 from easy_tracking.fairmot.image import transform_preds
+from easyai.utility.logger import EasyLogger
 
 
 class FairMOTPostProcess():
 
-    def __init__(self, image_size, class_number, threshold=0.4):
+    def __init__(self, image_size, detect2d_class, threshold=0.4):
         super().__init__()
         self.image_size = image_size
-        self.class_number = class_number
+        self.detect2d_class = detect2d_class
+        self.class_number = len(detect2d_class)
         self.threshold = threshold
         self.K = 500
         self.ltrb = True
         self.down_ratio = 4
+        EasyLogger.debug("det2d class name:{}".format(self.detect2d_class))
 
     def set_threshold(self, value):
         self.threshold = value
@@ -61,6 +64,8 @@ class FairMOTPostProcess():
             temp.max_corner.x = det[2]
             temp.max_corner.y = det[3]
             temp.classConfidence = det[4]
+            temp.classIndex = 0
+            temp.name = self.detect2d_class[0]
             temp.reid = id_feature[index]
             result.append(temp)
         return result

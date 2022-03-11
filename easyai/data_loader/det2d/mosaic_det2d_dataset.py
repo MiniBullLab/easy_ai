@@ -40,8 +40,7 @@ class MosaicDet2dDataset(TorchDataLoader):
         self.indices = range(self.detection_sample.get_sample_count())
         self.is_augment = is_augment
 
-        self.dataset_augment = DetectionDataAugment(is_augment_affine=False,
-                                                    is_lr_flip=False)
+        self.dataset_augment = DetectionDataAugment(is_augment_affine=False)
 
         self.number = 0
         self.drawing = ImageDrawing()

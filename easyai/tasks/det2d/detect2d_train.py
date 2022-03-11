@@ -39,6 +39,9 @@ class Detection2dTrain(CommonTrain):
             lr = lr_scheduler.get_lr(epoch, current_iter)
             lr_scheduler.adjust_learning_rate(self.optimizer, lr)
             if sum([len(x) for x in batch_data['label']]) < 1:  # if no targets continue
+                EasyLogger.warn("Epoch: {}[{}/{}] has not targets".format(epoch,
+                                                                          i,
+                                                                          self.total_batch_data))
                 continue
             loss_info = self.compute_backward(batch_data, i)
             self.update_logger(i, self.total_batch_data, epoch, loss_info)

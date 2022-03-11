@@ -19,9 +19,9 @@ class Det2dReidDatasetCollate(BaseDatasetCollate):
         images = []
         image_path_list = []
         src_size_list = []
-        for i, all_data in enumerate(batch_list):
-            images.append(all_data['image'])
-            labels.append(all_data['label'])
+        for i in range(len(batch_list)):
+            images.append(batch_list[i]['image'])
+            labels.append(batch_list[i]['label'])
             image_path_list.append(batch_list[i]['image_path'])
             src_size_list.append(batch_list[i]['src_size'])
         images = torch.stack(images, 0)

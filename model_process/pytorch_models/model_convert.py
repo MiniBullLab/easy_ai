@@ -12,17 +12,16 @@ def main(cfgPath, modelPath, savePath):
     model_factory = ModelFactory()
     model_config = {"type": "FairMOTNet",
                     "data_channel": 3,
-                    "class_number": 1,
-                    "reid": 64}
+                    "class_number": 1}
     model = model_factory.get_model(model_config)
     model_dict = model.state_dict()
     # obj_text = codecs.open('/home/lpj/Downloads/dict.json', 'r', encoding='utf-8').read()
     # b_new = json.loads(obj_text)
 
-    modelCvt = torch.load('/home/lpj/github/FairMOT/models/fairmot_lite.pth',
+    modelCvt = torch.load('/home/lpj/model_zoom/pytorch_model/yolov5s_v5.pt',
                           map_location='cpu')
     if isinstance(modelCvt, dict):
-        modelCvt = modelCvt['state_dict']
+        modelCvt = modelCvt['model']
     # modelCvt = np.load('/home/lpj/Downloads/obilenetv3_dict.npy', allow_pickle=True)
     vs = []
 
@@ -39,6 +38,8 @@ def main(cfgPath, modelPath, savePath):
         # if "num_batches_tracked" in k_:
         #     continue
         print(k_, v_.shape)
+        if v_.shape != vs[index].shape:
+            break
         if j == len(vs):
             break
         v_.copy_(vs[index])
@@ -51,7 +52,7 @@ def main(cfgPath, modelPath, savePath):
     checkpoint = {'epoch': 0,
                   'best_value': 0,
                   'model': model.state_dict()}
-    torch.save(checkpoint, "/home/lpj/fairmot_person.pt")
+    torch.save(checkpoint, "/home/lpj/yolov5s_v5.pt")
 
     print("End of game!!!")
 

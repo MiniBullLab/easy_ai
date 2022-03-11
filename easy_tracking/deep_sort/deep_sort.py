@@ -5,12 +5,15 @@ from .nn_matching import NearestNeighborDistanceMetric
 from .detection import Detection
 from .tracker import Tracker
 
+from easy_tracking.utility.tracking_registry import REGISTERED_TRACKER
+from easy_tracking.utility.tracking_task_name import MultiTrackerName
 from easyai.helper import TrackObject2d
 
 
 __all__ = ['DeepSort']
 
 
+@REGISTERED_TRACKER.register_module(MultiTrackerName.DeepSort)
 class DeepSort():
 
     def __init__(self, max_dist=0.2, min_confidence=0.3,

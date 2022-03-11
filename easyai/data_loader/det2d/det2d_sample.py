@@ -39,6 +39,17 @@ class DetectionSample(BaseDetectionSample):
         except TypeError as err:
             EasyLogger.error(err)
 
+    def read_tracking_sample(self):
+        try:
+            self.image_and_label_list = self.get_tracking_image_and_label_list(self.train_path)
+            self.sample_count = self.get_sample_count()
+            EasyLogger.warn("%s sample count: %d" % (self.train_path,
+                                                     self.sample_count))
+        except ValueError as err:
+            EasyLogger.error(err)
+        except TypeError as err:
+            EasyLogger.error(err)
+
     def get_sample_boxes(self, label_path):
         result = []
         _, boxes = self.json_process.parse_rect_data(label_path)

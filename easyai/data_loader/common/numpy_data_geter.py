@@ -4,6 +4,7 @@
 
 import cv2
 import numpy as np
+import torch
 from easyai.helper import DirProcess
 from easyai.data_loader.utility.base_data_geter import BaseDataGeter
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
@@ -34,6 +35,19 @@ class NumpyDataGeter(BaseDataGeter):
         torch_image = torch_image.unsqueeze(0)
         return {"src_image": cv_image,
                 "image": torch_image}
+
+    def get_multi(self, numpy_list):
+        torch_image_list = []
+        for numpy_data in numpy_list:
+            _, src_image = self.get_src_image(numpy_data)
+            image = self.dataset_process.resize_image(src_image, self.image_size)
+            torch_image = self.dataset_process.normalize_image(image)
+            if self.transform_func is not None:
+                torch_image = self.transform_func(torch_image)
+            torch_image = torch_image.unsqueeze(0)
+            torch_image_list.append(torch_image)
+        return {"src_image": None,
+                "image": torch.cat(torch_image_list, dim=0)}
 
     def get_src_image(self, numpy_image):
         src_image = None

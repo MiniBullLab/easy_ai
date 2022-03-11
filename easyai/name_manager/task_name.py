@@ -16,7 +16,8 @@ class TaskName():
     Landmark = "landmark"
     Polygon2d_Task = "polygon2d"
     RecognizeText = "recognize_text"
-    DET2D_REID_TASK = "det2d_reid"
+    Det2D_REID_TASK = "det2d_reid"
+    Det2D_Classify_REID_TASK = "det2d_classify_reid"
 
     Det_Pose2d_Task = "det_pose2d"
     Det2d_Seg_Task = "det2d_seg"

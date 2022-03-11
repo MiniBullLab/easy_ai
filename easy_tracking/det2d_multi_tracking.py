@@ -2,30 +2,26 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
 from easyai.utility.logger import EasyLogger
 if EasyLogger.check_init():
     log_file_path = EasyLogger.get_log_file_path("tracking_task.log")
     EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
 import cv2
 from pathlib import Path
-from easy_tracking.reid.det2d_deep_sort import Det2dDeepSort
-from easy_tracking.deep_sort.deep_sort import DeepSort
-from easy_tracking.reid.det2d_fairmot import Det2dFairMOT
-from easy_tracking.fairmot.jde_tracker import JDETracker
-from easyai.helper import DirProcess
-from easyai.helper import VideoProcess
-from easyai.helper.arguments_parse import TaskArgumentsParse
+from easy_tracking.utility.base_tracking_task import BaseTrackingTask
+from easy_tracking.utility.task_arguments_parse import TaskArgumentsParse
 
 
-class MultiDet2dTracking():
+class MultiDet2dTracking(BaseTrackingTask):
 
-    def __init__(self, model_name, gpu_id, weight_path, config_path):
-        self.dir_process = DirProcess()
-        self.video_process = VideoProcess()
-        # self.reid_task = Det2dDeepSort(model_name, gpu_id, weight_path, config_path)
-        # self.multi_tracker = DeepSort()
-        self.reid_task = Det2dFairMOT(model_name, gpu_id, weight_path, config_path)
-        self.multi_tracker = JDETracker()
+    def __init__(self, reid_task_name, tracker_name, gpu_id, config_path):
+        super().__init__(config_path)
+        self.build_reid_task(reid_task_name, gpu_id)
+        self.build_tracker_task(tracker_name)
+
+    def load_weights(self, weights_path):
+        self.reid_task.load_weights(weights_path)
 
     def process(self, input_path, is_show=False):
         if Path(input_path).is_dir():
@@ -42,11 +38,16 @@ class MultiDet2dTracking():
                         break
         elif self.video_process.isVideoFile(input_path):
             if self.video_process.openVideo(input_path):
+                frame_number = 0
                 while True:
                     success, cv_image = self.video_process.read_frame()
+                    if cv_image is None:
+                        break
                     if not success:
                         break
                     result = self.single_image_process(cv_image)
+                    print("frame_number:", frame_number)
+                    frame_number += 1
                     if is_show:
                         if not self.show_result(cv_image, result):
                             break
@@ -85,8 +86,10 @@ class MultiDet2dTracking():
 
 def main():
     EasyLogger.info("tracking process start...")
-    options = TaskArgumentsParse.inference_parse_arguments()
-    multi_tracker_task = MultiDet2dTracking(options.model, 0, options.weights, options.config_path)
+    options = TaskArgumentsParse.multi_tracker_parse_arguments()
+    multi_tracker_task = MultiDet2dTracking(options.reid_name, options.tracker_name,
+                                            0, options.config_path)
+    multi_tracker_task.load_weights(options.weights)
     multi_tracker_task.process(options.inputPath, options.show)
     EasyLogger.info("tracking process end!")
 

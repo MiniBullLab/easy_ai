@@ -8,18 +8,18 @@ from easyai.config.utility.common_train_config import CommonTrainConfig
 from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
 
 
-@REGISTERED_TASK_CONFIG.register_module(TaskName.DET2D_REID_TASK)
+@REGISTERED_TASK_CONFIG.register_module(TaskName.Det2D_REID_TASK)
 class Det2dReidConfig(CommonTrainConfig):
 
     def __init__(self):
-        super().__init__(TaskName.DET2D_REID_TASK)
+        super().__init__(TaskName.Det2D_REID_TASK)
         # data
         self.detect2d_class = None
         self.save_result_name = None
         # test
-        self.save_result_dir = os.path.join(self.root_save_dir, 'reid_results')
+        self.save_result_dir = os.path.join(self.root_save_dir, 'det2d_reid_results')
 
-        self.config_path = os.path.join(self.config_save_dir, "reid_config.json")
+        self.config_path = os.path.join(self.config_save_dir, "det2d_reid_config.json")
 
         self.get_data_default_value()
         self.get_test_default_value()
@@ -62,25 +62,25 @@ class Det2dReidConfig(CommonTrainConfig):
             config_dict['val_data'] = self.val_data
 
     def get_data_default_value(self):
-        self.data = {'image_size': (640, 640),  # W * H
+        self.data = {'image_size': (1088, 608),  # W * H
                      'data_channel': 3,
                      'resize_type': 2,
                      'normalize_type': 1,
                      'mean': (0, 0, 0),
                      'std': (1, 1, 1)}
-        self.detect2d_class = ('car',)
+        self.detect2d_class = ('person',)
 
-        self.post_process = {'type': 'YoloPostProcess',
-                             'threshold': 0.25,
-                             'nms_threshold': 0.45}
+        self.post_process = None
 
         self.model_type = 0
         self.model_config = {'type': 'FairMOTNet',
                              'data_channel': self.data['data_channel'],
                              'class_number': len(self.detect2d_class),
-                             "reid": 64}
+                             "reid": 64,
+                             "max_id": 1506,
+                             "backbone_name": "yolov5s_bockbone"}
 
-        self.save_result_name = "reid_result.txt"
+        self.save_result_name = "det2d_reid_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)
 
     def get_test_default_value(self):
@@ -99,9 +99,9 @@ class Det2dReidConfig(CommonTrainConfig):
         self.val_data['dataloader']['drop_last'] = False
         self.val_data['dataloader']['collate_fn'] = {"type": "Det2dReidDatasetCollate"}
 
-        self.evaluation = {"type": "DetectionMeanAp",
+        self.evaluation = {"type": "ReidDetectionMeanAp",
                            'detect2d_class': self.detect2d_class}
-        self.evaluation_result_name = 'reid_evaluation.txt'
+        self.evaluation_result_name = 'det2d_reid_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
@@ -113,7 +113,7 @@ class Det2dReidConfig(CommonTrainConfig):
         self.train_data['dataset']['is_augment'] = True
 
         self.train_data['dataloader']['type'] = "DataLoader"
-        self.train_data['dataloader']['batch_size'] = 16
+        self.train_data['dataloader']['batch_size'] = 8
         self.train_data['dataloader']['shuffle'] = True
         self.train_data['dataloader']['num_workers'] = 8
         self.train_data['dataloader']['pin_memory'] = True
@@ -121,21 +121,24 @@ class Det2dReidConfig(CommonTrainConfig):
         self.train_data['dataloader']['collate_fn'] = {"type": "Det2dReidDatasetCollate"}
 
         self.is_save_epoch_model = False
-        self.latest_weights_name = 'reid_latest.pt'
-        self.best_weights_name = 'reid_best.pt'
-        self.latest_optimizer_name = "reid_optimizer.pt"
+        self.latest_weights_name = 'det2d_reid_latest.pt'
+        self.best_weights_name = 'det2d_reid_best.pt'
+        self.latest_optimizer_name = "det2d_reid_optimizer.pt"
 
         self.latest_optimizer_path = os.path.join(self.snapshot_dir, self.latest_optimizer_name)
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 300
+        self.max_epochs = 50
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 0.01
+        self.base_lr = 0.001
+        # self.optimizer_config = {0: {'type': 'Adam',
+        #                              'weight_decay': 5e-4}
+        #                          }
         self.optimizer_config = {0: {'type': 'SGD',
                                      'momentum': 0.937,
                                      'weight_decay': 5e-4}

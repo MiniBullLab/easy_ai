@@ -3,9 +3,12 @@ from easy_tracking.fairmot.basetrack import TrackState
 from easy_tracking.fairmot.stracker import STrack
 from easy_tracking.fairmot import matching
 from easy_tracking.fairmot.kalman_filter import KalmanFilter
+from easy_tracking.utility.tracking_registry import REGISTERED_TRACKER
+from easy_tracking.utility.tracking_task_name import MultiTrackerName
 from easyai.helper import TrackObject2d
 
 
+@REGISTERED_TRACKER.register_module(MultiTrackerName.JDETracker)
 class JDETracker():
 
     def __init__(self, track_buffer=30, frame_rate=30, threshold=0.4):

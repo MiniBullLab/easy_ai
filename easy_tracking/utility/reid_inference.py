@@ -2,45 +2,30 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import os
 import abc
-from pathlib import Path
-
 import numpy as np
 import torch
-from easyai.helper.timer_process import TimerProcess
-from easyai.helper import VideoProcess
-from easyai.data_loader.common.images_loader import ImagesLoader
-from easyai.data_loader.common.video_loader import VideoLoader
-from easyai.data_loader.common.text_data_loader import TextDataLoader
 from easyai.data_loader.common.numpy_data_geter import NumpyDataGeter
-from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
+from easyai.helper.timer_process import TimerProcess
 from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
-from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
-from easyai.tasks.utility.base_task import BaseTask
+from easyai.config.utility.config_factory import ConfigFactory
 from easyai.utility.logger import EasyLogger
 
 
-class BaseInference(BaseTask):
+class ReidInference():
 
     def __init__(self, model_name, config_path, task_name):
-        super().__init__(config_path)
-        self.set_task_name(task_name)
-        self.video_process = VideoProcess()
+        self.task_name = task_name
+        self.config_path = config_path
+        self.config_factory = ConfigFactory()
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
-        self.show_factory = TaskShowFactory()
-        self.transform_factory = DataTransformsFactory()
-        self.batch_data_process_factory = BatchDataProcessFactory()
         self.model_name = model_name
         self.model_args = None
         self.model = None
         self.task_config = None
-        self.batch_data_process_func = None
         self.src_size = (0, 0)
-        self.result_show = self.show_factory.get_task_show(self.task_name)
         self.set_task_config(config_path)
 
     def set_task_config(self, config=None):
@@ -104,40 +89,11 @@ class BaseInference(BaseTask):
         self.model = self.torchModelProcess.model_test_init(self.model)
         self.model.eval()
 
-    def get_image_data_lodaer(self, input_path):
-        if not os.path.exists(input_path):
-            return None
-        EasyLogger.debug(self.task_config.data)
-        image_size = tuple(self.task_config.data['image_size'])
-        data_channel = self.task_config.data['data_channel']
-        mean = self.task_config.data.get('mean', 1)
-        std = self.task_config.data.get('std', 0)
-        resize_type = self.task_config.data['resize_type']
-        normalize_type = self.task_config.data['normalize_type']
-        transform_args = self.task_config.data.get('transform_func', None)
-        transform_func = self.transform_factory.get_data_transform(transform_args)
-        if Path(input_path).is_dir():
-            dataloader = ImagesLoader(input_path, image_size, data_channel,
-                                      resize_type, normalize_type, mean, std,
-                                      transform_func)
-        elif Path(input_path).suffix in ['.txt', '.text']:
-            dataloader = TextDataLoader(input_path, image_size, data_channel,
-                                        resize_type, normalize_type, mean, std,
-                                        transform_func)
-        elif self.video_process.isVideoFile(input_path):
-            dataloader = VideoLoader(input_path, image_size, data_channel,
-                                     resize_type, normalize_type, mean, std,
-                                     transform_func)
-        else:
-            EasyLogger.debug("%s: input path not support!" % input_path)
-            return None
-        self.batch_data_process_func = \
-            self.batch_data_process_factory.build_process(self.task_config.batch_data_process)
-        EasyLogger.debug("data count: %d" % len(dataloader))
-        return dataloader
+    def set_task_name(self, task_name):
+        self.task_name = task_name
 
-    def get_point_cloud_data_lodaer(self, input_path):
-        pass
+    def get_task_name(self):
+        return self.task_name
 
     def get_single_image_data(self, input_param):
         EasyLogger.debug(self.task_config.data)
@@ -147,31 +103,14 @@ class BaseInference(BaseTask):
         std = self.task_config.data.get('std', 0)
         resize_type = self.task_config.data['resize_type']
         normalize_type = self.task_config.data['normalize_type']
-        transform_args = self.task_config.data.get('transform_func', None)
-        transform_func = self.transform_factory.get_data_transform(transform_args)
         if isinstance(input_param, np.ndarray):
             data_geter = NumpyDataGeter(image_size, data_channel,
-                                        resize_type, normalize_type, mean, std,
-                                        transform_func)
+                                        resize_type, normalize_type, mean, std)
             input_data = data_geter.get(input_param)
-            return input_data
-        elif isinstance(input_param, list):
-            data_geter = NumpyDataGeter(image_size, data_channel,
-                                        resize_type, normalize_type, mean, std,
-                                        transform_func)
-            input_data = data_geter.get_multi(input_param)
             return input_data
         else:
             EasyLogger.debug("input path not support!")
             return None
-
-    def batch_processing(self, batch_data):
-        if self.batch_data_process_func is not None:
-            self.batch_data_process_func(batch_data)
-
-    def set_src_size(self, src_data):
-        shape = src_data.shape[:2]  # shape = [height, width]
-        self.src_size = (shape[1], shape[0])
 
     def common_output(self, output_list):
         output = None
@@ -191,22 +130,9 @@ class BaseInference(BaseTask):
             EasyLogger.error("compute prediction error")
         return output
 
-    def gan_output(self, output_list):
-        output = None
-        loss_count = len(self.model.g_loss_list)
-        output_count = len(output_list)
-        if loss_count == 1 and output_count == 1:
-            output = self.model.g_loss_list[0](output_list[0])
-        elif loss_count == 1 and output_count > 1:
-            output = self.model.g_loss_list[0](output_list)
-        elif loss_count > 1 and loss_count == output_count:
-            output = []
-            for k in range(0, loss_count):
-                result = self.model.g_loss_list[k](output_list[k])
-                output.append(result)
-        else:
-            EasyLogger.error("compute generator prediction error")
-        return output
+    def set_src_size(self, src_data):
+        shape = src_data.shape[:2]  # shape = [height, width]
+        self.src_size = (shape[1], shape[0])
 
     @property
     def device(self):

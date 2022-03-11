@@ -15,3 +15,4 @@ class EvaluationName():
     SegmentionMetric = "SegmentionMetric"
     SuperResolutionPSNR = "SuperResolutionPSNR"
     OCRDetectionMetric = "OCRDetectionMetric"
+    ReidDetectionMeanAp = "ReidDetectionMeanAp"

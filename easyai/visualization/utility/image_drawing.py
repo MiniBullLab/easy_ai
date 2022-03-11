@@ -37,6 +37,15 @@ class ImageDrawing():
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(src_image, object.name, point1, font, 0.5, (0, 0, 255), 1)
 
+    def draw_tracking_objects(self, src_image, result_objects):
+        for temp_object in result_objects:
+            point1 = (int(temp_object.min_corner.x), int(temp_object.min_corner.y))
+            point2 = (int(temp_object.max_corner.x), int(temp_object.max_corner.y))
+            cv2.rectangle(src_image, point1, point2, (0, 0, 255), 2)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            show_str = "%s %d" % (temp_object.name, temp_object.objectId)
+            cv2.putText(src_image, show_str, point1, font, 0.5, (0, 0, 255), 1)
+
     def draw_segment_result(self, src_image, result, class_list):
         r = result.copy()
         g = result.copy()

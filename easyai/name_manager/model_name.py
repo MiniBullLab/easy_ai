@@ -73,6 +73,7 @@ class ModelName():
 
     # reid
     FairMOTNet = "FairMOTNet"
+    FairMOTNetV2 = "FairMOTNetV2"
     DeepSortNet = "DeepSortNet"
 
     # multi

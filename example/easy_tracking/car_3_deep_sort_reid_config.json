@@ -1,0 +1,414 @@
+{
+    "classify": {
+        "accumulated_batches": 1,
+        "amp_config": {
+            "enable_amp": false,
+            "keep_batchnorm_fp32": true,
+            "opt_level": "O1"
+        },
+        "base_lr": 0.1,
+        "best_weights_name": "cls_best.pt",
+        "class_name": [
+            "cls1",
+            "cls2",
+            "cls3",
+            "cls4",
+            "cls5",
+            "cls6",
+            "cls7",
+            "cls8",
+            "cls9",
+            "cls10",
+            "cls11",
+            "cls12",
+            "cls13",
+            "cls14",
+            "cls15",
+            "cls16",
+            "cls17",
+            "cls18",
+            "cls19",
+            "cls20",
+            "cls21",
+            "cls22",
+            "cls23",
+            "cls24",
+            "cls25",
+            "cls26",
+            "cls27",
+            "cls28",
+            "cls29",
+            "cls30",
+            "cls31",
+            "cls32",
+            "cls33",
+            "cls34",
+            "cls35",
+            "cls36",
+            "cls37",
+            "cls38",
+            "cls39",
+            "cls40",
+            "cls41",
+            "cls42",
+            "cls43",
+            "cls44",
+            "cls45",
+            "cls46",
+            "cls47",
+            "cls48",
+            "cls49",
+            "cls50",
+            "cls51",
+            "cls52",
+            "cls53",
+            "cls54",
+            "cls55",
+            "cls56",
+            "cls57",
+            "cls58",
+            "cls59",
+            "cls60",
+            "cls61",
+            "cls62",
+            "cls63",
+            "cls64",
+            "cls65",
+            "cls66",
+            "cls67",
+            "cls68",
+            "cls69",
+            "cls70",
+            "cls71",
+            "cls72",
+            "cls73",
+            "cls74",
+            "cls75",
+            "cls76",
+            "cls77",
+            "cls78",
+            "cls79",
+            "cls80",
+            "cls81",
+            "cls82",
+            "cls83",
+            "cls84",
+            "cls85",
+            "cls86",
+            "cls87",
+            "cls88",
+            "cls89",
+            "cls90",
+            "cls91",
+            "cls92",
+            "cls93",
+            "cls94",
+            "cls95",
+            "cls96",
+            "cls97",
+            "cls98",
+            "cls99",
+            "cls100"
+        ],
+        "clip_grad_config": {
+            "enable_clip": false,
+            "max_norm": 20
+        },
+        "data": {
+            "data_channel": 3,
+            "image_size": [
+                64,
+                128
+            ],
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "normalize_type": -1,
+            "resize_type": 1,
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ]
+        },
+        "display": 20,
+        "evaluation": {
+            "top_k": [
+                1
+            ],
+            "type": "ClassifyAccuracy"
+        },
+        "freeze_bn_layer_name": "route_0",
+        "freeze_bn_type": 0,
+        "freeze_layer_name": "route_0",
+        "freeze_layer_type": 0,
+        "is_save_epoch_model": false,
+        "latest_optimizer_name": "cls_optimizer.pt",
+        "latest_weights_name": "cls_latest.pt",
+        "lr_scheduler_config": {
+            "lr_stages": [
+                [
+                    60,
+                    1
+                ],
+                [
+                    120,
+                    0.2
+                ],
+                [
+                    160,
+                    0.04
+                ],
+                [
+                    200,
+                    0.008
+                ]
+            ],
+            "type": "MultiStageLR",
+            "warmup_iters": 5,
+            "warmup_type": 2
+        },
+        "max_epochs": 200,
+        "model_config": {
+            "class_number": 751,
+            "data_channel": 3,
+            "reid": 512,
+            "type": "DeepSortNet"
+        },
+        "model_type": 0,
+        "optimizer_config": {
+            "0": {
+                "momentum": 0.9,
+                "type": "SGD",
+                "weight_decay": 0.0005
+            }
+        },
+        "post_process": {
+            "type": "MaxPostProcess"
+        },
+        "train_data": {
+            "dataloader": {
+                "batch_size": 16,
+                "collate_fn": {
+                    "type": "ClassifyDataSetCollate"
+                },
+                "drop_last": true,
+                "num_workers": 8,
+                "shuffle": true,
+                "type": "DataLoader"
+            },
+            "dataset": {
+                "data_channel": 3,
+                "image_size": [
+                    224,
+                    224
+                ],
+                "is_augment": true,
+                "mean": [
+                    0.5070751592371323,
+                    0.48654887331495095,
+                    0.4409178433670343
+                ],
+                "normalize_type": -1,
+                "resize_type": 1,
+                "std": [
+                    0.2666410733740041,
+                    0.2666410733740041,
+                    0.2666410733740041
+                ],
+                "type": "ClassifyDataSet"
+            }
+        },
+        "val_data": {
+            "dataloader": {
+                "batch_size": 1,
+                "collate_fn": {
+                    "type": "ClassifyDataSetCollate"
+                },
+                "drop_last": false,
+                "num_workers": 8,
+                "shuffle": false,
+                "type": "DataLoader"
+            },
+            "dataset": {
+                "data_channel": 3,
+                "image_size": [
+                    224,
+                    224
+                ],
+                "is_augment": false,
+                "mean": [
+                    0.5070751592371323,
+                    0.48654887331495095,
+                    0.4409178433670343
+                ],
+                "normalize_type": -1,
+                "resize_type": 1,
+                "std": [
+                    0.2666410733740041,
+                    0.2666410733740041,
+                    0.2666410733740041
+                ],
+                "type": "ClassifyDataSet"
+            }
+        }
+    },
+    "det2d": {
+        "accumulated_batches": 1,
+        "amp_config": {
+            "enable_amp": false,
+            "keep_batchnorm_fp32": true,
+            "opt_level": "O1"
+        },
+        "base_lr": 0.01,
+        "best_weights_name": "det2d_best.pt",
+        "clip_grad_config": {
+            "enable_clip": false,
+            "max_norm": 20
+        },
+        "data": {
+            "data_channel": 3,
+            "image_size": [
+                640,
+                640
+            ],
+            "mean": [
+                0,
+                0,
+                0
+            ],
+            "normalize_type": 1,
+            "resize_type": 2,
+            "std": [
+                1,
+                1,
+                1
+            ]
+        },
+        "detect2d_class": [
+            "car",
+            "truck",
+            "bus"
+        ],
+        "display": 20,
+        "evaluation": {
+            "detect2d_class": [
+                "car",
+                "truck",
+                "bus"
+            ],
+            "type": "DetectionMeanAp"
+        },
+        "freeze_bn_layer_name": "route_0",
+        "freeze_bn_type": 0,
+        "freeze_layer_name": "baseNet_0",
+        "freeze_layer_type": 0,
+        "is_save_epoch_model": false,
+        "latest_optimizer_name": "det2d_optimizer.pt",
+        "latest_weights_name": "det2d_latest.pt",
+        "lr_scheduler_config": {
+            "type": "CosineLR",
+            "warmup_iters": 3,
+            "warmup_type": 2
+        },
+        "max_epochs": 300,
+        "model_config": {
+            "class_number": 3,
+            "data_channel": 3,
+            "type": "yolov5s"
+        },
+        "model_type": 0,
+        "optimizer_config": {
+            "0": {
+                "momentum": 0.937,
+                "type": "SGD",
+                "weight_decay": 0.0005
+            }
+        },
+        "post_process": {
+            "nms_threshold": 0.45,
+            "threshold": 0.25,
+            "type": "YoloPostProcess"
+        },
+        "train_data": {
+            "dataloader": {
+                "batch_size": 16,
+                "collate_fn": {
+                    "type": "MosaicDataSetCollate"
+                },
+                "drop_last": false,
+                "num_workers": 8,
+                "pin_memory": true,
+                "shuffle": true,
+                "type": "DataLoader"
+            },
+            "dataset": {
+                "data_channel": 3,
+                "detect2d_class": [
+                    "car",
+                    "truck",
+                    "bus"
+                ],
+                "image_size": [
+                    640,
+                    640
+                ],
+                "is_augment": true,
+                "mean": [
+                    0,
+                    0,
+                    0
+                ],
+                "normalize_type": 1,
+                "resize_type": 2,
+                "std": [
+                    1,
+                    1,
+                    1
+                ],
+                "type": "MosaicDet2dDataset"
+            }
+        },
+        "val_data": {
+            "dataloader": {
+                "batch_size": 1,
+                "collate_fn": {
+                    "type": "MosaicDataSetCollate"
+                },
+                "drop_last": false,
+                "num_workers": 8,
+                "pin_memory": true,
+                "shuffle": false,
+                "type": "DataLoader"
+            },
+            "dataset": {
+                "data_channel": 3,
+                "detect2d_class": [
+                    "car",
+                    "truck",
+                    "bus"
+                ],
+                "image_size": [
+                    640,
+                    640
+                ],
+                "is_augment": false,
+                "mean": [
+                    0,
+                    0,
+                    0
+                ],
+                "normalize_type": 1,
+                "resize_type": 2,
+                "std": [
+                    1,
+                    1,
+                    1
+                ],
+                "type": "MosaicDet2dDataset"
+            }
+        }
+    }
+}

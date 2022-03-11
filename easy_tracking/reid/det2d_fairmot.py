@@ -2,67 +2,78 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os
 import torch
-from easyai.name_manager.task_name import TaskName
-from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.config.utility.base_config import BaseConfig
-from easyai.config.utility.config_factory import ConfigFactory
-from easyai.data_loader.common.numpy_data_geter import NumpyDataGeter
 from easy_tracking.fairmot.fairmot_post_process import FairMOTPostProcess
-from easyai.utility.logger import EasyLogger
+from easy_tracking.utility.reid_inference import ReidInference
+from easy_tracking.utility.tracking_registry import REGISTERED_REID
+from easyai.name_manager.task_name import TaskName
 
 
-class Det2dFairMOT():
+@REGISTERED_REID.register_module(TaskName.Det2D_REID_TASK)
+class Det2dFairMOT(ReidInference):
 
-    def __init__(self, model_name, gpu_id, weights_path, config_path):
-        self.config_factory = ConfigFactory()
-        self.config_path = config_path
-        self.task_config = None
-        self.model_args = {"type": model_name[0],
-                           "data_channel": 3,
-                           "class_number": 1,
-                           "reid": 64}
-        self.model_process = TorchModelProcess()
-        self.model = self.model_process.create_model(self.model_args, gpu_id)
-        self.model_process.load_latest_model(weights_path[0], self.model)
-        self.model = self.model_process.model_test_init(self.model)
-        self.model.eval()
-        self.device = self.model_process.get_device()
+    def __init__(self, model_name, gpu_id, config_path=None):
+        super().__init__(model_name, config_path, TaskName.Det2D_REID_TASK)
+        self.set_model_param(data_channel=self.task_config.data['data_channel'],
+                             class_number=len(self.task_config.detect2d_class))
+        self.set_model(gpu_id=gpu_id)
+        self.post_process = FairMOTPostProcess(self.task_config.data['image_size'],
+                                               self.task_config.detect2d_class)
 
-        self.image_size = (1088, 608)
-        self.data_geter = NumpyDataGeter(self.image_size, 3, 2, 1,)
-
-        self.post_process = FairMOTPostProcess(self.image_size, 1)
-
-    def process(self, src_image):
-        input_data = self.data_geter.get(src_image)
-        with torch.no_grad():
-            img_batch = input_data['image'].to(self.device)
-            shape = input_data['src_image'].shape[:2]  # shape = [height, width]
-            src_size = (shape[1], shape[0])
-            output_list = self.model(img_batch)
-            result = self.post_process(output_list, src_size)
+    def process(self, src_image, data_type=1, is_show=False):
+        input_data = self.get_single_image_data(src_image)
+        result, _ = self.single_image_process(input_data)
         return result
 
-    def set_task_config(self, config=None):
-        if config is None:
-            self.task_config = self.config_factory.get_config(TaskName.DET2D_REID_TASK,
-                                                              self.config_path)
-            self.task_config.save_config()
-        elif isinstance(config, str):
-            self.task_config = self.config_factory.get_config(TaskName.DET2D_REID_TASK,
-                                                              self.config_path)
-            self.task_config.save_config()
-        elif isinstance(config, BaseConfig):
-            self.config_path = None
-            self.task_config = config
-        assert self.task_config is not None, \
-            EasyLogger.error("create config fail! {}".format(config))
+    def single_image_process(self, input_data):
+        if input_data.get('src_size', None) is not None:
+            self.src_size = input_data['src_size'][0].numpy()
+        elif input_data.get('src_image', None) is not None:
+            self.set_src_size(input_data['src_image'])
+        prediction, model_output = self.infer(input_data)
+        result = self.post_process(prediction, self.src_size)
+        return result, model_output
 
-    def set_model(self, my_model=None, gpu_id=0):
-        if my_model is None:
-            self.model = self.model_process.create_model(self.model_args, gpu_id)
-        elif isinstance(my_model, torch.nn.Module):
-            self.model = my_model
-            self.model.eval()
-        assert self.model is not None, EasyLogger.error("create model fail!")
+    def infer(self, input_data, net_type=0):
+        with torch.no_grad():
+            image_data = input_data['image'].to(self.device)
+            output_list = self.model(image_data)
+            output = self.common_output(output_list)
+        return output, output_list
+
+    def save_result(self, file_path, detection_objects, flag=0):
+        path, filename_post = os.path.split(file_path)
+        temp_path1, image_dir = os.path.split(path)
+        temp_path2, video_dir = os.path.split(temp_path1)
+        save_str = os.path.join(video_dir, image_dir, filename_post)
+        if flag == 0:
+            save_data = save_str + "|"
+            for temp_object in detection_objects:
+                confidence = temp_object.classConfidence
+                x1 = temp_object.min_corner.x
+                y1 = temp_object.min_corner.y
+                x2 = temp_object.max_corner.x
+                y2 = temp_object.max_corner.y
+                save_data = save_data + "{} {} {} {} {} {}|".format(temp_object.name,
+                                                                    confidence,
+                                                                    x1, y1, x2, y2)
+            save_data += "\n"
+            with open(self.task_config.save_result_path, 'a') as file:
+                file.write(save_data)
+        elif flag == 1:
+            if self.task_config.save_result_dir is not None and \
+                    not os.path.exists(self.task_config.save_result_dir):
+                os.makedirs(self.task_config.save_result_dir, exist_ok=True)
+            for temp_object in detection_objects:
+                confidence = temp_object.classConfidence
+                x1 = temp_object.min_corner.x
+                y1 = temp_object.min_corner.y
+                x2 = temp_object.max_corner.x
+                y2 = temp_object.max_corner.y
+                temp_save_path = os.path.join(self.task_config.save_result_dir, "%s.txt" % temp_object.name)
+                with open(temp_save_path, 'a') as file:
+                    file.write("{} {} {} {} {} {}\n".format(save_str, confidence, x1, y1, x2, y2))
+
+
+

@@ -5,3 +5,5 @@ from . import keypoint2d
 from . import one_class
 from . import ocr
 from . import sr
+from . import reid
+

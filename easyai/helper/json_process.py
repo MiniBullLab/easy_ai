@@ -28,7 +28,7 @@ class JsonProcess():
         rect_objects_list = objects_dict['rectObject']
         boxes = []
         for rect_dict in rect_objects_list:
-            id = rect_dict.get("id", -1)
+            id = int(rect_dict.get("id", -1))
             class_name = rect_dict['class']
             xmin = rect_dict['minX']
             ymin = rect_dict['minY']
