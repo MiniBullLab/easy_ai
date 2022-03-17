@@ -62,13 +62,13 @@ class Det2dReidConfig(CommonTrainConfig):
             config_dict['val_data'] = self.val_data
 
     def get_data_default_value(self):
-        self.data = {'image_size': (1088, 608),  # W * H
+        self.data = {'image_size': (640, 640),  # W * H
                      'data_channel': 3,
                      'resize_type': 2,
                      'normalize_type': 1,
                      'mean': (0, 0, 0),
                      'std': (1, 1, 1)}
-        self.detect2d_class = ('person',)
+        self.detect2d_class = ('car',)
 
         self.post_process = None
 
@@ -77,8 +77,8 @@ class Det2dReidConfig(CommonTrainConfig):
                              'data_channel': self.data['data_channel'],
                              'class_number': len(self.detect2d_class),
                              "reid": 64,
-                             "max_id": 1506,
-                             "backbone_name": "yolov5s_bockbone"}
+                             "max_id": 5984,
+                             "backbone_name": "yolov5s_old_bockbone"}
 
         self.save_result_name = "det2d_reid_result.txt"
         self.save_result_path = os.path.join(self.root_save_dir, self.save_result_name)

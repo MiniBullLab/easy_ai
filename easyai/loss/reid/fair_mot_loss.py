@@ -162,7 +162,7 @@ class FairMotLoss(BaseLoss):
             self.loss_info['off_loss'] = off_loss.item()
             self.loss_info['id_loss'] = id_loss.item()
 
-            return loss.mean()
+            return loss
 
     def _neg_loss(self, pred, gt):
         ''' Modified focal loss. Exactly the same as CornerNet.

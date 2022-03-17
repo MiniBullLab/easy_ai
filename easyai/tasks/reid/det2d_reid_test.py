@@ -36,8 +36,8 @@ class Det2dReidTest(BaseTest):
         os.makedirs(self.test_task_config.save_result_dir, exist_ok=True)
         for i, batch_data in enumerate(self.dataloader):
             result, output_list = self.inference.single_image_process(batch_data)
-            with torch.no_grad():
-                loss_value = self.compute_loss(output_list, batch_data)
+            # loss_value = self.compute_loss(output_list, batch_data)
+            loss_value = -1
             self.metirc_loss(i, loss_value)
             self.print_test_info(i, loss_value)
             self.inference.save_result(batch_data['image_path'][0], result, 1)
