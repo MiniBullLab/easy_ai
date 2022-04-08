@@ -5,27 +5,3 @@ services:
       build:
         context: ./pytorch
       tty: true
-    base:
-      build:
-        context: ./base
-      tty: true
-    runtime_lib:
-      build:
-        context: ./runtime_lib
-      tty: true
-    workspace_base:
-      build:
-        context: ./workspace_base
-      tty: true
-    workspace_lib:
-      build:
-        context: ./workspace_lib
-      tty: true
-    runtime:
-      build:
-        context: ./runtime
-      tty: true
-    workspace:
-      build:
-        context: ./workspace
-      tty: true

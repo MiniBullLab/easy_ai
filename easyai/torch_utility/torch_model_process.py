@@ -8,7 +8,7 @@ import re
 import torch
 from collections import OrderedDict
 from easyai.torch_utility.torch_device_process import TorchDeviceProcess
-from easyai.model.utility.model_factory import ModelFactory, ModelWeightInit
+from easyai.model.utility.mode_weight_init import ModelWeightInit
 from easyai.utility.logger import EasyLogger
 
 
@@ -16,17 +16,17 @@ class TorchModelProcess():
 
     def __init__(self):
         self.torchDeviceProcess = TorchDeviceProcess()
-        self.modelFactory = ModelFactory()
         self.model_weight_init = ModelWeightInit()
 
         self.torchDeviceProcess.initTorch()
         self.best_value = -1
         self.is_multi_gpu = False
 
-    def create_model(self, model_config, gpu_id, is_multi_gpu=False):
+    def create_model(self, model_config, model_factory,
+                     gpu_id, is_multi_gpu=False):
         self.is_multi_gpu = is_multi_gpu
         self.torchDeviceProcess.setGpuId(gpu_id)
-        model = self.modelFactory.get_model(model_config)
+        model = model_factory.get_model(model_config)
         return model
 
     def init_model(self, model, init_type):

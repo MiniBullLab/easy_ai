@@ -14,12 +14,9 @@ class ClassifySample(BaseClassifySample):
         self.data_and_label_list = []
         self.sample_count = 0
 
-    def read_sample(self, flag):
+    def read_sample(self):
         try:
-            if flag == 0:
-                self.data_and_label_list = self.get_image_and_label_list(self.train_path)
-            elif flag == 1:
-                self.data_and_label_list = self.get_pointcloud_and_label_list(self.train_path)
+            self.data_and_label_list = self.get_image_and_label_list(self.train_path)
             self.sample_count = self.get_sample_count()
             EasyLogger.warn("%s sample count: %d" % (self.train_path,
                                                      self.sample_count))

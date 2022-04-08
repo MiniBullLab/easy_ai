@@ -15,6 +15,7 @@ from easyai.data_loader.common.video_loader import VideoLoader
 from easyai.data_loader.common.text_data_loader import TextDataLoader
 from easyai.data_loader.common.numpy_data_geter import NumpyDataGeter
 from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
+from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
@@ -78,7 +79,10 @@ class BaseInference(BaseTask):
 
     def set_model(self, my_model=None, gpu_id=0):
         if my_model is None:
-            self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+            model_factory = ModelFactory()
+            self.model = self.torchModelProcess.create_model(self.model_args,
+                                                             model_factory,
+                                                             gpu_id)
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.model.eval()

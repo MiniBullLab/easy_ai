@@ -6,7 +6,6 @@ from easyai.name_manager.block_name import ActivationType, NormalizationType
 from easyai.name_manager.block_name import LayerType, BlockType
 from easyai.model_block.base_block.common.activation_function import ActivationFunction
 from easyai.model_block.base_block.common.normalization_layer import NormalizationFunction
-from easyai.model_block.base_block.common.pooling_layer import MyAvgPool2d
 from easyai.model_block.utility.base_block import *
 
 

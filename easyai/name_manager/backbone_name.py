@@ -139,11 +139,4 @@ class GanBaseModelName():
     GANomalyGenerator = "ganomaly_generator"
 
 
-class PointCloudBackboneName():
-
-    # pc
-    PointNet = "pointnet"
-    PointNetV2 = "pointnetv2"
-    PointNet2 = "pointnet2"
-
 

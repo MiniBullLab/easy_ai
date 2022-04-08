@@ -39,12 +39,12 @@ class YoloPostProcess(BasePostProcess):
         prediction[:, :4] = box2d_xywh2xyxy(prediction[:, :4])
         for index, value in enumerate(prediction):
             temp_object = DetectionObject()
-            temp_object.min_corner.x = value[0]
-            temp_object.min_corner.y = value[1]
-            temp_object.max_corner.x = value[2]
-            temp_object.max_corner.y = value[3]
-            temp_object.objectConfidence = value[4]
-            temp_object.classConfidence = class_confidence[index]
-            temp_object.classIndex = class_index[index]
+            temp_object.min_corner.x = value[0].item()
+            temp_object.min_corner.y = value[1].item()
+            temp_object.max_corner.x = value[2].item()
+            temp_object.max_corner.y = value[3].item()
+            temp_object.objectConfidence = value[4].item()
+            temp_object.classConfidence = class_confidence[index].item()
+            temp_object.classIndex = class_index[index].item()
             result.append(temp_object)
         return result

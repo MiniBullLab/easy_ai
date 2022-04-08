@@ -15,8 +15,6 @@ from . import ocr_config
 from . import det2d_reid_config
 from . import det2d_classify_reid_config
 
-from . import pc_classify_config
-
 
 
 

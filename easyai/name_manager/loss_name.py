@@ -30,7 +30,7 @@ class LossName():
     FastRCNNLoss = "FastRCNNLoss"
     YoloV5Loss = "YoloV5Loss"
 
-    # det3d
+    # pc_det3d
 
     # seg
     EncNetLoss = "encNetLoss"
@@ -64,6 +64,3 @@ class LossName():
     # reid
     FairMotLoss = "FairMotLoss"
 
-    # pc
-    PointNetClsLoss = "pointClsNetLoss"
-    PointNetSegLoss = "pointSegNetLoss"

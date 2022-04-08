@@ -21,8 +21,6 @@ class DatasetName():
     DetOCRDataSet = "DetOCRDataSet"
     Det2dReidDataset = "Det2dReidDataset"
 
-    ClassifyPointCloudDataSet = "ClassifyPointCloudDataSet"
-
 
 class DatasetCollateName():
 
@@ -36,8 +34,6 @@ class DatasetCollateName():
     SegmentDataSetCollate = "SegmentDataSetCollate"
     DetOCRDataSetCollate = "DetOCRDataSetCollate"
     Det2dReidDatasetCollate = "Det2dReidDatasetCollate"
-
-    ClassifyPointCloudDataSetCollate = "ClassifyPointCloudDataSetCollate"
 
 
 class DataloaderName():

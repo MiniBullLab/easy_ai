@@ -1,6 +1,5 @@
 from . import cls
 from . import det2d
-from . import det3d
 from . import keypoint2d
 from . import pose2d
 from . import seg
@@ -14,7 +13,6 @@ from . import ocr
 from . import reid
 from . import multi_task
 
-from . import pc_cls
 
 
 

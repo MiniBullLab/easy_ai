@@ -23,4 +23,3 @@ class TaskName():
     Det2d_Seg_Task = "det2d_seg"
     OCR_Task = "ocr"
 
-    PC_Classify_Task = "pc_classify"

@@ -12,7 +12,6 @@ from easyai.loss.utility.loss_registry import REGISTERED_GAN_G_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_KEYPOINT2D_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_RNN_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_REID_LOSS
-from easyai.loss.utility.loss_registry import REGISTERED_PC_LOSS
 from easyai.utility.registry import build_from_cfg
 from easyai.utility.logger import EasyLogger
 
@@ -40,12 +39,10 @@ class LossFactory():
             result = self.get_rnn_loss(loss_args)
         elif REGISTERED_REID_LOSS.has_class(input_name):
             result = self.get_reid_loss(loss_args)
-        elif REGISTERED_PC_LOSS.has_class(input_name):
-            result = self.get_pc_loss(loss_args)
         else:
             result = self.get_gan_loss(loss_args)
         if result is None:
-            print("loss:%s error" % input_name)
+            EasyLogger.error("loss:%s error" % input_name)
         return result
 
     def has_loss(self, key):
@@ -83,10 +80,6 @@ class LossFactory():
                 return True
 
         for loss_name in REGISTERED_REID_LOSS.get_keys():
-            if loss_name in key:
-                return True
-
-        for loss_name in REGISTERED_PC_LOSS.get_keys():
             if loss_name in key:
                 return True
 
@@ -304,11 +297,5 @@ class LossFactory():
         loss = build_from_cfg(loss_config, REGISTERED_REID_LOSS)
         return loss
 
-    def get_pc_loss(self, loss_config):
-        input_name = loss_config['type'].strip()
-        if input_name == LossName.PointNetClsLoss:
-            loss_config['flag'] = bool(loss_config['flag'])
-        loss = build_from_cfg(loss_config, REGISTERED_PC_LOSS)
-        return loss
 
 

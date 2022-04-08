@@ -4,7 +4,6 @@
 
 import traceback
 from easyai.utility.logger import EasyLogger
-import os.path
 from easyai.model_block.utility.block_registry import REGISTERED_MODEL_HEAD
 from easyai.utility.registry import build_from_cfg
 

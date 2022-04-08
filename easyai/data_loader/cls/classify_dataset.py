@@ -20,7 +20,7 @@ class ClassifyDataSet(TorchDataLoader):
         self.image_size = tuple(image_size)
         self.is_augment = is_augment
         self.classify_sample = ClassifySample(data_path)
-        self.classify_sample.read_sample(flag=0)
+        self.classify_sample.read_sample()
         self.dataset_process = ClassifyDatasetProcess(resize_type, normalize_type,
                                                       mean, std,
                                                       pad_color=self.get_pad_color())
