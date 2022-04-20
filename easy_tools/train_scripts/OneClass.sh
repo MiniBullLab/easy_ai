@@ -10,12 +10,14 @@ function run_onnx_convert() {
     outNetName=OneClassNet
 
     inputColorFormat=1
-    outputShape=1,3,128,128
+    outputShape=1,3,144,144
     outputLayerName="o:one_class_output|ot:0,1,2,3|odf:fp32"
     inputDataFormat=0,0,0,0
 
     mean=123.675,116.28,103.53
     scale=57.63
+    #mean=0.0
+    #scale=255.0
 
     rm -rf $outDir
     mkdir $outDir
@@ -47,7 +49,8 @@ function run_onnx_convert() {
                     -is $outputShape \
                     -im $mean -ic $scale \
                     -iq -idf $inputDataFormat \
-                    -odst $outputLayerName
+                    -odst $outputLayerName \
+                    -c act-allow-fp16,coeff-force-fx16
 
     cd $outDir/out_parser;vas -auto -show-progress $outNetName.vas
 
