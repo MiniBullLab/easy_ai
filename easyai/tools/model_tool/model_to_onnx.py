@@ -46,11 +46,17 @@ class ModelConverter():
 
 def main(options_param):
     config_factory = ConfigFactory()
-    task_config = config_factory.get_config(options_param.task_name, config_path=None)
-    converter = ModelConverter(task_config.image_size)
+    task_config = config_factory.get_config(options_param.task_name, config_path=options_param.config_path)
+
+    converter = ModelConverter(task_config.data["image_size"])
     if options_param.model is not None:
-        model_config = {"type": options_param.model,
-                        "data_channel": 3}
+        if options_param.config_path is not None:
+            model_config = {"type": options_param.model,
+                            "data_channel": 3,
+                            "class_number": len(task_config.class_name)}
+        else:
+            model_config = {"type": options_param.model,
+                            "data_channel": 3}
         converter.model_convert(model_config, options_param.weight_path, options_param.save_dir)
     elif options_param.backbone is not None:
         model_config = {"type": options_param.backbone,

@@ -391,6 +391,10 @@ class ToolArgumentsParse():
                           metavar="PATH", type="string", default=None,
                           help="path to store weights")
 
+        parser.add_option("-c", "--config", dest="config_path",
+                          metavar="PATH", type="string", default=None,
+                          help="config path")
+
         parser.add_option("-d", "--save_dir", dest="save_dir",
                           metavar="PATH", type="string", default=".",
                           help="save onnx dir")
