@@ -87,8 +87,8 @@ class ClassifyAccuracy(BaseEvaluation):
     def print_evaluation(self):
         if max(self.param_top) > 1:
             EasyLogger.info('prec{}: {:.3f} \t prec{}: {:.3f}\t'.format(self.param_top[0],
-                                                                        self.param_top[1],
                                                                         self.top1.avg,
+                                                                        self.param_top[1],
                                                                         self.topK.avg))
         else:
             EasyLogger.info('prec1: {:.3f} \t'.format(self.top1.avg))

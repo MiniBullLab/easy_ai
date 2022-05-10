@@ -1,0 +1,24 @@
+{
+    "input_layer": "cls_input",
+    "objects_name": [
+        "bluebell",
+        "buttercup",
+        "coltsfoot",
+        "cowslip",
+        "crocus",
+        "daffodil",
+        "daisy",
+        "dandelion",
+        "fritillary",
+        "iris",
+        "lilyvalley",
+        "pansy",
+        "snowdrop",
+        "sunflower",
+        "tigerlily",
+        "tulip",
+        "windflower"
+    ],
+    "output_layer": "cls_output",
+    "threshold": 0.3
+}
