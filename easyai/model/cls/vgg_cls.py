@@ -29,7 +29,7 @@ class VggNetCls(BaseClassifyModel):
     def create_block_list(self):
         self.clear_list()
 
-        backbone = self.factory.get_backbone_model(self.model_args)
+        backbone = self.backbone_factory.get_backbone_model(self.model_args)
         base_out_channels = backbone.get_outchannel_list()
         self.add_block_list(BlockType.BaseNet, backbone, base_out_channels[-1])
 
@@ -56,7 +56,7 @@ class VggNetCls(BaseClassifyModel):
         layer7 = nn.Linear(4096, self.class_number)
         self.add_block_list(LayerType.FcLinear, layer7, self.class_number)
 
-        self.create_loss()
+        self.create_loss_list()
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []
