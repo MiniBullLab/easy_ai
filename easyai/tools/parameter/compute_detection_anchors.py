@@ -49,7 +49,7 @@ class ComputeDetectionAnchors():
             _, rgb_image = self.image_process.readRgbImage(img_path)
             _, boxes = self.json_process.parse_rect_data(label_path)
             rgb_image, labels = self.dataset_process.resize_dataset(rgb_image,
-                                                                    self.task_config.image_size,
+                                                                    self.task_config.data["image_size"],
                                                                     boxes,
                                                                     self.task_config.detect2d_class)
 

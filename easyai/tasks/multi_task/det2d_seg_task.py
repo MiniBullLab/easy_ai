@@ -64,11 +64,11 @@ class Det2dSegTask(BaseInference):
         result_seg = self.seg_result_process.get_segmentation_result(result[1], threshold[1])
         det2d_objects = self.nms_process.multi_class_nms(result_dets, self.task_config.nms_th)
         det2d_objects = self.det2d_result_process.resize_detection_objects(self.src_size,
-                                                                           self.task_config.image_size,
+                                                                           self.task_config.data["image_size"],
                                                                            det2d_objects,
                                                                            self.task_config.detect2d_class)
         segment_image = self.seg_result_process.resize_segmention_result(self.src_size,
-                                                                         self.task_config.image_size,
+                                                                         self.task_config.data["image_size"],
                                                                          result_seg)
         return det2d_objects, segment_image, result_seg
 
