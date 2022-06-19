@@ -6,12 +6,12 @@ from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.model_block.utility.base_backbone import *
 
 from easy_pc.name_manager.pc_backbone_name import PointCloudBackboneName
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNet2BlockName
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNetSetAbstractionMSG
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNetSetAbstractionMRG
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNet2RouteBlock
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNet2Block
-from easy_pc.model_block.ops.pc_cls.pointnet_block import MaxPool1dBlock
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNet2BlockName
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNetSetAbstractionMSG
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNetSetAbstractionMRG
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNet2RouteBlock
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNet2Block
+from easy_pc.model_block.base_block.pc_cls.pointnet_block import MaxPool1dBlock
 from easy_pc.model_block.utility.pc_block_registry import REGISTERED_PC_CLS_BACKBONE
 
 

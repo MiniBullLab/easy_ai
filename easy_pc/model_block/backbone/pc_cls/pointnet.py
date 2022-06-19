@@ -8,8 +8,8 @@ from easyai.model_block.base_block.common.utility_block import ConvBNActivationB
 from easyai.model_block.base_block.common.utility_block import ConvBNBlock1d
 
 from easy_pc.name_manager.pc_backbone_name import PointCloudBackboneName
-from easy_pc.model_block.ops.pc_cls.pointnet_block import PointNetBlockName
-from easy_pc.model_block.ops.pc_cls.pointnet_block import TransformBlock, MaxPool1dBlock
+from easy_pc.model_block.base_block.pc_cls.pointnet_block import PointNetBlockName
+from easy_pc.model_block.base_block.pc_cls.pointnet_block import TransformBlock, MaxPool1dBlock
 from easy_pc.model_block.utility.pc_block_registry import REGISTERED_PC_CLS_BACKBONE
 
 

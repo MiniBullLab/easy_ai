@@ -45,7 +45,7 @@ class PointCloudTrainConfig(PointCloudTaskConfig):
         if self.snapshot_dir is not None and not os.path.exists(self.snapshot_dir):
             os.makedirs(self.snapshot_dir, exist_ok=True)
 
-    def load_image_train_value(self, config_dict):
+    def load_pc_train_value(self, config_dict):
         if config_dict.get('train_data', dict()) is not None:
             self.train_data = config_dict['train_data']
         if config_dict.get('is_save_epoch_model', None) is not None:
@@ -86,7 +86,7 @@ class PointCloudTrainConfig(PointCloudTaskConfig):
         if config_dict.get('freeze_bn_layer_name', None) is not None:
             self.freeze_bn_layer_name = config_dict['freeze_bn_layer_name']
 
-    def save_image_train_value(self, config_dict):
+    def save_pc_train_value(self, config_dict):
         if self.train_data is not None and len(self.train_data) > 0:
             config_dict['train_data'] = self.train_data
         config_dict['is_save_epoch_model'] = self.is_save_epoch_model

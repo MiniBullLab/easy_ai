@@ -199,3 +199,37 @@ class JsonProcess():
                 ocr_object.add_point(point)
             result.append(ocr_object)
         return image_name, result
+
+    def parse_rect3d_data(self, json_path):
+        if not os.path.exists(json_path):
+            print("error:%s file not exists" % json_path)
+            return None, []
+        with codecs.open(json_path, 'r', encoding='utf-8') as f:
+            data_dict = json.load(f)
+        pc_name = data_dict['filename']
+        objects_dict = data_dict['objects']
+        rect3d_objects_list = objects_dict['rect3DObject']
+        boxes = []
+        for box_value in rect3d_objects_list:
+            id = int(box_value.get("id", -1))
+            class_name = box_value['class']
+            yaw = -box_value['yaw']  # inverse clockwise
+            x = box_value['centerX']
+            y = box_value['centerY']
+            z = box_value['centerZ']
+            width = box_value['width']
+            length = box_value['length']
+            height = box_value['height']
+            box = Rect3D()
+            box.objectId = id
+            box.center.x = x
+            box.center.y = y
+            box.center.z = z
+            box.size.x = width
+            box.size.y = length
+            box.size.z = height
+            box.rotation.z = yaw
+            box.name = class_name
+            box.objectId = id
+            boxes.append(box)
+        return pc_name, boxes

@@ -49,7 +49,7 @@ class PointCloudClassifyTrain(BasePCTrain):
 
     def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
-        image_datas = batch_data['image'].to(self.device)
+        image_datas = batch_data['point_cloud'].to(self.device)
         output_list = self.model(image_datas)
         loss, loss_info = self.compute_loss(output_list, batch_data)
 

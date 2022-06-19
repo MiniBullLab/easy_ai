@@ -50,8 +50,8 @@ class OneClassTrain(GanTrain):
         # Compute loss, compute gradient, update parameters
         d_loss_values = None
         g_loss_values = None
-        image_datas = batch_data['image'].to(self.device)
-        g_output_list = self.model(image_datas,
+        input_datas = self.input_datas_processing(batch_data)
+        g_output_list = self.model(input_datas,
                                    net_type=1)
         d_output_list = self.model(g_output_list[0], g_output_list[2],
                                    net_type=2)

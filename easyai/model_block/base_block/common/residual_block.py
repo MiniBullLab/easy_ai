@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-# from torchvision.ops import DeformConv2d
+# from torchvision.base_block import DeformConv2d
 from easyai.name_manager.block_name import ActivationType, NormalizationType
 from easyai.name_manager.block_name import BlockType, LayerType
 from easyai.model_block.base_block.common.utility_layer import EmptyLayer

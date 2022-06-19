@@ -11,7 +11,7 @@ from easyai.model_block.base_block.common.utility_layer import ActivationLayer
 from easy_pc.name_manager.pc_model_name import PCModelName
 from easy_pc.name_manager.pc_loss_name import PCLossName
 from easy_pc.model.utility.base_pc_classify_model import *
-from easy_pc.name_manager.pc_backbone_name import PointCloudBackboneName
+from easy_pc.name_manager.pc_backbone_name import PCBackboneName
 from easy_pc.model.utility.pc_model_registry import REGISTERED_PC_CLS_MODEL
 
 
@@ -25,7 +25,7 @@ class PointNetCls(BasePCClassifyModel):
         self.feature_transform = False
         self.bn_name = NormalizationType.BatchNormalize1d
         self.activation_name = ActivationType.ReLU
-        self.model_args['type'] = PointCloudBackboneName.PointNet
+        self.model_args['type'] = PCBackboneName.PointNet
         self.model_args['feature_transform'] = self.feature_transform
         self.model_args['bn_name'] = self.bn_name
         self.model_args['activation_name'] = self.activation_name

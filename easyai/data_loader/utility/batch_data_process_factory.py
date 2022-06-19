@@ -2,9 +2,9 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-from easyai.tasks.utility.task_registry import REGISTERED_BATCH_DATA_PROCESS
 from easyai.utility.registry import build_from_cfg
 from easyai.utility.logger import EasyLogger
+from easyai.data_loader.utility.dataloader_registry import REGISTERED_BATCH_DATA_PROCESS
 
 
 class BatchDataProcessFactory():

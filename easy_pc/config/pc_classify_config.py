@@ -4,6 +4,7 @@
 
 import os
 from easyai.config.utility.config_registry import REGISTERED_TASK_CONFIG
+
 from easy_pc.name_manager.pc_task_name import PCTaskName
 from easy_pc.config.utility.pc_train_config import PointCloudTrainConfig
 
@@ -24,19 +25,19 @@ class PointCloudClassifyConfig(PointCloudTrainConfig):
         self.get_train_default_value()
 
     def load_data_value(self, config_dict):
-        self.load_image_data_value(config_dict)
+        self.load_pc_data_value(config_dict)
         if config_dict.get('class_name', None) is not None:
             self.class_name = tuple(config_dict['class_name'])
 
     def save_data_value(self, config_dict):
-        self.save_image_data_value(config_dict)
+        self.save_pc_data_value(config_dict)
         config_dict['class_name'] = self.class_name
 
     def load_train_value(self, config_dict):
-        self.load_image_train_value(config_dict)
+        self.load_pc_train_value(config_dict)
 
     def save_train_value(self, config_dict):
-        self.save_image_train_value(config_dict)
+        self.save_pc_train_value(config_dict)
 
     def get_data_default_value(self):
         self.data = {'point_features': 3}
@@ -65,7 +66,7 @@ class PointCloudClassifyConfig(PointCloudTrainConfig):
 
         self.evaluation = {"type": "ClassifyAccuracy",
                            'top_k': (1,)}
-        self.evaluation_result_name = 'cls_evaluation.txt'
+        self.evaluation_result_name = 'pc_cls_evaluation.txt'
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):

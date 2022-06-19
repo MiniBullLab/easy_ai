@@ -48,14 +48,14 @@ class PointCloudTaskConfig(BaseConfig):
         with codecs.open(self.config_path, 'w', encoding='utf-8') as f:
             json.dump(config_dict, f, sort_keys=True, indent=4, ensure_ascii=False)
 
-    def load_image_data_value(self, config_dict):
+    def load_pc_data_value(self, config_dict):
         if config_dict.get('data', dict()) is not None:
             self.data = config_dict['data']
 
         if config_dict.get('post_process', None) is not None:
             self.post_process = config_dict['post_process']
 
-    def save_image_data_value(self, config_dict):
+    def save_pc_data_value(self, config_dict):
         if self.data is not None and len(self.data) > 0:
             config_dict['data'] = self.data
         if self.post_process is not None:

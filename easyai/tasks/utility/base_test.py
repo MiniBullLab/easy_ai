@@ -7,7 +7,7 @@ import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.evaluation.utility.evaluation_factory import EvaluationFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask

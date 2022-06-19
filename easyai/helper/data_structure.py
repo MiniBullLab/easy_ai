@@ -141,8 +141,29 @@ class Rect3D(MyObject):
 
     def __init__(self):
         super().__init__()
-        self.center_corner = Point3d(0, 0, 0)
+        self.center = Point3d(0, 0, 0)
         self.size = Point3d(0, 0, 0)
+        self.rotation = Point3d(0, 0, 0)
+
+    def copy(self):
+        b = Rect3D()
+        b.objectId = self.objectId
+        b.name = self.name
+        b.class_id = self.class_id
+        b.difficult = self.difficult
+        b.center = self.center
+        b.size = self.size
+        b.rotation = self.rotation
+        return b
+
+    def __repr__(self):
+        return '%s:%d %d %d %d %d %d' % (self.name,
+                                         self.center.x,
+                                         self.center.y,
+                                         self.center.z,
+                                         self.size.x,
+                                         self.size.y,
+                                         self.size.z)
 
 
 class OCRObject(Rect2D):

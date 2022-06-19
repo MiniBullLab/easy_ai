@@ -5,6 +5,7 @@
 from easyai.data_loader.utility.torch_data_loader import TorchDataLoader
 from easyai.data_loader.utility.dataloader_registry import REGISTERED_DATASET
 
+from easy_pc.helper.pointcloud_process import PointCloudProcess
 from easy_pc.dataloader.pc_cls.classify_pc_sample import ClassifyPointCloudSample
 from easy_pc.dataloader.pc_cls.classify_pc_augment import ClassifyPointCloudAugment
 from easy_pc.dataloader.pc_cls.classify_pc_dataset_process import ClassifyPointCloudDatasetProcess
@@ -18,6 +19,7 @@ class ClassifyPointCloudDataSet(TorchDataLoader):
                  transform_func=None):
         super().__init__(data_path, point_features, transform_func)
         self.is_augment = is_augment
+        self.pointcloud_process = PointCloudProcess(dim=point_features)
         self.classify_sample = ClassifyPointCloudSample(data_path)
         self.classify_sample.read_sample()
 

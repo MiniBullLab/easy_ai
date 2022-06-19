@@ -76,10 +76,10 @@ class Detection2d(BaseInference):
                 with open(temp_save_path, 'a') as file:
                     file.write("{} {} {} {} {} {}\n".format(filename_post, confidence, x1, y1, x2, y2))
 
-    def infer(self, input_data, net_type=0):
+    def infer(self, batch_data, net_type=0):
         with torch.no_grad():
-            image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
+            input_datas = self.input_datas_processing(batch_data)
+            output_list = self.model(input_datas)
             output = self.compute_output(output_list)
         return output, output_list
 

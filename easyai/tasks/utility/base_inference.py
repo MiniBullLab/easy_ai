@@ -17,7 +17,7 @@ from easyai.data_loader.common.numpy_data_geter import NumpyDataGeter
 from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
 from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -97,7 +97,7 @@ class BaseInference(BaseTask):
         pass
 
     @abc.abstractmethod
-    def infer(self, input_data, net_type=0):
+    def infer(self, batch_data, net_type=0):
         pass
 
     def load_weights(self, weights_path):
@@ -169,10 +169,6 @@ class BaseInference(BaseTask):
             EasyLogger.debug("input path not support!")
             return None
 
-    def batch_processing(self, batch_data):
-        if self.batch_data_process_func is not None:
-            self.batch_data_process_func(batch_data)
-
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]
         self.src_size = (shape[1], shape[0])
@@ -215,3 +211,10 @@ class BaseInference(BaseTask):
     @property
     def device(self):
         return self.torchModelProcess.get_device()
+
+    def input_datas_processing(self, batch_data):
+        if self.batch_data_process_func is not None:
+            input_datas = self.batch_data_process_func(batch_data, self.device)
+        else:
+            input_datas = batch_data['image'].to(self.device, non_blocking=True)
+        return input_datas

@@ -2,17 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
-import os
 import abc
-from pathlib import Path
 
-import numpy as np
 import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
-from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask

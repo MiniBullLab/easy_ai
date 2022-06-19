@@ -6,9 +6,9 @@ from easyai.name_manager.block_name import NormalizationType, ActivationType
 from easyai.name_manager.block_name import LayerType
 from easyai.model_block.base_block.common.utility_block import ConvBNActivationBlock1d
 
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNet2BlockName
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNetSetAbstractionMRG
-from easy_pc.model_block.ops.pc_cls.pointnet2_block import PointNetFeaturePropagation
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNet2BlockName
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNetSetAbstractionMRG
+from easy_pc.model_block.base_block.pc_cls.pointnet2_block import PointNetFeaturePropagation
 from easy_pc.name_manager.pc_model_name import PCModelName
 from easy_pc.name_manager.pc_loss_name import PCLossName
 from easy_pc.model.utility.base_pc_classify_model import *

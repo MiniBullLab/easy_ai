@@ -7,7 +7,7 @@ import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
 from easyai.model.utility.model_factory import ModelFactory
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
@@ -132,9 +132,13 @@ class BaseTrain(BaseTask):
         else:
             self.total_batch_data = 0
 
-    def batch_processing(self, batch_data):
+    def input_datas_processing(self, batch_data):
         if self.batch_data_process_func is not None:
-            self.batch_data_process_func(batch_data)
+            input_datas = self.batch_data_process_func(batch_data)
+        else:
+            input_datas = batch_data['image'].to(self.device)
+        return input_datas
+
 
 
 

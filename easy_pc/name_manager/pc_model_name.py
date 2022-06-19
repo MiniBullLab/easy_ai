@@ -10,6 +10,8 @@ class PCModelName():
     PointNetSeg = "PointNetSeg"
     PointNet2Seg = "PointNet2Seg"
 
+    PointPillars = "PointPillars"
+
 
 
 
