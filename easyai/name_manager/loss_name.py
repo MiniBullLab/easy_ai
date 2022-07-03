@@ -28,8 +28,9 @@ class LossName():
     RefineMultiBoxLoss = "RefineMultiBoxLoss"
     RPNLoss = "RPNLoss"
     FastRCNNLoss = "FastRCNNLoss"
+    YoloV5Loss = "YoloV5Loss"
 
-    # det3d
+    # pc_det3d
 
     # seg
     EncNetLoss = "encNetLoss"
@@ -60,6 +61,6 @@ class LossName():
     AggregationCrossEntropyLoss = "ACELoss"
     ACELabelSmoothingLoss = "ACELabelSmoothingLoss"
 
-    # pc
-    PointNetClsLoss = "pointClsNetLoss"
-    PointNetSegLoss = "pointSegNetLoss"
+    # reid
+    FairMotLoss = "FairMotLoss"
+

@@ -1,0 +1,1 @@
+python3 easy_tracking/det2d_multi_tracking.py -r det2d_classify_reid -t DeepSort -i /home/lpj/dataset/tests/test_video/MOT16-11-raw.mp4  -w /home/lpj/model_zoom/pytorch_model/yolov5s_person.pt -w /home/lpj/model_zoom/pytorch_model/deep_sort.pt -c /home/lpj/github/easy_ai/example/easy_tracking/deep_sort_reid_config.json -s

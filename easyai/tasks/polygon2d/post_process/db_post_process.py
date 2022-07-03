@@ -41,6 +41,8 @@ class DBPostProcess(BasePostProcess):
         else:
             boxes, scores = self.boxes_from_bitmap(instance_score, bitmap, src_size)
         for box, socre in zip(boxes, scores):
+            if socre <= self.threshold:
+                continue
             polygon_object = Polygon2dObject()
             polygon_object.clear_polygon()
             for temp_value in box:

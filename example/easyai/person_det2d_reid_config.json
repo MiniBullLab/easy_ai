@@ -1,0 +1,145 @@
+{
+    "accumulated_batches": 1,
+    "amp_config": {
+        "enable_amp": false,
+        "keep_batchnorm_fp32": true,
+        "opt_level": "O1"
+    },
+    "base_lr": 0.001,
+    "best_weights_name": "det2d_reid_best.pt",
+    "clip_grad_config": {
+        "enable_clip": false,
+        "max_norm": 20
+    },
+    "data": {
+        "data_channel": 3,
+        "image_size": [
+            1088,
+            608
+        ],
+        "mean": [
+            0,
+            0,
+            0
+        ],
+        "normalize_type": 1,
+        "resize_type": 2,
+        "std": [
+            1,
+            1,
+            1
+        ]
+    },
+    "detect2d_class": [
+        "person"
+    ],
+    "display": 20,
+    "evaluation": {
+        "detect2d_class": [
+            "person"
+        ],
+        "type": "ReidDetectionMeanAp"
+    },
+    "freeze_bn_layer_name": "route_0",
+    "freeze_bn_type": 0,
+    "freeze_layer_name": "baseNet_0",
+    "freeze_layer_type": 0,
+    "is_save_epoch_model": false,
+    "latest_optimizer_name": "det2d_reid_optimizer.pt",
+    "latest_weights_name": "det2d_reid_latest.pt",
+    "lr_scheduler_config": {
+        "type": "CosineLR",
+        "warmup_iters": 3,
+        "warmup_type": 2
+    },
+    "max_epochs": 50,
+    "model_config": {
+        "class_number": 1,
+        "data_channel": 3,
+        "max_id": 1506,
+        "reid": 64,
+        "type": "FairMOTNet"
+    },
+    "model_type": 0,
+    "optimizer_config": {
+        "0": {
+            "momentum": 0.937,
+            "type": "SGD",
+            "weight_decay": 0.0005
+        }
+    },
+    "train_data": {
+        "dataloader": {
+            "batch_size": 8,
+            "collate_fn": {
+                "type": "Det2dReidDatasetCollate"
+            },
+            "drop_last": true,
+            "num_workers": 8,
+            "pin_memory": true,
+            "shuffle": true,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "detect2d_class": [
+                "person"
+            ],
+            "image_size": [
+                1088,
+                608
+            ],
+            "is_augment": true,
+            "mean": [
+                0,
+                0,
+                0
+            ],
+            "normalize_type": 1,
+            "resize_type": 2,
+            "std": [
+                1,
+                1,
+                1
+            ],
+            "type": "Det2dReidDataset"
+        }
+    },
+    "val_data": {
+        "dataloader": {
+            "batch_size": 1,
+            "collate_fn": {
+                "type": "Det2dReidDatasetCollate"
+            },
+            "drop_last": false,
+            "num_workers": 8,
+            "pin_memory": true,
+            "shuffle": false,
+            "type": "DataLoader"
+        },
+        "dataset": {
+            "data_channel": 3,
+            "detect2d_class": [
+                "person"
+            ],
+            "image_size": [
+                1088,
+                608
+            ],
+            "is_augment": false,
+            "mean": [
+                0,
+                0,
+                0
+            ],
+            "normalize_type": 1,
+            "resize_type": 2,
+            "std": [
+                1,
+                1,
+                1
+            ],
+            "type": "Det2dReidDataset"
+        }
+    }
+}

@@ -32,8 +32,7 @@ class OCRTask(BaseInference):
             EasyLogger.info('%g/%g' % (i + 1, image_count))
             self.timer.tic()
             self.set_src_size(batch_data['src_image'])
-            detection_objects = self.det2d_inference.single_image_process(self.src_size,
-                                                                          batch_data)
+            detection_objects = self.det2d_inference.single_image_process(batch_data)
             ocr_result = self.convert_ocr_object(detection_objects)
 
             ocr_dataloader = OCRLoader(ocr_result, batch_data['src_image'],
@@ -44,7 +43,7 @@ class OCRTask(BaseInference):
                                        self.text_inference.task_config.data['mean'],
                                        self.text_inference.task_config.data['std'])
             for index, ocr_data in enumerate(ocr_dataloader):
-                text = self.text_inference.single_image_process(ocr_data)
+                text, _ = self.text_inference.single_image_process(ocr_data)
                 ocr_result[index].set_text(text[0].get_text())
                 ocr_result[index].text_confidence = text[0].text_confidence
             if not self.result_show.show(batch_data['src_image'], ocr_result):

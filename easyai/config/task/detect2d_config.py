@@ -62,19 +62,16 @@ class Detect2dConfig(CommonTrainConfig):
             config_dict['val_data'] = self.val_data
 
     def get_data_default_value(self):
-        self.data = {'image_size': (416, 416),  # W * H
+        self.data = {'image_size': (640, 640),  # W * H
                      'data_channel': 3,
                      'resize_type': 2,
                      'normalize_type': 1,
                      'mean': (0, 0, 0),
                      'std': (1, 1, 1)}
-        self.detect2d_class = ("orange",
-                               "apple",
-                               "pear",
-                               "potato")
+        self.detect2d_class = ('car',)
 
         self.post_process = {'type': 'YoloPostProcess',
-                             'threshold': 0.24,
+                             'threshold': 0.25,
                              'nms_threshold': 0.45}
 
         self.save_result_name = "det2d_result.txt"
@@ -83,16 +80,18 @@ class Detect2dConfig(CommonTrainConfig):
     def get_test_default_value(self):
         self.val_data = {'dataset': {},
                          'dataloader': {}}
-        self.val_data['dataset']['type'] = "Det2dDataset"
+        self.val_data['dataset']['type'] = "MosaicDet2dDataset"
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['detect2d_class'] = self.detect2d_class
+        self.val_data['dataset']['is_augment'] = False
 
         self.val_data['dataloader']['type'] = "DataLoader"
         self.val_data['dataloader']['batch_size'] = 1
         self.val_data['dataloader']['shuffle'] = False
         self.val_data['dataloader']['num_workers'] = 8
+        self.val_data['dataloader']['pin_memory'] = True
         self.val_data['dataloader']['drop_last'] = False
-        self.val_data['dataloader']['collate_fn'] = {"type": "Det2dDataSetCollate"}
+        self.val_data['dataloader']['collate_fn'] = {"type": "MosaicDataSetCollate"}
 
         self.evaluation = {"type": "DetectionMeanAp",
                            'detect2d_class': self.detect2d_class}
@@ -100,13 +99,20 @@ class Detect2dConfig(CommonTrainConfig):
         self.evaluation_result_path = os.path.join(self.root_save_dir, self.evaluation_result_name)
 
     def get_train_default_value(self):
-        self.train_data = {'dataloader': {}}
-        self.train_data['dataloader']['type'] = "Det2dTrainDataloader"
-        self.train_data['dataloader']['detect2d_class'] = self.detect2d_class
-        self.train_data['dataloader'].update(self.data)
-        self.train_data['dataloader']['batch_size'] = 4
-        self.train_data['dataloader']['balanced_sample'] = False
-        self.train_data['dataloader']['is_augment'] = True
+        self.train_data = {'dataset': {},
+                           'dataloader': {}}
+        self.train_data['dataset']['type'] = "MosaicDet2dDataset"
+        self.train_data['dataset'].update(self.data)
+        self.train_data['dataset']['detect2d_class'] = self.detect2d_class
+        self.train_data['dataset']['is_augment'] = True
+
+        self.train_data['dataloader']['type'] = "DataLoader"
+        self.train_data['dataloader']['batch_size'] = 16
+        self.train_data['dataloader']['shuffle'] = True
+        self.train_data['dataloader']['num_workers'] = 8
+        self.train_data['dataloader']['pin_memory'] = True
+        self.train_data['dataloader']['drop_last'] = False
+        self.train_data['dataloader']['collate_fn'] = {"type": "MosaicDataSetCollate"}
 
         self.is_save_epoch_model = False
         self.latest_weights_name = 'det2d_latest.pt'
@@ -117,28 +123,31 @@ class Detect2dConfig(CommonTrainConfig):
         self.latest_weights_path = os.path.join(self.snapshot_dir, self.latest_weights_name)
         self.best_weights_path = os.path.join(self.snapshot_dir, self.best_weights_name)
 
-        self.max_epochs = 100
+        self.max_epochs = 300
 
         self.amp_config = {'enable_amp': False,
                            'opt_level': 'O1',
                            'keep_batchnorm_fp32': True}
 
-        self.base_lr = 2e-4
+        self.base_lr = 0.01
         self.optimizer_config = {0: {'type': 'SGD',
-                                     'momentum': 0.9,
+                                     'momentum': 0.937,
                                      'weight_decay': 5e-4}
                                  }
-        self.lr_scheduler_config = {'type': 'MultiStageLR',
-                                    'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
+        self.lr_scheduler_config = {'type': 'CosineLR',
                                     'warmup_type': 2,
-                                    'warmup_iters': 5}
+                                    'warmup_iters': 3}
+        # self.lr_scheduler_config = {'type': 'MultiStageLR',
+        #                             'lr_stages': [[50, 1], [70, 0.1], [100, 0.01]],
+        #                             'warmup_type': 2,
+        #                             'warmup_iters': 5}
         self.accumulated_batches = 1
         self.display = 20
 
         self.clip_grad_config = {'enable_clip': False,
                                  'max_norm': 20}
 
-        self.freeze_layer_type = 1
+        self.freeze_layer_type = 0
         self.freeze_layer_name = "baseNet_0"
         self.freeze_bn_type = 0
         self.freeze_bn_layer_name = "route_0"

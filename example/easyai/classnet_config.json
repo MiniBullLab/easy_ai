@@ -50,6 +50,12 @@
         ]
     },
     "display": 20,
+    "evaluation": {
+        "top_k": [
+            1
+        ],
+        "type": "ClassifyAccuracy"
+    },
     "freeze_bn_layer_name": "route_0",
     "freeze_bn_type": 0,
     "freeze_layer_name": "route_0",

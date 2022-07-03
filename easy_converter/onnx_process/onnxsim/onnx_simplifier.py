@@ -246,7 +246,7 @@ def eliminate_const_nodes(model: onnx.ModelProto, const_nodes: List[onnx.NodePro
     :param model: the original onnx model
     :param const_nodes: const nodes detected by `get_constant_nodes`
     :param res: The dict containing all tensors, got by `forward_all`
-    :return: the simplified onnx model. Redundant ops are all removed.
+    :return: the simplified onnx model. Redundant base_block are all removed.
     """
     for i, node in enumerate(model.graph.node):
         if node in const_nodes:
@@ -311,7 +311,7 @@ def check(model_opt: onnx.ModelProto, model_ori: onnx.ModelProto, n_times: int =
     onnx.checker.check_model(model_opt)
 
     if is_non_deterministic_model(model_ori) and n_times > 0:
-        print("The model has random ops like RandomNormal. Skip checking..")
+        print("The model has random base_block like RandomNormal. Skip checking..")
         n_times = 0
 
     for i in range(n_times):
@@ -430,7 +430,7 @@ def simplify(model: Union[str, onnx.ModelProto],
             the value of input_shapes will be used when generating random inputs for checking equality.
             If 'dynamic_input_shape' is False, the input shape in simplified model will be overwritten
             by the value of 'input_shapes' param.
-    :param custom_lib: onnxruntime custom ops's shared library
+    :param custom_lib: onnxruntime custom base_block's shared library
     :return: A tuple (simplified model, success(True) or failed(False))
     """
     if input_shapes is None:

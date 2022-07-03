@@ -66,6 +66,7 @@ class MyModel(BaseModel):
                 data_channel = self.default_args.get('data_channel', 3)
                 if backbone_args.get('data_channel') is None:
                     backbone_args['data_channel'] = data_channel
+                self.data_channel = backbone_args['data_channel']
                 result = self.backbone_factory.get_backbone_model(backbone_args)
         assert result is not None, EasyLogger.error("%s is error" % input_name)
         return result, input_name

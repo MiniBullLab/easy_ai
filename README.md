@@ -5,10 +5,15 @@ easy ai
 
 [代码规范](http://www.imooc.com/article/19184?block_id=tuijian_wz#child_5_1)
 
+## 简介
+主分支代码目前支持 PyTorch 1.6版本
+
+
 # EasyAI
   * easyai
   * easy_converter
   * easy_tracking
+  * easy_pc
   * [easy_tools](./docs/tools_README.md)
   * [easy_py2so](./docs/py2so_README.md)
   * [dataset_process](./docs/dataset_README.md)
@@ -22,10 +27,4 @@ easy ai
   
 # easy_perception
  * [perception](https://github.com/MiniBullLab/easy_perception)
-
-# Project
-* [easy_project](https://github.com/MiniBullLab/easy_project)
-
-# Docker
-* [easy_docker](https://github.com/MiniBullLab/easy_docker)
 

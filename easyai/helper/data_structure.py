@@ -30,6 +30,7 @@ class Point3d():
 class MyObject():
 
     def __init__(self):
+        self.objectId = -1
         self.name = ""
         self.class_id = -1
         self.difficult = 0
@@ -47,6 +48,7 @@ class Rect2D(MyObject):
 
     def copy(self):
         b = Rect2D()
+        b.objectId = self.objectId
         b.name = self.name
         b.class_id = self.class_id
         b.difficult = self.difficult
@@ -87,6 +89,7 @@ class KeyPoint2D(Rect2D):
 
     def copy(self):
         b = KeyPoint2D()
+        b.objectId = self.objectId
         b.name = self.name
         b.class_id = self.class_id
         b.difficult = self.difficult
@@ -138,8 +141,29 @@ class Rect3D(MyObject):
 
     def __init__(self):
         super().__init__()
-        self.center_corner = Point3d(0, 0, 0)
+        self.center = Point3d(0, 0, 0)
         self.size = Point3d(0, 0, 0)
+        self.rotation = Point3d(0, 0, 0)
+
+    def copy(self):
+        b = Rect3D()
+        b.objectId = self.objectId
+        b.name = self.name
+        b.class_id = self.class_id
+        b.difficult = self.difficult
+        b.center = self.center
+        b.size = self.size
+        b.rotation = self.rotation
+        return b
+
+    def __repr__(self):
+        return '%s:%d %d %d %d %d %d' % (self.name,
+                                         self.center.x,
+                                         self.center.y,
+                                         self.center.z,
+                                         self.size.x,
+                                         self.size.y,
+                                         self.size.z)
 
 
 class OCRObject(Rect2D):
@@ -154,6 +178,7 @@ class OCRObject(Rect2D):
 
     def copy(self):
         b = OCRObject()
+        b.objectId = self.objectId
         b.name = self.name
         b.class_id = self.class_id
         b.difficult = self.difficult
@@ -208,6 +233,7 @@ class Polygon2dObject(MyObject):
 
     def copy(self):
         b = OCRObject()
+        b.objectId = self.objectId
         b.name = self.name
         b.class_id = self.class_id
         b.difficult = self.difficult
@@ -241,5 +267,32 @@ class DetectionKeyPoint(KeyPoint2D):
         self.classIndex = -1
         self.keypoint_confidence = 0
         self.objectConfidence = 0
+
+
+class ReIDObject2d(DetectionObject):
+
+    def __init__(self):
+        super().__init__()
+        self.reid = None
+
+    def copy_object2d(self, detection_object):
+        self.classIndex = detection_object.classIndex
+        self.classConfidence = detection_object.classConfidence
+        self.objectConfidence = detection_object.objectConfidence
+        self.objectId = detection_object.objectId
+        self.name = detection_object.name
+        self.class_id = detection_object.class_id
+        self.difficult = detection_object.difficult
+        self.min_corner = detection_object.min_corner
+        self.max_corner = detection_object.max_corner
+
+
+class TrackObject2d(DetectionObject):
+
+    def __init__(self):
+        super().__init__()
+        track_id = -1
+        current_frame = -1
+
 
 

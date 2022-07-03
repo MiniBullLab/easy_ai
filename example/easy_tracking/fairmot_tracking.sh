@@ -1,0 +1,1 @@
+python3 easy_tracking/det2d_multi_tracking.py -r det2d_reid -t JDETracker -i //home/lpj/dataset/tests/test_video/MOT16-03.mp4  -w /home/lpj/fairmot_person.pt -c /home/lpj/github/easy_ai/example/easy_tracking/person_fairmot_reid_config.json -s

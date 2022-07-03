@@ -49,9 +49,9 @@ class RecognizeTextConfig(CommonTrainConfig):
     def get_data_default_value(self):
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../character")
-        self.character_set = os.path.join(dir_name, "temp_en.txt")
+        self.character_set = os.path.join(dir_name, "chinese_lpr.txt")
         EasyLogger.debug(self.character_set)
-        self.character_count = 37
+        self.character_count = 68
 
         self.data = {'image_size': (128, 32),   # W * H
                      'data_channel': 3,
@@ -72,7 +72,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.val_data['dataset'].update(self.data)
         self.val_data['dataset']['char_path'] = self.character_set
         self.val_data['dataset']['max_text_length'] = 32
-        self.val_data['dataset']['language'] = ("english", )
+        self.val_data['dataset']['language'] = ("chinese", )
         self.val_data['dataset']['is_augment'] = False
 
         self.val_data['dataloader']['type'] = "DataLoader"
@@ -95,7 +95,7 @@ class RecognizeTextConfig(CommonTrainConfig):
         self.train_data['dataset'].update(self.data)
         self.train_data['dataset']['char_path'] = self.character_set
         self.train_data['dataset']['max_text_length'] = 32
-        self.train_data['dataset']['language'] = ("english",)
+        self.train_data['dataset']['language'] = ("chinese",)
         self.train_data['dataset']['is_augment'] = True
 
         self.train_data['dataloader']['type'] = "DataLoader"

@@ -74,10 +74,11 @@ if __name__ == '__main__':
     parser.add_argument('--source', type=str, default='Annotations', help='folder saved json file')  # file/folder, 0 for webcam
     opt = parser.parse_args()
     all_class = gen_classes(opt.source)
-    files= os.listdir(opt.source)
+    files = os.listdir(opt.source)
     if not os.path.exists(opt.source+"/"+"voc"):
         os.makedirs(opt.source+"/"+"voc")
     for in_file in files:
         temp_path = os.path.join(opt.source, in_file)
+        print(temp_path)
         if not os.path.isdir(temp_path):
             convert_annotation(temp_path)

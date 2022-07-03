@@ -21,14 +21,14 @@ class ImageDataSetProcess(BaseDataSetProcess):
             result = src_image
         elif resize_type == 1:
             result = self.cv_image_resize(src_image, dst_size)
-            EasyLogger.debug("1: {}".format(dst_size))
+            # EasyLogger.debug("1: {}".format(dst_size))
         elif resize_type == 2:
             pad_color = param['pad_color']
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             ratio, pad_size = self.get_square_size(src_size, dst_size)
             result = self.image_resize_square(src_image, ratio, pad_size,
                                               pad_color=pad_color)
-            EasyLogger.debug("2: {}".format(dst_size))
+            # EasyLogger.debug("2: {}".format(dst_size))
         elif resize_type == 3:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             # resize_ratio = dst_size[1] / src_image.shape[0]

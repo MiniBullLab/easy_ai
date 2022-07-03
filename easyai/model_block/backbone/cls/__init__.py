@@ -28,5 +28,7 @@ from . import xception
 from . import xception1
 from . import peleenet
 from . import slimnet
+from . import deep_sort_backbone
+
 
 

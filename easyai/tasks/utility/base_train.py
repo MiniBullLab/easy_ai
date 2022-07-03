@@ -6,7 +6,8 @@ import abc
 import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.model.utility.model_factory import ModelFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
 from easyai.solver.utility.optimizer_process import OptimizerProcess
 from easyai.solver.utility.lr_factory import LrSchedulerFactory
@@ -82,7 +83,10 @@ class BaseTrain(BaseTask):
     def set_model(self, my_model=None, gpu_id=0, init_type="kaiming"):
         if my_model is None:
             EasyLogger.debug(self.model_args)
-            self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+            model_factory = ModelFactory()
+            self.model = self.torchModelProcess.create_model(self.model_args,
+                                                             model_factory,
+                                                             gpu_id)
             self.torchModelProcess.init_model(self.model, init_type)
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
@@ -128,9 +132,13 @@ class BaseTrain(BaseTask):
         else:
             self.total_batch_data = 0
 
-    def batch_processing(self, batch_data):
+    def input_datas_processing(self, batch_data):
         if self.batch_data_process_func is not None:
-            self.batch_data_process_func(batch_data)
+            input_datas = self.batch_data_process_func(batch_data)
+        else:
+            input_datas = batch_data['image'].to(self.device)
+        return input_datas
+
 
 
 

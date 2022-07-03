@@ -42,10 +42,10 @@ class Landmark(BaseInference):
         _, pose = self.result_process.post_process(prediction, self.src_size)
         return pose
 
-    def infer(self, input_data, net_type=0):
+    def infer(self, batch_data, net_type=0):
         with torch.no_grad():
-            image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
+            input_datas = self.input_datas_processing(batch_data)
+            output_list = self.model(input_datas)
             output = self.compute_output(output_list)
         return output, output_list
 

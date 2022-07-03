@@ -2,16 +2,15 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os.path
 import traceback
 from easyai.utility.logger import EasyLogger
-import os.path
 from easyai.model_block.backbone.common.my_backbone import MyBackbone
 from easyai.model_block.utility.model_parse import ModelParse
 from easyai.model_block.utility.block_registry import REGISTERED_VISION_BACKBONE
 from easyai.model_block.utility.block_registry import REGISTERED_CLS_BACKBONE
 from easyai.model_block.utility.block_registry import REGISTERED_GAN_D_BACKBONE
 from easyai.model_block.utility.block_registry import REGISTERED_GAN_G_BACKBONE
-from easyai.model_block.utility.block_registry import REGISTERED_PC_CLS_BACKBONE
 from easyai.utility.registry import build_from_cfg
 
 __all__ = ["BackboneFactory"]
@@ -36,8 +35,6 @@ class BackboneFactory():
                     result = self.get_troch_vision_model(model_args)
                 if result is None:
                     result = self.get_gan_base_model(model_args)
-                if result is None:
-                    result = self.get_pc_backbone_from_name(model_args)
                 if result is None:
                     EasyLogger.error("backbone:%s error" % input_name)
         except ValueError as err:
@@ -88,10 +85,3 @@ class BackboneFactory():
             result = build_from_cfg(model_args, REGISTERED_GAN_G_BACKBONE)
         return result
 
-    def get_pc_backbone_from_name(self, model_config):
-        result = None
-        model_args = model_config.copy()
-        input_name = model_args['type'].strip()
-        if REGISTERED_PC_CLS_BACKBONE.has_class(input_name):
-            result = build_from_cfg(model_args, REGISTERED_PC_CLS_BACKBONE)
-        return result

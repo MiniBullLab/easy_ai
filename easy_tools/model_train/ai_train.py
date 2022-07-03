@@ -132,7 +132,7 @@ class EasyAiModelTrain():
         try:
             create_sample = CreateRecognizeTextSample()
             create_sample.create_train_and_test(self.images_dir, self.dataset_path, 8,
-                                                language=("english",))
+                                                language=("chinese",))
 
             train_task = TrainTask(TaskName.RecognizeText, self.train_path, self.val_path)
             train_task.set_convert_param(True, input_name, output_name)
