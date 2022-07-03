@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传下载</title>
+</head>
+<body>
+<h1>{{ hello }}</h1>
+<form action="{% url 'upload_iamge' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <scan>选择文件：</scan>
+    <input type="file" name="image"/>
+
+    <br/>
+    <input type="submit" value="上传"/>
+
+
+</form>
+</body>
+</html>
