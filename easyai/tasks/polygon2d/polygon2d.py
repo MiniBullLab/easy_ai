@@ -26,8 +26,7 @@ class Polygon2d(BaseInference):
         for i, batch_data in enumerate(dataloader):
             print('%g/%g' % (i + 1, image_count), end=' ')
             self.timer.tic()
-            self.set_src_size(batch_data['src_image'])
-            objects_result = self.single_image_process(self.src_size, batch_data)
+            objects_result = self.single_image_process(batch_data)
             print('Batch %d... Done. (%.3fs)' % (i, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(batch_data['src_image'], objects_result):
@@ -35,15 +34,16 @@ class Polygon2d(BaseInference):
             else:
                 pass
 
-    def single_image_process(self, src_size, input_data):
+    def single_image_process(self, input_data):
+        self.set_src_size(input_data['src_image'])
         prediction, _ = self.infer(input_data)
-        result = self.result_process.post_process(prediction, src_size)
+        result = self.result_process.post_process(prediction, self.src_size)
         return result
 
-    def infer(self, input_data, net_type=0):
+    def infer(self, batch_data, net_type=0):
         with torch.no_grad():
-            image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
+            input_datas = self.input_datas_processing(batch_data)
+            output_list = self.model(input_datas)
             output = self.compute_output(output_list)
         return output, output_list
 

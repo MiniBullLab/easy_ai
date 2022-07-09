@@ -169,11 +169,12 @@ export class LambdaApiStack extends cdk.Construct {
               'mkdir -p /mnt/ml',
               'mkdir -p /mnt/ml/model',
               'python3 -m venv /mnt/ml/code',
+              'chown -R 1000:1000 /mnt/ml/',
               '/mnt/ml/code/bin/pip3 install -i https://opentuna.cn/pypi/web/simple opencv-python==4.4.0.44',
-              '/mnt/ml/code/bin/pip3 install -i https://opentuna.cn/pypi/web/simple gluoncv==0.8.0',
-              '/mnt/ml/code/bin/pip3 install -i https://opentuna.cn/pypi/web/simple gluonnlp==0.10.0',
-              '/mnt/ml/code/bin/pip3 install -i https://opentuna.cn/pypi/web/simple mxnet-mkl==1.6.0',
-              'chown -R 1000:1000 /mnt/ml/'
+              '/mnt/ml/code/bin/pip3 install -i https://opentuna.cn/pypi/web/simple pytorch-cpu==1.0.1 torchvision-cpu==0.2.2',
+              'curl -O http://118.31.19.101:8080/software/easyai/easyai-0.3-py2.py3-none-any.whl',
+              '/mnt/ml/code/bin/pip3 install -i https://mirrors.aliyun.com/pypi/simple easyai-0.3-py2.py3-none-any.whl',
+              'rm -rf easyai-0.3-py2.py3-none-any.whl'
             ]
           }
         },

@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import torch
 from easyai.tasks.utility.base_post_process import BasePostProcess
 from easyai.name_manager.post_process_name import PostProcessName
 from easyai.tasks.utility.task_registry import REGISTERED_POST_PROCESS
@@ -17,5 +18,7 @@ class BinaryPostProcess(BasePostProcess):
     def __call__(self, prediction):
         output_count = prediction.size(1)
         assert output_count == 1
-        class_indices = (prediction >= self.threshold).astype(int)
+        class_indices = (prediction >= self.threshold).to(torch.int32).squeeze(dim=1)
+        #     batch_size = prediction.size(0)
+        #     class_index = torch.ones(batch_size)
         return class_indices, prediction

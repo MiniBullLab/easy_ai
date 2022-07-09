@@ -112,12 +112,21 @@ class BackboneName():
     PeleeNetTransition24 = "peleenet_tran24"
     SlimNet = "slimnet"
     LPRSmallNet = "lpr_small_net"
+    DeepSortBackbone = "deepsort_backbone"
 
     HourGlassNet = "hourglassnet"
 
+    # common
     VisionResnet50 = "vision_resnet50"
     VisionWideResnet50 = "vision_wide_resnet50"
 
+    # det2d
+    Yolov5s_Backbone = "yolov5s_bockbone"
+    Yolov5m_Backbone = "yolov5m_bockbone"
+    Yolov5l_Backbone = "yolov5l_bockbone"
+    Yolov5x_Backbone = "yolov5x_bockbone"
+
+    Yolov5s_Old_Backbone = "yolov5s_old_bockbone"
 
 
 class GanBaseModelName():
@@ -129,12 +138,5 @@ class GanBaseModelName():
     GANomalyDiscriminator = "ganomaly_discriminator"
     GANomalyGenerator = "ganomaly_generator"
 
-
-class PointCloudBackboneName():
-
-    # pc
-    PointNet = "pointnet"
-    PointNetV2 = "pointnetv2"
-    PointNet2 = "pointnet2"
 
 

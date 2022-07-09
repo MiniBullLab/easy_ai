@@ -7,6 +7,7 @@ import numpy as np
 import random
 import math
 from easyai.data_loader.utility.base_dataset_process import BaseDataSetProcess
+from easyai.utility.logger import EasyLogger
 
 
 class ImageDataSetProcess(BaseDataSetProcess):
@@ -20,12 +21,14 @@ class ImageDataSetProcess(BaseDataSetProcess):
             result = src_image
         elif resize_type == 1:
             result = self.cv_image_resize(src_image, dst_size)
+            # EasyLogger.debug("1: {}".format(dst_size))
         elif resize_type == 2:
             pad_color = param['pad_color']
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             ratio, pad_size = self.get_square_size(src_size, dst_size)
             result = self.image_resize_square(src_image, ratio, pad_size,
                                               pad_color=pad_color)
+            # EasyLogger.debug("2: {}".format(dst_size))
         elif resize_type == 3:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             # resize_ratio = dst_size[1] / src_image.shape[0]
@@ -37,16 +40,16 @@ class ImageDataSetProcess(BaseDataSetProcess):
             if resize_w > dst_size[0]:
                 resize_w = dst_size[0]
             dst_size = (resize_w, dst_size[1])
+            EasyLogger.debug("3: {}".format(dst_size))
             result = self.cv_image_resize(src_image, dst_size, interpolation="bilinear")
         elif resize_type == 4:
             src_size = (src_image.shape[1], src_image.shape[0])  # [width, height]
             resize_w, resize_h = self.get_short_size(src_size, dst_size)
-            # print(resize_w, resize_h)
-            if int(resize_w) <= 0 or int(resize_h) <= 0:
-                return None, (None, None)
+            EasyLogger.debug("4: {}".format((resize_w, resize_h)))
             result = self.cv_image_resize(src_image, (int(resize_w), int(resize_h)))
         elif resize_type == 5:
             temp_size = self.get_random_size(dst_size)
+            EasyLogger.debug("5: {}".format(temp_size))
             result = self.cv_image_resize(src_image, temp_size)
         return result
 
@@ -197,15 +200,13 @@ class ImageDataSetProcess(BaseDataSetProcess):
 
     def get_short_size(self, src_size, dst_size):
         short_size = min(dst_size)
-        if min(src_size) < short_size:
-            if src_size[1] < src_size[0]:
-                ratio = float(short_size) / src_size[1]
-            else:
-                ratio = float(short_size) / src_size[0]
+        min_edge = min(src_size)
+        if min_edge < short_size:
+            ratio = float(short_size) / min_edge
         else:
             ratio = 1.
-        resize_h = int(src_size[0] * ratio)
-        resize_w = int(src_size[1] * ratio)
-        resize_h = max(int(round(resize_h / 32) * 32), 32)
+        resize_w = int(src_size[0] * ratio)
+        resize_h = int(src_size[1] * ratio)
         resize_w = max(int(round(resize_w / 32) * 32), 32)
+        resize_h = max(int(round(resize_h / 32) * 32), 32)
         return resize_w, resize_h

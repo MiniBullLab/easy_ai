@@ -2,6 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+from easyai.utility.logger import EasyLogger
+if EasyLogger.check_init():
+    log_file_path = EasyLogger.get_log_file_path("tools.log")
+    EasyLogger.init(logfile_level="debug", log_file=log_file_path, stdout_level="error")
 import os
 import sys
 sys.path.insert(0, os.getcwd() + "/..")
@@ -10,6 +14,7 @@ import numpy as np
 from easyai.helper import DirProcess
 from easyai.helper import ImageProcess
 from easyai.helper.json_process import JsonProcess
+from easyai.visualization.utility.color_define import SegmentColorDefine
 from easyai.helper.arguments_parse import ToolArgumentsParse
 from easyai.config.utility.config_factory import ConfigFactory
 from easyai.name_manager.task_name import TaskName
@@ -37,7 +42,7 @@ class ConvertSegmentionLable():
                 os.makedirs(output_dir)
             for label_path in self.dirProcess.getDirFiles(label_dir, "*.*"):
                 _, file_name_and_post = os.path.split(label_path)
-                # print(label_path)
+                EasyLogger.debug(label_path)
                 mask = self.process_segment_label(label_path, label_type, class_list)
                 if mask is not None:
                     save_path = os.path.join(output_dir, file_name_and_post)
@@ -47,10 +52,10 @@ class ConvertSegmentionLable():
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             annotation_dir = os.path.join(label_dir, self.annotation_dir_name)
-            for label_path in self.dirProcess.getDirFiles(annotation_dir, "*.*"):
+            for label_path in self.dirProcess.getDirFiles(annotation_dir, "*.json"):
                 _, file_name_post = os.path.split(label_path)
                 file_name, post = os.path.splitext(file_name_post)
-                # print(label_path)
+                EasyLogger.debug(label_path)
                 mask = self.convert_json_to_segment_label(label_path, label_type, class_list)
                 if mask is not None:
                     save_name_and_post = file_name + self.segment_post
@@ -85,7 +90,7 @@ class ConvertSegmentionLable():
         if label_type == -1:  # gray
             mask = self.fill_gray_label(image_data.shape[:2], polygon_list, class_list)
         elif label_type == -2:  # rgb
-            mask = self.fill_color_label(image_data.shape[:2], polygon_list, class_list)
+            mask = self.fill_color_label(image_data.shape, polygon_list, class_list)
         return mask
 
     def merge_segment_label(self, mask, volid_label, valid_label):
@@ -119,25 +124,27 @@ class ConvertSegmentionLable():
         return result
 
     def fill_gray_label(self, shape, polygon_list, class_list):
-        result = np.full(shape, 255, dtype=np.uint8)
+        result = np.full(shape, SegmentColorDefine.background[0], dtype=np.uint8)
         for class_name, value in class_list:
             if class_name.strip() == "background":
                 continue
+            gray_value = int(value.strip())
             for polygon_object in polygon_list:
                 if class_name.strip() == polygon_object.name:
                     contours = np.array([[p.x, p.y] for p in polygon_object.get_polygon()])
-                    cv2.fillPoly(result, [contours], value)
+                    cv2.fillPoly(result, [contours], gray_value)
         return result
 
     def fill_color_label(self, shape, polygon_list, class_list):
-        result = np.full(shape, (255, 255, 255), dtype=np.uint8)
+        result = np.full(shape, SegmentColorDefine.background, dtype=np.uint8)
         for class_name, value in class_list:
             if class_name.strip() == "background":
                 continue
+            value_list = [int(x) for x in value.split(',') if x.strip()]
             for polygon_object in polygon_list:
                 if class_name.strip() == polygon_object.name:
                     contours = np.array([[p.x, p.y] for p in polygon_object.get_polygon()])
-                    cv2.fillPoly(result, [contours], value)
+                    cv2.fillPoly(result, [contours], value_list)
         return result
 
 

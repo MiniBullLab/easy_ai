@@ -3,7 +3,6 @@
 # Author:lipeijie
 
 import numpy as np
-from easyai.helper.data_structure import Rect2D
 from easyai.data_loader.utility.task_dataset_process import TaskDataSetProcess
 
 
@@ -16,7 +15,7 @@ class Box2dDataSetProcess(TaskDataSetProcess):
         labels = []
         if self.resize_type == 0:
             for box in boxes:
-                rect = Rect2D()
+                rect = box.copy()
                 rect.class_id = class_name.index(box.name)
                 rect.min_corner.x = box.min_corner.x
                 rect.min_corner.y = box.min_corner.y
@@ -27,7 +26,7 @@ class Box2dDataSetProcess(TaskDataSetProcess):
             ratio_w = float(dst_size[0]) / src_size[0]
             ratio_h = float(dst_size[1]) / src_size[1]
             for box in boxes:
-                rect = Rect2D()
+                rect = box.copy()
                 rect.class_id = class_name.index(box.name)
                 rect.min_corner.x = ratio_w * box.min_corner.x
                 rect.min_corner.y = ratio_h * box.min_corner.y
@@ -37,7 +36,7 @@ class Box2dDataSetProcess(TaskDataSetProcess):
         elif self.resize_type == 2:
             ratio, pad_size = self.dataset_process.get_square_size(src_size, dst_size)
             for box in boxes:
-                rect = Rect2D()
+                rect = box.copy()
                 rect.class_id = class_name.index(box.name)
                 rect.min_corner.x = ratio * box.min_corner.x + pad_size[0] // 2
                 rect.min_corner.y = ratio * box.min_corner.y + pad_size[1] // 2
@@ -57,7 +56,7 @@ class Box2dDataSetProcess(TaskDataSetProcess):
         new_right = int(np.clip(xmax + ratio * width, 0, src_size[0]))
         new_top = int(np.clip(ymin - ratio * height, 0, src_size[1]))
         new_bottom = int(np.clip(ymax + ratio * height, 0, src_size[1]))
-        rect2d = Rect2D()
+        rect2d = box.copy()
         rect2d.name = box.name
         rect2d.min_corner.x = new_left
         rect2d.min_corner.y = new_top

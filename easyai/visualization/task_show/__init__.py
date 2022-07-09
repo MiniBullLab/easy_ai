@@ -13,7 +13,6 @@ from . import polygon2d_show
 from . import recognize_text_show
 from . import ocr_show
 
-from . import pc_classify_show
 
 
 

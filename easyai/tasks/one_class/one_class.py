@@ -47,10 +47,13 @@ class OneClass(BaseInference):
                                                class_index,
                                                class_confidence))
 
-    def infer(self, input_data, net_type=0):
+    def single_image_process(self, input_data):
+        pass
+
+    def infer(self, batch_data, net_type=0):
         with torch.no_grad():
-            image_data = input_data['image'].to(self.device)
-            model_output = self.model(image_data)
+            input_datas = self.input_datas_processing(batch_data)
+            model_output = self.model(input_datas)
             output = self.compute_output(model_output)
         return output, model_output
 

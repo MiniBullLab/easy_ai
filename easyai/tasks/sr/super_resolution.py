@@ -49,11 +49,14 @@ class SuperResolution(BaseInference):
         #
         #     if cv2.waitKey() & 0xFF == 27:
         #         break
+    
+    def single_image_process(self, input_data):
+        pass
 
-    def infer(self, input_data, net_type=0):
+    def infer(self, batch_data, net_type=0):
         with torch.no_grad():
-            image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
+            input_datas = self.input_datas_processing(batch_data)
+            output_list = self.model(input_datas)
             prediction = self.compute_output(output_list[:])
         return prediction, output_list
 

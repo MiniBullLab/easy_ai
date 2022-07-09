@@ -10,9 +10,8 @@ from easyai.model.utility.model_registry import REGISTERED_KEYPOINT2D_MODEL
 from easyai.model.utility.model_registry import REGISTERED_SR_MODEL
 from easyai.model.utility.model_registry import REGISTERED_GAN_MODEL
 from easyai.model.utility.model_registry import REGISTERED_RNN_MODEL
+from easyai.model.utility.model_registry import REGISTERED_REID_MODEL
 from easyai.model.utility.model_registry import REGISTERED_MULTI_MODEL
-from easyai.model.utility.model_registry import REGISTERED_PC_CLS_MODEL
-from easyai.model.utility.model_registry import REGISTERED_PC_SEG_MODEL
 from easyai.utility.registry import build_from_cfg
 
 from easyai.model_block.utility.model_parse import ModelParse
@@ -73,12 +72,10 @@ class ModelFactory():
             model = build_from_cfg(model_config, REGISTERED_KEYPOINT2D_MODEL)
         elif REGISTERED_RNN_MODEL.has_class(model_name):
             model = build_from_cfg(model_config, REGISTERED_RNN_MODEL)
+        elif REGISTERED_REID_MODEL.has_class(model_name):
+            model = build_from_cfg(model_config, REGISTERED_REID_MODEL)
         elif REGISTERED_MULTI_MODEL.has_class(model_name):
             model = build_from_cfg(model_config, REGISTERED_MULTI_MODEL)
-        elif REGISTERED_PC_CLS_MODEL.has_class(model_name):
-            model = build_from_cfg(model_config, REGISTERED_PC_CLS_MODEL)
-        elif REGISTERED_PC_SEG_MODEL.has_class(model_name):
-            model = build_from_cfg(model_config, REGISTERED_PC_SEG_MODEL)
         else:
             model = None
         return model

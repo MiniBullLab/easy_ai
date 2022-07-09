@@ -2,12 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import os
 from easyai.name_manager.block_name import LayerType, BlockType, HeadType
 from easyai.model_block.utility.create_model_list import CreateModuleList
 from easyai.model_block.utility.backbone_factory import BackboneFactory
 from easyai.loss.utility.loss_factory import LossFactory
 from easyai.model_block.utility.base_model import BaseModel
-import os
+from easyai.utility.logger import EasyLogger
 
 
 class MyModel(BaseModel):
@@ -21,24 +22,25 @@ class MyModel(BaseModel):
         self.cfg_dir = cfg_dir
         self.default_args = default_args
         self.backbone_name = ""
-
+        EasyLogger.debug("{}".format(model_defines))
+        EasyLogger.debug("{}".format(default_args))
         self.create_block_list()
 
     def create_block_list(self):
         self.clear_list()
 
         backbone_block, self.backbone_name = self.creat_backbone()
-        base_out_channels = backbone_block.get_outchannel_list()
-        self.add_block_list(BlockType.BaseNet, backbone_block,
-                            base_out_channels[-1])
         if backbone_block is not None:
+            base_out_channels = backbone_block.get_outchannel_list()
+            self.add_block_list(BlockType.BaseNet, backbone_block,
+                                base_out_channels[-1])
             task_block_dict, task_out_channels = self.create_task(base_out_channels)
             for index, (key, block) in enumerate(task_block_dict.items()):
                 self.add_block_list(key, block, task_out_channels[index], flag=1)
 
             self.create_loss_list(input_dict=task_block_dict)
         else:
-            print("create backbone error!")
+            EasyLogger.error("create backbone error!")
 
     def create_loss_list(self, input_dict=None):
         self.lossList = []
@@ -50,18 +52,23 @@ class MyModel(BaseModel):
     def creat_backbone(self):
         input_name = ''
         result = None
-        backbone = self.model_defines[0]
-        if backbone["type"] == BlockType.BaseNet:
-            input_name = backbone["name"]
+        backbone_args = self.model_defines[0]
+        if backbone_args["type"] == BlockType.BaseNet:
+            input_name = backbone_args.pop("name")
             self.model_defines.pop(0)
             input_name = input_name.strip()
             if input_name.endswith("cfg"):
                 input_cfg_path = os.path.join(self.cfg_dir, input_name)
-                self.default_args['type'] = input_cfg_path
-                result = self.backbone_factory.get_backbone_model(self.default_args)
+                backbone_args['type'] = input_cfg_path
+                result = self.backbone_factory.get_backbone_model(backbone_args)
             else:
-                self.default_args['type'] = input_name
-                result = self.backbone_factory.get_backbone_model(self.default_args)
+                backbone_args['type'] = input_name
+                data_channel = self.default_args.get('data_channel', 3)
+                if backbone_args.get('data_channel') is None:
+                    backbone_args['data_channel'] = data_channel
+                self.data_channel = backbone_args['data_channel']
+                result = self.backbone_factory.get_backbone_model(backbone_args)
+        assert result is not None, EasyLogger.error("%s is error" % input_name)
         return result, input_name
 
     def create_task(self, base_out_channels):

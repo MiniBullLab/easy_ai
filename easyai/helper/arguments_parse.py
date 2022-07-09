@@ -435,7 +435,7 @@ class ToolArgumentsParse():
 
         parser.add_option("-t", "--type", dest="type",
                           metavar="PATH", type="string", default="train_val",
-                          help="create sample_tool type")
+                          help="create sample type")
 
         parser.add_option("-p", '--probability', dest='probability', type='int',
                           default=10, metavar='EVICTINTERVAL',

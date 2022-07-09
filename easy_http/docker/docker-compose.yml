@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: ./web
+    ports:
+      - "8000:8000"
+      - "5000:5000"
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+    tty: true

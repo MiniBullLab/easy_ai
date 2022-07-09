@@ -102,7 +102,10 @@ class RecTextSample(BaseDetectionSample):
         for image_path, label_path in image_and_label_list:
             _, ocr_objects = self.json_process.parse_ocr_data(label_path)
             for ocr in ocr_objects:
-                if ocr.language.strip() in self.language:
+                if not self.language.strip():
+                    self.max_length = max(len(ocr.object_text), self.max_length)
+                    result.append((image_path, ocr))
+                elif ocr.language.strip() in self.language:
                     self.max_length = max(len(ocr.object_text), self.max_length)
                     result.append((image_path, ocr))
         return result

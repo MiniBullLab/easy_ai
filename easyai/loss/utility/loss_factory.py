@@ -11,7 +11,7 @@ from easyai.loss.utility.loss_registry import REGISTERED_GAN_D_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_GAN_G_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_KEYPOINT2D_LOSS
 from easyai.loss.utility.loss_registry import REGISTERED_RNN_LOSS
-from easyai.loss.utility.loss_registry import REGISTERED_PC_LOSS
+from easyai.loss.utility.loss_registry import REGISTERED_REID_LOSS
 from easyai.utility.registry import build_from_cfg
 from easyai.utility.logger import EasyLogger
 
@@ -37,12 +37,12 @@ class LossFactory():
             result = self.get_keypoint2d_loss(loss_args)
         elif REGISTERED_RNN_LOSS.has_class(input_name):
             result = self.get_rnn_loss(loss_args)
-        elif REGISTERED_PC_LOSS.has_class(input_name):
-            result = self.get_pc_loss(loss_args)
+        elif REGISTERED_REID_LOSS.has_class(input_name):
+            result = self.get_reid_loss(loss_args)
         else:
             result = self.get_gan_loss(loss_args)
         if result is None:
-            print("loss:%s error" % input_name)
+            EasyLogger.error("loss:%s error" % input_name)
         return result
 
     def has_loss(self, key):
@@ -79,7 +79,7 @@ class LossFactory():
             if loss_name in key:
                 return True
 
-        for loss_name in REGISTERED_PC_LOSS.get_keys():
+        for loss_name in REGISTERED_REID_LOSS.get_keys():
             if loss_name in key:
                 return True
 
@@ -207,6 +207,13 @@ class LossFactory():
             loss_config['bg_iou_threshold'] = float(loss_config['bg_iou_threshold'])
             loss_config['per_image_sample'] = int(loss_config['per_image_sample'])
             loss_config['positive_fraction'] = float(loss_config['positive_fraction'])
+        elif input_name == LossName.YoloV5Loss:
+            loss_config['class_number'] = int(loss_config['class_number'])
+            loss_config['anchor_count'] = int(loss_config['anchor_count'])
+            loss_config['anchor_sizes'] = loss_config['anchor_sizes']
+            loss_config['box_weight'] = float(loss_config['box_weight'])
+            loss_config['object_weight'] = float(loss_config['object_weight'])
+            loss_config['class_weight'] = float(loss_config['class_weight'])
         loss = build_from_cfg(loss_config, REGISTERED_DET2D_LOSS)
         return loss
 
@@ -233,8 +240,10 @@ class LossFactory():
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
             loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         elif input_name == LossName.DBLoss:
+            loss_config['alpha'] = loss_config.get('alpha', 1.0)
+            loss_config['beta'] = loss_config.get('beta', 10.0)
+            loss_config['ohem_ratio'] = loss_config.get('ohem_ratio', 3)
             loss_config['reduction'] = loss_config.get("reduction", 'mean')
-            loss_config['ignore_index'] = int(loss_config.get("ignore_index", 250))
         loss = build_from_cfg(loss_config, REGISTERED_SEG_LOSS)
         return loss
 
@@ -279,11 +288,14 @@ class LossFactory():
         loss = build_from_cfg(loss_config, REGISTERED_RNN_LOSS)
         return loss
 
-    def get_pc_loss(self, loss_config):
+    def get_reid_loss(self, loss_config):
         input_name = loss_config['type'].strip()
-        if input_name == LossName.PointNetClsLoss:
-            loss_config['flag'] = bool(loss_config['flag'])
-        loss = build_from_cfg(loss_config, REGISTERED_PC_LOSS)
+        if input_name == LossName.FairMotLoss:
+            loss_config['class_number'] = int(loss_config['class_number'])
+            loss_config['reid'] = int(loss_config['reid'])
+            loss_config['max_id'] = int(loss_config['max_id'])
+        loss = build_from_cfg(loss_config, REGISTERED_REID_LOSS)
         return loss
+
 
 

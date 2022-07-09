@@ -30,6 +30,19 @@ class DetectionDataSetProcess(Box2dDataSetProcess):
             result[index, :] = np.array([class_id, x, y, width, height])
         return result
 
+    def normalize_tracking_labels(self, labels, image_size):
+        result = np.zeros((len(labels), 6), dtype=np.float32)
+        for index, rect in enumerate(labels):
+            id = rect.objectId
+            class_id = rect.class_id
+            x, y = rect.center()
+            x /= image_size[0]
+            y /= image_size[1]
+            width = rect.width() / image_size[0]
+            height = rect.height() / image_size[1]
+            result[index, :] = np.array([class_id, id, x, y, width, height])
+        return result
+
     def change_outside_labels(self, labels):
         delete_index = []
         # reject warped points outside of image (0.999 for the image boundary)
@@ -49,3 +62,25 @@ class DetectionDataSetProcess(Box2dDataSetProcess):
 
         labels = np.delete(labels, delete_index, axis=0)
         return labels
+
+    def normalize_clip_labels(self, labels, image_size, clip=True, eps=1E-3):
+        result = np.zeros((len(labels), 5), dtype=np.float32)
+        for index, rect in enumerate(labels):
+            class_id = rect.class_id
+            x1 = rect.min_corner.x
+            y1 = rect.min_corner.y
+            x2 = rect.max_corner.x
+            y2 = rect.max_corner.y
+            result[index, :] = np.array([class_id, x1, y1, x2, y2])
+        if clip:
+            self.clip_coords(result, (image_size[0] - eps, image_size[1] - eps))  # warning: inplace clip
+        y = np.copy(result)
+        y[:, 1] = ((result[:, 1] + result[:, 3]) / 2) / image_size[0]  # x center
+        y[:, 2] = ((result[:, 2] + result[:, 4]) / 2) / image_size[1]  # y center
+        y[:, 3] = (result[:, 3] - result[:, 1]) / image_size[0]  # width
+        y[:, 4] = (result[:, 4] - result[:, 2]) / image_size[1]  # height
+        return y
+
+    def clip_coords(self, boxes, shape):
+        boxes[:, [1, 3]] = boxes[:, [1, 3]].clip(0, shape[0])  # x1, x2
+        boxes[:, [2, 4]] = boxes[:, [2, 4]].clip(0, shape[1])  # y1, y2

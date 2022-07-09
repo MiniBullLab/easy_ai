@@ -16,8 +16,8 @@ class ImageDataAugment():
         self.dataset_process = ImageDataSetProcess()
         self.border_value = (0.0, 0.0, 0.0)
 
-    def augment_affine(self, src_image, degrees=(-15, 15),
-                       translate=(0.0, 0.0), scale=(1.0, 1.0), shear=(-3, 3)):
+    def augment_affine(self, src_image, degrees=(-5, 5),
+                       translate=(0.1, 0.1), scale=(0.5, 1.2), shear=(-3, 3)):
         image_size = (src_image.shape[1], src_image.shape[0])
         matrix, degree = self.dataset_process.affine_matrix(image_size,
                                                             degrees=degrees,
@@ -40,20 +40,22 @@ class ImageDataAugment():
         return image, matrix
 
     def augment_lr_flip(self, src_image):
-        image = src_image[:]
-        is_lr = False
         if random.random() > 0.5:
-            image = np.fliplr(image)
+            image = cv2.flip(src_image, 1)
             is_lr = True
+        else:
+            image = src_image[:]
+            is_lr = False
         return image, is_lr
 
     def augment_up_flip(self, src_image):
         # random up-down flip
-        image = src_image[:]
-        is_up = False
         if random.random() > 0.5:
-            image = np.flipud(image)
+            image = cv2.flip(src_image, 0)
             is_up = True
+        else:
+            image = src_image[:]
+            is_up = False
         return image, is_up
 
     def augment_hsv(self, rgb_image):
@@ -76,6 +78,23 @@ class ImageDataAugment():
         img_hsv[:, :, 1] = S.astype(np.uint8)
         img_hsv[:, :, 2] = V.astype(np.uint8)
         result = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB)
+        return result
+
+    def augment_hsv_v2(self, im, hgain=0.5, sgain=0.5, vgain=0.5):
+        # HSV color-space augmentation
+        result = im[:]
+        if hgain or sgain or vgain:
+            r = np.random.uniform(-1, 1, 3) * [hgain, sgain, vgain] + 1  # random gains
+            hue, sat, val = cv2.split(cv2.cvtColor(im,  cv2.COLOR_RGB2HSV))
+            dtype = im.dtype  # uint8
+
+            x = np.arange(0, 256, dtype=r.dtype)
+            lut_hue = ((x * r[0]) % 180).astype(dtype)
+            lut_sat = np.clip(x * r[1], 0, 255).astype(dtype)
+            lut_val = np.clip(x * r[2], 0, 255).astype(dtype)
+
+            im_hsv = cv2.merge((cv2.LUT(hue, lut_hue), cv2.LUT(sat, lut_sat), cv2.LUT(val, lut_val)))
+            result = cv2.cvtColor(im_hsv, cv2.COLOR_HSV2BGR)
         return result
 
     def gaussian_blur(self, src_image):

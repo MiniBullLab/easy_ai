@@ -5,14 +5,19 @@
 import os
 import abc
 from pathlib import Path
+
+import numpy as np
 import torch
 from easyai.helper.timer_process import TimerProcess
+from easyai.helper import VideoProcess
 from easyai.data_loader.common.images_loader import ImagesLoader
 from easyai.data_loader.common.video_loader import VideoLoader
 from easyai.data_loader.common.text_data_loader import TextDataLoader
+from easyai.data_loader.common.numpy_data_geter import NumpyDataGeter
 from easyai.data_loader.utility.data_transforms_factory import DataTransformsFactory
+from easyai.model.utility.model_factory import ModelFactory
 from easyai.torch_utility.torch_model_process import TorchModelProcess
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.visualization.utility.task_show_factory import TaskShowFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -24,6 +29,7 @@ class BaseInference(BaseTask):
     def __init__(self, model_name, config_path, task_name):
         super().__init__(config_path)
         self.set_task_name(task_name)
+        self.video_process = VideoProcess()
         self.timer = TimerProcess()
         self.torchModelProcess = TorchModelProcess()
         self.show_factory = TaskShowFactory()
@@ -73,7 +79,10 @@ class BaseInference(BaseTask):
 
     def set_model(self, my_model=None, gpu_id=0):
         if my_model is None:
-            self.model = self.torchModelProcess.create_model(self.model_args, gpu_id)
+            model_factory = ModelFactory()
+            self.model = self.torchModelProcess.create_model(self.model_args,
+                                                             model_factory,
+                                                             gpu_id)
         elif isinstance(my_model, torch.nn.Module):
             self.model = my_model
             self.model.eval()
@@ -84,7 +93,11 @@ class BaseInference(BaseTask):
         pass
 
     @abc.abstractmethod
-    def infer(self, input_data, net_type=0):
+    def single_image_process(self, input_data):
+        pass
+
+    @abc.abstractmethod
+    def infer(self, batch_data, net_type=0):
         pass
 
     def load_weights(self, weights_path):
@@ -115,10 +128,13 @@ class BaseInference(BaseTask):
             dataloader = TextDataLoader(input_path, image_size, data_channel,
                                         resize_type, normalize_type, mean, std,
                                         transform_func)
-        else:
+        elif self.video_process.isVideoFile(input_path):
             dataloader = VideoLoader(input_path, image_size, data_channel,
                                      resize_type, normalize_type, mean, std,
                                      transform_func)
+        else:
+            EasyLogger.debug("%s: input path not support!" % input_path)
+            return None
         self.batch_data_process_func = \
             self.batch_data_process_factory.build_process(self.task_config.batch_data_process)
         EasyLogger.debug("data count: %d" % len(dataloader))
@@ -127,9 +143,31 @@ class BaseInference(BaseTask):
     def get_point_cloud_data_lodaer(self, input_path):
         pass
 
-    def batch_processing(self, batch_data):
-        if self.batch_data_process_func is not None:
-            self.batch_data_process_func(batch_data)
+    def get_single_image_data(self, input_param):
+        EasyLogger.debug(self.task_config.data)
+        image_size = tuple(self.task_config.data['image_size'])
+        data_channel = self.task_config.data['data_channel']
+        mean = self.task_config.data.get('mean', 1)
+        std = self.task_config.data.get('std', 0)
+        resize_type = self.task_config.data['resize_type']
+        normalize_type = self.task_config.data['normalize_type']
+        transform_args = self.task_config.data.get('transform_func', None)
+        transform_func = self.transform_factory.get_data_transform(transform_args)
+        if isinstance(input_param, np.ndarray):
+            data_geter = NumpyDataGeter(image_size, data_channel,
+                                        resize_type, normalize_type, mean, std,
+                                        transform_func)
+            input_data = data_geter.get(input_param)
+            return input_data
+        elif isinstance(input_param, list):
+            data_geter = NumpyDataGeter(image_size, data_channel,
+                                        resize_type, normalize_type, mean, std,
+                                        transform_func)
+            input_data = data_geter.get_multi(input_param)
+            return input_data
+        else:
+            EasyLogger.debug("input path not support!")
+            return None
 
     def set_src_size(self, src_data):
         shape = src_data.shape[:2]  # shape = [height, width]
@@ -173,3 +211,10 @@ class BaseInference(BaseTask):
     @property
     def device(self):
         return self.torchModelProcess.get_device()
+
+    def input_datas_processing(self, batch_data):
+        if self.batch_data_process_func is not None:
+            input_datas = self.batch_data_process_func(batch_data, self.device)
+        else:
+            input_datas = batch_data['image'].to(self.device, non_blocking=True)
+        return input_datas

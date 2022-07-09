@@ -1,10 +1,10 @@
 {
-  "title": "Machine Learning Bot",
+  "title": "Easy Bot",
   "yes": "Yes",
   "no": "No",
   "signOut": "Sign Out",
   "reLogin": "Login Again",
-  "reLoignTips": "This session has expired. To log in to Machine Learning Bot again, please click Login Again.",
+  "reLoignTips": "This session has expired. To log in to Easy Bot again, please click Login Again.",
   "info": "Info",
   "optional": "optional",
   "loadMore": "Load More",

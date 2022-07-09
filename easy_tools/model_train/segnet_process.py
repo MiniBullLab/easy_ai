@@ -7,18 +7,25 @@ from easyai.helper.image_process import ImageProcess
 from easyai.helper.dir_process import DirProcess
 from easyai.data_loader.common.image_dataset_process import ImageDataSetProcess
 from easyai.data_loader.seg.segment_sample import SegmentSample
+from easyai.tools.sample_tool.sample_info_get import SampleInformation
 from easyai.tools.sample_tool.convert_segment_label import ConvertSegmentionLable
+from easyai.name_manager.task_name import TaskName
 from easyai.utility.logger import EasyLogger
 
 
 class SegNetProcess():
 
     def __init__(self):
-        self.label_dir_name = "SegmentLabel"
-        self.annotation_post = ".png"
+        self.images_dir_name = "JPEGImages"
+        self.annotation_dir_name = "Annotations"
+        self.annotation_post = ".json"
+        self.save_label_dir = "SegmentLabel"
+        self.segment_post = ".png"
         self.dir_process = DirProcess()
         self.image_process = ImageProcess()
         self.dataset_process = ImageDataSetProcess()
+        self.convert_label = ConvertSegmentionLable()
+        self.sample_process = SampleInformation()
 
     def resize_process(self, data_path):
         image_count = 0
@@ -40,10 +47,36 @@ class SegNetProcess():
                 EasyLogger.error("(%s/%s) read segment data fail!" % (img_path, label_path))
         # assert image_count > 0
 
+    def label_process(self, data_path):
+        temp_path, file_name = os.path.split(data_path)
+        root_path, _ = os.path.split(temp_path)
+        labels_dir = os.path.join(root_path, self.save_label_dir)
+        annotation_dir = os.path.join(root_path, self.annotation_dir_name)
+        images_dir = os.path.join(root_path, self.images_dir_name)
+        if not os.path.exists(labels_dir):
+            class_names = ()
+            if os.path.exists(annotation_dir) and os.path.exists(images_dir):
+                temp_path = os.path.join(images_dir, file_name)
+                class_names = self.sample_process.create_class_names(temp_path,
+                                                                     TaskName.Segment_Task)
+                EasyLogger.debug("segnet: {}".format(class_names))
+                if class_names is not None and len(class_names) > 0:
+
+                    self.convert_label.convert_segment_label(images_dir, -2, class_names)
+                else:
+                    EasyLogger.error("input segnet datset error!")
+            else:
+                EasyLogger.error("%s or %s not exists!" % (annotation_dir, images_dir))
+        else:
+            self.png_process(data_path)
+            class_names = (('fg', '0'),
+                           ('background', '255'))
+        return class_names
+
     def png_process(self, data_path):
         temp_path, _ = os.path.split(data_path)
         root_path, _ = os.path.split(temp_path)
-        labels_dir = os.path.join(root_path, self.label_dir_name)
+        labels_dir = os.path.join(root_path, self.save_label_dir)
         for label_path in self.dir_process.getDirFiles(labels_dir, "*.*"):
             path, filename_and_post = os.path.split(label_path)
             filename, post = os.path.splitext(filename_and_post)
@@ -57,6 +90,4 @@ class SegNetProcess():
                 else:
                     EasyLogger.error("%s read segment label fail!" % label_path)
 
-        def label_convert():
-            pass
 

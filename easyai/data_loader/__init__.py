@@ -7,6 +7,8 @@ from . import one_class
 from . import rec_text
 from . import seg
 from . import sr
+from . import ocr
+from . import reid
 from . import multi_task
 
 

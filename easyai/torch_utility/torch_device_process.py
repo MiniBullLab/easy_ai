@@ -3,6 +3,7 @@
 # Author:lipeijie
 
 import os
+import time
 import torch
 from easyai.utility.env import set_random_seed
 from easyai.utility.logger import EasyLogger
@@ -45,5 +46,7 @@ class TorchDeviceProcess():
     def initTorch(self):
         if TorchDeviceProcess.first_run:
             torch.cuda.empty_cache()
+            t = time.time()
+            seed = int(t)
             set_random_seed(0, TorchDeviceProcess.hasCUDA())
             TorchDeviceProcess.first_run = False

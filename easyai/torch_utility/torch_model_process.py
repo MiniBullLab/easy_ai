@@ -8,7 +8,7 @@ import re
 import torch
 from collections import OrderedDict
 from easyai.torch_utility.torch_device_process import TorchDeviceProcess
-from easyai.model.utility.model_factory import ModelFactory, ModelWeightInit
+from easyai.model.utility.mode_weight_init import ModelWeightInit
 from easyai.utility.logger import EasyLogger
 
 
@@ -16,17 +16,17 @@ class TorchModelProcess():
 
     def __init__(self):
         self.torchDeviceProcess = TorchDeviceProcess()
-        self.modelFactory = ModelFactory()
         self.model_weight_init = ModelWeightInit()
 
         self.torchDeviceProcess.initTorch()
         self.best_value = -1
         self.is_multi_gpu = False
 
-    def create_model(self, model_config, gpu_id, is_multi_gpu=False):
+    def create_model(self, model_config, model_factory,
+                     gpu_id, is_multi_gpu=False):
         self.is_multi_gpu = is_multi_gpu
         self.torchDeviceProcess.setGpuId(gpu_id)
-        model = self.modelFactory.get_model(model_config)
+        model = model_factory.get_model(model_config)
         return model
 
     def init_model(self, model, init_type):
@@ -50,7 +50,7 @@ class TorchModelProcess():
                     EasyLogger.debug("{} {}".format(k, v.shape))
                 model_dict.update(new_pretrained_dict)
                 model.load_state_dict(model_dict)
-                EasyLogger.warn("Load pretrained parameters(%s) success" % weight_path)
+                EasyLogger.info("Load pretrained parameters(%s) success" % weight_path)
             else:
                 EasyLogger.warn("pretrained model %s not exist" % weight_path)
 
@@ -58,18 +58,13 @@ class TorchModelProcess():
         count = self.torchDeviceProcess.getCUDACount()
         checkpoint = None
         if os.path.exists(weight_path):
-            try:
-                if count > 1:
-                    checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                    state = self.convert_state_dict(checkpoint[dict_name])
-                    model.load_state_dict(state)
-                else:
-                    checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
-                    model.load_state_dict(checkpoint[dict_name])
-            except Exception as err:
-                # os.remove(weight_path)
-                checkpoint = None
-                EasyLogger.warn(err)
+            if count > 1:
+                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
+                state = self.convert_state_dict(checkpoint[dict_name])
+                model.load_state_dict(state)
+            else:
+                checkpoint = torch.load(weight_path, map_location=torch.device("cpu"))
+                model.load_state_dict(checkpoint[dict_name])
         else:
             EasyLogger.error("Latest model %s exists" % weight_path)
         result = self.get_latest_model_value(checkpoint)

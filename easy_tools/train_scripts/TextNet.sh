@@ -23,7 +23,7 @@ function run_onnx_convert() {
     mkdir -m 755 -p $outDir/dra_image_bin
 
     #amba
-    source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv22.env
+    source /usr/local/amba-cv-tools-2.2.1-20200928.ubuntu-18.04/env/cv25.env
 
     #cuda10
     export PATH=/usr/local/cuda/bin:$PATH
@@ -47,7 +47,7 @@ function run_onnx_convert() {
 
     gen_image_list.py -f $imageDir \
                       -o $imageDir/img_list.txt \
-                      -ns -e png -c 0 -d 0,0 -r 32,128 \
+                      -ns -e jpg -c 0 -d 0,0 -r 32,128 \
                       -bf $outDir/dra_image_bin \
                       -bo $outDir/dra_image_bin/dra_bin_list.txt
 
@@ -100,20 +100,20 @@ function run_onnx_convert() {
     echo  $(cat ${outDir}/dra_image_bin/dra_bin_list.txt | head -1) | xargs -n 1 echo | xargs -i cp -rf {} ${outDir}/cavalry/
 
     cp $outDir/cavalry/$outNetName.bin  ${root_path}/${outNetName}.bin
-    rm -rf logs lc_cnn_output ades
+    rm -rf logs lc_cnn_output lc_onnx_output ades
 }
 
 function main() {
     if [ -n "$1" ]; then
         dataset_train_path=$1
     else
-        dataset_train_path=/easy_ai/ImageSets/train.txt
+        dataset_train_path=/easy_data/ImageSets/train.txt
     fi
 
     if [ -n "$2" ]; then
         dataset_val_path=$2
     else
-        dataset_val_path=/easy_ai/ImageSets/val.txt
+        dataset_val_path=/easy_data/ImageSets/val.txt
     fi
     echo ${dataset_train_path}
     echo ${dataset_val_path}

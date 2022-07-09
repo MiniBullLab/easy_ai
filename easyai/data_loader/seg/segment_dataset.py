@@ -15,14 +15,14 @@ from easyai.utility.logger import EasyLogger
 @REGISTERED_DATASET.register_module(DatasetName.SegmentDataset)
 class SegmentDataset(TorchDataLoader):
 
-    def __init__(self, data_path, class_names, label_type,
+    def __init__(self, data_path, segment_class, label_type,
                  resize_type, normalize_type, mean=0, std=1,
                  image_size=(768, 320), data_channel=3,
                  is_augment=False, transform_func=None):
         super().__init__(data_path, data_channel, transform_func)
-        self.class_names = class_names
+        self.class_names = segment_class
         self.label_type = label_type
-        self.number_class = len(class_names)
+        self.number_class = len(segment_class)
         self.is_augment = is_augment
         self.image_size = tuple(image_size)
         self.segment_sample = SegmentSample(data_path)

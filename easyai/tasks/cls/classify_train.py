@@ -2,12 +2,13 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
+from easyai.utility.logger import EasyLogger
 import os
 from easyai.tasks.utility.common_train import CommonTrain
 from easyai.tasks.cls.classify_test import ClassifyTest
 from easyai.name_manager.task_name import TaskName
 from easyai.tasks.utility.task_registry import REGISTERED_TRAIN_TASK
-from easyai.utility.logger import EasyLogger
 
 
 @REGISTERED_TRAIN_TASK.register_module(TaskName.Classify_Task)
@@ -33,6 +34,7 @@ class ClassifyTrain(CommonTrain):
                 save_model_path = self.save_train_model(epoch)
                 self.test(val_path, epoch, save_model_path)
         except RuntimeError as e:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(e)
         finally:
             self.train_logger.close()
@@ -47,8 +49,8 @@ class ClassifyTrain(CommonTrain):
 
     def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
-        image_datas = batch_data['image'].to(self.device)
-        output_list = self.model(image_datas)
+        input_datas = self.input_datas_processing(batch_data)
+        output_list = self.model(input_datas)
         loss, loss_info = self.compute_loss(output_list, batch_data)
 
         self.loss_backward(loss)

@@ -7,7 +7,7 @@ import torch
 from easyai.helper.timer_process import TimerProcess
 from easyai.helper.average_meter import AverageMeter
 from easyai.data_loader.utility.dataloader_factory import DataloaderFactory
-from easyai.tasks.utility.batch_data_process_factory import BatchDataProcessFactory
+from easyai.data_loader.utility.batch_data_process_factory import BatchDataProcessFactory
 from easyai.evaluation.utility.evaluation_factory import EvaluationFactory
 from easyai.config.utility.base_config import BaseConfig
 from easyai.tasks.utility.base_task import BaseTask
@@ -123,11 +123,14 @@ class BaseTest(BaseTask):
         with torch.no_grad():
             if loss_count == 1 and output_count == 1:
                 loss = self.model.lossList[0](output_list[0], batch_data)
+                self.model.lossList[0].print_loss_info()
             elif loss_count == 1 and output_count > 1:
                 loss = self.model.lossList[0](output_list, batch_data)
+                self.model.lossList[0].print_loss_info()
             elif loss_count > 1 and loss_count == output_count:
                 for k in range(0, loss_count):
                     loss += self.model.lossList[k](output_list[k], batch_data)
+                    self.model.lossList[k].print_loss_info()
             else:
                 EasyLogger.error("compute loss error")
         return loss.item()

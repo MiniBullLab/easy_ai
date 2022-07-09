@@ -7,6 +7,7 @@ class DatasetName():
 
     ClassifyDataSet = "ClassifyDataSet"
     Det2dDataset = "Det2dDataset"
+    MosaicDet2dDataset = "MosaicDet2dDataset"
     Det2dSegDataset = "Det2dSegDataset"
     GenImageDataset = "GenImageDataset"
     KeyPoint2dDataset = "KeyPoint2dDataset"
@@ -17,21 +18,22 @@ class DatasetName():
     RecTextDataSet = "RecTextDataSet"
     RecTextOCRDataSet = "RecTextOCRDataSet"
     SuperResolutionDataset = "SuperResolutionDataset"
-
-    ClassifyPointCloudDataSet = "ClassifyPointCloudDataSet"
+    DetOCRDataSet = "DetOCRDataSet"
+    Det2dReidDataset = "Det2dReidDataset"
 
 
 class DatasetCollateName():
 
     ClassifyDataSetCollate = "ClassifyDataSetCollate"
     Det2dDataSetCollate = "Det2dDataSetCollate"
+    MosaicDataSetCollate = "MosaicDataSetCollate"
     KeyPoint2dDataSetCollate = "KeyPoint2dDataSetCollate"
     Pose2dDataSetCollate = "Pose2dDataSetCollate"
     RecTextDataSetCollate = "RecTextDataSetCollate"
     SuperResolutionDataSetCollate = "SuperResolutionDataSetCollate"
     SegmentDataSetCollate = "SegmentDataSetCollate"
-
-    ClassifyPointCloudDataSetCollate = "ClassifyPointCloudDataSetCollate"
+    DetOCRDataSetCollate = "DetOCRDataSetCollate"
+    Det2dReidDatasetCollate = "Det2dReidDatasetCollate"
 
 
 class DataloaderName():

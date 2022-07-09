@@ -106,6 +106,8 @@ class BlockType():
     InvertedResidual = "invertedResidual"
     InvertedResidualV2 = "invertedResidualV2"
 
+    DeformableResidualBlock = "DeformableResidualBlock"
+
     FPNBlock = "FPNBlock"
     FPNV2Block = "FPNV2Block"
 
@@ -160,6 +162,7 @@ class HeadType():
     SSDBoxHead = "ssdBox"
     MultiSSDBoxHead = "multiSSDBox"
     ARMBoxHead = "ARMBox"
+    YoloBoxHead = "yoloBox"
 
     MultiRPNHead = "multiRPN"
     MultiROIBoxHead = "multiROIBox"
@@ -175,6 +178,9 @@ class HeadType():
 
     TextAttentionHead = "TextAttentionHead"
     Seq2SeqHead = "Seq2SeqHead"
+
+    # reid
+    FairMOTHead = "FairMOTHead"
 
 
 class STNType():

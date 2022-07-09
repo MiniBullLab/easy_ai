@@ -7,6 +7,7 @@ import inspect
 import random
 import cv2
 import numpy as np
+# import ft2
 from PIL import Image, ImageDraw, ImageFont
 from easyai.visualization.utility.color_define import ColorDefine
 
@@ -21,12 +22,29 @@ class ImageDrawing():
         cv2.resizeWindow(widnow_name, int(image.shape[1] * scale), int(image.shape[0] * scale))
         cv2.imshow(widnow_name, image)
 
+    def draw_rect2d(self, src_image, boxes):
+        for box in boxes:
+            point1 = (int(box.min_corner.x), int(box.min_corner.y))
+            point2 = (int(box.max_corner.x), int(box.max_corner.y))
+            cv2.rectangle(src_image, point1, point2, (0, 0, 255), 2)
+
     def draw_detect_objects(self, src_image, result_objects):
         for object in result_objects:
             point1 = (int(object.min_corner.x), int(object.min_corner.y))
             point2 = (int(object.max_corner.x), int(object.max_corner.y))
-            index = object.classIndex
+            index = object.classIndex % len(ColorDefine.colors)
             cv2.rectangle(src_image, point1, point2, ColorDefine.colors[index], 2)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(src_image, object.name, point1, font, 0.5, (0, 0, 255), 1)
+
+    def draw_tracking_objects(self, src_image, result_objects):
+        for temp_object in result_objects:
+            point1 = (int(temp_object.min_corner.x), int(temp_object.min_corner.y))
+            point2 = (int(temp_object.max_corner.x), int(temp_object.max_corner.y))
+            cv2.rectangle(src_image, point1, point2, (0, 0, 255), 2)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            show_str = "%s %d" % (temp_object.name, temp_object.objectId)
+            cv2.putText(src_image, show_str, point1, font, 0.5, (0, 0, 255), 1)
 
     def draw_segment_result(self, src_image, result, class_list):
         r = result.copy()
@@ -91,7 +109,7 @@ class ImageDrawing():
             for point in key_points:
                 cv2.circle(src_image, (int(point.x), int(point.y)), 5, (0, 255, 225), 2)
 
-    def draw_polygon2d_result(self, src_image, result):
+    def draw_polygon2d_result(self, src_image, result, color=(0, 0, 225)):
         for result_object in result:
             polygon = result_object.get_polygon()
             point_list = []
@@ -100,13 +118,17 @@ class ImageDrawing():
                 y = int(point.y)
                 point_list.append([x, y])
             cv2.polylines(src_image, np.array([point_list], np.int32),
-                          True, (0, 0, 225), 2)
+                          True, color, 3, 0)
+
+    def draw_text_result(self, src_image, result, color=(0, 0, 225)):
+        for result_object in result:
+            pass
 
     def draw_ocr_result(self, src_image, result):
         random.seed(0)
         current_path = inspect.getfile(inspect.currentframe())
         dir_name = os.path.join(os.path.dirname(current_path), "../../config/fonts")
-        font_file = os.path.join(dir_name, "方正隶书简体.ttf")
+        font_file = os.path.join(dir_name, "IPAEXG.TTF")
         if isinstance(src_image, np.ndarray):
             src_image = Image.fromarray(src_image)
         h, w = src_image.height, src_image.width
@@ -122,7 +144,7 @@ class ImageDrawing():
             draw_left.polygon(draw_points, fill=color)
             txt = temp_object.get_text()
             if temp_object.get_text() is not None:
-                font = ImageFont.truetype(font_file, 18, encoding="utf-8")
+                font = ImageFont.truetype(font_file, 24, encoding="utf-8")
                 draw_right.text([draw_points[0][0], draw_points[0][1]],
                                 txt, fill=(0, 0, 0), font=font)
         img_left = Image.blend(src_image, img_left, 0.5)
@@ -130,4 +152,7 @@ class ImageDrawing():
         img_show.paste(img_left, (0, 0, w, h))
         img_show.paste(img_right, (w, 0, w * 2, h))
         return np.array(img_show)
+
+    def save_image(self, image, save_path):
+        cv2.imwrite(save_path, image)
 

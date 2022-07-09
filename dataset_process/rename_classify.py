@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from optparse import OptionParser
 
 
@@ -22,6 +21,7 @@ def parse_arguments():
         parser.error("'inputPath' option is required to run this program")
 
     return options
+
 
 def main():
     print("process start...")

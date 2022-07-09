@@ -22,7 +22,7 @@ class CommonTrain(BaseTrain):
         super().__init__(model_name, config_path, task_name)
         self.optimizer = None
         self.lr_scheduler = None
-        self.best_score = 0
+        self.best_score = -1
         self.start_epoch = 0
         self.test_first = True
         self.loss_info_average = dict()
@@ -36,10 +36,16 @@ class CommonTrain(BaseTrain):
 
     def load_latest_param(self, latest_weights_path):
         if latest_weights_path is not None and os.path.exists(latest_weights_path):
-            self.start_epoch, self.best_score = \
-                self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
-            EasyLogger.debug("Latest value: {} {}".format(self.start_epoch,
-                                                          self.best_score))
+            try:
+                self.start_epoch, self.best_score = \
+                    self.torchModelProcess.load_latest_model(latest_weights_path, self.model)
+                EasyLogger.debug("Latest value: {} {}".format(self.start_epoch,
+                                                              self.best_score))
+            except Exception as err:
+                # os.remove(weight_path)
+                self.torchModelProcess.load_pretain_model(latest_weights_path, self.model)
+                EasyLogger.warn(err)
+
         self.model = self.torchModelProcess.model_train_init(self.model)
         self.build_optimizer()
 
@@ -96,6 +102,11 @@ class CommonTrain(BaseTrain):
                     # lr_center is learning rate for center loss, e.g. lr_center = 0.5
                     param.grad.data *= (self.model.lossList[0].lr_center / (self.model.lossList[0].alpha * lr))
 
+        if self.train_task_config.sparse_config is not None and \
+                self.train_task_config.sparse_config.get('enable_sparse', None):
+            sparse_lr = self.train_task_config.sparse_config['sparse_lr']
+            self.optimize_bn.update_bn(self.model, sparse_lr)
+
     def clip_grad(self):
         if self.train_task_config.clip_grad_config['enable_clip']:
             # self.print_grad_norm()
@@ -105,13 +116,16 @@ class CommonTrain(BaseTrain):
             else:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm)
 
-    def L2_regularization(self, loss, lambda_alpha=0.0002):
-        l2_alpha = 0.0
+    def regularization_loss(self, loss, l2_alpha=0.0002):
         if self.model is not None:
+            # l2_alpha = 0.0
+            # for name, param in self.model.named_parameters():
+            #     if "alpha" in name:
+            #         l2_alpha += torch.pow(param, 2)
+            # loss += lambda_alpha * l2_alpha
             for name, param in self.model.named_parameters():
-                if "alpha" in name:
-                    l2_alpha += torch.pow(param, 2)
-            loss += lambda_alpha * l2_alpha
+                if name.split('.')[-1] == "weight":
+                    loss += l2_alpha * param.norm()
         else:
             EasyLogger.error("model not exists")
 

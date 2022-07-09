@@ -47,13 +47,13 @@ class YoloV3Loss(BaseYoloLoss):
 
         # Tensors
         object_mask = torch.zeros(batch_size, self.anchor_count, nPixels,
-                                  requires_grad=False, dtype=torch.uint8, device=device)
+                                  requires_grad=False, dtype=torch.bool, device=device)
         no_object_mask = torch.ones(batch_size, self.anchor_count, nPixels,
-                                    requires_grad=False, dtype=torch.uint8, device=device)
+                                    requires_grad=False, dtype=torch.bool, device=device)
         coord_mask = torch.zeros(batch_size, self.anchor_count, nPixels, 1,
                                  requires_grad=False, device=device)
         cls_mask = torch.zeros(batch_size, self.anchor_count, nPixels,
-                               requires_grad=False, dtype=torch.uint8, device=device)
+                               requires_grad=False, dtype=torch.bool, device=device)
         tcoord = torch.zeros(batch_size, self.anchor_count, nPixels, 4,
                              requires_grad=False, device=device)
         tconf = torch.zeros(batch_size, self.anchor_count, nPixels,

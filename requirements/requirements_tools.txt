@@ -1,1 +1,3 @@
+easyai
+easy_converter
 PyQt5==5.10.1

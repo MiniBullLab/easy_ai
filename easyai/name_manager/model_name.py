@@ -43,8 +43,11 @@ class ModelName():
 
     RPNDet2d = "rpnDet2d"
     YoloV3Det2d = "yolov3"
+    YoloV5sDet2d = "yolov5s"
     MobileV2RefineDet2d = "mbv2Refine"
     DetNet = "denet"
+
+    OCRDetNet = "OCRDeNet"
 
     # keypoint2d
     KeyPointRCNN = "KeyPointRCNN"
@@ -67,6 +70,11 @@ class ModelName():
     CNNCTC = "CNNCTC"
     LPRNet = "LPRNet"
     TextNet = "TextNet"
+
+    # reid
+    FairMOTNet = "FairMOTNet"
+    FairMOTNetV2 = "FairMOTNetV2"
+    DeepSortNet = "DeepSortNet"
 
     # multi
     DetPoes2dModel = "DetPoes2d"

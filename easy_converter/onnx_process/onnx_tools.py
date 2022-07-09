@@ -25,7 +25,7 @@ class OnnxTool():
         set_initializer = set()
         for ipt in self.model.graph.input:
             set_input.add(ipt.name)
-        for x in model.graph.initializer:
+        for x in self.model.graph.initializer:
             set_initializer.add(x.name)
         return list(set_input - set_initializer)
 

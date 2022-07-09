@@ -4,3 +4,5 @@ from . import det2d
 from . import keypoint2d
 from . import ocr
 from . import seg
+from . import reid
+

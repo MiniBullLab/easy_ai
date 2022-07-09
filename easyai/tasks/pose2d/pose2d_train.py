@@ -42,7 +42,7 @@ class Pose2dTrain(CommonTrain):
 
     def compute_backward(self, batch_data, setp_index):
         # Compute loss, compute gradient, update parameters
-        input_datas = batch_data['image'].to(self.device)
+        input_datas = self.input_datas_processing(batch_data)
         output_list = self.model(input_datas)
         loss, loss_info = self.compute_loss(output_list, batch_data)
 

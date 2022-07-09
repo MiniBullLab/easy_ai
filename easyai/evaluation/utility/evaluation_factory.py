@@ -2,9 +2,10 @@
 # -*- coding:utf-8 -*-
 # Author:lipeijie
 
+import traceback
+from easyai.utility.logger import EasyLogger
 from easyai.evaluation.utility.evaluation_registry import REGISTERED_EVALUATION
 from easyai.utility.registry import build_from_cfg
-from easyai.utility.logger import EasyLogger
 
 
 class EvaluationFactory():
@@ -22,7 +23,9 @@ class EvaluationFactory():
             else:
                 EasyLogger.error("%s evaluation not exits" % type_name)
         except ValueError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         except TypeError as err:
+            EasyLogger.error(traceback.format_exc())
             EasyLogger.error(err)
         return result

@@ -19,7 +19,6 @@ import os
 import boto3
 from datetime import datetime
 import numpy as np
-import shutil
 import tarfile
 
 task_type = os.environ.get("TASK_TYPE")
@@ -33,9 +32,10 @@ if task_type == "IMAGE_CLASSIFICATION":
 elif task_type == "OBJECT_DETECTION":
     from object_detection import train
 elif task_type == "NAMED_ENTITY_RECOGNITION":
-    from named_entity_recognition import train
+    from image_segmentattion import train
 
 train()
+
 
 def init_efs():
     print("Downloading to EFS...", flush=True)
@@ -86,6 +86,7 @@ def init_efs():
             np.savetxt(os.path.join(target_dir, "EXTRACTED"), [])
 
         np.savetxt(os.path.join(target_dir, "DONE"), [])
+
 
 init_efs()
 

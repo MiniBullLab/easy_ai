@@ -7,6 +7,7 @@ import os.path
 import torch
 from torch import onnx
 from easyai.torch_utility.torch_model_process import TorchModelProcess
+from easyai.torch_utility.torch_optimize_bn import TorchOptimizeBN
 
 
 # # Override Upsample's ONNX export until new opset is supported
@@ -38,9 +39,10 @@ class TorchConvertOnnx():
 
     def __init__(self, channel=3, width=224, height=224):
         self.model_process = TorchModelProcess()
+        self.optimize_bn = TorchOptimizeBN()
         self.input_x = torch.ones(1, channel, width, height)
         self.save_dir = "."
-        self.opset = 9
+        self.opset = 11
         self.input_names = None
         self.output_names = None
 
@@ -66,8 +68,9 @@ class TorchConvertOnnx():
                 model = torch.jit.load(str(temp_path))
             else:
                 self.model_process.load_latest_model(weight_path, model)
+        # self.optimize_bn.fuse(model)
         save_onnx_path = os.path.join(self.save_dir, "%s.onnx" % model.get_name())
         onnx.export(model, self.input_x, save_onnx_path,
-                    export_params=True, verbose=False,
+                    export_params=True, verbose=False, opset_version=12,
                     input_names=self.input_names, output_names=self.output_names)
         return save_onnx_path

@@ -26,19 +26,14 @@ class Classify(BaseInference):
         dataloader = self.get_image_data_lodaer(input_path)
         for index, batch_data in enumerate(dataloader):
             self.timer.tic()
-            prediction, _ = self.infer(batch_data)
-            class_index, class_confidence = self.result_process.post_process(prediction)
+            class_index, class_confidence = self.single_image_process(batch_data)
             EasyLogger.info('Batch %d Done. (%.3fs)' % (index, self.timer.toc()))
             if is_show:
                 if not self.result_show.show(batch_data['src_image'],
-                                             class_index[0].cpu().numpy(),
+                                             class_index,
                                              self.task_config.class_name):
                     break
             else:
-                output_count = prediction.size(1)
-                if output_count == 1:
-                    batch_size = prediction.size(0)
-                    class_index = torch.ones(batch_size)
                 self.save_result(batch_data['file_path'], class_index,
                                  class_confidence)
 
@@ -46,13 +41,18 @@ class Classify(BaseInference):
         path, filename_post = os.path.split(file_path)
         with open(self.task_config.save_result_path, 'a') as file:
             file.write("{} {} {:.5f}\n".format(filename_post,
-                                               class_index[0].cpu().numpy(),
-                                               class_confidence[0][0].cpu().numpy()))
+                                               class_index,
+                                               class_confidence))
 
-    def infer(self, input_data, net_type=0):
+    def single_image_process(self, input_data):
+        prediction, _ = self.infer(input_data)
+        class_index, class_confidence = self.result_process.post_process(prediction)
+        return class_index, class_confidence
+
+    def infer(self, batch_data, net_type=0):
         with torch.no_grad():
-            image_data = input_data['image'].to(self.device)
-            output_list = self.model(image_data)
+            input_datas = self.input_datas_processing(batch_data)
+            output_list = self.model(input_datas)
             output = self.compute_output(output_list)
         return output, output_list
 

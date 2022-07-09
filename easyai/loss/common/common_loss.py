@@ -8,12 +8,27 @@ from easyai.loss.utility.base_loss import *
 from easyai.loss.utility.loss_registry import REGISTERED_COMMON_LOSS
 
 
-def smooth_l1_loss(x, t):
-    diff = (x - t)
-    abs_diff = diff.abs()
-    flag = (abs_diff.data < 1.).float()
-    y = flag * (diff ** 2) * 0.5 + (1 - flag) * (abs_diff - 0.5)
-    return y.sum()
+def smooth_l1_loss(pred, target, beta=1.0):
+    """Smooth L1 loss.
+
+    Args:
+        pred (torch.Tensor): The prediction.
+        target (torch.Tensor): The learning target of the prediction.
+        beta (float, optional): The threshold in the piecewise function.
+            Defaults to 1.0.
+
+    Returns:
+        torch.Tensor: Calculated loss
+    """
+    assert beta > 0
+    if target.numel() == 0:
+        return pred.sum() * 0
+
+    assert pred.size() == target.size()
+    diff = torch.abs(pred - target)
+    loss = torch.where(diff < beta, 0.5 * diff * diff / beta,
+                       diff - 0.5 * beta)
+    return loss
 
 
 def l2_loss(input, target, size_average=True):
@@ -76,21 +91,3 @@ class EmptyLoss(BaseLoss):
             return torch.Tensor([0])
         else:
             return input_data
-
-
-@REGISTERED_COMMON_LOSS.register_module(LossName.MeanSquaredErrorLoss)
-class MeanSquaredErrorLoss(BaseLoss):
-
-    def __init__(self, reduction='mean'):
-        super().__init__(LossName.MeanSquaredErrorLoss)
-        self.loss_function = torch.nn.MSELoss(reduction=reduction)
-
-    def forward(self, input_data, batch_data=None):
-        if batch_data is not None:
-            device = input_data.device
-            targets = batch_data['label'].to(device)
-            loss = self.loss_function(input_data, targets)
-        else:
-            loss = input_data
-        return loss
-
